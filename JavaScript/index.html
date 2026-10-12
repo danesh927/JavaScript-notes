@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Notes - Master Class</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #F7DF1E; /* JS Yellow */
+            --dark: #20232a;
+            --light: #f4f5f7;
+            --text-dark: #333;
+            --text-light: #fff;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, #3a3f4b 100%);
+            color: var(--text-light);
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            opacity: 0.9;
+        }
+
+        /* Background SVG Animation */
+        .bg-svg {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            opacity: 0.1;
+            animation: rotateLogo 20s linear infinite;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin: -30px auto 40px auto;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        #searchInput {
+            width: 80%;
+            max-width: 500px;
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            font-size: 1rem;
+            outline: none;
+            transition: transform 0.3s;
+        }
+
+        #searchInput:focus {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(247, 223, 30, 0.3);
+        }
+
+        /* Chapters Grid */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--dark);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding-bottom: 50px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid transparent;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-bottom: 5px solid var(--primary);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: #fdfae5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .card-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--dark);
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .chapter-number {
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 5rem;
+            font-weight: 700;
+            color: rgba(0,0,0,0.03);
+            transition: color 0.3s;
+        }
+
+        .card:hover .chapter-number {
+            color: rgba(247, 223, 30, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotateLogo {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Hero Section -->
+    <header>
+        <svg class="bg-svg" viewBox="0 0 630 630">
+            <path d="M423.4 120.3c21.3-11.6 52.2-28.1 75-17.5 54.4 25.2 50.8 117.2 49.2 161.8-1.5 43.1-6 87.2-28.4 121.7-22.7 35.2-61.9 59.8-101.4 75-39 15-84.3 22-120.9 5-37-17.1-61.8-54-82.5-87.4-22.9-37.1-41.6-80.6-35.3-122.9 6-40.3 32.5-74.8 62.9-101.4 33-28.8 77.2-44.5 119.4-45.7 20.8-.6 41.2 2.6 62 11.4z" fill="#F7DF1E"/>
+        </svg>
+        <div class="hero-content">
+            <h1>JavaScript Notes</h1>
+            <p class="subtitle">ಸಂಪೂರ್ಣ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಲಿಯಲು ಸುಲಭವಾದ, ಚಾಪ್ಟರ್-ವೈಸ್ ನೋಟ್ಸ್. ಬೇಸಿಕ್ ಇಂದ ಅಡ್ವಾನ್ಸ್ಡ್ ವರೆಗೆ!</p>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="ಚಾಪ್ಟರ್ ಅಥವಾ ವಿಷಯವನ್ನು ಹುಡುಕಿ... (ಉದಾ: DOM, Functions)">
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="section-title">ಅಧ್ಯಾಯಗಳು (Chapters)</h2>
+        
+        <div class="grid" id="chaptersGrid">
+            <!-- Dynamic Chapters will be loaded here via JS -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JavaScript Master Notes. Crafted with ❤️ for Developers.</p>
+    </footer>
+
+    <script>
+        // Chapter Data (Dynamic)
+        const chapters = [
+            {
+                id: 1,
+                title: "Introduction to JS",
+                desc: "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂದರೇನು? ವೆಬ್ ಡೆವಲಪ್ಮೆಂಟ್‌ನಲ್ಲಿ ಇದರ ಪಾತ್ರ ಮತ್ತು setup ಮಾಡುವುದು ಹೇಗೆ.",
+                icon: `<svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>`
+            },
+            {
+                id: 2,
+                title: "Variables & Data Types",
+                desc: "let, const, var ನಡುವಿನ ವ್ಯತ್ಯಾಸ. Strings, Numbers, Booleans, Arrays ಮತ್ತು Objects.",
+                icon: `<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>`
+            },
+            {
+                id: 3,
+                title: "Functions & Scope",
+                desc: "Arrow functions, Callback functions, ಮತ್ತು Global vs Local scope ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು.",
+                icon: `<svg viewBox="0 0 24 24"><path d="M12.58 4.66l7.59 7.59c.78.78.78 2.05 0 2.83l-7.59 7.59c-.78.78-2.05.78-2.83 0l-7.59-7.59c-.78-.78-.78-2.05 0-2.83l7.59-7.59c.78-.78 2.05-.78 2.83 0zM11 7v4H7v2h4v4h2v-4h4v-2h-4V7h-2z"/></svg>`
+            },
+            {
+                id: 4,
+                title: "DOM Manipulation",
+                desc: "HTML ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಸೆಲೆಕ್ಟ್ ಮಾಡುವುದು, ಬದಲಾಯಿಸುವುದು ಮತ್ತು Events ಗಳನ್ನು (click, hover) ಹ್ಯಾಂಡಲ್ ಮಾಡುವುದು.",
+                icon: `<svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>`
+            },
+            {
+                id: 5,
+                title: "Asynchronous JavaScript",
+                desc: "Promises, Async/Await ಮತ್ತು API ಗಳಿಂದ ಡೇಟಾ ತರುವುದು (Fetch API).",
+                icon: `<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>`
+            },
+            {
+                id: 6,
+                title: "ES6+ Modern Features",
+                desc: "Destructuring, Spread/Rest operators, Template literals, ಮತ್ತು Classes.",
+                icon: `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`
+            }
+        ];
+
+        const grid = document.getElementById('chaptersGrid');
+        const searchInput = document.getElementById('searchInput');
+
+        // Function to Render Cards
+        function renderChapters(data) {
+            grid.innerHTML = '';
+            data.forEach((chapter, index) => {
+                const delay = index * 0.1; // Staggered animation
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animation = `fadeInDown 0.6s ease forwards ${delay}s`;
+                
+                card.innerHTML = `
+                    <div class="chapter-number">0${chapter.id}</div>
+                    <div class="card-icon">
+                        ${chapter.icon}
+                    </div>
+                    <h3>${chapter.title}</h3>
+                    <p>${chapter.desc}</p>
+                `;
+                grid.appendChild(card);
+
+                // Add class after animation to remove translation for hover effects
+                setTimeout(() => {
+                    card.classList.add('show');
+                }, (delay * 1000) + 600);
+            });
+        }
+
+        // Initial Render
+        renderChapters(chapters);
+
+        // Search Functionality
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = chapters.filter(chap => 
+                chap.title.toLowerCase().includes(term) || 
+                chap.desc.toLowerCase().includes(term)
+            );
+            renderChapters(filtered);
+        });
+    </script>
+</body>
+</html>

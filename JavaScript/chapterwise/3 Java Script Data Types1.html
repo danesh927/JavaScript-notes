@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="kn" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಡೇಟಾ ಟೈಪ್ಸ್ (JavaScript Data Types) - Complete Notes 🚀</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #f59e0b;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --border-color: #e2e8f0;
+            --highlight-bg: #eff6ff;
+            --warning-bg: #fef3c7;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --secondary: #60a5fa;
+            --accent: #fbbf24;
+            --code-bg: #000000;
+            --code-text: #f8f8f2;
+            --border-color: #334155;
+            --highlight-bg: #1e3a8a;
+            --warning-bg: #78350f;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Header & Theme Toggle */
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+            text-align: center;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #0b1120, #1e3a8a);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header p { color: #e2e8f0; font-size: 1.1rem; }
+
+        .theme-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Section Cards */
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.8s ease-out backwards;
+            transition: var(--transition);
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Headers inside cards */
+        h2 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            border-left: 6px solid var(--secondary);
+            padding-left: 15px;
+            margin: 0 0 25px 0;
+            background: var(--highlight-bg);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 0 10px 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p { margin-bottom: 16px; font-size: 1.05rem; }
+        
+        ul, ol { margin: 15px 0 20px 35px; }
+        li { margin-bottom: 10px; font-size: 1.05rem; }
+
+        /* Custom Boxes */
+        .item-box {
+            background: rgba(37, 99, 235, 0.03);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--secondary);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+        
+        [data-theme="dark"] .item-box { background: rgba(255, 255, 255, 0.02); }
+
+        .item-box:hover { box-shadow: var(--shadow-sm); }
+
+        .note-box {
+            background: var(--warning-bg);
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        [data-theme="dark"] .note-box p, [data-theme="dark"] .note-box li { color: #fef3c7; }
+
+        /* Missing Info Highlight Added */
+        .new-info-box {
+            background: #dcfce7;
+            border-left: 5px solid #22c55e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #166534;
+        }
+        [data-theme="dark"] .new-info-box { background: #14532d; color: #dcfce7; border-color: #4ade80;}
+
+        /* Visual Diagram Styling */
+        .diagram-box {
+            background: var(--bg-card);
+            border: 2px dashed var(--secondary);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .diagram-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.15rem;
+            display: inline-block;
+            background: var(--highlight-bg);
+            padding: 6px 20px;
+            border-radius: 25px;
+        }
+
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+            background: #ffffff; /* keep svgs readable in dark mode */
+            padding: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Code Blocks */
+        .code-container {
+            background-color: var(--code-bg);
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .code-header {
+            background-color: #1e293b;
+            color: #38bdf8;
+            padding: 10px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.1);
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .copy-btn:hover { background: #38bdf8; color: #000; }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--code-text);
+        }
+
+        .inline-code {
+            background: var(--highlight-bg);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        [data-theme="dark"] .inline-code { background: #1e293b; color: #38bdf8; }
+
+        /* Tables */
+        .table-wrapper { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) { background-color: rgba(0,0,0,0.02); }
+        [data-theme="dark"] tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
+
+        .divider-banner {
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 16px;
+            margin: 45px 0 35px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        /* Scroll to Top */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary);
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            border: none;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        #scrollTopBtn.show { opacity: 1; visibility: visible; }
+        #scrollTopBtn:hover { transform: translateY(-5px); background: var(--primary); }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.6rem; flex-direction: column;}
+            .theme-btn { position: static; margin-top: 15px; display: inline-flex; }
+            .section-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+            <i class="fas fa-moon"></i> Dark Mode
+        </button>
+        <h1><i class="fab fa-js-square" style="color: #f7df1e; font-size: 2.8rem;"></i> ಡೇಟಾ ಟೈಪ್ (Data Type) ಎಂದರೇನು?</h1>
+        <p>JavaScript Data Types, Primitive vs Non-Primitive, Stack & Heap Memory — ಚಿತ್ರ ಸಹಿತ ಸಂಪೂರ್ಣ ನೋಟ್ಸ್</p>
+    </header>
+
+    <!-- ಪೀಠಿಕೆ ಭಾಗ 1 ಮತ್ತು 2 -->
+    <div class="section-card" style="animation-delay: 0.1s;">
+        <h2><i class="fas fa-book-open"></i> ಡೇಟಾ ಟೈಪ್ (Data Type) ಎಂದರೇನು?</h2>
+        <p>ನಮ್ಮ ದೈನಂದಿನ ಜೀವನದಲ್ಲಿ ಒಂದು ಉದಾಹರಣೆ ತೆಗೆದುಕೊಳ್ಳೋಣ: ನಾವು ನೀರನ್ನು ಬಾಟಲಿಯಲ್ಲಿ ತುಂಬುತ್ತೇವೆ, ಅಕ್ಕಿಯನ್ನು ಡಬ್ಬದಲ್ಲಿ ಹಾಕುತ್ತೇವೆ, ಹಾಗೆಯೇ ಹಣವನ್ನು ಪರ್ಸ್‌ನಲ್ಲಿ ಇಡುತ್ತೇವೆ. ಅಂದರೆ, ಪ್ರತಿಯೊಂದು ವಸ್ತುವಿಗೂ (ನೀರು, ಅಕ್ಕಿ, ಹಣ) ಅದರದೇ ಆದ ಗುಣವಿದೆ ಮತ್ತು ಅದನ್ನು ಶೇಖರಿಸಲು ಒಂದು ನಿರ್ದಿಷ್ಟ ವಿಧಾನವಿದೆ.</p>
+        <p>ಅದೇ ರೀತಿ, ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ನಾವು ಬಳಸುವ ಮಾಹಿತಿಯು (Data) ಯಾವ ಗುಂಪಿಗೆ ಸೇರುತ್ತದೆ - ಅಂದರೆ ಅದು ಅಕ್ಷರವೇ, ಅಂಕಿಯೇ, ಪಟ್ಟಿಯೇ ಅಥವಾ ಸರಿಯೋ/ತಪ್ಪೋ - ಎಂಬುದನ್ನು ಕಂಪ್ಯೂಟರ್‌ಗೆ ತಿಳಿಸುವ ವಿಧಾನವೇ Data Types.</p>
+        <p>JavaScript ನಲ್ಲಿ ಒಂದು ವೇರಿಯೇಬಲ್ (Variable) ಒಳಗೆ ಯಾವ ರೀತಿಯ ಡೇಟಾ ಇದೆ ಎಂದು ಹೇಳಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+        <!-- ಚಿತ್ರ 1 -->
+        <div class="diagram-box">
+            <div class="diagram-title"><i class="fas fa-image"></i> ಚಿತ್ರ 1: ದೈನಂದಿನ ವಸ್ತುಗಳು ಮತ್ತು ಕೋಡಿಂಗ್ ಡೇಟಾ ಟೈಪ್ಸ್ ಹೋಲಿಕೆ</div>
+            <svg viewBox="0 0 850 230" xmlns="http://www.w3.org/2000/svg">
+                <!-- Card 1: Bottle / String -->
+                <rect x="20" y="15" width="250" height="200" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="145" y="55" font-size="38" text-anchor="middle">🍼 ➔ 📝</text>
+                <text x="145" y="95" font-size="16" font-weight="bold" fill="#1e3a8a" text-anchor="middle">ನೀರು ➔ ಬಾಟಲಿಯಲ್ಲಿ</text>
+                <text x="145" y="125" font-size="14" fill="#475569" text-anchor="middle">ಪದ/ಹೆಸರು ➔ String ಒಳಗೆ</text>
+                <rect x="45" y="145" width="200" height="45" rx="8" fill="#1e293b"/>
+                <text x="145" y="173" font-size="14" fill="#38bdf8" font-family="monospace" text-anchor="middle">let name = "ರಾಹುಲ್";</text>
+
+                <!-- Card 2: Rice Box / Number -->
+                <rect x="300" y="15" width="250" height="200" rx="14" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                <text x="425" y="55" font-size="38" text-anchor="middle">🌾 ➔ 🥫</text>
+                <text x="425" y="95" font-size="16" font-weight="bold" fill="#14532d" text-anchor="middle">ಅಕ್ಕಿ ➔ ಡಬ್ಬದಲ್ಲಿ</text>
+                <text x="425" y="125" font-size="14" fill="#475569" text-anchor="middle">ಸಂಖ್ಯೆಗಳು ➔ Number ಒಳಗೆ</text>
+                <rect x="325" y="145" width="200" height="45" rx="8" fill="#1e293b"/>
+                <text x="425" y="173" font-size="14" fill="#4ade80" font-family="monospace" text-anchor="middle">let age = 12;</text>
+
+                <!-- Card 3: Purse / Boolean & Object -->
+                <rect x="580" y="15" width="250" height="200" rx="14" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="705" y="55" font-size="38" text-anchor="middle">💰 ➔ 👛</text>
+                <text x="705" y="95" font-size="16" font-weight="bold" fill="#713f12" text-anchor="middle">ಹಣ ➔ ಪರ್ಸ್‌ನಲ್ಲಿ</text>
+                <text x="705" y="125" font-size="14" fill="#475569" text-anchor="middle">ಸರಿ/ತಪ್ಪು ➔ Boolean ಒಳಗೆ</text>
+                <rect x="605" y="145" width="200" height="45" rx="8" fill="#1e293b"/>
+                <text x="705" y="173" font-size="14" fill="#facc15" font-family="monospace" text-anchor="middle">let isRich = true;</text>
+            </svg>
+        </div>
+
+        <p>ನಿಮ್ಮ ಮನೆಯಲ್ಲಿ ಅಡುಗೆಮನೆ ಅಥವಾ ಆಟದ ಕೋಣೆಯನ್ನು ಒಮ್ಮೆ ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ: ನೀರನ್ನು ಇಡಲು ಬಾಟಲಿ, ಪೆನ್ಸಿಲ್ ಇಡಲು ಪೆನ್ಸಿಲ್ ಬಾಕ್ಸ್, ಮತ್ತು ಊಟ ಕಟ್ಟಲು ಟಿಫಿನ್ ಬಾಕ್ಸ್ ಬಳಸುತ್ತೇವೆ ಅಲ್ಲವೇ? ನೀರನ್ನು ಪೆನ್ಸಿಲ್ ಬಾಕ್ಸ್‌‌ನಲ್ಲಿ ಹಾಕಲು ಸಾಧ್ಯವಿಲ್ಲ! ಅದೇ ರೀತಿ, ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ನಾವು ಮಾಹಿತಿಯನ್ನು (Data) ಸೇವ್ ಮಾಡುವಾಗ, ಅದು ಸಂಖ್ಯೆಯೇ, ಹೆಸರೇ ಅಥವಾ ಬೇರೆಯದೇ ಮಾಹಿತಿಯೇ ಎಂದು ಕಂಪ್ಯೂಟರ್‌ಗೆ ತಿಳಿಸಬೇಕಾಗುತ್ತದೆ. ಹೀಗೆ ಮಾಹಿತಿಯ ವಿಧಗಳನ್ನು ಗುರುತಿಸುವುದನ್ನೇ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Data Types (ಡೇಟಾ ಟೈಪ್ಸ್) ಎಂದು ಕರೆಯುತ್ತಾರೆ.</p>
+
+        <div class="note-box">
+            <p><strong><i class="fas fa-sitemap"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಡೇಟಾ ಟೈಪ್‌ಗಳನ್ನು ಮುಖ್ಯವಾಗಿ 2 ಭಾಗಗಳಾಗಿ ವಿಂಗಡಿಸಲಾಗಿದೆ:</strong></p>
+            <ol>
+                <li>Primitive Data Types (ಮೂಲಭೂತ ಡೇಟಾ ಟೈಪ್‌‌ಗಳು - ಒಟ್ಟು 7)</li>
+                <li>Non-Primitive / Reference Data Types (ಸಂಕೀರ್ಣ ಡೇಟಾ ಟೈಪ್‌ಗಳು - Object)</li>
+            </ol>
+        </div>
+
+        <!-- ಚಿತ್ರ 2 -->
+        <div class="diagram-box">
+            <div class="diagram-title"><i class="fas fa-project-diagram"></i> ಚಿತ್ರ 2: JavaScript Data Types ವರ್ಗೀಕರಣ ಚಾರ್ಟ್</div>
+            <svg viewBox="0 0 850 320" xmlns="http://www.w3.org/2000/svg">
+                <!-- Root Node -->
+                <rect x="295" y="10" width="260" height="48" rx="10" fill="#1e3a8a"/>
+                <text x="425" y="40" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">JavaScript Data Types</text>
+                <!-- Connector Lines -->
+                <path d="M425 58 L425 85 M210 85 L640 85 M210 85 L210 110 M640 85 L640 110" stroke="#475569" stroke-width="3" fill="none"/>
+                <!-- Branch 1 -->
+                <rect x="60" y="110" width="300" height="45" rx="8" fill="#2563eb"/>
+                <text x="210" y="138" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">1. Primitive Types (ಒಟ್ಟು 7)</text>
+                <!-- Branch 2 -->
+                <rect x="490" y="110" width="300" height="45" rx="8" fill="#0d9488"/>
+                <text x="640" y="138" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">2. Non-Primitive (Reference)</text>
+                <!-- Primitive Items -->
+                <rect x="40" y="170" width="340" height="135" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+                <text x="210" y="198" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">ಚಿಕ್ಕ ಡಬ್ಬಿಗಳು (Stack Memory)</text>
+                <text x="65" y="225" font-size="14" fill="#0f172a">1. String ("ರಾಹುಲ್")</text>
+                <text x="225" y="225" font-size="14" fill="#0f172a">5. Null (ಖಾಲಿ)</text>
+                <text x="65" y="252" font-size="14" fill="#0f172a">2. Number (12, 99.5)</text>
+                <text x="225" y="252" font-size="14" fill="#0f172a">6. BigInt (999n)</text>
+                <text x="65" y="279" font-size="14" fill="#0f172a">3. Boolean (true/false)</text>
+                <text x="225" y="279" font-size="14" fill="#0f172a">7. Symbol (ID)</text>
+                <text x="65" y="300" font-size="14" fill="#0f172a">4. Undefined</text>
+                <!-- Non-Primitive Items -->
+                <rect x="470" y="170" width="340" height="135" rx="10" fill="#f0fdfa" stroke="#5eead4" stroke-width="2"/>
+                <text x="640" y="198" font-size="14" font-weight="bold" fill="#115e59" text-anchor="middle">ದೊಡ್ಡ ಕಪಾಟುಗಳು (Heap Memory)</text>
+                <text x="495" y="225" font-size="14" fill="#0f172a">1. Object { key: value }</text>
+                <text x="665" y="225" font-size="14" fill="#0f172a">5. RegExp (/abc/)</text>
+                <text x="495" y="252" font-size="14" fill="#0f172a">2. Array [0, 1, 2]</text>
+                <text x="665" y="252" font-size="14" fill="#0f172a">6. Map (ES6)</text>
+                <text x="495" y="279" font-size="14" fill="#0f172a">3. Function ()</text>
+                <text x="665" y="279" font-size="14" fill="#0f172a">7. Set (ES6)</text>
+                <text x="495" y="300" font-size="14" fill="#0f172a">4. Date (ದಿನಾಂಕ)</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ಹಂತ 1: Beginner Level -->
+    <div class="section-card" style="animation-delay: 0.2s;">
+        <h2><i class="fas fa-layer-group"></i> ಹಂತ 1: Beginner Level — ಮೂಲಭೂತ ಡೇಟಾ ಟೈಪ್‌‌ಗಳು (Primitive Types)</h2>
+        <p>ಇವು ಒಂದೇ ಒಂದು ಸರಳವಾದ ಮಾಹಿತಿಯನ್ನು ಇಟ್ಟುಕೊಳ್ಳುವ ಚಿಕ್ಕ ಡಬ್ಬಿಗಳಂತೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ಇವುಗಳಲ್ಲಿ 7 ವಿಧಗಳಿವೆ:</p>
+
+        <div class="item-box">
+            <h3><i class="fas fa-font"></i> 1. String (ಪದಗಳು ಅಥವಾ ಅಕ್ಷರಗಳು)</h3>
+            <p>ಯಾವುದೇ ಹೆಸರು, ವಾಕ್ಯ ಅಥವಾ ಅಕ್ಷರಗಳನ್ನು ಬರೆಯಲು ಇದನ್ನು ಬಳಸುತ್ತೇವೆ. ಇದನ್ನು ಯಾವಾಗಲೂ ಸಿಂಗಲ್ ಕೋಟ್ಸ್ (' ') ಅಥವಾ ಡಬಲ್ ಕೋಟ್ಸ್ (" ") ಒಳಗೆ ಬರೆಯಬೇಕು.</p>
+            <ul>
+                <li>ಮಕ್ಕಳ ಉದಾಹರಣೆ: ನಿಮ್ಮ ಹೆಸರಿನ ಸ್ಟಿಕ್ಕರ್.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let studentName = "ರಾಹುಲ್";
+let message = 'ನಮಸ್ಕಾರ ಕರ್ನಾಟಕ!';</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-hashtag"></i> 2. Number (ಸಂಖ್ಯೆಗಳು)</h3>
+            <p>ಎಲ್ಲಾ ರೀತಿಯ ಸಂಖ್ಯೆಗಳು—ಪೂರ್ಣ ಸಂಖ್ಯೆ ಇರಲಿ ಅಥವಾ ದಶಮಾಂಶ (Decimal) ಸಂಖ್ಯೆ ಇರಲಿ—ಇದರಲ್ಲಿ ಬರುತ್ತವೆ. ಇದಕ್ಕೆ ಕೋಟ್ಸ್ ಹಾಕುವಂತಿಲ್ಲ.</p>
+            <ul>
+                <li>ಮಕ್ಕಳ ಉದಾಹರಣೆ: ನಿಮ್ಮ ವಯಸ್ಸು ಅಥವಾ ಪರೀಕ್ಷೆಯಲ್ಲಿ ಬಂದ ಅಂಕಗಳು.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let age = 12;
+let price = 99.50;</code></pre>
+            </div>
+            
+            <!-- ಸೇರಿಸಿದ ಹೊಸ ಮಾಹಿತಿ (NaN) -->
+            <div class="new-info-box">
+                <p><strong><i class="fas fa-plus-circle"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ: NaN (Not a Number)</strong></p>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಅಕ್ಷರಗಳನ್ನು ಸಂಖ್ಯೆಯ ಜೊತೆ ಲೆಕ್ಕ (ಉದಾ: ಗುಣಾಕಾರ, ಭಾಗಾಕಾರ) ಮಾಡಲು ಹೋದರೆ, ಅದು <code>NaN</code> ಎಂಬ ಮೌಲ್ಯವನ್ನು ಕೊಡುತ್ತದೆ. ವಿಶೇಷವೆಂದರೆ <code>typeof NaN</code> ಪರೀಕ್ಷಿಸಿದರೂ ಅದು "number" ಎಂದೇ ಹೇಳುತ್ತದೆ!</p>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-toggle-on"></i> 3. Boolean (ಹೌದು ಅಥವಾ ಇಲ್ಲ)</h3>
+            <p>ಇದರಲ್ಲಿ ಕೇವಲ ಎರಡೇ ಎರಡು ಉತ್ತರಗಳಿರುತ್ತವೆ: true (ಸರಿ/ಹೌದು) ಅಥವಾ false (ತಪ್ಪು/ಇಲ್ಲ).</p>
+            <ul>
+                <li>ಮಕ್ಕಳ ಉದಾಹರಣೆ: ಕೋಣೆಯ ಲೈಟ್ ಆನ್ ಆಗಿದೆಯೇ (true) ಅಥವಾ ಆಫ್ ಆಗಿದೆಯೇ (false)?</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let isRaining = true;
+let HomeworkDone = false;</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-box-open"></i> 4. Undefined (ಇನ್ನೂ ಏನನ್ನೂ ಹಾಕದ ಡಬ್ಬಿ)</h3>
+            <p>ನಾವು ಒಂದು ಡಬ್ಬಿಯನ್ನು (Variable) ತಂದಿದ್ದೇವೆ, ಆದರೆ ಅದರೊಳಗೆ ಇನ್ನೂ ಯಾವುದೇ ವಸ್ತುವನ್ನು ಹಾಕಿಲ್ಲ ಎಂದರೆ ಅದು undefined ಆಗಿರುತ್ತದೆ.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let futureScore; 
+console.log(futureScore); // Output: undefined</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-eraser"></i> 5. Null (ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಖಾಲಿ ಇಟ್ಟ ಡಬ್ಬಿ)</h3>
+            <p>ಡಬ್ಬಿ ಇದೆ, ಆದರೆ ಅದರೊಳಗೆ ಸದ್ಯಕ್ಕೆ "ಏನೂ ಇಲ್ಲ" ಎಂದು ನಾವೇ ಸ್ವತಃ ಖಾಲಿ ಬಿಟ್ಟಿರುವ ಸ್ಥಿತಿ.</p>
+            <div class="note-box">
+                <strong><i class="fas fa-info-circle"></i> Undefined vs Null ವ್ಯತ್ಯಾಸ:</strong> ನೀವು ಹೊಸ ಟಿಫಿನ್ ಬಾಕ್ಸ್ ಕೊಂಡು ತಂದಾಗ ಅದು ತಾನಾಗಿಯೇ ಖಾಲಿ ಇರುತ್ತದೆ (Undefined). ಆದರೆ ಊಟ ಮುಗಿದ ಮೇಲೆ ಬಾಕ್ಸ್ ತೊಳೆದು "ಇದರಲ್ಲಿ ಈಗ ಏನೂ ಇಲ್ಲ" ಎಂದು ಎತ್ತಿಡುವುದು (Null).
+            </div>
+
+            <!-- ಚಿತ್ರ 3 -->
+            <div class="diagram-box">
+                <div class="diagram-title"><i class="fas fa-box"></i> ಚಿತ್ರ 3: Undefined ಮತ್ತು Null ನಡುವಿನ ವ್ಯತ್ಯಾಸ (ಟಿಫಿನ್ ಬಾಕ್ಸ್ ಉದಾಹರಣೆ)</div>
+                <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Undefined Box -->
+                    <rect x="40" y="15" width="330" height="170" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4"/>
+                    <text x="205" y="45" font-size="17" font-weight="bold" fill="#334155" text-anchor="middle">📦 Undefined (ಹೊಸ ಡಬ್ಬಿ)</text>
+                    <text x="205" y="78" font-size="14" fill="#64748b" text-anchor="middle">ಡಬ್ಬಿ ತಂದಿದ್ದೇವೆ, ಇನ್ನೂ ಏನೂ ಹಾಕಿಲ್ಲ!</text>
+                    <rect x="75" y="100" width="260" height="36" rx="6" fill="#1e293b"/>
+                    <text x="205" y="123" font-size="14" fill="#cbd5e1" font-family="monospace" text-anchor="middle">let futureScore;</text>
+                    <text x="205" y="165" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">ತಾನಾಗಿಯೇ ಖಾಲಿ ಇರುವ ಸ್ಥಿತಿ</text>
+
+                    <!-- Null Box -->
+                    <rect x="430" y="15" width="330" height="170" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="595" y="45" font-size="17" font-weight="bold" fill="#b45309" text-anchor="middle">✨ Null (ತೊಳೆದು ಎತ್ತಿಟ್ಟ ಡಬ್ಬಿ)</text>
+                    <text x="595" y="78" font-size="14" fill="#78350f" text-anchor="middle">"ಇದರಲ್ಲಿ ಈಗ ಏನೂ ಇಲ್ಲ" ಎಂದು ನಾವೇ ಹೇಳುವುದು</text>
+                    <rect x="465" y="100" width="260" height="36" rx="6" fill="#1e293b"/>
+                    <text x="595" y="123" font-size="14" fill="#fde047" font-family="monospace" text-anchor="middle">let selectedToy = null;</text>
+                    <text x="595" y="165" font-size="13" font-weight="bold" fill="#b45309" text-anchor="middle">ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಖಾಲಿ ಇಟ್ಟ ಸ್ಥಿತಿ</text>
+                </svg>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let selectedToy = null; // ಸದ್ಯಕ್ಕೆ ಯಾವುದೇ ಆಟಿಕೆ ಆಯ್ಕೆ ಮಾಡಿಲ್ಲ</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-infinity"></i> 6. BigInt (ಅತಿ ದೊಡ್ಡ ಸಂಖ್ಯೆಗಳು)</h3>
+            <p>ಸಾಮಾನ್ಯ Number ಡೇಟಾ ಟೈಪ್‌ನಲ್ಲಿ ಒಂದು ಮಿತಿಗಿಂತ (2<sup>53</sup> - 1) ದೊಡ್ಡ ಸಂಖ್ಯೆಗಳನ್ನು ಸೇವ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬಾಹ್ಯಾಕಾಶದ ದೂರ ಅಥವಾ ದೊಡ್ಡ ಲೆಕ್ಕಾಚಾರಗಳಿಗೆ BigInt ಬಳಸುತ್ತೇವೆ. ಸಂಖ್ಯೆಯ ಕೊನೆಯಲ್ಲಿ n ಸೇರಿಸಿದರೆ ಅದು BigInt ಆಗುತ್ತದೆ.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let starsInGalaxy = 900719925474099123456n;</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-fingerprint"></i> 7. Symbol (ಅನನ್ಯ ಗುರುತು - Unique ID)</h3>
+            <p>ಒಂದೇ ಹೆಸರಿನ ಇಬ್ಬರು ವಿದ್ಯಾರ್ಥಿಗಳಿದ್ದರೂ ಅವರ ರೋಲ್ ನಂಬರ್ (Roll Number) ಹೇಗೆ ಬೇರೆ ಬೇರೆಯಾಗಿರುತ್ತದೆಯೋ, ಹಾಗೆಯೇ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ಒಂದಕ್ಕೊಂದು ಹೋಲಿಕೆಯಾಗದ Unique ಗುರುತನ್ನು ರಚಿಸಲು Symbol ಬಳಸುತ್ತಾರೆ.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let id1 = Symbol("id");
+let id2 = Symbol("id");
+console.log(id1 === id2); // Output: false (ಎರಡೂ ಸಂಪೂರ್ಣ ಬೇರೆ!)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ಹಂತ 2: Intermediate Level -->
+    <div class="section-card" style="animation-delay: 0.3s;">
+        <h2><i class="fas fa-cubes"></i> ಹಂತ 2: Intermediate Level — Non-Primitive / Reference Data Types</h2>
+        <p>ಮೇಲಿನ 7 ವಿಧಗಳು ಕೇವಲ ಒಂದೇ ಮಾಹಿತಿಯನ್ನು ಹಿಡಿದಿಟ್ಟುಕೊಳ್ಳುತ್ತವೆ. ಆದರೆ ಒಂದೇ ಕಡೆ ನೂರಾರು ಮಾಹಿತಿಗಳನ್ನು ಜೋಡಿಸಿಡಲು ನಮಗೆ ದೊಡ್ಡ ಕಪಾಟು ಬೇಕಾಗುತ್ತದೆ. ಅದೇ Object.</p>
+
+        <h3><i class="fas fa-box"></i> 8. Object (ಮಾಹಿತಿಗಳ ಸಂಗ್ರಹ)</h3>
+        <p>ಖಂಡಿತ, ಈ ವಿಷಯವನ್ನು ಚಿಕ್ಕ ಮಕ್ಕಳಿಗೆ ಕಥೆಯಂತೆ ಅರ್ಥವಾಗುವ ರೀತಿಯಿಂದ ಹಿಡಿದು, ಒಬ್ಬ ಪ್ರೊಫೆಷನಲ್ (Pro) ಡೆವಲಪರ್ ಬಳಸುವ ತಾಂತ್ರಿಕ ಮಟ್ಟದವರೆಗೆ ಹಂತ ಹಂತವಾಗಿ ವಿವರಿಸುತ್ತೇನೆ.</p>
+
+        <div class="note-box">
+            <p><strong>ಮೊದಲಿಗೆ, Non-Primitive (Reference) ಡೇಟಾ ಪ್ರಕಾರಗಳು ಎಂದರೇನು?</strong></p>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ:</strong> ನಿಮ್ಮ ಜೇಬಿನಲ್ಲಿರುವ 10 ರೂಪಾಯಿ ನೋಟು 'Primitive' (ನೇರವಾಗಿ ನಿಮ್ಮ ಬಳಿಯೇ ಇದೆ). ಆದರೆ ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಅಕೌಂಟ್‌ನಲ್ಲಿರುವ 10,000 ರೂಪಾಯಿ 'Non-Primitive'. ನಿಮ್ಮ ಬಳಿ ಇರುವುದು ಕೇವಲ ಎಟಿಎಂ ಕಾರ್ಡ್ ಅಥವಾ ಪಾಸ್‌ಬುಕ್ (Reference / ವಿಳಾಸ) ಮಾತ್ರ, ಅಸಲು ಹಣ ಬ್ಯಾಂಕ್‌ನಲ್ಲಿದೆ (Memory).</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ:</strong> Non-Primitive ಡೇಟಾಗಳು ಮೆಮೊರಿಯಲ್ಲಿ ನೇರವಾಗಿ ಮೌಲ್ಯವನ್ನು (Value) ಶೇಖರಿಸುವುದಿಲ್ಲ. ಬದಲಾಗಿ, ಆ ಮೌಲ್ಯ ಇರುವ ಮೆಮೊರಿ ವಿಳಾಸವನ್ನು (Reference/Pointer) ಮಾತ್ರ ವೇರಿಯೇಬಲ್‌ನಲ್ಲಿ ಶೇಖರಿಸಿಡುತ್ತವೆ.</li>
+            </ul>
+        </div>
+
+        <!-- ಚಿತ್ರ 4 -->
+        <div class="diagram-box">
+            <div class="diagram-title"><i class="fas fa-wallet"></i> ಚಿತ್ರ 4: ಜೇಬಿನ ₹10 ನೋಟು (Primitive) vs ಬ್ಯಾಂಕ್ ಅಕೌಂಟ್ ಮತ್ತು ATM ಕಾರ್ಡ್ (Reference)</div>
+            <svg viewBox="0 0 850 210" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left -->
+                <rect x="20" y="15" width="320" height="180" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <text x="180" y="45" font-size="16" font-weight="bold" fill="#166534" text-anchor="middle">Primitive (ನೇರ ಮೌಲ್ಯ - Value)</text>
+                <rect x="90" y="65" width="180" height="65" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+                <text x="180" y="105" font-size="22" font-weight="bold" fill="#15803d" text-anchor="middle">💵 ₹10 ನೋಟು</text>
+                <text x="180" y="160" font-size="14" fill="#334155" text-anchor="middle">ನೇರವಾಗಿ ನಿಮ್ಮ ಜೇಬಿನಲ್ಲೇ ಇದೆ!</text>
+                <!-- Right -->
+                <rect x="370" y="15" width="460" height="180" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <text x="600" y="45" font-size="16" font-weight="bold" fill="#1e40af" text-anchor="middle">Non-Primitive (ವಿಳಾಸ / Reference ಮಾತ್ರ)</text>
+                <!-- Card -->
+                <rect x="395" y="70" width="165" height="75" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                <text x="477" y="100" font-size="15" font-weight="bold" fill="#1e3a8a" text-anchor="middle">💳 ATM ಕಾರ್ಡ್</text>
+                <text x="477" y="125" font-size="12" fill="#475569" text-anchor="middle">(Reference / ವಿಳಾಸ)</text>
+                <!-- Arrow -->
+                <path d="M565 107 L630 107" stroke="#dc2626" stroke-width="3"/>
+                <polygon points="630,101 642,107 630,113" fill="#dc2626"/>
+                <!-- Bank -->
+                <rect x="645" y="65" width="165" height="85" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                <text x="727" y="98" font-size="16" font-weight="bold" fill="#92400e" text-anchor="middle">🏦 ಬ್ಯಾಂಕ್ (Memory)</text>
+                <text x="727" y="125" font-size="15" font-weight="bold" fill="#b45309" text-anchor="middle">ಅಸಲಿ ₹10,000 ಹಣ</text>
+                <text x="600" y="175" font-size="13" fill="#334155" text-anchor="middle">ಜೇಬಿನಲ್ಲಿ ಕಾರ್ಡ್ ಮಾತ್ರ ಇದೆ, ಅಸಲು ಡೇಟಾ ಮೆಮೊರಿಯಲ್ಲಿದೆ!</text>
+            </svg>
+        </div>
+
+        <p><strong>ಈಗ ಪ್ರತಿಯೊಂದು ಪ್ರಕಾರವನ್ನು ವಿವರವಾಗಿ ನೋಡೋಣ:</strong></p>
+
+        <div class="item-box">
+            <h3><i class="fas fa-archive"></i> 1. Object (ಆಬ್ಜೆಕ್ಟ್)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದೊಂದು ಸ್ಕೂಲ್ ಬ್ಯಾಗ್ ಇದ್ದ ಹಾಗೆ. ಬ್ಯಾಗ್ ಒಳಗೆ ಏನೇನಿದೆ? ಪುಸ್ತಕ, ಪೆನ್ಸಿಲ್, ನೀರಿನ ಬಾಟಲಿ. ಪ್ರತಿಯೊಂದಕ್ಕೂ ಒಂದು ಹೆಸರಿದೆ (ಉದಾಹರಣೆಗೆ: ಬಣ್ಣ: "ನೀಲಿ", ಪುಸ್ತಕ: "ಕನ್ನಡ"). ವಸ್ತುಗಳನ್ನು ಹುಡುಕುವುದು ಸುಲಭ.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ಇದು 'Key-Value' (ಕೀ-ಮೌಲ್ಯ) ಜೋಡಿಗಳ ಸಂಗ್ರಹ. ಡೇಟಾವನ್ನು ರಚನಾತ್ಮಕವಾಗಿ (structured) ಶೇಖರಿಸಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let student = { 
+  name: "Ravi", // key: value
+  age: 10 
+};
+console.log(student.name); // Output: Ravi</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-list-ol"></i> 2. Array (ಅರೇ)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದು ರೈಲಿನ ಡಬ್ಬಿಗಳ ಹಾಗೆ! ಇಂಜಿನ್ ಹಿಂದಿರುವ ಮೊದಲ ಡಬ್ಬಿ (0), ಎರಡನೇ ಡಬ್ಬಿ (1)... ಹೀಗೆ ಒಂದರ ಹಿಂದೆ ಒಂದರಂತೆ ವಸ್ತುಗಳನ್ನು ಸಾಲಾಗಿ ಜೋಡಿಸಿಟ್ಟಿರುತ್ತೇವೆ.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ಇದು ಒಂದೇ ವೇರಿಯೇಬಲ್‌ನಲ್ಲಿ ಅನೇಕ ಮೌಲ್ಯಗಳನ್ನು ಶ್ರೇಣಿಯಾಗಿ (Ordered collection) ಸಂಗ್ರಹಿಸುವ ಪಟ್ಟಿ. ಇದು 0-index ಇಂದ ಶುರುವಾಗುತ್ತದೆ. JavaScript ನಲ್ಲಿ ಒಂದು Array ಒಳಗೆ Numbers, Strings, ಮತ್ತು Objects ಎಲ್ಲವನ್ನೂ ಒಟ್ಟಿಗೆ ಹಾಕಬಹುದು.</li>
+            </ul>
+            
+            <!-- ಸೇರಿಸಿದ ಹೊಸ ಮಾಹಿತಿ (Array Type) -->
+            <div class="new-info-box">
+                <p><strong><i class="fas fa-plus-circle"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ: Array Type</strong></p>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Array ಎಂಬುದು ಪ್ರತ್ಯೇಕ ಡೇಟಾ ಟೈಪ್ ಅಲ್ಲ, ಅದು ಮೂಲತಃ ಒಂದು ವಿಶೇಷ ರೀತಿಯ Object! ಆದ್ದರಿಂದ <code>typeof [1, 2, 3]</code> ಎಂದು ಪರೀಕ್ಷಿಸಿದರೆ "object" ಎಂದೇ ಬರುತ್ತದೆ.</p>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let fruits = ["Apple", "Banana", "Mango"];
+console.log(fruits[0]); // Output: Apple (ಮೊದಲ ಡಬ್ಬಿ)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-cogs"></i> 3. Function (ಫಂಕ್ಷನ್)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದೊಂದು ಜ್ಯೂಸ್ ಮಾಡುವ ಮಿಕ್ಸಿ ಇದ್ದ ಹಾಗೆ! ನೀವು ಒಳಗೆ ಹಣ್ಣು ಮತ್ತು ಸಕ್ಕರೆ (Input) ಹಾಕಿದರೆ, ಅದು ಜ್ಯೂಸ್ (Output) ಮಾಡಿ ಕೊಡುತ್ತದೆ. ಒಮ್ಮೆ ಮಿಕ್ಸಿ ಕೊಂಡುಕೊಂಡರೆ, ಎಷ್ಟು ಬಾರಿಯಾದರೂ ಜ್ಯೂಸ್ ಮಾಡಬಹುದು (ಮರುಬಳಕೆ).</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ನಿರ್ದಿಷ್ಟ ಕಾರ್ಯವನ್ನು ನಿರ್ವಹಿಸುವ ಮರುಬಳಕೆ ಮಾಡಬಹುದಾದ ಕೋಡ್ ಬ್ಲಾಕ್ (Reusable code block). JavaScript ನಲ್ಲಿ ಫಂಕ್ಷನ್‌ಗಳನ್ನು 'First-class citizens' ಎನ್ನುತ್ತಾರೆ. ಅಂದರೆ, ಇವುಗಳನ್ನು ವೇರಿಯೇಬಲ್‌ಗೆ ಅಸೈನ್ ಮಾಡಬಹುದು, ಅಥವಾ ಬೇರೆ ಫಂಕ್ಷನ್‌ಗೆ ಪ್ಯಾರಾಮೀಟರ್ ಆಗಿಯೂ ಕಳುಹಿಸಬಹುದು.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>function makeJuice(fruit) {
+  return fruit + " Juice ready!";
+}
+console.log(makeJuice("Apple")); // Output: Apple Juice ready!</code></pre>
+            </div>
+
+            <!-- ಚಿತ್ರ 5 -->
+            <div class="diagram-box">
+                <div class="diagram-title"><i class="fas fa-train"></i> ಚಿತ್ರ 5: Array (ರೈಲಿನ ಡಬ್ಬಿಗಳು) ಮತ್ತು Function (ಜ್ಯೂಸ್ ಮಿಕ್ಸಿ)</div>
+                <svg viewBox="0 0 850 220" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Array Train -->
+                    <rect x="15" y="15" width="465" height="190" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                    <text x="247" y="42" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">🚂 Array = ರೈಲಿನ ಡಬ್ಬಿಗಳು (0-Index ಇಂದ ಶುರು)</text>
+                    <rect x="30" y="75" width="80" height="65" rx="8" fill="#dc2626"/>
+                    <text x="70" y="112" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">fruits</text>
+                    <!-- Coach 0, 1, 2 -->
+                    <rect x="125" y="75" width="100" height="65" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="175" y="98" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">ಡಬ್ಬಿ [0]</text>
+                    <text x="175" y="125" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">🍎 "Apple"</text>
+                    <rect x="240" y="75" width="100" height="65" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="290" y="98" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">ಡಬ್ಬಿ [1]</text>
+                    <text x="290" y="125" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">🍌 "Banana"</text>
+                    <rect x="355" y="75" width="100" height="65" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="405" y="98" font-size="12" font-weight="bold" fill="#1e40af" text-anchor="middle">ಡಬ್ಬಿ [2]</text>
+                    <text x="405" y="125" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">🥭 "Mango"</text>
+                    <!-- Wheels -->
+                    <circle cx="55" cy="148" r="8" fill="#334155"/><circle cx="85" cy="148" r="8" fill="#334155"/>
+                    <circle cx="155" cy="148" r="8" fill="#334155"/><circle cx="195" cy="148" r="8" fill="#334155"/>
+                    <circle cx="270" cy="148" r="8" fill="#334155"/><circle cx="310" cy="148" r="8" fill="#334155"/>
+                    <circle cx="385" cy="148" r="8" fill="#334155"/><circle cx="425" cy="148" r="8" fill="#334155"/>
+                    <text x="247" y="185" font-size="13" fill="#475569" text-anchor="middle">fruits[0] ಎಂದರೆ ಮೊದಲ ಡಬ್ಬಿ ("Apple")</text>
+
+                    <!-- Function Mixie -->
+                    <rect x="500" y="15" width="335" height="190" rx="12" fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+                    <text x="667" y="42" font-size="16" font-weight="bold" fill="#6b21a8" text-anchor="middle">🍹 Function = ಜ್ಯೂಸ್ ಮಿಕ್ಸಿ</text>
+                    <text x="545" y="105" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">🍎 Input</text>
+                    <text x="545" y="125" font-size="12" fill="#475569" text-anchor="middle">("Apple")</text>
+                    <rect x="595" y="70" width="135" height="75" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+                    <text x="662" y="103" font-size="14" font-weight="bold" fill="#581c87" text-anchor="middle">⚙ makeJuice()</text>
+                    <text x="662" y="125" font-size="12" fill="#6b21a8" text-anchor="middle">ಮಿಕ್ಸಿ ಮಷಿನ್</text>
+                    <text x="780" y="105" font-size="14" font-weight="bold" fill="#15803d" text-anchor="middle">🧃 Output</text>
+                    <text x="780" y="125" font-size="12" fill="#166534" text-anchor="middle">Apple Juice!</text>
+                    <text x="667" y="185" font-size="13" fill="#6b21a8" text-anchor="middle">ಒಮ್ಮೆ ಬರೆದರೆ ಎಷ್ಟು ಬಾರಿಯಾದರೂ ಬಳಸಬಹುದು!</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="far fa-calendar-alt"></i> 4. Date (ದಿನಾಂಕ)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದು ನಿಮ್ಮ ಮನೆಯ ಗೋಡೆ ಮೇಲಿರುವ ಕ್ಯಾಲೆಂಡರ್ ಮತ್ತು ಗಡಿಯಾರ. ಇವತ್ತು ಯಾವ ದಿನ, ಸಮಯ ಎಷ್ಟು, ನಿನ್ನೆ ಯಾವ ದಿನವಾಗಿತ್ತು ಎಂಬುದನ್ನು ಹೇಳುತ್ತದೆ.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ಇದು JavaScript ನ Built-in ಆಬ್ಜೆಕ್ಟ್. ಜನವರಿ 1, 1970 ರಿಂದ ಈವರೆಗಿನ ಸಮಯವನ್ನು ಮಿಲಿಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಲೆಕ್ಕಹಾಕಿ, ದಿನಾಂಕ ಮತ್ತು ಸಮಯವನ್ನು ನಿರ್ವಹಿಸಲು, ಬದಲಾಯಿಸಲು (format/manipulate) ಅನುಕೂಲ ಮಾಡಿಕೊಡುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let today = new Date();
+console.log(today.getFullYear()); // Output: 2026</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-search"></i> 5. RegExp (Regular Expression)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದೊಂದು ಪೊಲೀಸ್ ನಾಯಿ ಇದ್ದ ಹಾಗೆ! ಅದಕ್ಕೆ ಒಂದು ವಾಸನೆ (pattern) ತೋರಿಸಿದರೆ ಸಾಕು, ಎಷ್ಟೇ ದೊಡ್ಡ ಗುಂಪಿನಲ್ಲಿದ್ದರೂ ಕಳ್ಳನನ್ನು ಹುಡುಕಿ ಹಿಡಿಯುತ್ತದೆ. ನಮಗೆ ಬೇಕಾದ ಪದ ದೊಡ್ಡ ಪುಸ್ತಕದಲ್ಲಿ ಎಲ್ಲಿದೆ ಅಂತ ಹುಡುಕಿಕೊಡುತ್ತದೆ.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ಸ್ಟ್ರಿಂಗ್‌ಗಳಲ್ಲಿ (Strings) ನಿರ್ದಿಷ್ಟ ಅಕ್ಷರಗಳ ಮಾದರಿಯನ್ನು (Pattern matching) ಹುಡುಕಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇಮೇಲ್ ಐಡಿ ಸರಿಯಾಗಿದೆಯೇ, ಪಾಸ್‌ವರ್ಡ್‌ನಲ್ಲಿ ನಂಬರ್ ಇದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸಲು (Validation) ಇದು ತುಂಬಾ ಉಪಯುಕ್ತ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let text = "Hello World";
+let pattern = /World/; // World ಎಂಬ ಪದವನ್ನು ಹುಡುಕು
+console.log(pattern.test(text)); // Output: true</code></pre>
+            </div>
+        </div>
+
+        <h3><i class="fas fa-rocket"></i> ES6 (ಹೊಸ JavaScript) ನಲ್ಲಿ ಬಂದಿರುವ ಅಡ್ವಾನ್ಸ್ಡ್ ಪ್ರಕಾರಗಳು:</h3>
+
+        <div class="item-box">
+            <h3><i class="fas fa-map-marked-alt"></i> 6. Map (ಮ್ಯಾಪ್)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದು Object ನಂತೆಯೇ ಬ್ಯಾಗ್, ಆದರೆ ಸ್ವಲ್ಪ ಅಡ್ವಾನ್ಸ್ಡ್! ಸಾಮಾನ್ಯ ಬ್ಯಾಗ್ (Object) ನಲ್ಲಿ ವಸ್ತುಗಳ ಹೆಸರನ್ನು (Key) ಕೇವಲ ಅಕ್ಷರಗಳಲ್ಲಿ (String) ಮಾತ್ರ ಬರೆಯಬಹುದು. ಆದರೆ Map ನಲ್ಲಿ ಹೆಸರಿನ ಜಾಗದಲ್ಲಿ ನೀವು ನಂಬರ್, ಫೋಟೋ ಅಥವಾ ಬೇರೆ ಯಾವುದೇ ವಸ್ತುವನ್ನಾದರೂ ಬಳಸಬಹುದು.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> Object ನಲ್ಲಿ Keys ಕೇವಲ String ಅಥವಾ Symbol ಆಗಿರಬಲ್ಲವು. ಆದರೆ Map ನಲ್ಲಿ ಯಾವುದೇ Data type ಅನ್ನು (Functions, Objects, Primitives) Key ಆಗಿ ಬಳಸಬಹುದು. ಇದು ಸೇರಿಸಿದ ಕ್ರಮಾಂಕವನ್ನು (Insertion order) ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let myMap = new Map();
+myMap.set(1, "One"); // ನಂಬರ್ ಅನ್ನು key ಆಗಿ ಬಳಸಲಾಗಿದೆ
+console.log(myMap.get(1)); // Output: One</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-layer-group"></i> 7. Set (ಸೆಟ್)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳಿಗೆ (Beginner):</strong> ಇದೊಂದು ಮ್ಯಾಜಿಕ್ ಬುಟ್ಟಿ. ಈ ಬುಟ್ಟಿಯೊಳಗೆ ನೀವು ಒಂದೇ ತರಹದ 2 ಸೇಬುಗಳನ್ನು ಹಾಕಿದರೆ, ಅದು ಮ್ಯಾಜಿಕ್ ಮಾಡಿ ಒಂದನ್ನು ಮಾಯ ಮಾಡುತ್ತದೆ ಮತ್ತು ಕೇವಲ ಒಂದನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ! ಅಂದರೆ, ನಕಲಿ (Duplicate) ವಸ್ತುಗಳಿಗೆ ಇಲ್ಲಿ ಜಾಗವಿಲ್ಲ.</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ (Pro):</strong> ಇದು ಕೇವಲ ಅನನ್ಯ (Unique) ಮೌಲ್ಯಗಳನ್ನು ಮಾತ್ರ ಸಂಗ್ರಹಿಸುವ ಕಲೆಕ್ಷನ್. Array ಗಳಲ್ಲಿರುವ ಡ್ಯೂಪ್ಲಿಕೇಟ್ ಡೇಟಾವನ್ನು ಸುಲಭವಾಗಿ ತೆಗೆದುಹಾಕಲು ಇದನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸಲಾಗುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let numbers = new Set([1, 2, 2, 3, 3, 3]);
+console.log(numbers); // Output: Set { 1, 2, 3 } (Duplicates ತೆಗೆಯಲ್ಪಟ್ಟಿವೆ)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ಹಂತ 3: Pro Level -->
+    <div class="section-card" style="animation-delay: 0.4s;">
+        <h2><i class="fas fa-laptop-code"></i> ಹಂತ 3: Pro Level — ಪರಿಣಿತರು ತಿಳಿದಿರಬೇಕಾದ ಆಳವಾದ ವಿಷಯಗಳು</h2>
+        <p>ನೀವು ಇಂಟರ್ವ್ಯೂ ಎದುರಿಸಲು ಅಥವಾ ದೊಡ್ಡ ಪ್ರಾಜೆಕ್ಟ್ ಮಾಡಲು ಈ 4 ರಹಸ್ಯಗಳನ್ನು ತಿಳಿದಿರಲೇಬೇಕು:</p>
+
+        <div class="item-box">
+            <h3><i class="fas fa-exchange-alt"></i> 1. Dynamic Typing (ಸ್ವಯಂಚಾಲಿತ ಬದಲಾವಣೆ)</h3>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದು Dynamically Typed ಭಾಷೆ. ಅಂದರೆ, ಇಲ್ಲಿ ಒಂದೇ ವೇರಿಯೇಬಲ್‌ಗೆ ಮೊದಲು ಸಂಖ್ಯೆ ಕೊಟ್ಟು, ನಂತರ ಅದಕ್ಕೆ ಹೆಸರನ್ನು (String) ಬದಲಾಯಿಸಬಹುದು. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತಾನಾಗಿಯೇ ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಗುರುತಿಸುತ್ತದೆ.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let box = 100;       // ಈಗ ಇದು Number
+box = "ನೂರು ರೂಪಾಯಿ"; // ಈಗ ಇದೇ ಡಬ್ಬಿ String ಆಯಿತು!</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-memory"></i> 2. Stack vs Heap Memory (ಮೆಮೊರಿಯಲ್ಲಿ ಡೇಟಾ ಹೇಗೆ ಸೇವ್ ಆಗುತ್ತದೆ?)</h3>
+            <ul>
+                <li><strong>Primitive Types (Stack Memory):</strong> ಇವುಗಳನ್ನು ಕಾಪಿ ಮಾಡಿದಾಗ ಹೊಸ ಜಾಗದಲ್ಲಿ ಅಸಲಿ ಬೆಲೆಯೇ ಕಾಪಿ ಆಗುತ್ತದೆ (Copy by Value). ಒಂದು ಬದಲಾದರೆ ಇನ್ನೊಂದು ಬದಲಾಗುವುದಿಲ್ಲ.</li>
+                <li><strong>Non-Primitive Types (Heap Memory):</strong> Object ಅಥವಾ Array ಗಳನ್ನು ಕಾಪಿ ಮಾಡಿದಾಗ ಕೇವಲ ಅದರ ವಿಳಾಸ (Address/Reference) ಮಾತ್ರ ಕಾಪಿ ಆಗುತ್ತದೆ (Copy by Reference).</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>// Primitive (Stack) - ಜೆರಾಕ್ಸ್ ಪ್ರತಿಯಂತೆ
+let a = 10;
+let b = a;
+b = 20;
+console.log(a); // Output: 10 ('a' ಬದಲಾಗಿಲ್ಲ)
+
+// Non-Primitive (Heap) - ಒಂದೇ ಮನೆಯ ಎರಡು ಕೀಲಿಗಳಂತೆ
+let user1 = { name: "ರಾಜು" };
+let user2 = user1;
+user2.name = "ಕಿರಣ್";
+console.log(user1.name); // Output: "ಕಿರಣ್" (user1 ಕೂಡ ಬದಲಾಗಿಬಿಟ್ಟಿತು!)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-bug"></i> 3. typeof ಆಪರೇಟರ್ ಮತ್ತು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಪ್ರಸಿದ್ಧ ತಪ್ಪು (Bug)</h3>
+            <p>ಯಾವುದೇ ಡೇಟಾ ಯಾವ ವಿಧದ್ದು ಎಂದು ಪರೀಕ್ಷಿಸಲು typeof ಬಳಸುತ್ತೇವೆ. ಆದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ನ ಆರಂಭದ ದಿನಗಳಲ್ಲಿ ಆದ ಒಂದು ಸಣ್ಣ ತಪ್ಪಿನಿಂದಾಗಿ typeof null ಎಂದರೆ "object" ಎಂದು ತೋರಿಸುತ್ತದೆ!</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>console.log(typeof "Hello"); // "string"
+console.log(typeof 42);      // "number"
+console.log(typeof null);    // "object" (ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹಳೆಯ ಬಗ್!)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-magic"></i> 4. Type Coercion (ಸ್ವಯಂ ರೂಪಾಂತರದ ಮ್ಯಾಜಿಕ್)</h3>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದು String ಮತ್ತು Number ಅನ್ನು ಕೂಡಿಸಿದರೆ (+), ಅದು ಸಂಖ್ಯೆಯನ್ನೂ String ಆಗಿ ಪರಿವರ್ತಿಸಿ ಪಕ್ಕದಲ್ಲಿ ಜೋಡಿಸಿಬಿಡುತ್ತದೆ. ಆದರೆ ಕಳೆದರೆ (-), String ಅನ್ನು ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತಿಸಿ ಲೆಕ್ಕ ಮಾಡುತ್ತದೆ!</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>console.log("5" + 2); // Output: "52" (ಜೋಡಿಸುತ್ತದೆ - Concatenation)
+console.log("5" - 2); // Output: 3 (ಕಳೆಯುತ್ತದೆ - Math subtraction)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ಜೇಬು ಮತ್ತು ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್ ವಿಶೇಷ ವಿವರಣೆ -->
+    <div class="divider-banner">
+        <i class="fas fa-star" style="color: #fbbf24;"></i> ಖಂಡಿತ, ನೀವು ನೀಡಿರುವ "ಜೇಬು ಮತ್ತು ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್" ಉದಾಹರಣೆ ಅತ್ಯದ್ಭುತವಾಗಿದೆ! ಇದೇ ತಳಹದಿಯ ಮೇಲೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ (JavaScript) ಈ ೪ ಪ್ರಮುಖ ವಿಷಯಗಳನ್ನು (Primitive, Reference, Stack, Heap) ಪ್ರತಿಯೊಬ್ಬರಿಗೂ—ಚಿಕ್ಕ ಮಕ್ಕಳಿಂದ ಹಿಡಿದು ಸಾಫ್ಟ್‌ವೇರ್ ಇಂಜಿನಿಯರ್‌ವರೆಗೆ—ಅರ್ಥವಾಗುವಂತೆ ಇನ್ನಷ್ಟು ರಂಜಕವಾಗಿ ಮತ್ತು ಸರಳವಾಗಿ ವಿವರಿಸುತ್ತೇನೆ.
+    </div>
+
+    <div class="section-card" style="animation-delay: 0.5s;">
+        <h2><i class="fas fa-bicycle"></i> 1. ಮಕ್ಕಳಿಗಾಗಿ ಕಥೆ: "ಅಂಗಿಯ ಜೇಬು ಮತ್ತು ಶಾಲೆಯ ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್!"</h2>
+        <p>ನೀವು ಶಾಲೆಗೆ ಹೋಗುತ್ತಿದ್ದೀರಿ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ನಿಮ್ಮ ಬಳಿ ಎರಡು ರೀತಿಯ ವಸ್ತುಗಳಿವೆ:</p>
+        <ul>
+            <li><strong>ಸಣ್ಣ ವಸ್ತು (ಚಾಕೊಲೇಟ್):</strong> ಇದು ತುಂಬಾ ಚಿಕ್ಕದು. ಇದನ್ನು ನೀವು ನೇರವಾಗಿ ನಿಮ್ಮ ಅಂಗಿಯ ಜೇಬಿನಲ್ಲಿ (Stack Memory) ಇಟ್ಟುಕೊಳ್ಳುತ್ತೀರಿ. ಬೇಕಾದಾಗ ತಕ್ಷಣ ಕೈಹಾಕಿ ತೆಗೆಯಬಹುದು. ಇದುವೇ Primitive Data.</li>
+            <li><strong>ದೊಡ್ಡ ವಸ್ತು (ನಿಮ್ಮ ಸೈಕಲ್):</strong> ಇದು ತುಂಬಾ ದೊಡ್ಡದು, ಇದನ್ನು ಜೇಬಿನಲ್ಲಿ ಇಡಲು ಸಾಧ್ಯವೇ? ಇಲ್ಲ! ಹಾಗಾಗಿ ಇದನ್ನು ಶಾಲೆಯ ಹೊರಗಿನ ದೊಡ್ಡ ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್‌ನಲ್ಲಿ (Heap Memory) ನಿಲ್ಲಿಸುತ್ತೀರಿ. ವಾಚ್‌ಮನ್ ನಿಮಗೆ ಒಂದು ಪಾರ್ಕಿಂಗ್ ಟೋಕನ್ ಚೀಟಿ (@101 - ವಿಳಾಸ) ಕೊಡುತ್ತಾರೆ. ಆ ಚಿಕ್ಕ ಚೀಟಿಯನ್ನು ತಂದು ನಿಮ್ಮ ಅಂಗಿಯ ಜೇಬಿನಲ್ಲಿ (Stack Memory) ಇಟ್ಟುಕೊಳ್ಳುತ್ತೀರಿ. ಇದುವೇ Non-Primitive Data.</li>
+        </ul>
+        <div class="note-box">
+            <strong><i class="fas fa-lightbulb"></i> ನೆನಪಿಡಬೇಕಾದ ಸೂತ್ರ:</strong><br>
+            ಸಣ್ಣ ವಸ್ತುಗಳು (Primitive) ನೇರವಾಗಿ ಜೇಬಿನಲ್ಲಿ (Stack) ಕೂರುತ್ತವೆ. ದೊಡ್ಡ ವಸ್ತುಗಳು (Reference) ಮೈದಾನದಲ್ಲಿ (Heap) ಕೂರುತ್ತವೆ, ಆದರೆ ಅವುಗಳ 'ವಿಳಾಸದ ಚೀಟಿ' ಮಾತ್ರ ಜೇಬಿನಲ್ಲಿ (Stack) ಇರುತ್ತದೆ!
+        </div>
+
+        <!-- ಚಿತ್ರ 6 -->
+        <div class="diagram-box">
+            <div class="diagram-title"><i class="fas fa-tshirt"></i> ಚಿತ್ರ 6: ಅಂಗಿಯ ಜೇಬು (Stack Memory) ಮತ್ತು ಶಾಲೆಯ ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್ (Heap Memory)</div>
+            <svg viewBox="0 0 850 280" xmlns="http://www.w3.org/2000/svg">
+                <!-- Stack Memory -->
+                <rect x="30" y="20" width="330" height="240" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+                <text x="195" y="52" font-size="18" font-weight="bold" fill="#1e3a8a" text-anchor="middle">👕 Stack Memory (ಅಂಗಿಯ ಜೇಬು)</text>
+                <text x="195" y="75" font-size="13" fill="#475569" text-anchor="middle">ಚಿಕ್ಕ ಜಾಗ &amp; ಅತಿ ವೇಗ (Fixed Size)</text>
+                <!-- Chocolate -->
+                <rect x="55" y="95" width="280" height="65" rx="8" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+                <text x="195" y="122" font-size="15" font-weight="bold" fill="#0f172a" text-anchor="middle">🍫 ಚಾಕೊಲೇಟ್ (Primitive Data)</text>
+                <text x="195" y="145" font-size="13" fill="#2563eb" font-family="monospace" text-anchor="middle">let age = 10; (ನೇರ ಮೌಲ್ಯ)</text>
+                <!-- Token -->
+                <rect x="55" y="175" width="280" height="65" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <text x="195" y="202" font-size="15" font-weight="bold" fill="#92400e" text-anchor="middle">🎟️ ಪಾರ್ಕಿಂಗ್ ಟೋಕನ್ ಚೀಟಿ: @101</text>
+                <text x="195" y="225" font-size="13" fill="#b45309" font-family="monospace" text-anchor="middle">let cycle1 = @101 (ವಿಳಾಸ ಮಾತ್ರ)</text>
+                <!-- Arrow -->
+                <path d="M335 207 L475 165" stroke="#dc2626" stroke-width="4" stroke-dasharray="8,4"/>
+                <polygon points="472,158 488,162 476,172" fill="#dc2626"/>
+                <text x="410" y="170" font-size="13" font-weight="bold" fill="#dc2626" text-anchor="middle">ವಿಳಾಸದ ಲಿಂಕ್</text>
+                <!-- Heap Memory -->
+                <rect x="485" y="20" width="335" height="240" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+                <text x="652" y="52" font-size="18" font-weight="bold" fill="#14532d" text-anchor="middle">🏟️ Heap Memory (ಸೈಕಲ್ ಸ್ಟ್ಯಾಂಡ್)</text>
+                <text x="652" y="75" font-size="13" fill="#475569" text-anchor="middle">ದೊಡ್ಡ ಮೈದಾನ / ಗೋದಾಮು (Dynamic Size)</text>
+                <!-- Cycle -->
+                <rect x="515" y="105" width="275" height="125" rx="10" fill="#ffffff" stroke="#22c55e" stroke-width="2"/>
+                <rect x="525" y="115" width="95" height="26" rx="5" fill="#dcfce7"/>
+                <text x="572" y="133" font-size="13" font-weight="bold" fill="#15803d" text-anchor="middle">ವಿಳಾಸ: @101</text>
+                <text x="652" y="172" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">🚲 ದೊಡ್ಡ ಸೈಕಲ್ (Object)</text>
+                <text x="652" y="205" font-size="14" fill="#15803d" font-family="monospace" text-anchor="middle">{ color: "ಕೆಂಪು" }</text>
+            </svg>
+        </div>
+
+        <h2><i class="fas fa-code"></i> 2. ಬಿಗಿನರ್ ಹಂತ: ಕೋಡಿಂಗ್ ಭಾಷೆಯಲ್ಲಿ ಇವುಗಳೇನು?</h2>
+        <p>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ ನಾವು ಡೇಟಾವನ್ನು (ಮಾಹಿತಿಯನ್ನು) ಸೇವ್ ಮಾಡಬೇಕಾಗುತ್ತದೆ.</p>
+
+        <div class="item-box">
+            <h3>A. Primitive Data Types (ಸಣ್ಣ ವಸ್ತುಗಳು)</h3>
+            <p>ಇವು ಕೇವಲ ಒಂದೇ ಒಂದು ಸರಳ ಬೆಲೆಯನ್ನು ಹೊಂದಿರುತ್ತವೆ. ಇವುಗಳನ್ನು ಕಂಪ್ಯೂಟರ್‌ನ ವೇಗವಾದ Stack Memory ಯಲ್ಲಿ ಸೇವ್ ಮಾಡಲಾಗುತ್ತದೆ.<br>
+            ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಇವು 7 ಇವೆ (ನೆನಪಿಡಲು: NN-BB-SS-U):</p>
+            <ul>
+                <li><strong>Number (ಸಂಖ್ಯೆ):</strong> <span class="inline-code">let age = 10;</span></li>
+                <li><strong>Null (ಖಾಲಿ):</strong> <span class="inline-code">let box = null;</span></li>
+                <li><strong>Boolean (ಹೌದು/ಇಲ್ಲ):</strong> <span class="inline-code">let isHappy = true;</span></li>
+                <li><strong>BigInt (ಅತಿ ದೊಡ್ಡ ಸಂಖ್ಯೆ):</strong> <span class="inline-code">let stars = 99999999999n;</span></li>
+                <li><strong>String (ಪದ/ಹೆಸರು):</strong> <span class="inline-code">let name = "ಅಪ್ಪು";</span></li>
+                <li><strong>Symbol (ವಿಶೇಷ ಗುರುತು):</strong> <span class="inline-code">let id = Symbol("1");</span></li>
+                <li><strong>Undefined (ಇನ್ನೂ ಬೆಲೆ ಕೊಟ್ಟಿಲ್ಲ):</strong> <span class="inline-code">let score;</span></li>
+            </ul>
+        </div>
+
+        <div class="item-box">
+            <h3>B. Non-Primitive / Reference Types (ದೊಡ್ಡ ವಸ್ತುಗಳು)</h3>
+            <p>ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಬೆಲೆಗಳನ್ನು ಒಟ್ಟಿಗೆ ಗುಂಪಾಗಿ ಇಟ್ಟುಕೊಳ್ಳುವ ಡೇಟಾಗಳಿವು. ಇವು ದೊಡ್ಡದಾಗಿರುವುದರಿಂದ Heap Memory ಎಂಬ ವಿಶಾಲ ಜಾಗದಲ್ಲಿ ಸೇವ್ ಆಗುತ್ತವೆ.</p>
+            <ul>
+                <li><strong>Object {} (ಮಾಹಿತಿಯ ಪೆಟ್ಟಿಗೆ):</strong> <span class="inline-code">let boy = { name: "ರಾಮು", age: 12 };</span></li>
+                <li><strong>Array [] (ಪಟ್ಟಿ):</strong> <span class="inline-code">let fruits = ["ಸೇಬು", "ಮಾವು", "ಬಾಳೆ"];</span></li>
+                <li><strong>Function () (ಕೆಲಸ ಮಾಡುವ ಮಷಿನ್):</strong> <span class="inline-code">function play() { return "ಆಟ ಶುರು!"; }</span></li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-tasks"></i> 3. ಇಂಟರ್ಮೀಡಿಯೇಟ್ ಹಂತ: ಇವುಗಳ ನಡುವಿನ 3 ಮುಖ್ಯ ವ್ಯತ್ಯಾಸಗಳು</h2>
+        <p>ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಮಾಡುವಾಗ ಈ ಎರಡು ಡೇಟಾಗಳು ಬೇರೆ ಬೇರೆ ರೀತಿಯಲ್ಲಿ ವರ್ತಿಸುತ್ತವೆ:</p>
+
+        <div class="item-box">
+            <h3><i class="fas fa-copy"></i> ವ್ಯತ್ಯಾಸ 1: ನಕಲು (Copy) ಮಾಡಿದಾಗ ಏನಾಗುತ್ತದೆ?</h3>
+            <ul>
+                <li><strong>Primitive (ಜೆರಾಕ್ಸ್ ಮಾಡಿದಂತೆ):</strong> ನೀವು ಒಂದು ಬೆಲೆಯನ್ನು ಇನ್ನೊಂದಕ್ಕೆ ಕಾಪಿ ಮಾಡಿದರೆ, ಅದು ಸಂಪೂರ್ಣ ಹೊಸ ಕಾಪಿಯನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let a = 50;
+let b = a;   // 'b' ಗಾಗಿ ಹೊಸ 50 ನಾಣ್ಯ ಬಂತು.
+b = 100;     // 'b' 100 ಆಯಿತು.
+console.log(a); // Output: 50 ('a' ಗೆ ಏನೂ ಆಗಿಲ್ಲ, ಅದು ಸೇಫ್!)</code></pre>
+            </div>
+
+            <ul>
+                <li><strong>Non-Primitive (ಒಂದೇ ಸೈಕಲ್‌ಗೆ 2 ಕೀಲಿಕೈ ಕೊಟ್ಟಂತೆ):</strong> ನೀವು ಒಂದು Object ಅನ್ನು ಕಾಪಿ ಮಾಡಿದರೆ, ಅಸಲಿ ವಸ್ತು ಕಾಪಿ ಆಗುವುದಿಲ್ಲ. ಬದಲಿಗೆ ಜೇಬಿನಲ್ಲಿರುವ ವಿಳಾಸದ ಚೀಟಿ ಮಾತ್ರ ಕಾಪಿ ಆಗುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let cycle1 = { color: "ಕೆಂಪು" }; // ವಿಳಾಸ: @101
+let cycle2 = cycle1;            // cycle2 ಗೂ ಅದೇ @101 ವಿಳಾಸ ಸಿಕ್ಕಿತು!
+
+cycle2.color = "ನೀಲಿ";          // 2ನೇ ಕೀ ಬಳಸಿ ಸೈಕಲ್ ಬಣ್ಣ ಬದಲಾಯಿಸಿದೆವು.
+console.log(cycle1.color);      // Output: "ನೀಲಿ" (ಕಾರಣ, ಇಬ್ಬರ ಸೈಕಲ್ ಒಂದೇ!)</code></pre>
+            </div>
+
+            <!-- ಚಿತ್ರ 7 -->
+            <div class="diagram-box">
+                <div class="diagram-title"><i class="fas fa-clone"></i> ಚಿತ್ರ 7: ಜೆರಾಕ್ಸ್ ಪ್ರತಿ (Copy by Value) vs ಒಂದೇ ಸೈಕಲ್‌ಗೆ 2 ಕೀಲಿಕೈ (Copy by Reference)</div>
+                <svg viewBox="0 0 850 230" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Left -->
+                    <rect x="20" y="15" width="380" height="200" rx="12" fill="#f8fafc" stroke="#3b82f6" stroke-width="2"/>
+                    <text x="210" y="45" font-size="16" font-weight="bold" fill="#1e3a8a" text-anchor="middle">📄 Primitive: ಜೆರಾಕ್ಸ್ ಮಾಡಿದಂತೆ</text>
+                    <rect x="45" y="70" width="150" height="80" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="120" y="100" font-size="16" font-weight="bold" fill="#1e40af" text-anchor="middle">a = 50</text>
+                    <text x="120" y="130" font-size="13" fill="#15803d" font-weight="bold" text-anchor="middle">(ಬದಲಾಗಿಲ್ಲ - ಸೇಫ್!)</text>
+
+                    <rect x="225" y="70" width="150" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                    <text x="300" y="100" font-size="16" font-weight="bold" fill="#166534" text-anchor="middle">b = 100</text>
+                    <text x="300" y="130" font-size="13" fill="#15803d" text-anchor="middle">(ಹೊಸ ಪ್ರತ್ಯೇಕ ಡಬ್ಬಿ)</text>
+                    <text x="210" y="185" font-size="13" fill="#334155" text-anchor="middle">ಎರಡೂ ಬೇರೆ ಬೇರೆ! 'b' ಬದಲಾದರೆ 'a' ಬದಲಾಗುವುದಿಲ್ಲ.</text>
+
+                    <!-- Right -->
+                    <rect x="430" y="15" width="400" height="200" rx="12" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+                    <text x="630" y="45" font-size="16" font-weight="bold" fill="#92400e" text-anchor="middle">🔑 Non-Primitive: ಒಂದೇ ಸೈಕಲ್‌ಗೆ 2 ಕೀಲಿಕೈ</text>
+                    
+                    <rect x="450" y="68" width="135" height="42" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="517" y="94" font-size="13" font-weight="bold" fill="#78350f" text-anchor="middle">🔑 cycle1 (@101)</text>
+
+                    <rect x="450" y="122" width="135" height="42" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="517" y="148" font-size="13" font-weight="bold" fill="#78350f" text-anchor="middle">🔑 cycle2 (@101)</text>
+
+                    <path d="M585 89 L650 110" stroke="#dc2626" stroke-width="2.5"/>
+                    <path d="M585 143 L650 122" stroke="#dc2626" stroke-width="2.5"/>
+
+                    <rect x="655" y="72" width="155" height="90" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+                    <text x="732" y="102" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">🚲 ಸೈಕಲ್ (@101)</text>
+                    <text x="732" y="128" font-size="14" font-weight="bold" fill="#2563eb" text-anchor="middle">color: "ನೀಲಿ"</text>
+                    <text x="732" y="150" font-size="11" fill="#dc2626" text-anchor="middle">(ಇಬ್ಬರಿಗೂ ಬದಲಾಯಿತು!)</text>
+
+                    <text x="630" y="190" font-size="13" fill="#78350f" text-anchor="middle">ಇಬ್ಬರ ಬಳಿಯೂ ಒಂದೇ ಸೈಕಲ್‌ನ ವಿಳಾಸ (@101) ಇದೆ!</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-edit"></i> ವ್ಯತ್ಯಾಸ 2: ತಿದ್ದಲು ಸಾಧ್ಯವೇ? (Mutability)</h3>
+            <ul>
+                <li><strong>Primitive (Immutable):</strong> Stack ನಲ್ಲಿರುವ ಬೆಲೆಯನ್ನು ತಿದ್ದಲು ಸಾಧ್ಯವಿಲ್ಲ. ಹಳೆಯದನ್ನು ತೆಗೆದು ಹೊಸದನ್ನೇ ಇಡಬೇಕು. <span class="inline-code">let word = "ಕನ್ನಡ"; word[0] = "ಚ";</span> ಅಂದರೂ ಅದು ಬದಲಾಗುವುದಿಲ್ಲ.</li>
+                <li><strong>Non-Primitive (Mutable):</strong> Heap ನಲ್ಲಿರುವ Object/Array ಒಳಗೆ ಯಾವಾಗ ಬೇಕಾದರೂ ಹೊಸ ವಸ್ತು ಸೇರಿಸಬಹುದು, ತಿದ್ದಬಹುದು ಅಥವಾ ತೆಗೆಯಬಹುದು. <span class="inline-code">let arr = ["ಕ", "ನ್ನ", "ಡ"]; arr[0] = "ಚ";</span> ಅಂದರೆ ಅದು <span class="inline-code">["ಚ", "ನ್ನ", "ಡ"]</span> ಆಗಿ ಬದಲಾಗುತ್ತದೆ.</li>
+            </ul>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-equals"></i> ವ್ಯತ್ಯಾಸ 3: ಹೋಲಿಕೆ ಮಾಡಿದಾಗ (===)</h3>
+            <ul>
+                <li><strong>Primitive:</strong> ಬೆಲೆಯನ್ನು (Value) ಮಾತ್ರ ನೋಡುತ್ತದೆ. <span class="inline-code">10 === 10</span> ಎಂದರೆ true.</li>
+                <li><strong>Non-Primitive:</strong> ಮೆಮೊರಿ ವಿಳಾಸವನ್ನು (Address) ಮಾತ್ರ ನೋಡುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let box1 = { item: "ಚೆಂಡು" }; // ವಿಳಾಸ: @111
+let box2 = { item: "ಚೆಂಡು" }; // ವಿಳಾಸ: @222
+console.log(box1 === box2);   // Output: false (ವಸ್ತು ಒಂದೇ, ಆದರೆ ವಿಳಾಸ ಬೇರೆ!)</code></pre>
+            </div>
+        </div>
+
+        <h2><i class="fas fa-user-ninja"></i> 4. ಪ್ರೊ (Pro) ಹಂತ: ಇಂಜಿನಿಯರ್‌ಗಳ ತಾಂತ್ರಿಕ ಗುಟ್ಟುಗಳು</h2>
+
+        <div class="item-box">
+            <h3><i class="fas fa-lock"></i> 1. const ರಹಸ್ಯ (ಅತಿ ಹೆಚ್ಚು ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಕೇಳುವ ಪ್ರಶ್ನೆ)</h3>
+            <p>const ಎಂದರೆ ಬದಲಾಯಿಸಲು ಆಗುವುದಿಲ್ಲ ಎಂದು ನಮಗೆ ಗೊತ್ತು. ಆದರೆ const ಬಳಸಿ Object ಸೃಷ್ಟಿಸಿದರೂ, ಅದರ ಒಳಗಿನ ಬೆಲೆಯನ್ನು ಬದಲಾಯಿಸಬಹುದು! ಏಕೆ?</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>const player = { name: "ವಿರಾಟ್", runs: 100 }; // ವಿಳಾಸ: @505
+player.runs = 150; // ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ!</code></pre>
+            </div>
+            <p><strong>ಕಾರಣ:</strong> const ಬೀಗ ಹಾಕುವುದು ನಿಮ್ಮ ಜೇಬಿನಲ್ಲಿರುವ ವಿಳಾಸದ ಚೀಟಿಗೆ (@505) ಮಾತ್ರ! Heap ಮೈದಾನದಲ್ಲಿರುವ ಗೋದಾಮಿಗೆ ಅಲ್ಲ. ವಿಳಾಸ ಬದಲಾಗದ ಹೊರತು, ನೀವು ಗೋದಾಮಿನ ಒಳಗೆ ಹೋಗಿ ವಸ್ತುಗಳನ್ನು ಎಷ್ಟು ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು. (ಗೋದಾಮಿಗೆ ಬೀಗ ಹಾಕಬೇಕೆಂದರೆ <span class="inline-code">Object.freeze(player)</span> ಬಳಸಬೇಕು).</p>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-cut"></i> 2. ವಿಳಾಸದ ಲಿಂಕ್ ಕಟ್ ಮಾಡಿ ಹೊಸ Object ತಯಾರಿಸುವುದು (Cloning)</h3>
+            <p>Non-Primitive ಡೇಟಾವನ್ನು ಕಾಪಿ ಮಾಡುವಾಗ ಹಳೆಯ ಡೇಟಾಗೆ ತೊಂದರೆ ಆಗಬಾರದು ಎಂದರೆ, Heap ನಲ್ಲಿ ಹೊಸ ವಿಳಾಸದಲ್ಲೇ ಹೊಸ ಪ್ರತಿ (Clone) ತಯಾರಿಸಬೇಕು.</p>
+            <div class="code-container">
+                <div class="code-header">
+                    <span><i class="fab fa-js"></i> JavaScript</span>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                </div>
+                <pre><code>let user1 = { name: "ಅಪ್ಪು", city: "ಬೆಂಗಳೂರು" };
+// Spread Operator (...) ಬಳಸಿ ಹೊಸ ವಿಳಾಸದಲ್ಲಿ ಕಾಪಿ ಮಾಡುವುದು:
+let user2 = { ...user1 }; 
+
+user2.city = "ಮೈಸೂರು";
+console.log(user1.city); // Output: "ಬೆಂಗಳೂರು" (ಈಗ user1 ಸೇಫ್)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-trash-alt"></i> 3. ಮೆಮೊರಿ ಕ್ಲೀನಿಂಗ್ (Garbage Collection)</h3>
+            <p>ನಮ್ಮ ಪ್ರೋಗ್ರಾಮ್ ನಡೆಯುತ್ತಿದ್ದಂತೆ ಮೆಮೊರಿ ತುಂಬಿ ಹೋಗಬಾರದು ಎಂದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕ್ಲೀನ್ ಮಾಡುತ್ತದೆ:</p>
+            <ul>
+                <li><strong>Stack Memory (LIFO):</strong> ನೀವು ಮಾಡಿದ ಫಂಕ್ಷನ್ (ಕೆಲಸ) ಮುಗಿದ ತಕ್ಷಣ, ಜೇಬಿನಲ್ಲಿರುವ (Stack) ಎಲ್ಲ ವೇರಿಯೇಬಲ್‌ಗಳು ತಕ್ಷಣ ಅಳಿಸಿಹೋಗುತ್ತವೆ.</li>
+                <li><strong>Heap Memory (Garbage Collector):</strong> Heap ಮೈದಾನದಲ್ಲಿರುವ ಯಾವುದಾದರೂ Object ಗೆ, Stack ನಿಂದ ಯಾವುದೇ 'ವಿಳಾಸದ ಲಿಂಕ್' ಇಲ್ಲದಿದ್ದರೆ (ಅನಾಥವಾಗಿದ್ದರೆ), ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ Mark-and-Sweep ಎಂಬ ಕ್ಲೀನರ್ ಬಂದು ಅದನ್ನು ಕಸದ ಬುಟ್ಟಿಗೆ ಹಾಕಿ ಮೆಮೊರಿ ಖಾಲಿ ಮಾಡುತ್ತದೆ.</li>
+            </ul>
+        </div>
+
+        <h2><i class="fas fa-clipboard-list"></i> 5. ಮಾಸ್ಟರ್ ಸಾರಾಂಶ (Cheat Sheet)</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ಗುಣಲಕ್ಷಣ</th>
+                        <th>Primitive Types (ಉದಾ: Number, String)</th>
+                        <th>Non-Primitive Types (ಉದಾ: Object, Array)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ಮಕ್ಕಳ ಭಾಷೆಯಲ್ಲಿ</strong></td>
+                        <td>ಕೈಯಲ್ಲಿರುವ ಚಿಕ್ಕ ಚಾಕೊಲೇಟ್</td>
+                        <td>ಮೈದಾನದಲ್ಲಿ ನಿಂತಿರುವ ಸೈಕಲ್ / ಕಾರು</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ಮೆಮೊರಿ ಜಾಗ</strong></td>
+                        <td>Stack Memory (ಅಂಗಿಯ ಜೇಬು)</td>
+                        <td>Heap Memory (ಮೈದಾನ - ವಿಳಾಸ ಮಾತ್ರ ಜೇಬಿನಲ್ಲಿ)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ವೇಗ ಮತ್ತು ಗಾತ್ರ</strong></td>
+                        <td>ಚಿಕ್ಕ ಗಾತ್ರ (Fixed) & ಅತಿ ವೇಗ</td>
+                        <td>ದೊಡ್ಡ ಗಾತ್ರ (Dynamic) & ಸ್ವಲ್ಪ ನಿಧಾನ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ತಿದ್ದುವಿಕೆ (Mutation)</strong></td>
+                        <td>ತಿದ್ದಲು ಸಾಧ್ಯವಿಲ್ಲ (Immutable)</td>
+                        <td>ಸುಲಭವಾಗಿ ತಿದ್ದಬಹುದು (Mutable)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ನಕಲು (Copy) ರೀತಿ</strong></td>
+                        <td>ಅಸಲಿ ಬೆಲೆಯ ಕಾಪಿ (Copy by Value)</td>
+                        <td>ವಿಳಾಸದ ಕಾಪಿ (Copy by Reference)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ಹೋಲಿಕೆ (===)</strong></td>
+                        <td>ಅಸಲಿ ಬೆಲೆಯನ್ನು ಹೋಲಿಸುತ್ತದೆ</td>
+                        <td>ಮೆಮೊರಿ ವಿಳಾಸವನ್ನು ಹೋಲಿಸುತ್ತದೆ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ಸ್ಟ್ಯಾಕ್ ಮತ್ತು ಹೀಪ್ ಮೆಮೊರಿ ಸಾರಾಂಶ -->
+    <div class="section-card" style="animation-delay: 0.6s;">
+        <h2><i class="fas fa-server"></i> Stack ಮತ್ತು Heap ಮೆಮೊರಿ — ಸವಿವರ ನೋಟ</h2>
+        <p>ಕಂಪ್ಯೂಟರ್ ಅಥವಾ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನಾವು ಬರೆಯುವ ಡೇಟಾವನ್ನು (ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು) ಸೇವ್ ಮಾಡಿಟ್ಟುಕೊಳ್ಳಲು ಬಳಸುವ ಎರಡು ಪ್ರಮುಖ ಮೆಮೊರಿ (ನೆನಪಿನ) ಜಾಗಗಳೇ Stack ಮತ್ತು Heap.</p>
+        <p>ಇದನ್ನು ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಹೀಗೆ ನೋಡೋಣ:</p>
+
+        <div class="item-box">
+            <h3><i class="fas fa-layer-group"></i> 1. Stack Memory (ಸ್ಟ್ಯಾಕ್ ಮೆಮೊರಿ) — "ನಿಮ್ಮ ಅಂಗಿಯ ಜೇಬು"</h3>
+            <p>ಇದು ಚಿಕ್ಕದಾದ, ಆದರೆ ಅತಿ ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುವ ಮೆಮೊರಿ ಜಾಗ.</p>
+            <ul>
+                <li><strong>ಏನು ಸೇವ್ ಆಗುತ್ತದೆ?</strong> ಇಲ್ಲಿ Primitive Data ಗಳು (ಅಂದರೆ ಸಣ್ಣ ವಸ್ತುಗಳು: Number, String, Boolean) ಸೇವ್ ಆಗುತ್ತವೆ. ಇವುಗಳ ಗಾತ್ರ ಎಷ್ಟು ಎಂದು ಕಂಪ್ಯೂಟರ್‌ಗೆ ಮೊದಲೇ ಗೊತ್ತಿರುತ್ತದೆ (Fixed Size).</li>
+                <li><strong>ಉದಾಹರಣೆ:</strong> ನಿಮ್ಮ ಅಂಗಿಯ ಜೇಬಿನಲ್ಲಿ ಒಂದು ಪೆನ್, ಅಥವಾ 10 ರೂಪಾಯಿ ನೋಟು ಇಟ್ಟುಕೊಂಡಂತೆ. ಇದು ಚಿಕ್ಕದಾಗಿದೆ ಮತ್ತು ನಿಮಗೆ ಬೇಕಾದಾಗ ತಕ್ಷಣ ಕೈಹಾಕಿ ತೆಗೆಯಬಹುದು (ಅತಿ ವೇಗ).</li>
+                <li><strong>ವಿಶೇಷತೆ:</strong> ಇದರಲ್ಲಿರುವ ಡೇಟಾಗೆ ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ, ಅದು ತನ್ನಷ್ಟಕ್ಕೆ ತಾನೇ ಅಳಿಸಿಹೋಗುತ್ತದೆ (LIFO - Last In First Out).</li>
+            </ul>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-warehouse"></i> 2. Heap Memory (ಹೀಪ್ ಮೆಮೊರಿ) — "ದೊಡ್ಡ ಗೋದಾಮು ಅಥವಾ ಮೈದಾನ"</h3>
+            <p>ಇದು ತುಂಬಾ ದೊಡ್ಡದಾದ, ವಿಶಾಲವಾದ ಮೆಮೊರಿ ಜಾಗ. ಆದರೆ ಸ್ಟ್ಯಾಕ್‌ನಷ್ಟು ವೇಗವಾಗಿರುವುದಿಲ್ಲ.</p>
+            <ul>
+                <li><strong>ಏನು ಸೇವ್ ಆಗುತ್ತದೆ?</strong> ಇಲ್ಲಿ Non-Primitive / Reference Data ಗಳು (ಅಂದರೆ ದೊಡ್ಡ ವಸ್ತುಗಳು: Objects, Arrays, Functions) ಸೇವ್ ಆಗುತ್ತವೆ. ಇವುಗಳ ಗಾತ್ರ ಮೊದಲೇ ಗೊತ್ತಿರುವುದಿಲ್ಲ, ಎಷ್ಟು ಬೇಕಾದರೂ ಬೆಳೆಯಬಹುದು (Dynamic Size).</li>
+                <li><strong>ಉದಾಹರಣೆ:</strong> ನಿಮ್ಮ ಬಳಿ ಇರುವ ದೊಡ್ಡ ಸೈಕಲ್ ಅಥವಾ ಕಾರು. ಇದನ್ನು ಜೇಬಿನಲ್ಲಿ ಇಟ್ಟುಕೊಳ್ಳಲು ಸಾಧ್ಯವಿಲ್ಲ! ಆದ್ದರಿಂದ ಅದನ್ನು ಊರ ಹೊರಗಿನ ದೊಡ್ಡ ಪಾರ್ಕಿಂಗ್ ಮೈದಾನದಲ್ಲಿ (Heap) ನಿಲ್ಲಿಸುತ್ತೀರಿ.</li>
+                <li><strong>ವಿಶೇಷತೆ:</strong> ಇಲ್ಲಿ ಜಾಗ ವಿಶಾಲವಾಗಿರುತ್ತದೆ, ಆದರೆ ವಸ್ತುಗಳನ್ನು ಹುಡುಕಿ ತರುವುದು ಸ್ವಲ್ಪ ನಿಧಾನ.</li>
+            </ul>
+        </div>
+
+        <div class="item-box">
+            <h3><i class="fas fa-compress-arrows-alt"></i> ಇವೆರಡೂ ಒಟ್ಟಿಗೆ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ? (ಅತ್ಯಂತ ಮುಖ್ಯವಾದ ವಿಷಯ!)</h3>
+            <p>ನೀವು ಒಂದು ದೊಡ್ಡ ಡೇಟಾವನ್ನು (ಉದಾಹರಣೆಗೆ ಒಂದು Object ಅಥವಾ Array) ಸೃಷ್ಟಿಸಿದಾಗ:</p>
+            <ol>
+                <li>ಆ ದೊಡ್ಡ ಡೇಟಾ ಹೋಗಿ Heap Memory (ಮೈದಾನದಲ್ಲಿ) ಕೂರುತ್ತದೆ.</li>
+                <li>ಆ ಮೈದಾನದಲ್ಲಿ ನಿಮ್ಮ ಡೇಟಾ ಎಲ್ಲಿದೆ ಎಂದು ಗುರುತಿಸಲು ಒಂದು ವಿಳಾಸ ಅಥವಾ ಪಾರ್ಕಿಂಗ್ ಟೋಕನ್ ನಂಬರ್ (Address) ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ.</li>
+                <li>ಆ ಪಾರ್ಕಿಂಗ್ ಟೋಕನ್ ನಂಬರ್ ಮಾತ್ರ ಬಂದು ನಿಮ್ಮ Stack Memory (ಅಂಗಿಯ ಜೇಬಿನಲ್ಲಿ) ಸೇವ್ ಆಗುತ್ತದೆ!</li>
+            </ol>
+        </div>
+
+        <div class="note-box">
+            <strong><i class="fas fa-check-double"></i> ಒಂದೇ ಸಾಲಿನಲ್ಲಿ ಹೇಳಬೇಕೆಂದರೆ:</strong><br>
+            ಸಣ್ಣ ವಸ್ತುಗಳು (Primitive) ನೇರವಾಗಿ ಸ್ಟ್ಯಾಕ್‌ನಲ್ಲಿರುತ್ತವೆ. ದೊಡ್ಡ ವಸ್ತುಗಳು (Non-Primitive) ಹೀಪ್‌ನಲ್ಲಿರುತ್ತವೆ, ಆದರೆ ಅವುಗಳ 'ವಿಳಾಸ' ಮಾತ್ರ ಸ್ಟ್ಯಾಕ್‌ನಲ್ಲಿರುತ್ತದೆ.
+        </div>
+    </div>
+
+</div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script>
+    // 1. Theme Toggle Logic
+    function toggleTheme() {
+        const html = document.documentElement;
+        const themeBtn = document.getElementById('themeBtn');
+        
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.setAttribute('data-theme', 'light');
+            themeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            themeBtn.innerHTML = '<i class="fas fa-sun" style="color: #fbbf24;"></i> Light Mode';
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    // Load saved theme on startup
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun" style="color: #fbbf24;"></i> Light Mode';
+    }
+
+    // 2. Copy Code to Clipboard Logic
+    function copyCode(btn) {
+        const codeBlock = btn.parentElement.nextElementSibling;
+        const codeText = codeBlock.innerText;
+        
+        navigator.clipboard.writeText(codeText).then(() => {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.style.background = '#22c55e';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#22c55e';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = 'rgba(255,255,255,0.1)';
+                btn.style.color = '#38bdf8';
+                btn.style.borderColor = '#38bdf8';
+            }, 2000);
+        });
+    }
+
+    // 3. Scroll to Top Button Logic
+    window.onscroll = function() {
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            scrollBtn.classList.add('show');
+        } else {
+            scrollBtn.classList.remove('show');
+        }
+    };
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

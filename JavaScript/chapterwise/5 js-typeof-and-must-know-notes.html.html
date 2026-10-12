@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>typeof ಪರೀಕ್ಷಕಗಳು ಮತ್ತು 6 ಮುಖ್ಯ ಅಂಶಗಳು - ಚಿತ್ರ ಸಹಿತ ಸಂಪೂರ್ಣ ನೋಟ್ಸ್</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #f59e0b;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --border-color: #cbd5e1;
+            --highlight-bg: #eff6ff;
+            --warning-bg: #fef3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+            color: #ffffff;
+            padding: 38px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #bfdbfe;
+        }
+
+        .part-banner {
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            color: #ffffff;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin: 32px 0 22px 0;
+            font-size: 1.35rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            border-left: 6px solid var(--secondary);
+            padding-left: 14px;
+            margin: 15px 0 18px 0;
+            background: var(--highlight-bg);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #0f172a;
+            font-size: 1.25rem;
+            margin: 22px 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        p {
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin: 12px 0 18px 28px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .item-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--secondary);
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+        }
+
+        .note-box {
+            background: var(--warning-bg);
+            border-left: 5px solid var(--accent);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-weight: 500;
+        }
+
+        /* Visual Diagram Styling */
+        .diagram-box {
+            background: #ffffff;
+            border: 2px dashed #93c5fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .diagram-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+            display: inline-block;
+            background: #dbeafe;
+            padding: 5px 18px;
+            border-radius: 20px;
+        }
+
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            font-family: 'Noto Sans Kannada', sans-serif;
+        }
+
+        .code-container {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 10px;
+            margin: 14px 0 20px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .code-header {
+            background-color: #1e293b;
+            color: #38bdf8;
+            padding: 6px 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Noto Sans Kannada', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Noto Sans Kannada', monospace;
+        }
+
+        .inline-code {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.92em;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.98rem;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 13px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .section-card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <h1>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ typeof ಪರೀಕ್ಷಕಗಳು ಮತ್ತು 6 ಅತ್ಯಂತ ಮುಖ್ಯವಾದ ಅಂಶಗಳು</h1>
+        <p>ಸರಳ ಉದಾಹರಣೆಗಳಿಂದ ಪ್ರೊಫೆಷನಲ್ ಇಂಜಿನಿಯರ್ ಹಂತದವರೆಗೆ — ಚಿತ್ರ ಸಹಿತ ಸಂಪೂರ್ಣ ಕೈಪಿಡಿ</p>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- ಮೊದಲನೇ ಅಧ್ಯಾಯ: typeof ಮತ್ತು ಇತರ ಪರೀಕ್ಷಕಗಳು -->
+    <!-- ================================================================= -->
+    <div class="part-banner">
+        ಅಧ್ಯಾಯ 1: typeof ಮತ್ತು ಇತರ ಎಲ್ಲಾ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪರೀಕ್ಷಕಗಳು (Type &amp; Value Checking Methods)
+    </div>
+
+    <div class="section-card">
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌‌ನಲ್ಲಿ ಒಂದು ವೇರಿಯೇಬಲ್ ಒಳಗೆ ಯಾವ ರೀತಿಯ ಡೇಟಾ ಇದೆ ಎಂದು ಪರೀಕ್ಷಿಸಲು ಕೇವಲ <strong><span class="inline-code">typeof</span></strong> ಮಾತ್ರವಲ್ಲದೆ, ಸಂದರ್ಭಕ್ಕೆ ತಕ್ಕಂತೆ ಬಳಸುವ <strong>ಇನ್ನೂ 8ಕ್ಕೂ ಹೆಚ್ಚು ಪ್ರಮುಖ ವಿಧಾನಗಳಿವೆ (Type &amp; Value Checking Methods)</strong>.</p>
+        <p>ಮಕ್ಕಳಿಗೆ ಅರ್ಥವಾಗುವ ಸರಳ ಉದಾಹರಣೆಗಳಿಂದ ಹಿಡಿದು ಪ್ರೊಫೆಷನಲ್ (Pro) ಇಂಜಿನಿಯರ್‌ಗಳು ಬಳಸುವ ತಂತ್ರಗಳವರೆಗೆ ಸಂಪೂರ್ಣ ಮಾಹಿತಿ ಇಲ್ಲಿದೆ:</p>
+
+        <h2>ಭಾಗ 1: typeof ಎಂದರೇನು ಮತ್ತು ಅದರ ಮಿತಿಗಳೇನು?</h2>
+        <ul>
+            <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಸೂಪರ್ ಮಾರ್ಕೆಟ್‌ನಲ್ಲಿರುವ <strong>ಬಾರ್‌ಕೋಡ್ ಸ್ಕ್ಯಾನರ್ (Barcode Scanner)</strong> ಇದ್ದಂತೆ! ಯಾವುದೇ ವಸ್ತುವನ್ನು ಅದರ ಮುಂದೆ ಹಿಡಿದರೆ ಅದು "ಇದು ಸೋಪು", "ಇದು ಬಿಸ್ಕೆಟ್" ಎಂದು ಹೇಳುತ್ತದೆ. ಹಾಗೆಯೇ <span class="inline-code">typeof</span> ಮುಂದೆ ಯಾವುದೇ ಡೇಟಾ ಇಟ್ಟರೆ ಅದರ ಜಾತಿ (Type) ಯಾವುದು ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+        </ul>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>console.log(typeof "ಕರ್ನಾಟಕ"); // "string"
+console.log(typeof 100);       // "number"
+console.log(typeof true);      // "boolean"
+console.log(typeof undefined); // "undefined"
+console.log(typeof 99999n);    // "bigint"
+console.log(typeof Symbol());  // "symbol"
+console.log(typeof function(){}); // "function"</code></pre>
+        </div>
+
+        <h3>typeof ನಲ್ಲಿರುವ 3 ದೊಡ್ಡ ಸಮಸ್ಯೆಗಳು (ಇದಕ್ಕಾಗಿಯೇ ಬೇರೆ ವಿಧಾನಗಳು ಬೇಕು!)</h3>
+        <p><span class="inline-code">typeof</span> ಸಾಮಾನ್ಯ ಡೇಟಾಗಳಿಗೆ (Primitive) ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಆದರೆ ಈ ಕೆಳಗಿನ 3 ಸಂದರ್ಭಗಳಲ್ಲಿ ದಾರಿ ತಪ್ಪಿಸುತ್ತದೆ:</p>
+        <ol>
+            <li><strong>ಎಲ್ಲಾ ಸಂಕೀರ್ಣ ಡೇಟಾಗಳಿಗೂ <span class="inline-code">"object"</span> ಎಂದೇ ಹೇಳುತ್ತದೆ:</strong> ನೀವು Array <span class="inline-code">[]</span>, Object <span class="inline-code">{}</span>, ಅಥವಾ <span class="inline-code">new Date()</span> ಕೊಟ್ಟರೂ ಎಲ್ಲವನ್ನೂ <span class="inline-code">"object"</span> ಎಂದೇ ತೋರಿಸುತ್ತದೆ!</li>
+            <li><strong><span class="inline-code">null</span> ನ ಪ್ರಸಿದ್ಧ ತಪ್ಪು:</strong> <span class="inline-code">typeof null</span> ಎಂದರೆ <span class="inline-code">"object"</span> ಎಂದು ತೋರಿಸುತ್ತದೆ (ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹಳೆಯ ಬಗ್).</li>
+            <li><strong><span class="inline-code">NaN</span> (Not a Number) ವಿಚಿತ್ರ:</strong> ಗಣಿತದಲ್ಲಿ ತಪ್ಪಾದಾಗ ಬರುವ <span class="inline-code">NaN</span> ಅನ್ನು ಪರೀಕ್ಷಿಸಿದರೆ <span class="inline-code">typeof NaN</span> ➔ <span class="inline-code">"number"</span> ಎಂದು ತೋರಿಸುತ್ತದೆ!</li>
+        </ol>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>console.log(typeof [1, 2, 3]); // "object" (ಇದು Array ಆದರೂ object ಎನ್ನುತ್ತದೆ!)
+console.log(typeof null);      // "object" (ತಪ್ಪು ಮಾಹಿತಿ)
+console.log(typeof NaN);       // "number" (ಹೆಸರಲ್ಲೇ Not-a-Number ಎಂದಿದ್ದರೂ number ಎನ್ನುತ್ತದೆ!)</code></pre>
+        </div>
+
+        <!-- ಚಿತ್ರ 1: typeof ಬಾರ್‌ಕೋಡ್ ಸ್ಕ್ಯಾನರ್ ಮತ್ತು ಅದರ 3 ಮಿತಿಗಳು -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 1: typeof ಬಾರ್‌ಕೋಡ್ ಸ್ಕ್ಯಾನರ್ ಮತ್ತು ಅದು ಗೊಂದಲಕ್ಕೀಡಾಗುವ 3 ಸಂದರ್ಭಗಳು</div>
+            <svg viewBox="0 0 860 245" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Normal Working -->
+                <rect x="20" y="15" width="380" height="215" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <text x="210" y="45" font-size="16" font-weight="bold" fill="#166534" text-anchor="middle">✅ typeof ಸರಿಯಾಗಿ ಗುರುತಿಸುವ ಡೇಟಾಗಳು</text>
+                
+                <rect x="45" y="65" width="330" height="40" rx="6" fill="#ffffff" stroke="#86efac"/>
+                <text x="210" y="90" font-size="14" font-family="monospace" fill="#0f172a" text-anchor="middle">typeof "ಕರ್ನಾಟಕ" ➔ "string"</text>
+
+                <rect x="45" y="115" width="330" height="40" rx="6" fill="#ffffff" stroke="#86efac"/>
+                <text x="210" y="140" font-size="14" font-family="monospace" fill="#0f172a" text-anchor="middle">typeof 100       ➔ "number"</text>
+
+                <rect x="45" y="165" width="330" height="40" rx="6" fill="#ffffff" stroke="#86efac"/>
+                <text x="210" y="190" font-size="14" font-family="monospace" fill="#0f172a" text-anchor="middle">typeof true      ➔ "boolean"</text>
+
+                <!-- Right: 3 Traps / Bugs -->
+                <rect x="430" y="15" width="410" height="215" rx="12" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="635" y="45" font-size="16" font-weight="bold" fill="#991b1b" text-anchor="middle">⚠️ typeof ದಾರಿ ತಪ್ಪಿಸುವ 3 ಸಂದರ್ಭಗಳು!</text>
+
+                <rect x="455" y="65" width="360" height="40" rx="6" fill="#ffffff" stroke="#fca5a5"/>
+                <text x="635" y="90" font-size="14" font-family="monospace" fill="#b91c1c" text-anchor="middle">typeof [1, 2, 3] ➔ "object" (Array ಅಲ್ಲ!)</text>
+
+                <rect x="455" y="115" width="360" height="40" rx="6" fill="#ffffff" stroke="#fca5a5"/>
+                <text x="635" y="140" font-size="14" font-family="monospace" fill="#b91c1c" text-anchor="middle">typeof null      ➔ "object" (ಹಳೆಯ ಬಗ್!)</text>
+
+                <rect x="455" y="165" width="360" height="40" rx="6" fill="#ffffff" stroke="#fca5a5"/>
+                <text x="635" y="190" font-size="14" font-family="monospace" fill="#b91c1c" text-anchor="middle">typeof NaN       ➔ "number" (ವಿಚಿತ್ರ!)</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ಭಾಗ 2: ಇತರ ಎಲ್ಲಾ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪರೀಕ್ಷಕಗಳು -->
+    <div class="section-card">
+        <h2>ಭಾಗ 2: typeof ತರಹವೇ ಇರುವ ಇತರ ಎಲ್ಲಾ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪರೀಕ್ಷಕಗಳು</h2>
+        <p>ಮೇಲಿನ ಸಮಸ್ಯೆಗಳನ್ನು ಬಗೆಹರಿಸಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಈ ಕೆಳಗಿನ ವಿಶೇಷ ಅಸ್ತ್ರಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ:</p>
+
+        <div class="item-box">
+            <h3>1. Array.isArray() — ಇದು ನಿಜವಾಗಿಯೂ Array ನಾ?</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> <span class="inline-code">typeof</span> ಗೆ ಶಾಲೆಯ ಬ್ಯಾಗ್ (Object) ಮತ್ತು ರೈಲಿನ ಡಬ್ಬಿ (Array) ಎರಡೂ ಒಂದೇ ತರಹ ಕಾಣಿಸುತ್ತವೆ. ಆದರೆ <span class="inline-code">Array.isArray()</span> ಕನ್ನಡಕ ಹಾಕಿಕೊಂಡು ನೋಡಿದರೆ ಅದು ನಿಜವಾಗಿಯೂ ರೈಲಿನ ಡಬ್ಬಿಯೇ (Array) ಎಂದು ಖಚಿತವಾಗಿ ಹೇಳುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let fruits = ["ಸೇಬು", "ಮಾವು"];
+let student = { name: "ರವಿ" };
+
+console.log(Array.isArray(fruits));  // true (ಹೌದು, ಇದು Array!)
+console.log(Array.isArray(student)); // false (ಇಲ್ಲ, ಇದು Object)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>2. instanceof ಆಪರೇಟರ್ — ವಸ್ತುವಿನ ಮೂಲ/ಕುಟುಂಬ ಪತ್ತೆಹಚ್ಚಲು (DNA ಟೆಸ್ಟ್!)</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಒಂದು ವಸ್ತು ಯಾವ ಕಾರ್ಖಾನೆಯಿಂದ (Class / Constructor) ತಯಾರಾಗಿ ಬಂದಿದೆ ಎಂದು ಪತ್ತೆಹಚ್ಚುವ <strong>DNA ಟೆಸ್ಟ್</strong> ಇದ್ದಂತೆ!</li>
+                <li><strong>ಪ್ರೊ ಗಳಿಗೆ:</strong> Non-Primitive ಡೇಟಾಗಳಾದ <span class="inline-code">Array</span>, <span class="inline-code">Date</span>, <span class="inline-code">RegExp</span> ಅಥವಾ ನಾವೇ ಸೃಷ್ಟಿಸಿದ <span class="inline-code">Class</span> ಗಳನ್ನು ಗುರುತಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let today = new Date();
+let items = [10, 20];
+
+console.log(today instanceof Date);   // true (ಇದು Date ಕಾರ್ಖಾನೆಯಿಂದ ಬಂದಿದೆ)
+console.log(items instanceof Array);  // true (ಇದು Array ಜಾತಿಗೆ ಸೇರಿದೆ)
+console.log(items instanceof Object); // true (ಎಲ್ಲಾ Array ಗಳೂ Object ಕುಟುಂಬವೇ!)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>3. Number.isNaN() ಮತ್ತು isNaN() — ಇದು ಸಂಖ್ಯೆಯಲ್ಲವೇ?</h3>
+            <p>ಯಾವುದಾದರೂ ತಪ್ಪಾದ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿದಾಗ (ಉದಾ: <span class="inline-code">"ಅಪ್ಪು" * 5</span>) ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ <span class="inline-code">NaN</span> (Not a Number) ಕೊಡುತ್ತದೆ. ಅದನ್ನು ಹಿಡಿಯಲು ಇದನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+            <ul>
+                <li><strong>ಎಚ್ಚರಿಕೆ:</strong> ಹಳೆಯ <span class="inline-code">isNaN()</span> ಬದಲು ಹೊಸ <strong><span class="inline-code">Number.isNaN()</span></strong> ಬಳಸುವುದು ಹೆಚ್ಚು ನಿಖರ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let badMath = "ಹತ್ತು" / 2; // ಉತ್ತರ: NaN
+
+console.log(Number.isNaN(badMath)); // true (ಹೌದು, ಲೆಕ್ಕ ತಪ್ಪಾಗಿದೆ - ಇದು NaN)
+console.log(Number.isNaN(100));     // false (ಇದು ಸರಿಯಾದ ಸಂಖ್ಯೆ)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>4. Number.isInteger() ಮತ್ತು Number.isFinite() — ಸಂಖ್ಯೆಯ ಒಳಪರೀಕ್ಷೆ</h3>
+            <p>ಸಂಖ್ಯೆಯು ಪೂರ್ಣ ಸಂಖ್ಯೆಯೇ ಅಥವಾ ದಶಮಾಂಶವೇ (Decimal) ಎಂದು ತಿಳಿಯಲು:</p>
+            <ul>
+                <li><strong><span class="inline-code">Number.isInteger()</span>:</strong> ಚಿಲ್ಲರೆ ಇಲ್ಲದ ಪೂರ್ಣ ಸಂಖ್ಯೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ.</li>
+                <li><strong><span class="inline-code">Number.isFinite()</span>:</strong> ಇದು ಮಿತಿಯೊಳಗಿರುವ ಸಾಮಾನ್ಯ ಸಂಖ್ಯೆಯೇ (ಅನಂತ / <span class="inline-code">Infinity</span> ಅಲ್ಲವೇ) ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>console.log(Number.isInteger(25));    // true (ಪೂರ್ಣ ಸಂಖ್ಯೆ)
+console.log(Number.isInteger(25.50)); // false (ದಶಮಾಂಶ ಸಂಖ್ಯೆ)
+console.log(Number.isFinite(10 / 0)); // false (ಏಕೆಂದರೆ 10/0 ಎಂದರೆ Infinity)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>5. in ಆಪರೇಟರ್ &amp; Object.hasOwn() — ಬ್ಯಾಗ್ ಒಳಗೆ ವಸ್ತು ಇದೆಯೇ?</h3>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಸ್ಕೂಲ್ ಬ್ಯಾಗ್ ತೆರೆಯುವ ಮುನ್ನವೇ "ಈ ಬ್ಯಾಗ್ ಒಳಗೆ ನೀರಿನ ಬಾಟಲಿ ಇದೆಯೇ?" ಎಂದು ಹೊರಗಿನಿಂದಲೇ ಸ್ಕ್ಯಾನ್ ಮಾಡುವ ವಿಧಾನ.</li>
+                <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ:</strong> ಒಂದು Object ಒಳಗೆ ನಿರ್ದಿಷ್ಟ Key (ಹೆಸರು) ಇದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸಲು ಬಳಸುತ್ತಾರೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let car = { brand: "Tata", price: 800000 };
+
+console.log("brand" in car);             // true (brand ಎಂಬ ಮಾಹಿತಿ ಇದೆ)
+console.log("color" in car);             // false (color ಇಲ್ಲ)
+console.log(Object.hasOwn(car, "price")); // true (ಆಧುನಿಕ ಮತ್ತು ಸುರಕ್ಷಿತ ವಿಧಾನ)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>6. Boolean() ಅಥವಾ !! — ಡಬ್ಬಿ ತುಂಬಿದೆಯೇ ಅಥವಾ ಖಾಲಿಯೇ? (Truthy vs Falsy)</h3>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌‌ನಲ್ಲಿ ಯಾವುದೇ ಮೌಲ್ಯವು ಅಸಲಿಯೇ (Truthy) ಅಥವಾ ಖಾಲಿಯೇ (Falsy) ಎಂದು ಪರೀಕ್ಷಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+            <ul>
+                <li><strong>6 Falsy ಮೌಲ್ಯಗಳು (ಇವು ಯಾವಾಗಲೂ <span class="inline-code">false</span> ಆಗಿರುತ್ತವೆ):</strong> <span class="inline-code">false</span>, <span class="inline-code">0</span>, <span class="inline-code">""</span> (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್), <span class="inline-code">null</span>, <span class="inline-code">undefined</span>, <span class="inline-code">NaN</span>. ಇವುಗಳನ್ನು ಬಿಟ್ಟು ಉಳಿದೆಲ್ಲವೂ <span class="inline-code">true</span>!</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>console.log(Boolean("ಕನ್ನಡ")); // true (ಒಳಗೆ ಅಕ್ಷರ ಇದೆ)
+console.log(Boolean(""));      // false (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್)
+console.log(Boolean(0));       // false (ಸೊನ್ನೆ)
+
+// ಶಾರ್ಟ್‌ಕಟ್ ಆಗಿ ಎರಡು ಆಶ್ಚರ್ಯಕರ ಚಿಹ್ನೆ (!!) ಬಳಸುತ್ತಾರೆ:
+console.log(!!"Hello"); // true</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>7. Object.is() — ಸೂಪರ್ ನಿಖರ ಹೋಲಿಕೆ (=== ಗಿಂತಲೂ ಸ್ಟ್ರಾಂಗ್!)</h3>
+            <p>ಸಾಮಾನ್ಯವಾಗಿ ಎರಡು ಬೆಲೆಗಳನ್ನು ಹೋಲಿಸಲು <span class="inline-code">===</span> ಬಳಸುತ್ತೇವೆ. ಆದರೆ <span class="inline-code">===</span> ಎರಡು ಜಾಗದಲ್ಲಿ ಸೋಲುತ್ತದೆ: ಅದು <span class="inline-code">NaN === NaN</span> ಎಂದರೆ <span class="inline-code">false</span> ಎನ್ನುತ್ತದೆ ಮತ್ತು <span class="inline-code">+0 === -0</span> ಎಂದರೆ <span class="inline-code">true</span> ಎನ್ನುತ್ತದೆ. ಇದನ್ನು ಸರಿಪಡಿಸಲು <span class="inline-code">Object.is()</span> ಬಳಸುತ್ತಾರೆ.</p>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>console.log(NaN === NaN);          // false (=== ಗೆ ಗುರುತಿಸಲು ಆಗುವುದಿಲ್ಲ)
+console.log(Object.is(NaN, NaN));  // true (ನಿಖರವಾಗಿ ಗುರುತಿಸುತ್ತದೆ!)
+
+console.log(+0 === -0);            // true
+console.log(Object.is(+0, -0));    // false (+0 ಮತ್ತು -0 ಬೇರೆ ಎಂದು ಗುರುತಿಸುತ್ತದೆ)</code></pre>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <h3>8. Pro ರಹಸ್ಯ: Object.prototype.toString.call() — ಮಾಸ್ಟರ್ ಡಿಟೆಕ್ಟಿವ್!</h3>
+            <ul>
+                <li><strong>ಇದೇ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಬ್ರಹ್ಮಾಸ್ತ್ರ!</strong> ನೀವು ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಅಥವಾ ದೊಡ್ಡ ಸಾಫ್ಟ್‌ವೇರ್‌ಗಳಲ್ಲಿ ಯಾವುದೇ ಡೇಟಾದ <strong>100% ಅಸಲಿ ಜಾತಿಯನ್ನು</strong> ಕಂಡುಹಿಡಿಯಬೇಕಾದರೆ ಇದನ್ನು ಬಳಸುತ್ತಾರೆ. <span class="inline-code">typeof</span> ಸೋಲುವ ಎಲ್ಲಾ ಜಾಗದಲ್ಲೂ ಇದು ಗೆಲ್ಲುತ್ತದೆ!</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let checkType = (val) => Object.prototype.toString.call(val);
+
+console.log(checkType(null));       // "[object Null]" (ನಿಖರವಾಗಿ ಹೇಳಿತು!)
+console.log(checkType([1, 2, 3]));  // "[object Array]"
+console.log(checkType({a: 1}));     // "[object Object]"
+console.log(checkType(new Date())); // "[object Date]"
+console.log(checkType(/abc/));      // "[object RegExp]"</code></pre>
+            </div>
+        </div>
+
+        <!-- ಚಿತ್ರ 2: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ವಿಶೇಷ ಪರೀಕ್ಷಕಗಳ ಟೂಲ್‌ಕಿಟ್ -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 2: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ವಿಶೇಷ ಪರೀಕ್ಷಕಗಳ ಟೂಲ್‌ಕಿಟ್ (Special Inspector Toolkit)</div>
+            <svg viewBox="0 0 860 215" xmlns="http://www.w3.org/2000/svg">
+                <!-- Box 1: Array.isArray -->
+                <rect x="15" y="15" width="195" height="185" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="112" y="48" font-size="26" text-anchor="middle">🚂 👓</text>
+                <text x="112" y="76" font-size="14" font-weight="bold" fill="#1e3a8a" font-family="monospace" text-anchor="middle">Array.isArray()</text>
+                <text x="112" y="102" font-size="13" font-weight="bold" fill="#1d4ed8" text-anchor="middle">ರೈಲು ಡಬ್ಬಿ ಪತ್ತೆದಾರ</text>
+                <text x="112" y="128" font-size="12" fill="#334155" text-anchor="middle">ಕೊಟ್ಟ ಡೇಟಾ Array ಹೌದೋ</text>
+                <text x="112" y="148" font-size="12" fill="#334155" text-anchor="middle">ಅಲ್ಲವೋ ಎಂದು ನಿಖರವಾಗಿ</text>
+                <text x="112" y="168" font-size="12" fill="#334155" text-anchor="middle">ಗುರುತಿಸುತ್ತದೆ.</text>
+
+                <!-- Box 2: instanceof -->
+                <rect x="226" y="15" width="195" height="185" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+                <text x="323" y="48" font-size="26" text-anchor="middle">🧬 🏭</text>
+                <text x="323" y="76" font-size="14" font-weight="bold" fill="#14532d" font-family="monospace" text-anchor="middle">instanceof</text>
+                <text x="323" y="102" font-size="13" font-weight="bold" fill="#15803d" text-anchor="middle">DNA / ಕುಟುಂಬ ಪರೀಕ್ಷೆ</text>
+                <text x="323" y="128" font-size="12" fill="#334155" text-anchor="middle">ವಸ್ತು ಯಾವ ಕಾರ್ಖಾನೆಯಿಂದ</text>
+                <text x="323" y="148" font-size="12" fill="#334155" text-anchor="middle">(Date, Array, Class)</text>
+                <text x="323" y="168" font-size="12" fill="#334155" text-anchor="middle">ಬಂದಿದೆ ಎಂದು ಹೇಳುತ್ತದೆ.</text>
+
+                <!-- Box 3: Number.isNaN -->
+                <rect x="437" y="15" width="195" height="185" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="534" y="48" font-size="26" text-anchor="middle">🔢 👮‍♂️</text>
+                <text x="534" y="76" font-size="14" font-weight="bold" fill="#713f12" font-family="monospace" text-anchor="middle">Number.isNaN()</text>
+                <text x="534" y="102" font-size="13" font-weight="bold" fill="#a16207" text-anchor="middle">ತಪ್ಪು ಲೆಕ್ಕ ಹಿಡಿಯುವ ಪೊಲೀಸ್</text>
+                <text x="534" y="128" font-size="12" fill="#334155" text-anchor="middle">ಗಣಿತದ ಲೆಕ್ಕ ತಪ್ಪಾಗಿ NaN</text>
+                <text x="534" y="148" font-size="12" fill="#334155" text-anchor="middle">ಬಂದಿದೆಯೇ ಎಂದು</text>
+                <text x="534" y="168" font-size="12" fill="#334155" text-anchor="middle">ಪತ್ತೆಹಚ್ಚುತ್ತದೆ.</text>
+
+                <!-- Box 4: toString.call() -->
+                <rect x="648" y="15" width="195" height="185" rx="10" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
+                <text x="745" y="48" font-size="26" text-anchor="middle">🕵️‍♂️ 🎯</text>
+                <text x="745" y="76" font-size="14" font-weight="bold" fill="#581c87" font-family="monospace" text-anchor="middle">toString.call()</text>
+                <text x="745" y="102" font-size="13" font-weight="bold" fill="#7e22ce" text-anchor="middle">ಮಾಸ್ಟರ್ ಡಿಟೆಕ್ಟಿವ್ ಬ್ರಹ್ಮಾಸ್ತ್ರ</text>
+                <text x="745" y="128" font-size="12" fill="#334155" text-anchor="middle">null, Array, Date ಸೇರಿದಂತೆ</text>
+                <text x="745" y="148" font-size="12" fill="#334155" text-anchor="middle">ಎಲ್ಲದರ 100% ಅಸಲಿ</text>
+                <text x="745" y="168" font-size="12" fill="#334155" text-anchor="middle">ಜಾತಿಯನ್ನು ಬಯಲು ಮಾಡುತ್ತದೆ!</text>
+            </svg>
+        </div>
+
+        <h2>ಭಾಗ 3: ಮಾಸ್ಟರ್ ಸಾರಾಂಶ ಕೋಷ್ಟಕ (Cheat Sheet)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ಪರೀಕ್ಷಕ (Method / Operator)</th>
+                    <th>ಮಕ್ಕಳ ಭಾಷೆಯಲ್ಲಿ ಉದಾಹರಣೆ</th>
+                    <th>ಯಾವಾಗ ಬಳಸಬೇಕು?</th>
+                    <th>ಉದಾಹರಣೆ ಮತ್ತು ಫಲಿತಾಂಶ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong><span class="inline-code">typeof</span></strong></td>
+                    <td>ಸಾಮಾನ್ಯ ಬಾರ್‌ಕೋಡ್ ಸ್ಕ್ಯಾನರ್</td>
+                    <td>ಮೂಲಭೂತ (Primitive) ಡೇಟಾ ಟೈಪ್ ತಿಳಿಯಲು</td>
+                    <td><span class="inline-code">typeof "ರವಿ"</span> ➔ <span class="inline-code">"string"</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Array.isArray()</span></strong></td>
+                    <td>ರೈಲು ಡಬ್ಬಿ ಪತ್ತೆದಾರ</td>
+                    <td>ಕೊಟ್ಟಿರುವ ಡೇಟಾ Array ಹೌದೋ ಅಲ್ಲವೋ ತಿಳಿಯಲು</td>
+                    <td><span class="inline-code">Array.isArray([1,2])</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">instanceof</span></strong></td>
+                    <td>DNA / ಕುಟುಂಬ ಪರೀಕ್ಷೆ</td>
+                    <td>Object ಯಾವ Class/Constructor ಇಂದ ಬಂದಿದೆ ತಿಳಿಯಲು</td>
+                    <td><span class="inline-code">d instanceof Date</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Number.isNaN()</span></strong></td>
+                    <td>ತಪ್ಪು ಲೆಕ್ಕ ಹಿಡಿಯುವ ಪೊಲೀಸ್</td>
+                    <td>ಬೆಲೆಯು <span class="inline-code">NaN</span> (Not a Number) ಆಗಿದೆಯೇ ಪರೀಕ್ಷಿಸಲು</td>
+                    <td><span class="inline-code">Number.isNaN(0/0)</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Number.isInteger()</span></strong></td>
+                    <td>ಪೂರ್ಣ ಸಂಖ್ಯೆ ಪರೀಕ್ಷಕ</td>
+                    <td>ಸಂಖ್ಯೆಯಲ್ಲಿ ದಶಮಾಂಶ (Decimal) ಇಲ್ಲವೇ ಎಂದು ನೋಡಲು</td>
+                    <td><span class="inline-code">Number.isInteger(10)</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">in</span> / <span class="inline-code">Object.hasOwn()</span></strong></td>
+                    <td>ಬ್ಯಾಗ್ ಒಳಗಿನ ವಸ್ತು ಸ್ಕ್ಯಾನರ್</td>
+                    <td>Object ಒಳಗೆ ನಿರ್ದಿಷ್ಟ Key ಇದೆಯೇ ಎಂದು ನೋಡಲು</td>
+                    <td><span class="inline-code">"age" in user</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Boolean()</span> / <span class="inline-code">!!</span></strong></td>
+                    <td>ಖಾಲಿ ಡಬ್ಬಿ ಪರೀಕ್ಷಕ</td>
+                    <td>ಮೌಲ್ಯವು Truthy ನಾ ಅಥವಾ Falsy ನಾ ಎಂದು ತಿಳಿಯಲು</td>
+                    <td><span class="inline-code">Boolean("")</span> ➔ <span class="inline-code">false</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Object.is()</span></strong></td>
+                    <td>ಸೂಕ್ಷ್ಮದರ್ಶಕ ಹೋಲಿಕೆ</td>
+                    <td><span class="inline-code">NaN</span> ಮತ್ತು <span class="inline-code">-0</span> ಸಮೇತ ನಿಖರವಾಗಿ ಹೋಲಿಸಲು</td>
+                    <td><span class="inline-code">Object.is(NaN, NaN)</span> ➔ <span class="inline-code">true</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">toString.call()</span></strong></td>
+                    <td>ಮಾಸ್ಟರ್ ಡಿಟೆಕ್ಟಿವ್ (ಬ್ರಹ್ಮಾಸ್ತ್ರ)</td>
+                    <td><span class="inline-code">null</span>, <span class="inline-code">Array</span>, <span class="inline-code">Date</span> ಸೇರಿದಂತೆ ಎಲ್ಲದರ ಅಸಲಿ ಟೈಪ್ ತಿಳಿಯಲು</td>
+                    <td><span class="inline-code">toString.call(null)</span> ➔ <span class="inline-code">"[object Null]"</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- ================================================================= -->
+    <!-- ಎರಡನೇ ಅಧ್ಯಾಯ: ಇನ್ನೂ 6 ಅತ್ಯಂತ ಮುಖ್ಯವಾದ (Must-Know) ಅಂಶಗಳು -->
+    <!-- ================================================================= -->
+    <div class="part-banner">
+        ಅಧ್ಯಾಯ 2: ಪ್ರತಿಯೊಬ್ಬ ಡೆವಲಪರ್ ತಿಳಿದಿರಲೇಬೇಕಾದ ಇನ್ನೂ 6 ಅತ್ಯಂತ ಮುಖ್ಯವಾದ (Must-Know) ಅಂಶಗಳು
+    </div>
+
+    <div class="section-card">
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಡೇಟಾ ಟೈಪ್‌ಗಳನ್ನು ಪರೀಕ್ಷಿಸುವ (<span class="inline-code">typeof</span> ಇತ್ಯಾದಿ) ನಂತರ, ಪ್ರತಿಯೊಬ್ಬ ಡೆವಲಪರ್ ಮತ್ತು ಸಂದರ್ಶನ ಎದುರಿಸುವವರು ತಿಳಿದಿರಲೇಬೇಕಾದ <strong>ಇನ್ನೂ 6 ಅತ್ಯಂತ ಮುಖ್ಯವಾದ (Must-Know) ಅಂಶಗಳಿವೆ</strong>. ಇವುಗಳಿಲ್ಲದೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಲಿಕೆ ಪೂರ್ಣವಾಗುವುದಿಲ್ಲ.</p>
+        <p>ಸರಳ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ಆ 6 ಮುಖ್ಯ ಅಂಶಗಳ ಸಂಪೂರ್ಣ ವಿವರ ಇಲ್ಲಿದೆ:</p>
+
+        <!-- 1. Explicit Type Conversion -->
+        <h2>1. Explicit Type Conversion (ನಾವೇ ಖುದ್ದಾಗಿ ಡೇಟಾ ಟೈಪ್ ಬದಲಾಯಿಸುವುದು)</h2>
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತಾನಾಗಿಯೇ ಡೇಟಾ ಬದಲಾಯಿಸಿಕೊಂಡರೆ ಅದನ್ನು <em>Type Coercion</em> ಎನ್ನುತ್ತೇವೆ ಎಂದು ಹಿಂದೆ ನೋಡಿದ್ದೇವೆ. ಆದರೆ ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಮಾಡುವಾಗ ನಾವೇ ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಒಂದು ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಇನ್ನೊಂದಕ್ಕೆ ಬದಲಾಯಿಸಬೇಕಾಗುತ್ತದೆ.</p>
+        <ul>
+            <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಐಸ್ (ಮಂಜುಗಡ್ಡೆ) ಅನ್ನು ಬಿಸಿ ಮಾಡಿ ನೀರಾಗಿ ಬದಲಾಯಿಸಿದಂತೆ! ವಸ್ತು ಒಂದೇ, ಆದರೆ ನಾವು ಅದರ ರೂಪವನ್ನು ಬದಲಾಯಿಸುತ್ತೇವೆ.</li>
+            <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ ಏಕೆ ಬೇಕು?</strong> HTML ಫಾರ್ಮ್‌‌ನಿಂದ (Input box) ಬಳಕೆದಾರರು ಅವರ ವಯಸ್ಸು ಅಥವಾ ಮೊಬೈಲ್ ನಂಬರ್ ಟೈಪ್ ಮಾಡಿದಾಗ ಅದು ಯಾವಾಗಲೂ <strong>String (<span class="inline-code">"25"</span>)</strong> ರೂಪದಲ್ಲೇ ಬರುತ್ತದೆ! ಅದನ್ನು ಲೆಕ್ಕಾಚಾರಕ್ಕೆ ಬಳಸಲು <strong>Number (<span class="inline-code">25</span>)</strong> ಆಗಿ ಬದಲಾಯಿಸಲೇಬೇಕು.</li>
+        </ul>
+
+        <!-- ಚಿತ್ರ 3: Explicit Type Conversion (ಮಂಜುಗಡ್ಡೆಯಿಂದ ನೀರು) -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 3: Explicit Type Conversion — String ("150.75px") ಅನ್ನು Number ಆಗಿ ಬದಲಾಯಿಸುವ ವಿಧಾನಗಳು</div>
+            <svg viewBox="0 0 860 205" xmlns="http://www.w3.org/2000/svg">
+                <!-- Input Box -->
+                <rect x="20" y="45" width="210" height="115" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <text x="125" y="78" font-size="24" text-anchor="middle">🧊 Input String</text>
+                <text x="125" y="112" font-size="16" font-weight="bold" fill="#1e3a8a" font-family="monospace" text-anchor="middle">"150.75"</text>
+                <text x="125" y="140" font-size="12" fill="#475569" text-anchor="middle">(ಕೋಟ್ಸ್ ಒಳಗಿರುವ ಅಕ್ಷರ)</text>
+
+                <!-- Arrows -->
+                <path d="M235 102 L305 50 M235 102 L305 102 M235 102 L305 155" stroke="#2563eb" stroke-width="2.5"/>
+
+                <!-- Converter 1: Number() -->
+                <rect x="310" y="15" width="525" height="50" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <text x="572" y="45" font-size="14" font-weight="bold" fill="#14532d" font-family="monospace" text-anchor="middle">Number("150") ➔ 150 (ಪೂರ್ಣ ಅಥವಾ ದಶಮಾಂಶ ಸಂಖ್ಯೆ)</text>
+
+                <!-- Converter 2: parseInt() -->
+                <rect x="310" y="78" width="525" height="50" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="572" y="108" font-size="14" font-weight="bold" fill="#713f12" font-family="monospace" text-anchor="middle">parseInt("150.75px") ➔ 150 (ಚಿಲ್ಲರೆ ಮತ್ತು px ತೆಗೆದು ಪೂರ್ಣ ಸಂಖ್ಯೆ ಕೊಡುತ್ತದೆ)</text>
+
+                <!-- Converter 3: parseFloat() -->
+                <rect x="310" y="140" width="525" height="50" rx="8" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
+                <text x="572" y="170" font-size="14" font-weight="bold" fill="#581c87" font-family="monospace" text-anchor="middle">parseFloat("150.75px") ➔ 150.75 (ದಶಮಾಂಶ ಸಂಖ್ಯೆ ಸಮೇತ ಕೊಡುತ್ತದೆ)</text>
+            </svg>
+        </div>
+
+        <h3>A. ಯಾವುದೇ ಡೇಟಾವನ್ನು Number ಆಗಿ ಬದಲಾಯಿಸಲು 3 ವಿಧಾನಗಳು:</h3>
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let priceText = "150.75";
+
+// 1. Number() - ಪೂರ್ಣ ಅಥವಾ ದಶಮಾಂಶ ಸಂಖ್ಯೆಯಾಗಿ ಬದಲಾಯಿಸುತ್ತದೆ:
+console.log(Number("150"));      // Output: 150 (Number)
+console.log(Number("ಕನ್ನಡ"));    // Output: NaN (ಅಕ್ಷರವನ್ನು ಸಂಖ್ಯೆ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ!)
+
+// 2. parseInt() - ಕೇವಲ ಪೂರ್ಣ ಸಂಖ್ಯೆಯನ್ನು (Integer) ಮಾತ್ರ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ:
+console.log(parseInt("150.75")); // Output: 150 (.75 ಬಿಟ್ಟುಬಿಡುತ್ತದೆ)
+console.log(parseInt("100px"));  // Output: 100 (ಪಕ್ಕದಲ್ಲಿರುವ 'px' ತೆಗೆದು ಸಂಖ್ಯೆ ಮಾತ್ರ ಕೊಡುತ್ತದೆ!)
+
+// 3. parseFloat() - ದಶಮಾಂಶ ಸಂಖ್ಯೆ ಸಮೇತ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ:
+console.log(parseFloat("150.75px")); // Output: 150.75</code></pre>
+        </div>
+
+        <h3>B. ಯಾವುದೇ ಡೇಟಾವನ್ನು String (ಪದ) ಆಗಿ ಬದಲಾಯಿಸಲು:</h3>
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let rollNo = 42;
+
+console.log(String(rollNo));     // Output: "42"
+console.log(rollNo.toString());  // Output: "42"</code></pre>
+        </div>
+
+        <!-- 2. == vs === -->
+        <h2>2. == vs === (ಸಾಮಾನ್ಯ ಹೋಲಿಕೆ vs ಕಟ್ಟುನಿಟ್ಟಿನ ಹೋಲಿಕೆ)</h2>
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಕೇಳುವ ಪ್ರಶ್ನೆ ಇದು!</p>
+        <ul>
+            <li><strong><span class="inline-code">==</span> (Loose Equality - ಬಣ್ಣದ ಕನ್ನಡಕ ಹಾಕಿದ ಸೆಕ್ಯೂರಿಟಿ ಗಾರ್ಡ್):</strong> ಇವನು ಕೇವಲ ಒಳಗಿರುವ ಬೆಲೆಯನ್ನು (Value) ಮಾತ್ರ ನೋಡುತ್ತಾನೆ, ಅದರ ಜಾತಿ (Data Type) ಯಾವುದು ಎಂದು ನೋಡುವುದಿಲ್ಲ!</li>
+            <li><strong><span class="inline-code">===</span> (Strict Equality - ಕಟ್ಟುನಿಟ್ಟಾದ ಪೊಲೀಸ್ ಅಧಿಕಾರಿ):</strong> ಇವನು ಬೆಲೆಯನ್ನೂ (Value) ನೋಡುತ್ತಾನೆ ಮತ್ತು ಅದರ ಡೇಟಾ ಟೈಪ್ (Data Type) ಕೂಡ ಒಂದೇ ಆಗಿದೆಯೇ ಎಂದು ಚೆಕ್ ಮಾಡುತ್ತಾನೆ!</li>
+        </ul>
+
+        <!-- ಚಿತ್ರ 4: == vs === ಹೋಲಿಕೆ -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 4: == (ಸಾಮಾನ್ಯ ಗಾರ್ಡ್) vs === (ಕಟ್ಟುನಿಟ್ಟಾದ ಪೊಲೀಸ್ ಅಧಿಕಾರಿ)</div>
+            <svg viewBox="0 0 860 210" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: == Loose Equality -->
+                <rect x="20" y="15" width="390" height="180" rx="12" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="215" y="48" font-size="17" font-weight="bold" fill="#854d0e" text-anchor="middle">🕶️ == (Loose Equality)</text>
+                <text x="215" y="75" font-size="13" fill="#713f12" text-anchor="middle">ಕೇವಲ ಬೆಲೆಯನ್ನು (Value) ಮಾತ್ರ ನೋಡುತ್ತಾನೆ!</text>
+                <rect x="55" y="95" width="320" height="45" rx="8" fill="#1e293b"/>
+                <text x="215" y="123" font-size="15" font-weight="bold" fill="#fde047" font-family="monospace" text-anchor="middle">10 == "10"  ➔  true</text>
+                <text x="215" y="168" font-size="13" fill="#a16207" text-anchor="middle">ಬೆಲೆ 10 ಇದೆ ಎಂದು ಒಳಗೆ ಬಿಟ್ಟುಬಿಡುತ್ತಾನೆ!</text>
+
+                <!-- Right: === Strict Equality -->
+                <rect x="445" y="15" width="395" height="180" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <text x="642" y="48" font-size="17" font-weight="bold" fill="#166534" text-anchor="middle">👮‍♂️ === (Strict Equality)</text>
+                <text x="642" y="75" font-size="13" fill="#14532d" text-anchor="middle">ಬೆಲೆ (Value) + ಜಾತಿ (Data Type) ಎರಡನ್ನೂ ನೋಡುತ್ತಾನೆ!</text>
+                <rect x="480" y="95" width="325" height="45" rx="8" fill="#1e293b"/>
+                <text x="642" y="123" font-size="15" font-weight="bold" fill="#4ade80" font-family="monospace" text-anchor="middle">10 === "10" ➔  false</text>
+                <text x="642" y="168" font-size="13" font-weight="bold" fill="#15803d" text-anchor="middle">Number ಮತ್ತು String ಬೇರೆ ಎಂದು ತಡೆಯುತ್ತಾನೆ!</text>
+            </svg>
+        </div>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>console.log(10 == "10");  // Output: true (ಬೆಲೆ ಒಂದೇ ಇದೆ ಎಂದು ಒಪ್ಪಿಕೊಳ್ಳುತ್ತದೆ!)
+console.log(10 === "10"); // Output: false (ಒಂದು Number, ಇನ್ನೊಂದು String - ಆದ್ದರಿಂದ ತಪ್ಪು!)
+
+console.log(0 == false);  // Output: true
+console.log(0 === false); // Output: false</code></pre>
+        </div>
+
+        <div class="note-box">
+            <strong>Pro ನಿಯಮ:</strong> ಕೋಡಿಂಗ್ ಮಾಡುವಾಗ ತಪ್ಪುಗಳಾಗಬಾರದು ಎಂದರೆ ಯಾವಾಗಲೂ <strong><span class="inline-code">===</span></strong> ಅನ್ನೇ ಬಳಸಿ!
+        </div>
+
+        <!-- 3. Optional Chaining (?.) -->
+        <h2>3. Optional Chaining (?.) — ಕೋಡ್ ಕ್ರ್ಯಾಶ್ ಆಗದಂತೆ ತಡೆಯುವ ಏರ್‌ಬ್ಯಾಗ್ (Airbag)!</h2>
+        <p>ನಾವು ದೊಡ್ಡ Object ಒಳಗಿನ ಮಾಹಿತಿಯನ್ನು ಹುಡುಕುವಾಗ, ಆ ಮಾಹಿತಿ ಇಲ್ಲದಿದ್ದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತಕ್ಷಣ <span class="inline-code">Uncaught TypeError: Cannot read properties of undefined</span> ಎಂದು ಕೆಂಪು Error ಕೊಟ್ಟು ಇಡೀ ವೆಬ್‌‌ಸೈಟ್ ನಿಲ್ಲಿಸಿಬಿಡುತ್ತದೆ! ಇದನ್ನು ತಡೆಯಲು ಬಂದಿರುವ ಆಧುನಿಕ ಅಸ್ತ್ರವೇ <strong><span class="inline-code">?.</span> (Optional Chaining)</strong>.</p>
+        <ul>
+            <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಕಾರಿನಲ್ಲಿರುವ <strong>ಏರ್‌ಬ್ಯಾಗ್ (Airbag)</strong> ಇದ್ದಂತೆ! ಮುಂದೆ ದಾರಿ ಇಲ್ಲದಿದ್ದರೆ ಅಪಘಾತವಾಗಲು (Error ಬರಲು) ಬಿಡುವುದಿಲ್ಲ, ಬದಲಿಗೆ ಸುರಕ್ಷಿತವಾಗಿ ನಿಲ್ಲಿಸಿ <span class="inline-code">undefined</span> ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+        </ul>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let student = {
+  name: "ರವಿ"
+  // ಇಲ್ಲಿ address ಎಂಬ ಮಾಹಿತಿಯೇ ಇಲ್ಲ!
+};
+
+// ಸಾಮಾನ್ಯ ರೀತಿ (ಇದು ಕೆಂಪು Error ಕೊಟ್ಟು ಕೋಡ್ ನಿಲ್ಲಿಸುತ್ತದೆ!):
+// console.log(student.address.city); // ❌ Uncaught TypeError!
+
+// Optional Chaining (?.) ಬಳಸಿದಾಗ (ಯಾವುದೇ Error ಬರುವುದಿಲ್ಲ!):
+console.log(student?.address?.city);  // ✅ Output: undefined (ಕೋಡ್ ಸೇಫ್!)</code></pre>
+        </div>
+
+        <!-- 4. Nullish Coalescing (??) -->
+        <h2>4. Nullish Coalescing (??) vs OR (||) — ಡಿಫಾಲ್ಟ್ ಬೆಲೆ ಕೊಡುವ ಮ್ಯಾಜಿಕ್!</h2>
+        <p>ಬಳಕೆದಾರರು ಯಾವುದೇ ಮಾಹಿತಿ ಕೊಡದಿದ್ದಾಗ (<span class="inline-code">null</span> ಅಥವಾ <span class="inline-code">undefined</span> ಇದ್ದಾಗ) ನಾವು ಒಂದು ಬದಲಿ ಬೆಲೆಯನ್ನು (Default Value) ಕೊಡಲು <strong><span class="inline-code">??</span></strong> ಬಳಸುತ್ತೇವೆ.</p>
+        <ul>
+            <li><strong><span class="inline-code">||</span> (OR ಆಪರೇಟರ್ ಸಮಸ್ಯೆ):</strong> ವಿದ್ಯಾರ್ಥಿಯು ಪರೀಕ್ಷೆಯಲ್ಲಿ <strong><span class="inline-code">0</span> ಅಂಕ</strong> ಪಡೆದಿದ್ದರೂ, <span class="inline-code">||</span> ಆಪರೇಟರ್ <span class="inline-code">0</span> ಯನ್ನು ಖಾಲಿ (Falsy) ಎಂದು ಭಾವಿಸಿ ಬದಲಿ ಬೆಲೆ ಕೊಟ್ಟುಬಿಡುತ್ತದೆ!</li>
+            <li><strong><span class="inline-code">??</span> (Nullish Coalescing ಪರಿಹಾರ):</strong> ಇದು ಕೇವಲ <span class="inline-code">null</span> ಅಥವಾ <span class="inline-code">undefined</span> ಇದ್ದಾಗ ಮಾತ್ರ ಬದಲಿ ಬೆಲೆ ಕೊಡುತ್ತದೆ. <span class="inline-code">0</span> ಅಥವಾ <span class="inline-code">""</span> ಇದ್ದರೆ ಅದನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ!</li>
+        </ul>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let marks = 0; // ವಿದ್ಯಾರ್ಥಿ 0 ಅಂಕ ಪಡೆದಿದ್ದಾನೆ
+
+// ಹಳೆಯ || ಬಳಸಿದರೆ ಆಗುವ ತಪ್ಪು:
+console.log(marks || "ಗೈರು ಹಾಜರಿ"); // Output: "ಗೈರು ಹಾಜರಿ" (0 ಅಂಕವನ್ನು ತಪ್ಪಾಗಿ ತಿಳಿಯಿತು!)
+
+// ಹೊಸ ?? ಬಳಸಿದರೆ ಸರಿಯಾದ ಫಲಿತಾಂಶ:
+console.log(marks ?? "ಗೈರು ಹಾಜರಿ"); // Output: 0 (ನಿಖರವಾಗಿ 0 ಎಂದೇ ತೋರಿಸುತ್ತದೆ!)</code></pre>
+        </div>
+
+        <!-- ಚಿತ್ರ 5: Optional Chaining (?.) ಮತ್ತು Nullish Coalescing (??) -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 5: Optional Chaining (?.) ಏರ್‌ಬ್ಯಾಗ್ ಮತ್ತು Nullish Coalescing (??) ಸ್ಮಾರ್ಟ್ ಫಿಲ್ಟರ್</div>
+            <svg viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Optional Chaining -->
+                <rect x="20" y="15" width="395" height="190" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <text x="217" y="45" font-size="16" font-weight="bold" fill="#1e3a8a" text-anchor="middle">🚗 ?. Optional Chaining (ಕೋಡ್ ಏರ್‌ಬ್ಯಾಗ್)</text>
+                
+                <rect x="40" y="65" width="355" height="45" rx="6" fill="#fef2f2" stroke="#f87171"/>
+                <text x="217" y="93" font-size="13" font-family="monospace" fill="#991b1b" text-anchor="middle">student.address.city ➔ 💥 CRASH (TypeError!)</text>
+
+                <rect x="40" y="125" width="355" height="50" rx="6" fill="#f0fdf4" stroke="#4ade80"/>
+                <text x="217" y="155" font-size="13" font-weight="bold" font-family="monospace" fill="#166534" text-anchor="middle">student?.address?.city ➔ 🛡️ undefined (ಸೇಫ್!)</text>
+
+                <!-- Right: Nullish Coalescing -->
+                <rect x="440" y="15" width="400" height="190" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+                <text x="640" y="45" font-size="16" font-weight="bold" fill="#581c87" text-anchor="middle">🎯 ?? Nullish Coalescing (ಸ್ಮಾರ್ಟ್ ಬದಲಿ ಆಟಗಾರ)</text>
+
+                <rect x="460" y="65" width="360" height="45" rx="6" fill="#fef2f2" stroke="#f87171"/>
+                <text x="640" y="93" font-size="13" font-family="monospace" fill="#991b1b" text-anchor="middle">0 || "ಗೈರು ಹಾಜರಿ" ➔ ❌ "ಗೈರು ಹಾಜರಿ" (ತಪ್ಪು!)</text>
+
+                <rect x="460" y="125" width="360" height="50" rx="6" fill="#f0fdf4" stroke="#4ade80"/>
+                <text x="640" y="155" font-size="13" font-weight="bold" font-family="monospace" fill="#166534" text-anchor="middle">0 ?? "ಗೈರು ಹಾಜರಿ" ➔ ✅ 0 (ಸರಿಯಾದ ಅಂಕ ಉಳಿಯಿತು!)</text>
+            </svg>
+        </div>
+
+        <!-- 5. Object.freeze() vs Object.seal() -->
+        <h2>5. Object ರಕ್ಷಣಾ ಕವಚಗಳು: Object.freeze() vs Object.seal()</h2>
+        <p>ನಾವು ಹಿಂದೆ ನೋಡಿದಂತೆ <span class="inline-code">const</span> ಬಳಸಿದರೂ Object ಒಳಗಿನ ಬೆಲೆಗಳನ್ನು ತಿದ್ದಬಹುದು. ಆದರೆ Object ಒಳಗಿನ ಮಾಹಿತಿಯನ್ನು ಯಾರೂ ಬದಲಾಯಿಸದಂತೆ ಬೀಗ ಹಾಕಲು ಇವೆರಡನ್ನು ಬಳಸುತ್ತಾರೆ:</p>
+        <ol>
+            <li><strong><span class="inline-code">Object.freeze()</span> (ಫ್ರಿಡ್ಜ್‌ನಲ್ಲಿಟ್ಟ ಕಲ್ಲು-ಐಸ್!):</strong> ಇದನ್ನು ಬಳಸಿದರೆ Object ಒಳಗೆ ಹೊಸದನ್ನು ಸೇರಿಸಲೂ ಆಗುವುದಿಲ್ಲ, ಇರುವುದನ್ನು ತೆಗೆಯಲೂ ಆಗುವುದಿಲ್ಲ ಮತ್ತು ಇರುವ ಬೆಲೆಯನ್ನು ತಿದ್ದಲೂ ಆಗುವುದಿಲ್ಲ! (100% ಲಾಕ್).</li>
+            <li><strong><span class="inline-code">Object.seal()</span> (ಸೀಲ್ ಮಾಡಿದ ಲಕೋಟೆ!):</strong> ಇದರಲ್ಲಿ ಹೊಸ ಮಾಹಿತಿ ಸೇರಿಸಲು ಮತ್ತು ಇರುವುದನ್ನು ಅಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ಆದರೆ <strong>ಇರುವ ಮಾಹಿತಿಯ ಬೆಲೆಯನ್ನು ಮಾತ್ರ ತಿದ್ದಬಹುದು!</strong></li>
+        </ol>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let bankRules = { interest: 7 };
+Object.freeze(bankRules); // ಸಂಪೂರ್ಣ ಬೀಗ ಹಾಕಲಾಗಿದೆ!
+
+bankRules.interest = 10;  // ಬದಲಾಗುವುದಿಲ್ಲ!
+console.log(bankRules.interest); // Output: 7</code></pre>
+        </div>
+
+        <!-- 6. Shallow Copy vs Deep Copy -->
+        <h2>6. Shallow Copy vs Deep Copy (structuredClone()) — ಆಳವಾದ ಜೆರಾಕ್ಸ್!</h2>
+        <p>ನಾವು ಹಿಂದೆ Spread Operator (<span class="inline-code">{ ...user1 }</span>) ಬಳಸಿ Object ಕಾಪಿ ಮಾಡುವುದನ್ನು ನೋಡಿದ್ದೇವೆ. ಆದರೆ ಒಂದು Object ಒಳಗೆ ಇನ್ನೊಂದು Object ಇದ್ದರೆ (Nested Object), Spread Operator ಕೇವಲ ಮೇಲ್ಪದರವನ್ನು ಮಾತ್ರ ಕಾಪಿ ಮಾಡುತ್ತದೆ (<strong>Shallow Copy</strong>). ಒಳಗಿರುವ Object ಅನ್ನು ಪೂರ್ತಿಯಾಗಿ ಹೊಸ ವಿಳಾಸದಲ್ಲಿ ಕಾಪಿ ಮಾಡಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹೊಸ ಬಿಲ್ಟ್-ಇನ್ ಫಂಕ್ಷನ್ <strong><span class="inline-code">structuredClone()</span></strong> ಬಳಸುತ್ತಾರೆ (<strong>Deep Copy</strong>).</p>
+        <ul>
+            <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಬ್ಯಾಗ್ ಒಳಗೆ ಇನ್ನೊಂದು ಚಿಕ್ಕ ಪೌಚ್ ಇದೆ ಎಂದಿಟ್ಟುಕೊಳ್ಳಿ. <span class="inline-code">...</span> ಬಳಸಿದರೆ ಕೇವಲ ಹೊರಗಿನ ಬ್ಯಾಗ್ ಮಾತ್ರ ಹೊಸದಾಗುತ್ತದೆ. ಆದರೆ <strong><span class="inline-code">structuredClone()</span></strong> ಬಳಸಿದರೆ ಬ್ಯಾಗ್ ಸಮೇತ ಒಳಗಿರುವ ಪೌಚ್ ಕೂಡ ಸಂಪೂರ್ಣ ಹೊಸದಾಗಿ ಜೆರಾಕ್ಸ್ ಆಗುತ್ತದೆ!</li>
+        </ul>
+
+        <!-- ಚಿತ್ರ 6: Object.freeze() ಮತ್ತು structuredClone() -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 6: Object.freeze() ರಕ್ಷಣಾ ಕವಚ ಮತ್ತು structuredClone() ಆಳವಾದ ಜೆರಾಕ್ಸ್</div>
+            <svg viewBox="0 0 860 215" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: freeze vs seal -->
+                <rect x="20" y="15" width="395" height="185" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="217" y="45" font-size="16" font-weight="bold" fill="#1e3a8a" text-anchor="middle">🔒 Object.freeze() vs Object.seal()</text>
+                
+                <rect x="40" y="65" width="355" height="52" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+                <text x="217" y="88" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">❄️ Object.freeze() = 100% ಬೀಗ!</text>
+                <text x="217" y="108" font-size="12" fill="#334155" text-anchor="middle">ಸೇರಿಸಲು ❌ | ತೆಗೆಯಲು ❌ | ತಿದ್ದಲು ❌</text>
+
+                <rect x="40" y="128" width="355" height="52" rx="8" fill="#fef3c7" stroke="#d97706"/>
+                <text x="217" y="151" font-size="14" font-weight="bold" fill="#92400e" text-anchor="middle">✉️ Object.seal() = ಲಕೋಟೆ ಸೀಲ್!</text>
+                <text x="217" y="171" font-size="12" fill="#334155" text-anchor="middle">ಸೇರಿಸಲು ❌ | ತೆಗೆಯಲು ❌ | ಇರುವ ಬೆಲೆ ತಿದ್ದಲು ✅</text>
+
+                <!-- Right: structuredClone -->
+                <rect x="440" y="15" width="400" height="185" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <text x="640" y="45" font-size="16" font-weight="bold" fill="#14532d" text-anchor="middle">🎒 structuredClone() — Deep Copy ಬ್ರಹ್ಮಾಸ್ತ್ರ</text>
+                
+                <rect x="460" y="68" width="160" height="90" rx="8" fill="#ffffff" stroke="#22c55e" stroke-width="2"/>
+                <text x="540" y="95" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="middle">🎒 emp1 (ಬ್ಯಾಗ್)</text>
+                <rect x="480" y="108" width="120" height="36" rx="5" fill="#dcfce7"/>
+                <text x="540" y="130" font-size="12" fill="#166534" text-anchor="middle">👝 city: "ಬೆಳಗಾವಿ"</text>
+
+                <text x="640" y="118" font-size="22" text-anchor="middle">➔</text>
+
+                <rect x="660" y="68" width="160" height="90" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+                <text x="740" y="95" font-size="13" font-weight="bold" fill="#1e3a8a" text-anchor="middle">🎒 emp2 (ಹೊಸ ಬ್ಯಾಗ್)</text>
+                <rect x="680" y="108" width="120" height="36" rx="5" fill="#dbeafe"/>
+                <text x="740" y="130" font-size="12" fill="#1e40af" text-anchor="middle">👝 city: "ಮೈಸೂರು"</text>
+
+                <text x="640" y="182" font-size="12" font-weight="bold" fill="#15803d" text-anchor="middle">ಒಳಗಿನ ಪೌಚ್ (Nested Object) ಕೂಡ ಪ್ರತ್ಯೇಕವಾಗಿ ಕಾಪಿ ಆಗುತ್ತದೆ!</text>
+            </svg>
+        </div>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>let emp1 = {
+  name: "ಕಿರಣ್",
+  address: { city: "ಬೆಳಗಾವಿ" } // Object ಒಳಗೆ ಇನ್ನೊಂದು Object!
+};
+
+// Deep Copy ಮಾಡಲು ಆಧುನಿಕ ಬ್ರಹ್ಮಾಸ್ತ್ರ:
+let emp2 = structuredClone(emp1);
+
+emp2.address.city = "ಮೈಸೂರು";
+console.log(emp1.address.city); // Output: "ಬೆಳಗಾವಿ" (emp1 100% ಸುರಕ್ಷಿತ!)</code></pre>
+        </div>
+
+        <h2>ಮಾಸ್ಟರ್ ಸಾರಾಂಶ ಕೋಷ್ಟಕ (Cheat Sheet)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ವಿಷಯ / ಆಪರೇಟರ್</th>
+                    <th>ಮಕ್ಕಳ ಭಾಷೆಯಲ್ಲಿ ಉದಾಹರಣೆ</th>
+                    <th>ಮುಖ್ಯ ಉಪಯೋಗ</th>
+                    <th>ಕೋಡ್ ಉದಾಹರಣೆ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong><span class="inline-code">Number()</span> / <span class="inline-code">parseInt()</span></strong></td>
+                    <td>ಮಂಜುಗಡ್ಡೆಯನ್ನು ನೀರಾಗಿಸುವುದು</td>
+                    <td>String ಅನ್ನು ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತಿಸಲು</td>
+                    <td><span class="inline-code">parseInt("50px")</span> ➔ <span class="inline-code">50</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">===</span> (Strict Equality)</strong></td>
+                    <td>ಕಟ್ಟುನಿಟ್ಟಾದ ಪೊಲೀಸ್ ಅಧಿಕಾರಿ</td>
+                    <td>ಬೆಲೆ ಮತ್ತು ಡೇಟಾ ಟೈಪ್ ಎರಡನ್ನೂ ಹೋಲಿಸಲು</td>
+                    <td><span class="inline-code">5 === "5"</span> ➔ <span class="inline-code">false</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">?.</span> (Optional Chaining)</strong></td>
+                    <td>ಕಾರಿನ ಸುರಕ್ಷಾ ಏರ್‌ಬ್ಯಾಗ್</td>
+                    <td>ಮಾಹಿತಿ ಇಲ್ಲದಿದ್ದಾಗ ಕೆಂಪು Error ಬರದಂತೆ ತಡೆಯಲು</td>
+                    <td><span class="inline-code">user?.address?.city</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">??</span> (Nullish Coalescing)</strong></td>
+                    <td>ಸ್ಮಾರ್ಟ್ ಬದಲಿ ಆಟಗಾರ</td>
+                    <td>ಕೇವಲ <span class="inline-code">null</span>/<span class="inline-code">undefined</span> ಇದ್ದಾಗ ಬದಲಿ ಬೆಲೆ ಕೊಡಲು</td>
+                    <td><span class="inline-code">score ?? "NA"</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Object.freeze()</span></strong></td>
+                    <td>ಫ್ರಿಡ್ಜ್‌ನ ಕಲ್ಲು-ಐಸ್ (100% ಬೀಗ)</td>
+                    <td>Object ಅನ್ನು ಯಾರೂ ತಿದ್ದದಂತೆ ಸಂಪೂರ್ಣ ಲಾಕ್ ಮಾಡಲು</td>
+                    <td><span class="inline-code">Object.freeze(obj)</span></td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">structuredClone()</span></strong></td>
+                    <td>ಪೂರ್ಣ ಪ್ರಮಾಣದ 3D ಜೆರಾಕ್ಸ್</td>
+                    <td>Object ಒಳಗಿನ Object ಅನ್ನೂ ಸೇಫ್ ಆಗಿ ಕಾಪಿ ಮಾಡಲು</td>
+                    <td><span class="inline-code">structuredClone(obj)</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

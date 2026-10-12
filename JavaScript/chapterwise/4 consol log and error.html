@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>console.log() ಮತ್ತು Errors ಪತ್ತೆಹಚ್ಚುವ ವಿಧಾನ - ಚಿತ್ರ ಸಹಿತ ಸಂಪೂರ್ಣ ನೋಟ್ಸ್</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #f59e0b;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --border-color: #cbd5e1;
+            --highlight-bg: #eff6ff;
+            --warning-bg: #fef3c7;
+            --error-bg: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+            color: #ffffff;
+            padding: 38px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #bfdbfe;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.55rem;
+            border-left: 6px solid var(--secondary);
+            padding-left: 14px;
+            margin: 10px 0 20px 0;
+            background: var(--highlight-bg);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        h3 {
+            color: #0f172a;
+            font-size: 1.3rem;
+            margin: 24px 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        h4 {
+            color: #b91c1c;
+            font-size: 1.2rem;
+            margin: 10px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin: 12px 0 18px 28px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .item-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--secondary);
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .error-card {
+            background: #fffafa;
+            border: 1px solid #fecaca;
+            border-left: 5px solid var(--danger);
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+        }
+
+        .note-box {
+            background: var(--warning-bg);
+            border-left: 5px solid var(--accent);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        .error-banner {
+            background: var(--error-bg);
+            border: 2px solid #f87171;
+            color: #991b1b;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        /* Visual Diagram Styling */
+        .diagram-box {
+            background: #ffffff;
+            border: 2px dashed #93c5fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .diagram-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 14px;
+            font-size: 1.1rem;
+            display: inline-block;
+            background: #dbeafe;
+            padding: 5px 18px;
+            border-radius: 20px;
+        }
+
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            font-family: 'Noto Sans Kannada', sans-serif;
+        }
+
+        .code-container {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 10px;
+            margin: 14px 0 20px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .code-header {
+            background-color: #1e293b;
+            color: #38bdf8;
+            padding: 6px 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 1px solid #334155;
+        }
+
+        pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Noto Sans Kannada', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Noto Sans Kannada', monospace;
+        }
+
+        .inline-code {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.92em;
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1rem;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .section-card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <h1>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ console.log() ಮತ್ತು Errors ಪತ್ತೆಹಚ್ಚುವ ವಿಧಾನ</h1>
+        <p>ಸರಳ ಉದಾಹರಣೆಗಳಿಂದ ಹಿಡಿದು ಪ್ರೊಫೆಷನಲ್ (Pro) ಮಟ್ಟದವರೆಗೆ ಚಿತ್ರ ಸಹಿತ ಸಂಪೂರ್ಣ ವಿವರ</p>
+    </header>
+
+    <div class="section-card">
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong><span class="inline-code">console.log()</span></strong> ಮತ್ತು <strong>Errors (ತಪ್ಪುಗಳನ್ನು) ಪತ್ತೆಹಚ್ಚುವ ವಿಧಾನ</strong> ಪ್ರತಿಯೊಬ್ಬ ಪ್ರೋಗ್ರಾಮರ್ ತಿಳಿದಿರಬೇಕಾದ ಅತ್ಯಂತ ಮೂಲಭೂತ ಹಾಗೂ ಪ್ರಮುಖ ಕೌಶಲ್ಯಗಳಾಗಿವೆ. ಸರಳ ಉದಾಹರಣೆಗಳಿಂದ ಹಿಡಿದು ಪ್ರೊಫೆಷನಲ್ (Pro) ಮಟ್ಟದವರೆಗೆ ಇದರ ಸಂಪೂರ್ಣ ವಿವರ ಇಲ್ಲಿದೆ:</p>
+    </div>
+
+    <!-- ಭಾಗ 1: console.log() -->
+    <div class="section-card">
+        <h2>ಭಾಗ 1: console.log() ಎಂದರೇನು? (ಸಂಪೂರ್ಣ ವಿವರ)</h2>
+
+        <h3>1. ದೈನಂದಿನ ಜೀವನದ ಉದಾಹರಣೆ (ಮಕ್ಕಳಿಗೆ / Beginner Level)</h3>
+        <p>ನಿಮ್ಮ ಮನೆಯಲ್ಲಿ ಕುಕ್ಕರ್‌ನಲ್ಲಿ ಅಡುಗೆ ಮಾಡುವಾಗ ಒಳಗೆ ಅನ್ನ ಬೆಂದಿದೆಯೋ ಇಲ್ಲವೋ ಎಂದು ಹೊರಗಿನಿಂದ ಕಾಣಿಸುವುದಿಲ್ಲ. ಆದರೆ ಕುಕ್ಕರ್ ಮುಚ್ಚಳವು <strong>ಪಾರದರ್ಶಕ ಗಾಜಿನದ್ದಾಗಿದ್ದರೆ (Glass Lid)</strong> ಒಳಗೆ ಏನಾಗುತ್ತಿದೆ ಎಂದು ನೇರವಾಗಿ ಕಾಣಿಸುತ್ತದೆ ಅಲ್ಲವೇ?</p>
+        <p>ಅದೇ ರೀತಿ, ನಾವು ಬರೆಯುವ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೋಡ್ ಕಂಪ್ಯೂಟರ್ ಒಳಗೆ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ, ವೇರಿಯೇಬಲ್ ಒಳಗೆ ಯಾವ ಬೆಲೆ ಇದೆ, ಲೆಕ್ಕಾಚಾರ ಸರಿಯಾಗಿ ನಡೆಯುತ್ತಿದೆಯೇ ಎಂದು <strong>ನೋಡಲು ಇರುವ ರಹಸ್ಯ ಕಿಟಕಿಯೇ (X-Ray / CCTV ಕ್ಯಾಮೆರಾ) <span class="inline-code">console.log()</span></strong>.</p>
+
+        <ul>
+            <li><strong>ಇದು ಯಾರಿಗಾಗಿ?</strong> ಇದು ವೆಬ್‌ಸೈಟ್ ಬಳಸುವ ಸಾಮಾನ್ಯ ಜನರಿಗೆ ಪರದೆಯ ಮೇಲೆ ಕಾಣಿಸುವುದಿಲ್ಲ. ಇದು ಕೇವಲ ಕೋಡ್ ಬರೆಯುವ <strong>ಡೆವಲಪರ್‌ಗಳಿಗೆ (Developers)</strong> ಪರೀಕ್ಷೆ ಮಾಡಲು ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ.</li>
+            <li><strong>ಬ್ರೌಸರ್‌‌ನಲ್ಲಿ ಇದನ್ನು ನೋಡುವುದು ಹೇಗೆ?</strong>
+                <ol>
+                    <li>ಕ್ರೋಮ್ (Chrome) ಬ್ರೌಸರ್ ಓಪನ್ ಮಾಡಿ.</li>
+                    <li>ಮೌಸ್‌‌ನಿಂದ <strong>Right Click</strong> ಮಾಡಿ ➔ <strong>Inspect</strong> ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ (ಅಥವಾ ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ <strong>F12</strong> ಅಥವಾ <strong>Ctrl + Shift + I</strong> ಒತ್ತಿ).</li>
+                    <li>ಅಲ್ಲಿ ಮೇಲ್ಭಾಗದಲ್ಲಿ ಕಾಣುವ <strong>Console</strong> ಟ್ಯಾಬ್ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ನಿಮ್ಮ ಕೋಡ್‌ನ ಫಲಿತಾಂಶ ಕಾಣಿಸುತ್ತದೆ.</li>
+                </ol>
+            </li>
+        </ul>
+
+        <!-- ಚಿತ್ರ 1: console.log() X-Ray ಕಿಟಕಿ ಮತ್ತು ಬ್ರೌಸರ್ ಕನ್ಸೋಲ್ -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 1: ಕುಕ್ಕರ್‌ನ ಗಾಜಿನ ಮುಚ್ಚಳದಂತೆ ಕೋಡ್ ಒಳಗಿನ ರಹಸ್ಯ ತೋರಿಸುವ console.log()</div>
+            <svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Box 1: Code Editor -->
+                <rect x="20" y="25" width="240" height="200" rx="12" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+                <rect x="20" y="25" width="240" height="32" rx="12" fill="#1e293b"/>
+                <circle cx="40" cy="41" r="6" fill="#ef4444"/>
+                <circle cx="58" cy="41" r="6" fill="#eab308"/>
+                <circle cx="76" cy="41" r="6" fill="#22c55e"/>
+                <text x="150" y="46" font-size="13" fill="#94a3b8" font-family="monospace" text-anchor="middle">script.js (ನಿಮ್ಮ ಕೋಡ್)</text>
+                <text x="35" y="90" font-size="14" fill="#f8fafc" font-family="monospace">let score = 95;</text>
+                <text x="35" y="120" font-size="14" fill="#38bdf8" font-family="monospace">console.log(score);</text>
+                <text x="140" y="175" font-size="13" fill="#fde047" text-anchor="middle">🍲 ಕುಕ್ಕರ್ ಒಳಗಿನ ಅಡುಗೆ</text>
+                <text x="140" y="198" font-size="12" fill="#cbd5e1" text-anchor="middle">(ಕಂಪ್ಯೂಟರ್ ಒಳಗಿನ ಲೆಕ್ಕಾಚಾರ)</text>
+
+                <!-- Arrow 1 -->
+                <path d="M265 125 L325 125" stroke="#2563eb" stroke-width="4"/>
+                <polygon points="325,118 338,125 325,132" fill="#2563eb"/>
+
+                <!-- Box 2: X-Ray / Glass Lid -->
+                <rect x="342" y="45" width="175" height="160" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2" stroke-dasharray="6,4"/>
+                <text x="430" y="85" font-size="34" text-anchor="middle">🔍 📹</text>
+                <text x="430" y="120" font-size="15" font-weight="bold" fill="#1e3a8a" text-anchor="middle">console.log()</text>
+                <text x="430" y="145" font-size="13" fill="#475569" text-anchor="middle">ಪಾರದರ್ಶಕ ಗಾಜಿನ ಮುಚ್ಚಳ</text>
+                <text x="430" y="168" font-size="12" font-weight="bold" fill="#2563eb" text-anchor="middle">(X-Ray / CCTV ಕಿಟಕಿ)</text>
+
+                <!-- Arrow 2 -->
+                <path d="M522 125 L582 125" stroke="#16a34a" stroke-width="4"/>
+                <polygon points="582,118 595,125 582,132" fill="#16a34a"/>
+
+                <!-- Box 3: Browser DevTools Console -->
+                <rect x="600" y="25" width="240" height="200" rx="12" fill="#ffffff" stroke="#16a34a" stroke-width="2.5"/>
+                <rect x="600" y="25" width="240" height="35" rx="10" fill="#f1f5f9"/>
+                <text x="655" y="47" font-size="12" fill="#64748b" text-anchor="middle">Elements</text>
+                <rect x="695" y="30" width="80" height="26" rx="5" fill="#2563eb"/>
+                <text x="735" y="47" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">Console</text>
+                <text x="620" y="95" font-size="15" font-weight="bold" fill="#15803d" font-family="monospace">&gt; 95</text>
+                <rect x="615" y="120" width="210" height="85" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+                <text x="720" y="145" font-size="13" font-weight="bold" fill="#166534" text-anchor="middle">ತೆರೆಯುವ ಶಾರ್ಟ್‌ಕಟ್:</text>
+                <text x="720" y="168" font-size="12" fill="#15803d" text-anchor="middle">Right Click ➔ Inspect</text>
+                <text x="720" y="190" font-size="12" font-weight="bold" fill="#1e3a8a" text-anchor="middle">ಅಥವಾ F12 ಒತ್ತಿ</text>
+            </svg>
+        </div>
+
+        <h3>2. console.log() ಬಳಸುವ ವಿಧಾನಗಳು</h3>
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>// 1. ಸಾಮಾನ್ಯ ಸಂದೇಶ (String) ಪ್ರಿಂಟ್ ಮಾಡಲು:
+console.log("ನಮಸ್ಕಾರ ಕರ್ನಾಟಕ!"); 
+
+// 2. ಗಣಿತದ ಲೆಕ್ಕಾಚಾರ ಪರೀಕ್ಷಿಸಲು:
+console.log(10 + 25); // Output: 35
+
+// 3. ವೇರಿಯೇಬಲ್ ( ಡಬ್ಬಿಯ ) ಒಳಗೆ ಏನಿದೆ ಎಂದು ನೋಡಲು:
+let score = 95;
+console.log(score); // Output: 95
+
+// 4. ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಮಾಹಿತಿಗಳನ್ನು ಒಟ್ಟಿಗೆ ನೋಡಲು (Comma ಬಳಸಿ):
+let userName = "ರವಿ";
+console.log("ಬಳಕೆದಾರನ ಹೆಸರು:", userName, "ಅಂಕಗಳು:", score);
+// Output: ಬಳಕೆದಾರನ ಹೆಸರು: ರವಿ ಅಂಕಗಳು: 95</code></pre>
+        </div>
+
+        <h3>3. Pro Level: ಕೇವಲ console.log ಮಾತ್ರವಲ್ಲ! ಇತರ ಪ್ರಮುಖ ವಿಧಗಳು</h3>
+        <p>ಒಬ್ಬ ಪರಿಣಿತ ಡೆವಲಪರ್ ಕೇವಲ <span class="inline-code">log</span> ಮಾತ್ರ ಬಳಸುವುದಿಲ್ಲ, ಸಂದರ್ಭಕ್ಕೆ ತಕ್ಕಂತೆ ಇವುಗಳನ್ನೂ ಬಳಸುತ್ತಾರೆ:</p>
+        <ul>
+            <li><strong><span class="inline-code">console.warn()</span> (ಎಚ್ಚರಿಕೆ):</strong> ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್‌ನ <strong>ಹಳದಿ ಲೈಟ್</strong> ಇದ್ದಂತೆ. ಕೋಡ್ ನಿಲ್ಲುವುದಿಲ್ಲ, ಆದರೆ "ಮುಂದೆ ಸಮಸ್ಯೆಯಾಗಬಹುದು ಎಚ್ಚರ!" ಎಂದು ಹಳದಿ ಬಣ್ಣದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.</li>
+            <li><strong><span class="inline-code">console.error()</span> (ತಪ್ಪು/ಅಪಾಯ):</strong> ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್‌ನ <strong>ಕೆಂಪು ಲೈಟ್</strong> ಇದ್ದಂತೆ. ಏನೋ ದೊಡ್ಡ ತಪ್ಪಾಗಿದೆ ಎಂದು ಕೆಂಪು ಬಣ್ಣದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.</li>
+            <li><strong><span class="inline-code">console.table()</span> (ಕೋಷ್ಟಕ):</strong> ನಿಮ್ಮ ಬಳಿ ದೊಡ್ಡ Array ಅಥವಾ Object ಇದ್ದರೆ, ಅದನ್ನು ಸುಂದರವಾದ ಟೇಬಲ್ (Table) ರೂಪದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.</li>
+            <li><strong><span class="inline-code">console.time()</span> &amp; <span class="inline-code">console.timeEnd()</span>:</strong> ನಿಮ್ಮ ಕೋಡ್ ರನ್ ಆಗಲು ಎಷ್ಟು ಮಿಲಿಸೆಕೆಂಡ್ ಸಮಯ ತೆಗೆದುಕೊಂಡಿತು ಎಂದು ಸ್ಟಾಪ್‌ವಾಚ್ (Stopwatch) ಹಿಡಿದು ಅಳೆಯುತ್ತದೆ.</li>
+        </ul>
+
+        <!-- ಚಿತ್ರ 2: Console ವಿವಿಧ ವಿಧಗಳು (ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್ ಹೋಲಿಕೆ) -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 2: Console ನ ವಿವಿಧ ಬಣ್ಣಗಳು ಮತ್ತು ಕೆಲಸಗಳು (ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್ ಹೋಲಿಕೆ)</div>
+            <svg viewBox="0 0 860 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- console.log -->
+                <rect x="15" y="15" width="195" height="170" rx="10" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                <text x="112" y="48" font-size="26" text-anchor="middle">💬</text>
+                <text x="112" y="78" font-size="15" font-weight="bold" fill="#0f172a" font-family="monospace" text-anchor="middle">console.log()</text>
+                <text x="112" y="108" font-size="13" font-weight="bold" fill="#334155" text-anchor="middle">ಸಾಮಾನ್ಯ ಸಂದೇಶ</text>
+                <text x="112" y="135" font-size="12" fill="#475569" text-anchor="middle">ಮೌಲ್ಯಗಳನ್ನು ಪರೀಕ್ಷಿಸಲು</text>
+                <text x="112" y="158" font-size="12" fill="#475569" text-anchor="middle">ಬಳಸುವ ಸಾಮಾನ್ಯ ವಿಧಾನ</text>
+
+                <!-- console.warn -->
+                <rect x="226" y="15" width="195" height="170" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="323" y="48" font-size="26" text-anchor="middle">⚠️ 🟡</text>
+                <text x="323" y="78" font-size="15" font-weight="bold" fill="#854d0e" font-family="monospace" text-anchor="middle">console.warn()</text>
+                <text x="323" y="108" font-size="13" font-weight="bold" fill="#a16207" text-anchor="middle">ಹಳದಿ ಸಿಗ್ನಲ್ (ಎಚ್ಚರಿಕೆ)</text>
+                <text x="323" y="135" font-size="12" fill="#713f12" text-anchor="middle">ಕೋಡ್ ನಿಲ್ಲುವುದಿಲ್ಲ, ಆದರೆ</text>
+                <text x="323" y="158" font-size="12" fill="#713f12" text-anchor="middle">ಹಳದಿ ಬಣ್ಣದ ಎಚ್ಚರಿಕೆ ನೀಡುತ್ತದೆ</text>
+
+                <!-- console.error -->
+                <rect x="437" y="15" width="195" height="170" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="534" y="48" font-size="26" text-anchor="middle">🚨 🔴</text>
+                <text x="534" y="78" font-size="15" font-weight="bold" fill="#991b1b" font-family="monospace" text-anchor="middle">console.error()</text>
+                <text x="534" y="108" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="middle">ಕೆಂಪು ಸಿಗ್ನಲ್ (ಅಪಾಯ)</text>
+                <text x="534" y="135" font-size="12" fill="#7f1d1d" text-anchor="middle">ದೊಡ್ಡ ತಪ್ಪಾಗಿದೆ ಎಂದು</text>
+                <text x="534" y="158" font-size="12" fill="#7f1d1d" text-anchor="middle">ಕೆಂಪು ಬಣ್ಣದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ</text>
+
+                <!-- console.table -->
+                <rect x="648" y="15" width="195" height="170" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+                <text x="745" y="48" font-size="26" text-anchor="middle">📊 ⏱️</text>
+                <text x="745" y="78" font-size="15" font-weight="bold" fill="#1e40af" font-family="monospace" text-anchor="middle">console.table()</text>
+                <text x="745" y="108" font-size="13" font-weight="bold" fill="#1d4ed8" text-anchor="middle">ಸುಂದರ ಕೋಷ್ಟಕ (Table)</text>
+                <text x="745" y="135" font-size="12" fill="#1e3a8a" text-anchor="middle">Array ಮತ್ತು Object ಗಳನ್ನು</text>
+                <text x="745" y="158" font-size="12" fill="#1e3a8a" text-anchor="middle">ಟೇಬಲ್ ರೂಪದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ</text>
+            </svg>
+        </div>
+
+        <div class="code-container">
+            <div class="code-header">JavaScript</div>
+            <pre><code>console.warn("ಇದು ಎಚ್ಚರಿಕೆಯ ಸಂದೇಶ! ಪಾಸ್‌ವರ್ಡ್ ಚಿಕ್ಕದಾಗಿದೆ.");
+console.error("ಕ್ಷಮಿಸಿ! ಸರ್ವರ್ ಕನೆಕ್ಟ್ ಆಗುತ್ತಿಲ್ಲ.");
+
+// Object ಅಥವಾ Array ಅನ್ನು ಟೇಬಲ್ ರೂಪದಲ್ಲಿ ನೋಡಲು:
+let students = [
+  { name: "ಅಪ್ಪು", marks: 98 },
+  { name: "ರಾಮು", marks: 85 }
+];
+console.table(students);</code></pre>
+        </div>
+    </div>
+
+    <!-- ಭಾಗ 2: Errors ಪತ್ತೆಹಚ್ಚುವ ವಿಧಾನ -->
+    <div class="section-card">
+        <h2>ಭಾಗ 2: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Errors (ತಪ್ಪುಗಳು) ಎಂದರೇನು ಮತ್ತು ಅವುಗಳನ್ನು ಪತ್ತೆಹಚ್ಚುವುದು (Identify) ಹೇಗೆ?</h2>
+        <p>ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ನಾವು ಬರೆದ ಕೋಡ್‌ನಲ್ಲಿ ಏನಾದರೂ ತಪ್ಪಾದರೆ ಕಂಪ್ಯೂಟರ್‌ಗೆ ಮುಂದೆ ಏನು ಮಾಡಬೇಕೆಂದು ತಿಳಿಯದೆ ಕೆಲಸ ನಿಲ್ಲಿಸುತ್ತದೆ. ಇದನ್ನೇ <strong>Error (ಬಗ್ / Bug)</strong> ಎನ್ನುತ್ತಾರೆ. ಆ ತಪ್ಪನ್ನು ಹುಡುಕಿ ಸರಿಪಡಿಸುವ ಪ್ರಕ್ರಿಯೆಯನ್ನು <strong>Debugging</strong> ಎಂದು ಕರೆಯುತ್ತಾರೆ.</p>
+
+        <h3>1. Error Message ಅನ್ನು ಓದಿ ತಪ್ಪು ಎಲ್ಲಿದೆ ಎಂದು ಕಂಡುಹಿಡಿಯುವುದು ಹೇಗೆ?</h3>
+        <p>ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ಕೆಂಪು ಬಣ್ಣದ Error ಬಂದಾಗ ಭಯಪಡಬೇಡಿ! ಆ ಒಂದೇ ಸಾಲಿನಲ್ಲಿ ಕಂಪ್ಯೂಟರ್ ನಿಮಗೆ <strong>3 ಅತ್ಯಮೂಲ್ಯ ಸುಳಿವುಗಳನ್ನು</strong> ಕೊಟ್ಟಿರುತ್ತದೆ.</p>
+        <p>ಈ ಕೆಳಗಿನ Error ಗಮನಿಸಿ:</p>
+
+        <div class="error-banner">
+            Uncaught ReferenceError: marks is not defined at script.js:12:13
+        </div>
+
+        <!-- ಚಿತ್ರ 3: Error Message ಬಿಡಿಸಿ ಓದುವ X-Ray ವಿಧಾನ -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 3: ಕೆಂಪು Error Message ಅನ್ನು ಬಿಡಿಸಿ ಓದುವ X-Ray ವಿಧಾನ (3 ಸುಳಿವುಗಳು)</div>
+            <svg viewBox="0 0 860 270" xmlns="http://www.w3.org/2000/svg">
+                <!-- Main Error Bar -->
+                <rect x="25" y="15" width="810" height="55" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                
+                <!-- Highlight Part 1 -->
+                <rect x="35" y="23" width="235" height="39" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                <text x="152" y="48" font-size="15" font-weight="bold" fill="#991b1b" font-family="monospace" text-anchor="middle">Uncaught ReferenceError:</text>
+
+                <!-- Highlight Part 2 -->
+                <rect x="280" y="23" width="245" height="39" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+                <text x="402" y="48" font-size="15" font-weight="bold" fill="#92400e" font-family="monospace" text-anchor="middle">marks is not defined</text>
+
+                <!-- Highlight Part 3 -->
+                <rect x="535" y="23" width="285" height="39" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+                <text x="677" y="48" font-size="15" font-weight="bold" fill="#1e40af" font-family="monospace" text-anchor="middle">at script.js:12:13</text>
+
+                <!-- Arrows Down -->
+                <path d="M152 65 L152 110" stroke="#dc2626" stroke-width="3"/>
+                <polygon points="146,108 152,118 158,108" fill="#dc2626"/>
+
+                <path d="M402 65 L402 110" stroke="#d97706" stroke-width="3"/>
+                <polygon points="396,108 402,118 408,108" fill="#d97706"/>
+
+                <path d="M677 65 L677 110" stroke="#2563eb" stroke-width="3"/>
+                <polygon points="671,108 677,118 683,108" fill="#2563eb"/>
+
+                <!-- Explanation Box 1 -->
+                <rect x="25" y="120" width="245" height="135" rx="10" fill="#fff5f5" stroke="#f87171" stroke-width="2"/>
+                <text x="147" y="148" font-size="15" font-weight="bold" fill="#991b1b" text-anchor="middle">1. ಮೊದಲ ಭಾಗ (ತಪ್ಪಿನ ಜಾತಿ)</text>
+                <text x="147" y="178" font-size="13" fill="#334155" text-anchor="middle">ಇದು ಯಾವ ರೀತಿಯ ತಪ್ಪು</text>
+                <text x="147" y="200" font-size="13" fill="#334155" text-anchor="middle">(ReferenceError) ಎಂದು</text>
+                <text x="147" y="222" font-size="13" fill="#334155" text-anchor="middle">ನೇರವಾಗಿ ತಿಳಿಸುತ್ತದೆ.</text>
+
+                <!-- Explanation Box 2 -->
+                <rect x="282" y="120" width="250" height="135" rx="10" fill="#fffbeb" stroke="#fbbf24" stroke-width="2"/>
+                <text x="407" y="148" font-size="15" font-weight="bold" fill="#92400e" text-anchor="middle">2. ಎರಡನೇ ಭಾಗ (ತಪ್ಪಿನ ಕಾರಣ)</text>
+                <text x="407" y="178" font-size="13" fill="#334155" text-anchor="middle">'marks' ಎಂಬ ವೇರಿಯೇಬಲ್ ಅನ್ನು</text>
+                <text x="407" y="200" font-size="13" fill="#334155" text-anchor="middle">ಸೃಷ್ಟಿಸಿಲ್ಲ ಅಥವಾ ಸ್ಪೆಲ್ಲಿಂಗ್</text>
+                <text x="407" y="222" font-size="13" fill="#334155" text-anchor="middle">ತಪ್ಪಾಗಿದೆ ಎಂದು ಹೇಳುತ್ತದೆ!</text>
+
+                <!-- Explanation Box 3 -->
+                <rect x="545" y="120" width="290" height="135" rx="10" fill="#eff6ff" stroke="#60a5fa" stroke-width="2"/>
+                <text x="690" y="148" font-size="15" font-weight="bold" fill="#1e40af" text-anchor="middle">3. ಮೂರನೇ ಭಾಗ (ತಪ್ಪು ಇರುವ ವಿಳಾಸ)</text>
+                <text x="690" y="176" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="middle">• script.js ➔ ಫೈಲ್ ಹೆಸರು</text>
+                <text x="690" y="200" font-size="13" font-weight="bold" fill="#dc2626" text-anchor="middle">• 12 ➔ 12ನೇ ಸಾಲಿನಲ್ಲಿ ತಪ್ಪಿದೆ!</text>
+                <text x="690" y="224" font-size="13" fill="#334155" text-anchor="middle">• 13 ➔ 13ನೇ ಅಕ್ಷರದ ಬಳಿ ತಪ್ಪಿದೆ</text>
+            </svg>
+        </div>
+
+        <p><strong>ಇದನ್ನು ಬಿಡಿಸಿ ಓದುವ ವಿಧಾನ:</strong></p>
+        <ol>
+            <li><strong>ಮೊದಲ ಭಾಗ (<span class="inline-code">ReferenceError</span> - ತಪ್ಪಿನ ಜಾತಿ):</strong> ಇದು ಯಾವ ರೀತಿಯ ತಪ್ಪು ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+            <li><strong>ಎರಡನೇ ಭಾಗ (<span class="inline-code">marks is not defined</span> - ತಪ್ಪಿನ ಕಾರಣ):</strong> <span class="inline-code">marks</span> ಎಂಬ ವೇರಿಯೇಬಲ್ ಅನ್ನು ನೀವು ಎಲ್ಲಿಯೂ ಸೃಷ್ಟಿಸಿಲ್ಲ (ಅಥವಾ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪಾಗಿದೆ) ಎಂದು ನೇರವಾಗಿ ಹೇಳುತ್ತಿದೆ!</li>
+            <li><strong>ಮೂರನೇ ಭಾಗ (<span class="inline-code">at script.js:12:13</span> - ತಪ್ಪು ಇರುವ ವಿಳಾಸ):</strong>
+                <ul>
+                    <li><span class="inline-code">script.js</span> ➔ ಫೈಲ್ ಹೆಸರು.</li>
+                    <li><span class="inline-code">12</span> ➔ <strong>12ನೇ ಸಾಲಿನಲ್ಲಿ (Line Number 12)</strong> ತಪ್ಪಾಗಿದೆ!</li>
+                    <li><span class="inline-code">13</span> ➔ ಆ ಸಾಲಿನ 13ನೇ ಅಕ್ಷರದ ಬಳಿ ತಪ್ಪಿದೆ.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>2. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಬರುವ 4 ಪ್ರಮುಖ Error ವಿಧಗಳು</h3>
+
+        <!-- ಚಿತ್ರ 4: 4 ಪ್ರಮುಖ Error ವಿಧಗಳು -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 4: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ 4 ಪ್ರಮುಖ Error ವಿಧಗಳ ಸಚಿತ್ರ ಹೋಲಿಕೆ</div>
+            <svg viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- 1. SyntaxError -->
+                <rect x="15" y="15" width="195" height="190" rx="10" fill="#fff1f2" stroke="#f43f5e" stroke-width="2"/>
+                <text x="112" y="48" font-size="28" text-anchor="middle">✍️ ❌</text>
+                <text x="112" y="78" font-size="15" font-weight="bold" fill="#9f1239" text-anchor="middle">1. SyntaxError</text>
+                <text x="112" y="103" font-size="13" font-weight="bold" fill="#be123c" text-anchor="middle">(ವ್ಯಾಕರಣದ ತಪ್ಪು)</text>
+                <text x="112" y="132" font-size="12" fill="#334155" text-anchor="middle">ಕನ್ನಡದಲ್ಲಿ ಕಾಗುಣಿತ ತಪ್ಪಿದಂತೆ!</text>
+                <text x="112" y="154" font-size="12" fill="#475569" text-anchor="middle">ಬ್ರಾಕೆಟ್ ) ಅಥವಾ ಕೋಟ್ಸ್ ""</text>
+                <text x="112" y="174" font-size="12" fill="#475569" text-anchor="middle">ಮುಚ್ಚಲು ಮರೆತಾಗ ಬರುತ್ತದೆ.</text>
+
+                <!-- 2. ReferenceError -->
+                <rect x="226" y="15" width="195" height="190" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+                <text x="323" y="48" font-size="28" text-anchor="middle">🙋‍♂️ ❓</text>
+                <text x="323" y="78" font-size="15" font-weight="bold" fill="#9a3412" text-anchor="middle">2. ReferenceError</text>
+                <text x="323" y="103" font-size="13" font-weight="bold" fill="#c2410c" text-anchor="middle">(ಇಲ್ಲದ ವಸ್ತುವನ್ನು ಕರೆದಾಗ)</text>
+                <text x="323" y="132" font-size="12" fill="#334155" text-anchor="middle">ಶಾಲೆಗೆ ಬರದ ವಿದ್ಯಾರ್ಥಿಯನ್ನು</text>
+                <text x="323" y="154" font-size="12" fill="#475569" text-anchor="middle">ಕರೆದಂತೆ! ಡಿಕ್ಲೇರ್ ಮಾಡದ</text>
+                <text x="323" y="174" font-size="12" fill="#475569" text-anchor="middle">ವೇರಿಯೇಬಲ್ ಬಳಸಿದಾಗ ಬರುತ್ತದೆ.</text>
+
+                <!-- 3. TypeError -->
+                <rect x="437" y="15" width="195" height="190" rx="10" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
+                <text x="534" y="48" font-size="28" text-anchor="middle">🍼 🔌</text>
+                <text x="534" y="78" font-size="15" font-weight="bold" fill="#6b21a8" text-anchor="middle">3. TypeError</text>
+                <text x="534" y="103" font-size="13" font-weight="bold" fill="#7e22ce" text-anchor="middle">(ಗುಣಕ್ಕೆ ವಿರುದ್ಧವಾದ ಕೆಲಸ)</text>
+                <text x="534" y="132" font-size="12" fill="#334155" text-anchor="middle">ಬಾಟಲಿಯಿಂದ ಇಸ್ತ್ರಿ ಮಾಡಿದಂತೆ!</text>
+                <text x="534" y="154" font-size="12" fill="#475569" text-anchor="middle">const ಬೆಲೆಯನ್ನು ತಿದ್ದಲು</text>
+                <text x="534" y="174" font-size="12" fill="#475569" text-anchor="middle">ಪ್ರಯತ್ನಿಸಿದಾಗ ಬರುತ್ತದೆ.</text>
+
+                <!-- 4. Logical Error -->
+                <rect x="648" y="15" width="195" height="190" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <text x="745" y="48" font-size="28" text-anchor="middle">☕ 🧂</text>
+                <text x="745" y="78" font-size="15" font-weight="bold" fill="#854d0e" text-anchor="middle">4. Logical Error</text>
+                <text x="745" y="103" font-size="13" font-weight="bold" fill="#a16207" text-anchor="middle">(ಸೈಲೆಂಟ್ ಕಿಲ್ಲರ್!)</text>
+                <text x="745" y="132" font-size="12" fill="#334155" text-anchor="middle">ಚಹಾಕ್ಕೆ ಸಕ್ಕರೆ ಬದಲು ಉಪ್ಪು!</text>
+                <text x="745" y="154" font-size="12" fill="#475569" text-anchor="middle">ಕೆಂಪು Error ಬರುವುದಿಲ್ಲ, ಆದರೆ</text>
+                <text x="745" y="174" font-size="12" fill="#475569" text-anchor="middle">ಉತ್ತರ ಮಾತ್ರ ತಪ್ಪಾಗಿ ಬರುತ್ತದೆ!</text>
+            </svg>
+        </div>
+
+        <div class="error-card">
+            <h4>1. SyntaxError (ವ್ಯಾಕರಣದ ತಪ್ಪು)</h4>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಕನ್ನಡದಲ್ಲಿ ವಾಕ್ಯ ಬರೆಯುವಾಗ ಪೂರ್ಣವಿರಾಮ ಅಥವಾ ಕಾಗುಣಿತ ತಪ್ಪು ಮಾಡಿದಂತೆ.</li>
+                <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ:</strong> ಕೋಟ್ಸ್ (<span class="inline-code">" "</span>) ಮುಚ್ಚಲು ಮರೆತಾಗ, ಬ್ರಾಕೆಟ್ <span class="inline-code">)</span> ಬಿಟ್ಟಾಗ ಅಥವಾ ಕೀವರ್ಡ್ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪು ಬರೆದಾಗ ಇದು ಬರುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>// ತಪ್ಪಾದ ಕೋಡ್ (ಕೊನೆಯಲ್ಲಿ ಬ್ರಾಕೆಟ್ ಹಾಕಿಲ್ಲ):
+console.log("ನಮಸ್ಕಾರ"; 
+// Error: Uncaught SyntaxError: missing ) after argument list</code></pre>
+            </div>
+        </div>
+
+        <div class="error-card">
+            <h4>2. ReferenceError (ಇಲ್ಲದ ವಸ್ತುವನ್ನು ಕರೆದಾಗ)</h4>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ತರಗತಿಯಲ್ಲಿ ಇಲ್ಲದ ವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರನ್ನು ಹಾಜರಾತಿಯಲ್ಲಿ ಕರೆದಂತೆ!</li>
+                <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ:</strong> ವೇರಿಯೇಬಲ್ ಅನ್ನು ಡಿಕ್ಲೇರ್ ಮಾಡದೆಯೇ (<span class="inline-code">let</span> ಬಳಸದೆ) ಪ್ರಿಂಟ್ ಮಾಡಲು ಹೋದಾಗ ಅಥವಾ ಹೆಸರಿನ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪು ಬರೆದಾಗ ಬರುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>let userAge = 20;
+console.log(userage); // ಇಲ್ಲಿ 'A' ಬದಲು ಸಣ್ಣ 'a' ಹಾಕಲಾಗಿದೆ!
+// Error: Uncaught ReferenceError: userage is not defined</code></pre>
+            </div>
+        </div>
+
+        <div class="error-card">
+            <h4>3. TypeError (ವಸ್ತುವಿನ ಗುಣಕ್ಕೆ ವಿರುದ್ಧವಾದ ಕೆಲಸ ಮಾಡಿದಾಗ)</h4>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ನೀರಿನ ಬಾಟಲಿಯಿಂದ ಇಸ್ತ್ರಿ (Iron) ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದಂತೆ!</li>
+                <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ:</strong> <span class="inline-code">const</span> ವೇರಿಯೇಬಲ್ ಬೆಲೆಯನ್ನು ಬದಲಾಯಿಸಲು ಹೋದಾಗ, ಅಥವಾ Number ಮೇಲೆ String ಫಂಕ್ಷನ್ ಬಳಸಿದಾಗ, ಅಥವಾ <span class="inline-code">null</span>/<span class="inline-code">undefined</span> ಒಳಗಿನ ಮಾಹಿತಿ ಹುಡುಕಲು ಹೋದಾಗ ಬರುತ್ತದೆ.</li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>const pi = 3.14;
+pi = 5; // const ಬೆಲೆಯನ್ನು ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ!
+// Error: Uncaught TypeError: Assignment to constant variable.</code></pre>
+            </div>
+        </div>
+
+        <div class="error-card">
+            <h4>4. Logical Error (ತಾರ್ಕಿಕ ತಪ್ಪು — ಸೈಲೆಂಟ್ ಕಿಲ್ಲರ್!)</h4>
+            <ul>
+                <li><strong>ಮಕ್ಕಳ ಉದಾಹರಣೆ:</strong> ಚಹಾ ಮಾಡುವಾಗ ಸಕ್ಕರೆ ಬದಲು ಉಪ್ಪು ಹಾಕಿದಂತೆ! ನೋಡಲು ಚಹಾ ತರಹವೇ ಇರುತ್ತದೆ (ಯಾವುದೇ ಕೆಂಪು Error ಬರುವುದಿಲ್ಲ), ಆದರೆ ಕುಡಿದಾಗಲೇ ತಪ್ಪು ಗೊತ್ತಾಗುವುದು!</li>
+                <li><strong>ಕೋಡಿಂಗ್‌ನಲ್ಲಿ:</strong> ಕಂಪ್ಯೂಟರ್‌ಗೆ ನಿಮ್ಮ ಸೂತ್ರ ತಪ್ಪು ಎಂದು ಗೊತ್ತಾಗುವುದಿಲ್ಲ, ಆದರೆ ಉತ್ತರ ಮಾತ್ರ ತಪ್ಪಾಗಿ ಬರುತ್ತದೆ. <strong>ಇದನ್ನು ಪತ್ತೆಹಚ್ಚಲು <span class="inline-code">console.log()</span> ಒಂದೇ ದಾರಿ!</strong></li>
+            </ul>
+            <div class="code-container">
+                <div class="code-header">JavaScript</div>
+                <pre><code>// ಸರಾಸರಿ (Average) ಕಂಡುಹಿಡಿಯುವಾಗ ಬ್ರಾಕೆಟ್ ಹಾಕಲು ಮರೆತರೆ:
+let m1 = 80;
+let m2 = 100;
+let average = m1 + m2 / 2; // ಮೊದಲು 100/2 = 50 ಆಗಿ, 80 + 50 = 130 ಆಗುತ್ತದೆ!
+console.log("ಸರಾಸರಿ:", average); // Output: 130 (ಬರಬೇಕಾಗಿದ್ದು 90!)</code></pre>
+            </div>
+        </div>
+
+        <h3>3. ಯಾವುದೇ Error ಬಂದಾಗ ಪತ್ತೆಹಚ್ಚಲು 4 ಹಂತದ ಸೂತ್ರ (Debugging Steps)</h3>
+
+        <!-- ಚಿತ್ರ 5: 4 ಹಂತದ Debugging Flowchart -->
+        <div class="diagram-box">
+            <div class="diagram-title">ಚಿತ್ರ 5: ಯಾವುದೇ Error ಪತ್ತೆಹಚ್ಚಲು 4 ಹಂತದ ಸೂತ್ರ (Debugging Steps)</div>
+            <svg viewBox="0 0 860 155" xmlns="http://www.w3.org/2000/svg">
+                <!-- Step 1 -->
+                <rect x="15" y="15" width="185" height="125" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <circle cx="107" cy="45" r="16" fill="#2563eb"/>
+                <text x="107" y="51" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+                <text x="107" y="82" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Console ನೋಡಿ</text>
+                <text x="107" y="105" font-size="12" fill="#475569" text-anchor="middle">F12 ಒತ್ತಿ ಕೆಂಪು ಸಾಲು</text>
+                <text x="107" y="123" font-size="12" fill="#475569" text-anchor="middle">ಬಂದಿದೆಯೇ ಗಮನಿಸಿ</text>
+
+                <path d="M203 77 L225 77" stroke="#2563eb" stroke-width="3"/>
+                <polygon points="223,72 233,77 223,82" fill="#2563eb"/>
+
+                <!-- Step 2 -->
+                <rect x="235" y="15" width="185" height="125" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                <circle cx="327" cy="45" r="16" fill="#2563eb"/>
+                <text x="327" y="51" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+                <text x="327" y="82" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Line Number ಗುರುತಿಸಿ</text>
+                <text x="327" y="105" font-size="12" fill="#475569" text-anchor="middle">ಉದಾ: app.js:24 ಮೇಲೆ</text>
+                <text x="327" y="123" font-size="12" fill="#475569" text-anchor="middle">ಕ್ಲಿಕ್ ಮಾಡಿ ಸಾಲಿಗೆ ಹೋಗಿ</text>
+
+                <path d="M423 77 L445 77" stroke="#2563eb" stroke-width="3"/>
+                <polygon points="443,72 453,77 443,82" fill="#2563eb"/>
+
+                <!-- Step 3 -->
+                <rect x="455" y="15" width="185" height="125" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+                <circle cx="547" cy="45" r="16" fill="#16a34a"/>
+                <text x="547" y="51" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+                <text x="547" y="82" font-size="14" font-weight="bold" fill="#14532d" text-anchor="middle">console.log ಟೆಸ್ಟ್</text>
+                <text x="547" y="105" font-size="12" fill="#475569" text-anchor="middle">ಸಾಲುಗಳ ನಡುವೆ ಬೆಲೆ</text>
+                <text x="547" y="123" font-size="12" fill="#475569" text-anchor="middle">ಏನಾಗುತ್ತಿದೆ ಎಂದು ಪರೀಕ್ಷಿಸಿ</text>
+
+                <path d="M643 77 L665 77" stroke="#16a34a" stroke-width="3"/>
+                <polygon points="663,72 673,77 663,82" fill="#16a34a"/>
+
+                <!-- Step 4 -->
+                <rect x="675" y="15" width="170" height="125" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+                <circle cx="760" cy="45" r="16" fill="#ca8a04"/>
+                <text x="760" y="51" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+                <text x="760" y="82" font-size="14" font-weight="bold" fill="#713f12" text-anchor="middle">typeof ಪರೀಕ್ಷಿಸಿ</text>
+                <text x="760" y="105" font-size="12" fill="#475569" text-anchor="middle">ಸಂಖ್ಯೆ (10) ಬದಲು ಅಕ್ಷರ</text>
+                <text x="760" y="123" font-size="12" fill="#475569" text-anchor="middle">("10") ಬಂದಿದೆಯೇ ಚೆಕ್ ಮಾಡಿ</text>
+            </svg>
+        </div>
+
+        <ol>
+            <li><strong>ಹಂತ 1 (Console ನೋಡಿ):</strong> ಬ್ರೌಸರ್‌ನಲ್ಲಿ <span class="inline-code">F12</span> ಒತ್ತಿ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ಕೆಂಪು ಸಾಲು ಬಂದಿದೆಯೇ ಎಂದು ನೋಡಿ.</li>
+            <li><strong>ಹಂತ 2 (Line Number ಗುರುತಿಸಿ):</strong> Error ಬಲಭಾಗದಲ್ಲಿರುವ <span class="inline-code">ಫೈಲ್_ಹೆಸರು:ಸಾಲಿನ_ಸಂಖ್ಯೆ</span> (ಉದಾ: <span class="inline-code">app.js:24</span>) ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ. ಅದು ನೇರವಾಗಿ ತಪ್ಪಿರುವ ಸಾಲಿಗೆ ಕರೆದುಕೊಂಡು ಹೋಗುತ್ತದೆ.</li>
+            <li><strong>ಹಂತ 3 (<span class="inline-code">console.log</span> ಟೆಸ್ಟ್ ಮಾಡಿ):</strong> ಒಂದು ವೇಳೆ ಕೆಂಪು Error ಬರದಿದ್ದರೂ ಫಲಿತಾಂಶ ತಪ್ಪಾಗಿದ್ದರೆ, ಪ್ರತಿ ಹಂತದಲ್ಲೂ ವೇರಿಯೇಬಲ್ ಬೆಲೆ ಏನಾಗುತ್ತಿದೆ ಎಂದು ನೋಡಲು ಸಾಲುಗಳ ನಡುವೆ <span class="inline-code">console.log()</span> ಹಾಕಿ ಚೆಕ್ ಮಾಡಿ.</li>
+            <li><strong>ಹಂತ 4 (<span class="inline-code">typeof</span> ಪರೀಕ್ಷಿಸಿ):</strong> ಕೆಲವೊಮ್ಮೆ ಸಂಖ್ಯೆ (<span class="inline-code">10</span>) ಬದಲು ಅಕ್ಷರ (<span class="inline-code">"10"</span>) ಬಂದಿರುತ್ತದೆ. ಆಗ <span class="inline-code">console.log(typeof variableName)</span> ಬಳಸಿ ಡೇಟಾ ಟೈಪ್ ಪರೀಕ್ಷಿಸಿ.</li>
+        </ol>
+
+        <h3>4. ಮಾಸ್ಟರ್ ಸಾರಾಂಶ (Cheat Sheet)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ವಿಷಯ / Error ಹೆಸರು</th>
+                    <th>ಮಕ್ಕಳ ಭಾಷೆಯಲ್ಲಿ ಉದಾಹರಣೆ</th>
+                    <th>ಯಾವಾಗ ಬರುತ್ತದೆ / ಏನು ಕೆಲಸ ಮಾಡುತ್ತದೆ?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong><span class="inline-code">console.log()</span></strong></td>
+                    <td>ಅಡುಗೆ ಕುಕ್ಕರ್‌ನ ಗಾಜಿನ ಮುಚ್ಚಳ</td>
+                    <td>ಕೋಡ್ ಒಳಗೆ ಏನಾಗುತ್ತಿದೆ ಎಂದು ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ನೋಡಲು</td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">console.table()</span></strong></td>
+                    <td>ಶಾಲೆಯ ಹಾಜರಾತಿ ಪಟ್ಟಿ</td>
+                    <td>Object ಮತ್ತು Array ಡೇಟಾವನ್ನು ಟೇಬಲ್ ರೂಪದಲ್ಲಿ ನೋಡಲು</td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">SyntaxError</span></strong></td>
+                    <td>ಕನ್ನಡ ಕಾಗುಣಿತ / ವ್ಯಾಕರಣ ತಪ್ಪು</td>
+                    <td>ಬ್ರಾಕೆಟ್ <span class="inline-code">()</span>, ಕೋಟ್ಸ್ <span class="inline-code">""</span>, ಚಿಹ್ನೆಗಳನ್ನು ಮರೆತಾಗ</td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">ReferenceError</span></strong></td>
+                    <td>ಶಾಲೆಗೆ ಬರದ ಹುಡುಗನನ್ನು ಕರೆಯುವುದು</td>
+                    <td>ಡಿಕ್ಲೇರ್ ಮಾಡದ ವೇರಿಯೇಬಲ್ ಬಳಸಿದಾಗ ಅಥವಾ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪಾದಾಗ</td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">TypeError</span></strong></td>
+                    <td>ಚಮಚದಿಂದ ಬೀಗ ತೆಗೆಯಲು ಪ್ರಯತ್ನಿಸುವುದು</td>
+                    <td><span class="inline-code">const</span> ತಿದ್ದಲು ಹೋದಾಗ ಅಥವಾ ತಪ್ಪಾದ Data Type ಬಳಸಿದಾಗ</td>
+                </tr>
+                <tr>
+                    <td><strong><span class="inline-code">Logical Error</span></strong></td>
+                    <td>ಚಹಾಕ್ಕೆ ಸಕ್ಕರೆ ಬದಲು ಉಪ್ಪು ಹಾಕುವುದು</td>
+                    <td>ಯಾವುದೇ Error ತೋರಿಸದೆ, ಫಲಿತಾಂಶ ಮಾತ್ರ ತಪ್ಪು ಬರುವುದು</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

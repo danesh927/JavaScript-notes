@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Variables - Complete Notes 🚀</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --text-color: #2d3748;
+            --card-bg: #ffffff;
+            --primary-color: #f7df1e;
+            --primary-dark: #d4b800;
+            --sidebar-bg: #1a202c;
+            --sidebar-text: #e2e8f0;
+            --code-bg: #2d3748;
+            --code-text: #f8f8f2;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --sidebar-bg: #0b1120;
+            --sidebar-text: #f7df1e;
+            --code-bg: #000000;
+            --border-color: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            transition: var(--transition);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #ffe600);
+            color: #000;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom: 3px solid #000;
+        }
+
+        header h1 { font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 10px;}
+
+        .theme-btn {
+            background: #1a202c;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .theme-btn:hover { background: #2d3748; transform: scale(1.05); }
+
+        /* Layout */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 30px auto;
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            border-radius: 12px;
+            padding: 25px;
+            position: sticky;
+            top: 100px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+
+        .sidebar h3 { margin-bottom: 20px; border-bottom: 2px dashed var(--primary-color); padding-bottom: 10px; font-size: 1.3rem;}
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { margin-bottom: 12px; }
+        .sidebar ul li a {
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.02);
+        }
+        .sidebar ul li a:hover {
+            background: var(--primary-color);
+            color: #000;
+            transform: translateX(5px);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            animation: fadeUp 0.8s ease-out forwards;
+            transition: var(--transition);
+        }
+
+        .section-card:hover { box-shadow: 0 15px 25px -5px rgba(0,0,0,0.1); }
+
+        h2 { color: #d4b800; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; font-size: 1.6rem; display: flex; align-items: center; gap: 10px;}
+        h3 { margin: 25px 0 15px; color: #3b82f6; font-size: 1.3rem; display: flex; align-items: center; gap: 8px;}
+        [data-theme="dark"] h3 { color: #60a5fa; }
+        p { margin-bottom: 15px; font-size: 1.05rem; }
+        
+        ul { margin-left: 25px; margin-bottom: 20px; }
+        li { margin-bottom: 10px; }
+
+        .highlight { font-weight: bold; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px;}
+        .success { font-weight: bold; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 2px 6px; border-radius: 4px;}
+        
+        /* Graphics / SVG */
+        .svg-container {
+            text-align: center;
+            margin: 20px 0;
+            animation: float 4s ease-in-out infinite;
+        }
+        .svg-icon { width: 150px; height: auto; }
+
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 20px 0 30px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px 20px 20px 50px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .copy-btn:hover { background: var(--primary-color); color: #000; }
+
+        /* Table */
+        .table-wrapper { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            text-align: left;
+        }
+        th { background-color: var(--sidebar-bg); color: #fff; font-weight: 600;}
+        tr:nth-child(even) { background-color: rgba(0,0,0,0.02); }
+        [data-theme="dark"] tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
+        
+        .level-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .beginner { background: #dcfce7; color: #166534; border: 1px solid #86efac;}
+        .intermediate { background: #fef9c3; color: #854d0e; border: 1px solid #fde047;}
+        .advanced { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;}
+        
+        [data-theme="dark"] .beginner { background: #14532d; color: #bbf7d0; border-color: #166534;}
+        [data-theme="dark"] .intermediate { background: #713f12; color: #fef08a; border-color: #854d0e;}
+        [data-theme="dark"] .advanced { background: #7f1d1d; color: #fecaca; border-color: #991b1b;}
+
+        /* Scroll to top */
+        #scrollTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: #000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: none;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        #scrollTop:hover { transform: translateY(-5px); background: var(--primary-dark); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: static; margin-bottom: 20px;}
+            header h1 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fab fa-js-square" style="font-size: 2rem;"></i> JavaScript Variables Notes 🚀</h1>
+        <button class="theme-btn" onclick="toggleTheme()"><i class="fas fa-moon"></i> Dark Mode</button>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h3><i class="fas fa-list"></i> ಪರಿವಿಡಿ (Index)</h3>
+            <ul>
+                <li><a href="#intro"><i class="fas fa-box-open"></i> 1. ವೇರಿಯೇಬಲ್ ಎಂದರೇನು?</a></li>
+                <li><a href="#naming-rules"><i class="fas fa-spell-check"></i> 2. ಹೆಸರಿಸುವ ನಿಯಮಗಳು</a></li>
+                <li><a href="#complete-info"><i class="fas fa-layer-group"></i> 3. var, let, const ಮಾಹಿತಿ</a></li>
+                <li><a href="#beginner">🟢 ಹಂತ 1: ಮೂಲಭೂತ ಕಾನ್ಸೆಪ್ಟ್</a></li>
+                <li><a href="#intermediate">🟡 ಹಂತ 2: ಸ್ಕೋಪ್ (Scope)</a></li>
+                <li><a href="#advanced">🔴 ಹಂತ 3: ಪ್ರೊ ಪರಿಕಲ್ಪನೆಗಳು</a></li>
+                <li><a href="#golden-rules">🏆 4: ಸುವರ್ಣ ನಿಯಮಗಳು</a></li>
+                <li><a href="#shorts">🚀 5: ಕ್ವಿಕ್ ರಿವಿಷನ್ ನೋಟ್ಸ್</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Section 1 -->
+            <section id="intro" class="section-card">
+                <h2><i class="fas fa-box-open"></i> 1. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ವೇರಿಯೇಬಲ್ (Variables) ಎಂದರೇನು?</h2>
+                <p><strong>ಚಿಕ್ಕಮಕ್ಕಳಿಗೆ ಅರ್ಥವಾಗುವ ಉದಾಹರಣೆ:</strong></p>
+                <p>ವೇರಿಯೇಬಲ್ ಎಂದರೆ ನಿಮ್ಮ ಮನೆಯಲ್ಲಿರುವ ಒಂದು 'ಪ್ಲಾಸ್ಟಿಕ್ ಡಬ್ಬಿ' (Box) ಇದ್ದಂತೆ. ಆ ಡಬ್ಬಿಗೆ ನೀವು ಒಂದು ಹೆಸರು ಬರೆಯುತ್ತೀರಿ (ಉದಾಹರಣೆಗೆ: "ಸಕ್ಕರೆ ಡಬ್ಬಿ", "ಖಾರದ ಪುಡಿ ಡಬ್ಬಿ"). ನಂತರ ಆ ಡಬ್ಬಿಯೊಳಗೆ ಆ ವಸ್ತುಗಳನ್ನು ಹಾಕಿಡುತ್ತೀರಿ. ನಿಮಗೆ ಯಾವಾಗ ಬೇಕಾದರೂ ಆ ಡಬ್ಬಿಯನ್ನು ತೆರೆದು ಅದರೊಳಗಿರುವ ವಸ್ತುವನ್ನು ಬಳಸಬಹುದು ಅಥವಾ ಆ ವಸ್ತುವನ್ನು ತೆಗೆದು ಬೇರೆ ವಸ್ತುವನ್ನು ಹಾಕಬಹುದು.</p>
+                <p>ಕಂಪ್ಯೂಟರ್ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲೂ ಅಷ್ಟೇ! ವೇರಿಯೇಬಲ್ ಎಂದರೆ ಡೇಟಾ ಅಥವಾ ಮಾಹಿತಿಯನ್ನು ಶೇಖರಿಸಿಡಲು ಕಂಪ್ಯೂಟರ್ ಮೆಮೊರಿಯಲ್ಲಿ (Memory) ರಚಿಸುವ ಒಂದು ಜಾಗ (Container).</p>
+                
+                <!-- Graphic Added -->
+                <div class="svg-container">
+                    <svg class="svg-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10,40 L50,20 L90,40 L90,80 L50,100 L10,80 Z" fill="#f7df1e" stroke="#d4b800" stroke-width="3"/>
+                        <path d="M10,40 L50,60 L90,40 M50,60 L50,100" stroke="#d4b800" stroke-width="3" fill="none"/>
+                        <text x="50" y="55" font-size="12" font-family="Arial" font-weight="bold" fill="#000" text-anchor="middle">age</text>
+                        <text x="50" y="80" font-size="14" font-family="Arial" font-weight="bold" fill="#000" text-anchor="middle">25</text>
+                    </svg>
+                    <p style="font-size: 0.9rem; color: #666;">(ವೇರಿಯೇಬಲ್ ಎಂಬುದು ಒಂದು ಕಂಟೇನರ್)</p>
+                </div>
+
+                <p>ಉದಾಹರಣೆ:</p>
+                
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>let age = 25;</code></pre>
+                </div>
+                
+                <p>ಇಲ್ಲಿ:</p>
+                <ul>
+                    <li><strong>let</strong> ಎಂದರೆ ಡಬ್ಬಿ ತಯಾರು ಮಾಡಲು ಕೊಡುವ ಸೂಚನೆ.</li>
+                    <li><strong>age</strong> ಎಂದರೆ ಆ ಡಬ್ಬಿಯ ಹೆಸರು.</li>
+                    <li><strong>25</strong> ಎಂದರೆ ಆ ಡಬ್ಬಿಯ ಒಳಗೆ ನಾವು ಇಟ್ಟಿರುವ ಮಾಹಿತಿ (ಬೆಲೆ/Value).</li>
+                </ul>
+
+                <!-- Additional Info Added -->
+                <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-left: 4px solid #3b82f6; border-radius: 5px; margin-top: 20px;">
+                    <h4><i class="fas fa-info-circle"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ: ವೇರಿಯೇಬಲ್ ಜೀವನಚಕ್ರ (Memory Lifecycle)</h4>
+                    <p>ಒಂದು ವೇರಿಯೇಬಲ್ 3 ಹಂತಗಳನ್ನು ಹೊಂದಿರುತ್ತದೆ:</p>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>Declaration (ಘೋಷಣೆ):</strong> ಡಬ್ಬಿಯನ್ನು ರೆಡಿ ಮಾಡುವುದು (ಉದಾ: <code>let age;</code>)</li>
+                        <li><strong>Initialization (ಪ್ರಾರಂಭಿಸುವಿಕೆ):</strong> ಮೆಮೊರಿಯಲ್ಲಿ ಜಾಗ ಕಾಯ್ದಿರಿಸುವುದು.</li>
+                        <li><strong>Assignment (ಮೌಲ್ಯ ನಿಯೋಜನೆ):</strong> ಡಬ್ಬಿಯೊಳಗೆ ವಸ್ತುವನ್ನು ಹಾಕುವುದು (ಉದಾ: <code>age = 25;</code>)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="naming-rules" class="section-card">
+                <h2><i class="fas fa-spell-check"></i> 2. ವೇರಿಯೇಬಲ್ ಹೆಸರು ಬರೆಯಲು ಇರುವ ನಿಯಮಗಳು (Naming Rules)</h2>
+                
+                <h3><i class="fas fa-check-circle"></i> 1. ಬಳಸಬಹುದಾದ ಅಕ್ಷರಗಳು ಮತ್ತು ಚಿಹ್ನೆಗಳು</h3>
+                <p>ವೇರಿಯೇಬಲ್ ಹೆಸರಿನಲ್ಲಿ ಇವುಗಳನ್ನು ಮಾತ್ರ ಬಳಸಲು ಅನುಮತಿಯಿದೆ:</p>
+                <ul>
+                    <li>ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರಗಳು (A-Z ಮತ್ತು a-z)</li>
+                    <li>ಅಂಕಿಗಳು (0-9)</li>
+                    <li>ಅಂಡರ್‌ಸ್ಕೋರ್ (_)</li>
+                    <li>ಡಾಲರ್ ಚಿಹ್ನೆ ($)</li>
+                </ul>
+                <p>ಗಮನಿಸಿ: ಇವುಗಳನ್ನು ಬಿಟ್ಟು ಬೇರೆ ಯಾವುದೇ ವಿಶೇಷ ಚಿಹ್ನೆಗಳನ್ನು (@, #, %, !, -, &) ಬಳಸುವಂತಿಲ್ಲ.</p>
+                <ul>
+                    <li><span class="success"><i class="fas fa-check"></i> ಸರಿ:</span> myAge, price_100, $totalAmount</li>
+                    <li><span class="highlight"><i class="fas fa-times"></i> ತಪ್ಪು:</span> my@email, total-price</li>
+                </ul>
+
+                <h3><i class="fas fa-ban"></i> 2. ಅಂಕಿಯಿಂದ (Number) ಶುರುವಾಗುವಂತಿಲ್ಲ</h3>
+                <p>ಹೆಸರು ಯಾವಾಗಲೂ ಅಕ್ಷರ, _ ಅಥವಾ $ ನಿಂದಲೇ ಶುರುವಾಗಬೇಕು. ಯಾವುದೇ ಕಾರಣಕ್ಕೂ ಅಂಕಿಯಿಂದ ಶುರುವಾಗುವಂತಿಲ್ಲ. ಅಂಕಿಗಳನ್ನು ಹೆಸರಿನ ಮಧ್ಯದಲ್ಲಿ ಅಥವಾ ಕೊನೆಯಲ್ಲಿ ಬಳಸಬಹುದು.</p>
+                <ul>
+                    <li><span class="success"><i class="fas fa-check"></i> ಸರಿ:</span> player1, _score, $discount</li>
+                    <li><span class="highlight"><i class="fas fa-times"></i> ತಪ್ಪು:</span> 1player, 3rdPlace (ಇದು ಎರ್‍ರರ್/Error ಕೊಡುತ್ತದೆ)</li>
+                </ul>
+
+                <h3><i class="fas fa-compress-alt"></i> 3. ಖಾಲಿ ಜಾಗ (Space) ಬಿಡುವಂತಿಲ್ಲ</h3>
+                <p>ವೇರಿಯೇಬಲ್ ಹೆಸರಿನ ಮಧ್ಯೆ ಜಾಗ (Space) ಬಿಡುವಂತಿಲ್ಲ. ಜಾಗ ಬಿಟ್ಟರೆ ಕಂಪ್ಯೂಟರ್ ಅದನ್ನು ಎರಡು ಬೇರೆ ಬೇರೆ ಪದಗಳು ಎಂದು ಗೊಂದಲಕ್ಕೀಡಾಗುತ್ತದೆ. ಪದಗಳನ್ನು ಸೇರಿಸಲು ಕ್ಯಾಮೆಲ್ ಕೇಸ್ (Camel Case) ಅಥವಾ ಅಂಡರ್‌‌ಸ್ಕೋರ್ ಬಳಸಬೇಕು.</p>
+                <ul>
+                    <li><span class="success"><i class="fas fa-check"></i> ಸರಿ:</span> myFirstName, my_first_name</li>
+                    <li><span class="highlight"><i class="fas fa-times"></i> ತಪ್ಪು:</span> my first name</li>
+                </ul>
+
+                <h3><i class="fas fa-lock"></i> 4. ಕಾಯ್ದಿರಿಸಿದ ಪದಗಳನ್ನು (Reserved Keywords) ಬಳಸುವಂತಿಲ್ಲ</h3>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತನ್ನ ಸ್ವಂತ ಕೆಲಸಗಳಿಗೆ ಕೆಲವು ಪದಗಳನ್ನು ಮೀಸಲಿಟ್ಟಿದೆ. ಉದಾಹರಣೆಗೆ: let, var, const, function, if, else, return, class. ಈ ಪದಗಳನ್ನು ನೀವು ನಿಮ್ಮ ವೇರಿಯೇಬಲ್ ಹೆಸರಾಗಿ ಬಳಸುವಂತಿಲ್ಲ.</p>
+                <ul>
+                    <li><span class="success"><i class="fas fa-check"></i> ಸರಿ:</span> myFunction, isConditionTrue</li>
+                    <li><span class="highlight"><i class="fas fa-times"></i> ತಪ್ಪು:</span> let let = 10;, const function = "Hello";</li>
+                </ul>
+
+                <h3><i class="fas fa-font"></i> 5. ದೊಡ್ಡ ಮತ್ತು ಸಣ್ಣ ಅಕ್ಷರಗಳ ವ್ಯತ್ಯಾಸ (Case Sensitive)</h3>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ದೊಡ್ಡ ಅಕ್ಷರ (Uppercase) ಮತ್ತು ಸಣ್ಣ ಅಕ್ಷರಗಳನ್ನು (Lowercase) ಬೇರೆ ಬೇರೆಯಾಗಿ ನೋಡುತ್ತದೆ.</p>
+                <ul>
+                    <li>ಉದಾಹರಣೆಗೆ: score, Score, ಮತ್ತು SCORE - ಈ ಮೂರೂ ಪದಗಳು ನಮಗೆ ಒಂದೇ ಎನಿಸಿದರೂ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪ್ರಕಾರ ಇವು ಮೂರು ಬೇರೆ ಬೇರೆ ವೇರಿಯೇಬಲ್‌ಗಳು! ಆದ್ದರಿಂದ ಅಕ್ಷರಗಳ ಬಗ್ಗೆ ಗಮನವಿರಲಿ.</li>
+                </ul>
+
+                <h3><i class="fas fa-code"></i> 6. ಹೆಸರಿಸುವ ಶೈಲಿಗಳು (Naming Conventions):</h3>
+                <ul>
+                    <li><strong>ಕ್ಯಾಮೆಲ್ ಕೇಸ್ (Camel Case):</strong> myBankBalance
+                        <ul>
+                            <li>ಮೊದಲ ಪದದ ಅಕ್ಷರ ಸಣ್ಣದು, ನಂತರದ ಪದಗಳ ಮೊದಲ ಅಕ್ಷರ ದೊಡ್ಡದು.</li>
+                            <li>ಬಳಕೆ: ವೇರಿಯೇಬಲ್ಸ್ ಮತ್ತು ಫಂಕ್ಷನ್‌ಗಳಿಗೆ (ಅತಿ ಹೆಚ್ಚು ಬಳಸುವ ಶೈಲಿ).</li>
+                        </ul>
+                    </li>
+                    <li><strong>ಪಾಸ್ಕಲ್ ಕೇಸ್ (Pascal Case):</strong> MyBankBalance
+                        <ul>
+                            <li>ಪ್ರತಿಯೊಂದು ಪದದ ಮೊದಲನೇ ಅಕ್ಷರವೂ ದೊಡ್ಡದು.</li>
+                            <li>ಬಳಕೆ: ಕ್ಲಾಸ್‌ಗಳು (Classes) ಮತ್ತು ಕಾಂಪೊನೆಂಟ್‌ಗಳಿಗೆ ಮಾತ್ರ.</li>
+                        </ul>
+                    </li>
+                    <li><strong>ಸ್ನೇಕ್ ಕೇಸ್ (Snake / Underscore):</strong> MAX_SPEED_LIMIT
+                        <ul>
+                            <li>ಎಲ್ಲಾ ಅಕ್ಷರಗಳು ದೊಡ್ಡದು, ಪದಗಳ ಮಧ್ಯೆ ಅಂಡರ್‌ಸ್ಕೋರ್ (_) ಇರುತ್ತದೆ.</li>
+                            <li>ಬಳಕೆ: ಎಂದಿಗೂ ಬದಲಾಗದ ಜಾಗತಿಕ ಸ್ಥಿರ ಮೌಲ್ಯಗಳಿಗೆ (Global Constants).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3><i class="fas fa-lightbulb"></i> 💡 ವೃತ್ತಿಪರ ಡೆವಲಪರ್‌ಗಳ ಉತ್ತಮ ಅಭ್ಯಾಸಗಳು (Best Practices)</h3>
+                <p>ನಿಯಮಗಳಲ್ಲದಿದ್ದರೂ, ಐಟಿ ಕಂಪನಿಗಳಲ್ಲಿ ಕೆಲಸ ಮಾಡುವಾಗ ಎಲ್ಲರೂ ಪಾಲಿಸುವ ಪದ್ಧತಿಗಳಿವು:</p>
+                <ul>
+                    <li><strong>ಅರ್ಥಗರ್ಭಿತ ಹೆಸರು (Meaningful Names):</strong> ವೇರಿಯೇಬಲ್ ಹೆಸರನ್ನು ನೋಡಿದ ತಕ್ಷಣ ಅದರೊಳಗೆ ಏನಿದೆ ಎಂದು ತಿಳಿಯುವಂತಿರಬೇಕು. a, b, x, y ಎಂದು ಚಿಕ್ಕದಾಗಿ ಹೆಸರು ಇಡುವ ಬದಲು totalPrice, studentName ಎಂದು ಅರ್ಥ ಬರುವಂತೆ ಇಡಬೇಕು.</li>
+                    <li><strong>ಕ್ಯಾಮೆಲ್ ಕೇಸ್ (Camel Case):</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ವೇರಿಯೇಬಲ್ ಹೆಸರಿಸಲು ಯಾವಾಗಲೂ ಕ್ಯಾಮೆಲ್ ಕೇಸ್ ಬಳಸುವುದು ಅಂತರರಾಷ್ಟ್ರೀಯ ಪದ್ಧತಿ. (ಉದಾ: userBankAccoutNumber).</li>
+                </ul>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="complete-info" class="section-card">
+                <h2><i class="fas fa-layer-group"></i> 3. var, let, ಮತ್ತು const ಬಗ್ಗೆ ಸಂಪೂರ್ಣ ಮಾಹಿತಿ</h2>
+                
+                <div id="beginner">
+                    <span class="level-tag beginner"><i class="fas fa-seedling"></i> 🟢 ಹಂತ 1: ಮೂಲಭೂತ ಪರಿಕಲ್ಪನೆಗಳು (Beginner Level)</span>
+                    <p>ವೇರಿಯೇಬಲ್ ಎಂದರೆ ಡೇಟಾವನ್ನು ಸೇವ್ ಮಾಡಿಡಲು ಬಳಸುವ ಡಬ್ಬಿ (Container). ಇದರಲ್ಲಿ 3 ವಿಧ:</p>
+                    
+                    <h3><i class="fas fa-history"></i> 1. var (ಹಳೆಯ ಪದ್ಧತಿ)</h3>
+                    <ul><li>ನಿಯಮ: ಮೌಲ್ಯವನ್ನು ಬದಲಾಯಿಸಬಹುದು (Reassign) ಮತ್ತು ಒಂದೇ ಹೆಸರಿನಲ್ಲಿ ಮತ್ತೆ ಹೊಸ ಡಬ್ಬಿ ಮಾಡಬಹುದು (Redeclare).</li></ul>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>var playerName = "ರಾಹುಲ್";
+playerName = "ವಿರಾಟ್"; // 1. ಮೌಲ್ಯ ಬದಲಾಯಿಸಿದೆವು (ಸರಿ)
+var playerName = "ಧೋನಿ"; // 2. ಮತ್ತೆ ಅದೇ ಹೆಸರಿನಲ್ಲಿ ಘೋಷಿಸಿದೆವು (ಸರಿ)
+
+console.log(playerName); // ಔಟ್‌ಪುಟ್: ಧೋನಿ</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-bolt"></i> 2. let (ಆಧುನಿಕ ಪದ್ಧತಿ)</h3>
+                    <ul><li>ನಿಯಮ: ಮೌಲ್ಯವನ್ನು ಬದಲಾಯಿಸಬಹುದು, ಆದರೆ ಮತ್ತೆ ಅದೇ ಹೆಸರಿನಲ್ಲಿ ಹೊಸ ವೇರಿಯೇಬಲ್ ಘೋಷಿಸುವಂತಿಲ್ಲ.</li></ul>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>let score = 50;
+score = 100; // 1. ಮೌಲ್ಯ ಬದಲಾಯಿಸಿದೆವು (ಸರಿ)
+
+// let score = 150; // ❌ ERROR: Identifier 'score' has already been declared
+console.log(score); // ಔಟ್‌ಪುಟ್: 100</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-lock"></i> 3. const (ಸ್ಥಿರ ಪದ್ಧತಿ)</h3>
+                    <ul><li>ನಿಯಮ: ಮೌಲ್ಯವನ್ನು ಬದಲಾಯಿಸುವಂತೆಯೂ ಇಲ್ಲ, ಮತ್ತೆ ಘೋಷಿಸುವಂತೆಯೂ ಇಲ್ಲ.</li></ul>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>const birthYear = 2000;
+
+// birthYear = 2001; // ❌ TypeError: Assignment to constant variable.
+// const birthYear = 2005; // ❌ ERROR: Cannot redeclare block-scoped variable
+
+console.log(birthYear); // ಔಟ್‌ಪುಟ್: 2000</code></pre>
+                    </div>
+                </div>
+
+                <div id="intermediate">
+                    <span class="level-tag intermediate" style="margin-top: 20px;"><i class="fas fa-expand-arrows-alt"></i> 🟡 ಹಂತ 2: ಸ್ಕೋಪ್ ಅಥವಾ ಮಿತಿ (Intermediate Level)</span>
+                    <p>ಸ್ಕೋಪ್ ಎಂದರೆ ಒಂದು ವೇರಿಯೇಬಲ್ ಅನ್ನು ಎಲ್ಲೆಲ್ಲಿ ಬಳಸಬಹುದು ಎಂಬ ಮಿತಿ.</p>
+
+                    <h3><i class="fas fa-code-branch"></i> 1. Function Scope (var ನ ಸಮಸ್ಯೆ)</h3>
+                    <p>var ಕೇವಲ ಫಂಕ್ಷನ್ ಒಳಗೆ ಮಾತ್ರ ಕಂಟ್ರೋಲ್‌ನಲ್ಲಿರುತ್ತದೆ. if ಅಥವಾ for ಬ್ಲಾಕ್ { } ಒಳಗೆ ಬರೆದರೆ ಅದು ಹೊರಗಡೆ ಸೋರಿಕೆಯಾಗುತ್ತದೆ (Leak).</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>if (true) {
+    var myCity = "ಬೆಂಗಳೂರು"; // ಬ್ಲಾಕ್ ಒಳಗೆ ಬರೆದಿದ್ದೇವೆ
+}
+
+// ಹೊರಗಡೆಯಿಂದ ಪ್ರಿಂಟ್ ಮಾಡಿದರೂ ಸಿಗುತ್ತದೆ (ಇದು ಬಗ್ಸ್ / ತಪ್ಪುಗಳಿಗೆ ಕಾರಣವಾಗುತ್ತದೆ)
+console.log(myCity); // ಔಟ್‌ಪುಟ್: ಬೆಂಗಳೂರು</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-cube"></i> 2. Block Scope (let ಮತ್ತು const ನ ಶಕ್ತಿ)</h3>
+                    <p>ಇವು ಕಟ್ಟುನಿಟ್ಟಾಗಿ ಬ್ರಾಕೆಟ್ { } ನಿಯಮವನ್ನು ಪಾಲಿಸುತ್ತವೆ. ಬ್ಲಾಕ್‌ನಿಂದ ಹೊರಗೆ ಇವು ಸಿಗುವುದಿಲ್ಲ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>if (true) {
+    let myAge = 25;
+    const myCountry = "India";
+}
+
+// console.log(myAge); // ❌ ReferenceError: myAge is not defined
+// console.log(myCountry); // ❌ ReferenceError: myCountry is not defined</code></pre>
+                    </div>
+                </div>
+
+                <div id="advanced">
+                    <span class="level-tag advanced" style="margin-top: 20px;"><i class="fas fa-rocket"></i> 🔴 ಹಂತ 3: ಪ್ರೊ ಹಂತದ ಪರಿಕಲ್ಪನೆಗಳು (Advanced / Interview Level)</span>
+                    
+                    <h3><i class="fas fa-level-up-alt"></i> 1. Hoisting (ಮೇಲೇರುವಿಕೆ) ಮತ್ತು TDZ</h3>
+                    <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೋಡ್ ರನ್ ಆಗುವ ಮುನ್ನ ಎಲ್ಲಾ ವೇರಿಯೇಬಲ್ ಹೆಸರುಗಳನ್ನು ಮೆಮೊರಿಯ ಮೇಲ್ಭಾಗಕ್ಕೆ ಕೊಂಡೊಯ್ಯುತ್ತದೆ.</p>
+                    
+                    <p><strong>A. var ನ Hoisting:</strong> (Error ಬರುವುದಿಲ್ಲ, undefined ಬರುತ್ತದೆ)</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>console.log(company); // ಔಟ್‌ಪುಟ್: undefined
+var company = "Google";</code></pre>
+                    </div>
+
+                    <p><strong>B. let/const ನ Hoisting ಮತ್ತು TDZ (Temporal Dead Zone):</strong></p>
+                    <p>ಇವು ಕೂಡ Hoist ಆಗುತ್ತವೆ, ಆದರೆ ಮೌಲ್ಯ ಕೊಡುವವರೆಗೆ ಅವುಗಳನ್ನು ಬಳಸಲು ಹೋದರೆ Error ಬರುತ್ತದೆ. ಆ ಸಮಯವನ್ನು TDZ ಎನ್ನುತ್ತಾರೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>// console.log(salary); // ❌ ReferenceError: Cannot access 'salary' before initialization
+let salary = 50000;
+console.log(salary); // ಔಟ್‌ಪುಟ್: 50000</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-key"></i> 2. const ನ ಒಳಗಿನ ಗುಟ್ಟು (Mutation vs Reassignment)</h3>
+                    <p>const ಬಳಸಿ Array ಅಥವಾ Object ಮಾಡಿದಾಗ, ಇಡೀ ಡಬ್ಬಿಯನ್ನು ಬೇರೆಯದಕ್ಕೆ ಬದಲಿಸುವಂತಿಲ್ಲ. ಆದರೆ ಒಳಗಿರುವ ವಸ್ತುಗಳನ್ನು (Elements/Properties) ಬದಲಾಯಿಸಬಹುದು.</p>
+                    
+                    <p>Array ಉದಾಹರಣೆ:</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>const colors = ["Red", "Green"];
+
+colors.push("Blue"); // ಡಬ್ಬಿಯೊಳಗೆ ಹೊಸ ವಸ್ತು ಹಾಕಿದೆವು (ಸರಿ)
+console.log(colors); // ಔಟ್‌ಪುಟ್: ["Red", "Green", "Blue"]
+
+// colors = ["Yellow"]; // ❌ TypeError (ಇಡೀ ಡಬ್ಬಿಯನ್ನು ಬದಲಿಸುವಂತಿಲ್ಲ)</code></pre>
+                    </div>
+
+                    <p>Object ಉದಾಹರಣೆ:</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>const car = { brand: "Tata", model: "Nexon" };
+
+car.model = "Harrier"; // ಒಳಗಿನ ಪ್ರಾಪರ್ಟಿ ಬದಲಾಯಿಸಿದೆವು (ಸರಿ)
+console.log(car.model); // ಔಟ್‌ಪುಟ್: Harrier</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-globe"></i> 3. Global Object (Window) ನಡವಳಿಕೆ</h3>
+                    <p>ಬ್ರೌಸರ್‌ನಲ್ಲಿ ರನ್ ಮಾಡುವಾಗ:</p>
+                    <ul>
+                        <li>var ನಿಂದ ಮಾಡಿದ ವೇರಿಯೇಬಲ್ ನೇರವಾಗಿ window ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿಕೊಳ್ಳುತ್ತದೆ.</li>
+                        <li>let ಮತ್ತು const ಸೇರಿಕೊಳ್ಳುವುದಿಲ್ಲ (ಇದು ಹೆಚ್ಚು ಸುರಕ್ಷಿತ).</li>
+                    </ul>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>var a = 10;
+let b = 20;
+
+console.log(window.a); // ಔಟ್‌ಪುಟ್: 10 (window ಗೆ ಅಂಟಿಕೊಂಡಿದೆ)
+console.log(window.b); // ಔಟ್‌ಪುಟ್: undefined (ಸುರಕ್ಷಿತವಾಗಿದೆ)</code></pre>
+                    </div>
+
+                    <h3><i class="fas fa-user-secret"></i> 4. Variable Shadowing (ಮರೆಮಾಡುವುದು)</h3>
+                    <p>ಹೊರಗೆ ಮತ್ತು ಒಳಗೆ ಒಂದೇ ಹೆಸರಿನ ವೇರಿಯೇಬಲ್ ಇದ್ದಾಗ, ಒಳಗಿನ ವೇರಿಯೇಬಲ್ ಹೊರಗಿನದನ್ನು ತನ್ನ ಬ್ಲಾಕ್ ಒಳಗೆ ಮರೆಮಾಡುತ್ತದೆ.</p>
+                    
+                    <p><strong>Legal Shadowing (ಸರಿಯಾದ ವಿಧಾನ):</strong></p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>let testScore = 100; // ಹೊರಗಿನ ವೇರಿಯೇಬಲ್
+
+if (true) {
+    let testScore = 50; // ಒಳಗಿನ ವೇರಿಯೇಬಲ್
+    console.log("ಬ್ಲಾಕ್ ಒಳಗೆ: ", testScore); // ಔಟ್‌ಪುಟ್: 50
+}
+
+console.log("ಬ್ಲಾಕ್ ಹೊರಗೆ: ", testScore); // ಔಟ್‌ಪುಟ್: 100</code></pre>
+                    </div>
+
+                    <p><strong>Illegal Shadowing (ತಪ್ಪು ವಿಧಾನ):</strong></p>
+                    <p>ಹೊರಗೆ let ಬಳಸಿ, ಒಳಗೆ ಅದೇ ಹೆಸರಿಗೆ var ಬಳಸುವಂತಿಲ್ಲ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+<pre><code>let name = "Ravi";
+if (true) {
+    // var name = "Kumar"; // ❌ SyntaxError: Identifier 'name' has already been declared
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section id="golden-rules" class="section-card">
+                <h2><i class="fas fa-trophy"></i> 🏆 ಹಂತ 4: ವೃತ್ತಿಪರರ ಸುವರ್ಣ ನಿಯಮಗಳು (Golden Rules Checklist)</h2>
+                <p>ಯಾವಾಗ ಯಾವುದನ್ನು ಬಳಸಬೇಕು?</p>
+                <ul>
+                    <li>🥇 <strong>ಯಾವಾಗಲೂ const ಬಳಸಿ:</strong> ನಿಮ್ಮ ಕೋಡ್ ಬರೆಯುವಾಗ ಮೊದಲ ಆಯ್ಕೆ const ಆಗಿರಲಿ. (ಉದಾ: Arrays, Objects, Functions, ಕಾನ್ಸ್ಟಂಟ್ ಮೌಲ್ಯಗಳು).</li>
+                    <li>🥈 <strong>ಅನಿವಾರ್ಯವಿದ್ದರೆ ಮಾತ್ರ let ಬಳಸಿ:</strong> ಒಂದು ಮೌಲ್ಯ ಮುಂದೆ ಬದಲಾಗುತ್ತದೆ ಎಂದು ಖಚಿತವಿದ್ದರೆ ಮಾತ್ರ (ಉದಾ: For Loop ಲೆಕ್ಕಾಚಾರಗಳು, ಸ್ಕೋರ್ ಬೋರ್ಡ್, ಟೈಮರ್) let ಬಳಸಿ.</li>
+                    <li>🚫 <strong>var ಬಳಸುವುದನ್ನು ನಿಲ್ಲಿಸಿ:</strong> ಆಧುನಿಕ ಡೆವಲಪ್ಮೆಂಟ್‌ನಲ್ಲಿ var ಗೆ ಜಾಗವಿಲ್ಲ. ಹಳೆಯ ಪ್ರಾಜೆಕ್ಟ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಮಾತ್ರ ಇದರ ಬಗ್ಗೆ ತಿಳಿದಿರಲಿ.</li>
+                </ul>
+            </section>
+
+            <!-- Section 5 -->
+            <section id="shorts" class="section-card">
+                <h2><i class="fas fa-fighter-jet"></i> 🚀 ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ Variables - ಕ್ವಿಕ್ ರಿವಿಷನ್ ನೋಟ್ಸ್</h2>
+                
+                <h3>📌 1. ವೇರಿಯೇಬಲ್ ಎಂದರೇನು?</h3>
+                <ul>
+                    <li>ಡೇಟಾವನ್ನು ಶೇಖರಿಸಿಡುವ 'ಮೆಮೊರಿ ಡಬ್ಬಿ' (Container).</li>
+                </ul>
+
+                <h3>📌 2. ಹೆಸರಿಸುವ ನಿಯಮಗಳು (Naming Rules)</h3>
+                <ul>
+                    <li><i class="fas fa-check-circle" style="color:#10b981;"></i> ಬಳಸಬಹುದಾದವು: A-Z, a-z, 0-9, _, $.</li>
+                    <li><i class="fas fa-times-circle" style="color:#ef4444;"></i> ಬಳಸಬಾರದವು: ಅಂಕಿಯಿಂದ ಶುರುವಾಗುವಂತಿಲ್ಲ (ಉದಾ: 1name), ಜಾಗ (Space) ಬಿಡುವಂತಿಲ್ಲ, ವಿಶೇಷ ಚಿಹ್ನೆಗಳಿಲ್ಲ (@, #, -).</li>
+                    <li><i class="fas fa-times-circle" style="color:#ef4444;"></i> Reserved Words: let, const, if ಬಳಸುವಂತಿಲ್ಲ.</li>
+                    <li><i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> Case Sensitive: score ಮತ್ತು Score ಎರಡು ಬೇರೆ ಬೇರೆ!</li>
+                    <li><i class="fas fa-lightbulb" style="color:#3b82f6;"></i> Best Practice: ಯಾವಾಗಲೂ camelCase ಬಳಸಿ (ಉದಾ: myBankBalance).</li>
+                </ul>
+
+                <h3>📌 3. var, let, const - ತ್ವರಿತ ಹೋಲಿಕೆ</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ಗುಣಲಕ್ಷಣ</th>
+                                <th>var (ಹಳೆಯದು 👴)</th>
+                                <th>let (ಹೊಸದು 🧑)</th>
+                                <th>const (ಸ್ಥಿರ 🗿)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ಮೌಲ್ಯ ಬದಲಾವಣೆ (Reassign)</strong></td>
+                                <td>✅ ಹೌದು</td>
+                                <td>✅ ಹೌದು</td>
+                                <td>❌ ಇಲ್ಲ (Error)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ಮತ್ತೆ ಘೋಷಣೆ (Redeclare)</strong></td>
+                                <td>✅ ಹೌದು</td>
+                                <td>❌ ಇಲ್ಲ (Error)</td>
+                                <td>❌ ಇಲ್ಲ (Error)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ಮಿತಿ (Scope)</strong></td>
+                                <td>Function Scope</td>
+                                <td>Block Scope { }</td>
+                                <td>Block Scope { }</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Window ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರುತ್ತಾ?</strong></td>
+                                <td>✅ ಹೌದು (ಅಸುರಕ್ಷಿತ)</td>
+                                <td>❌ ಇಲ್ಲ (ಸುರಕ್ಷಿತ)</td>
+                                <td>❌ ಇಲ್ಲ (ಸುರಕ್ಷಿತ)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>📌 4. ಪ್ರೊ ಲೆವೆಲ್ ಕಾನ್ಸೆಪ್ಟ್‌ಗಳು (Pro Concepts)</h3>
+                <ul>
+                    <li>🔍 <strong>Scope (ಮಿತಿ):</strong> 
+                        <ul>
+                            <li>var ಬ್ಲಾಕ್ { } ನಿಂದ ಹೊರಗೆ ಲೀಕ್ ಆಗುತ್ತದೆ.</li>
+                            <li>let/const ಬ್ಲಾಕ್‌ನಿಂದ ಹೊರಬರುವುದಿಲ್ಲ (ಸುರಕ್ಷಿತ).</li>
+                        </ul>
+                    </li>
+                    <li>⬆️ <strong>Hoisting (ಮೇಲೇರುವಿಕೆ):</strong>
+                        <ul>
+                            <li>var ಮೇಲೇರಿ undefined ಆಗುತ್ತದೆ.</li>
+                            <li>let/const ಮೇಲೇರಿದರೂ ಮೌಲ್ಯ ಕೊಡುವವರೆಗೆ TDZ (Temporal Dead Zone) ನಲ್ಲಿರುತ್ತವೆ (ಮುಟ್ಟಿದರೆ Error ಬರುತ್ತದೆ).</li>
+                        </ul>
+                    </li>
+                    <li>🔓 <strong>const Mutation (ಒಳಗಿನ ಗುಟ್ಟು):</strong>
+                        <ul>
+                            <li>const ನಲ್ಲಿ ಇಡೀ Array/Object ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ. ಆದರೆ ಒಳಗಿರುವ ವಸ್ತುಗಳನ್ನು (Properties) ಬದಲಾಯಿಸಬಹುದು!</li>
+                            <li>(ಉದಾ: car.brand = "New" ✅)</li>
+                        </ul>
+                    </li>
+                    <li>👥 <strong>Shadowing (ಮರೆಮಾಡುವುದು):</strong>
+                        <ul>
+                            <li>ಬ್ಲಾಕ್ ಒಳಗಿನ ವೇರಿಯೇಬಲ್, ಹೊರಗಿನ ಅದೇ ಹೆಸರಿನ ವೇರಿಯೇಬಲ್ ಅನ್ನು ಮರೆಮಾಡುತ್ತದೆ. (ಆದರೆ ಹೊರಗೆ let, ಒಳಗೆ var ಬಳಸಿದರೆ Illegal Shadowing / Error ಬರುತ್ತದೆ).</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>🏆 5. ವೃತ್ತಿಪರರ 3 ಸುವರ್ಣ ನಿಯಮಗಳು</h3>
+                <ol>
+                    <li>🥇 ಡಿಫಾಲ್ಟ್ ಆಗಿ ಯಾವಾಗಲೂ const ಬಳಸಿ.</li>
+                    <li>🥈 ಮೌಲ್ಯ ಮುಂದೇ ಬದಲಾಗುತ್ತದೆ ಎಂದು ಖಚಿತವಿದ್ದರೆ ಮಾತ್ರ (ಉದಾ: ಲೂಪ್, ಸ್ಕೋರ್) let ಬಳಸಿ.</li>
+                    <li>🚫 ಹೊಸ ಕೋಡ್‌ನಲ್ಲಿ var ಬಳಸಲೇಬೇಡಿ!</li>
+                </ol>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTop" onclick="scrollToTop()"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // 1. Dark Mode Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-btn');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Check local storage for theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-btn').innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        }
+
+        // 2. Copy Code Functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.innerText;
+            
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.style.background = '#10b981';
+                button.style.color = '#fff';
+                button.style.borderColor = '#10b981';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.style.background = 'rgba(255,255,255,0.1)';
+                    button.style.color = 'var(--primary-color)';
+                    button.style.borderColor = 'var(--primary-color)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // 3. Scroll to Top logic
+        window.onscroll = function() {
+            const scrollBtn = document.getElementById("scrollTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.style.display = "flex";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

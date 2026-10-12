@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. JavaScript Notes Beginning - 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --card-bg: #ffffff;
+            --primary-color: #f7df1e;
+            --primary-dark: #d4b800;
+            --accent-color: #2980b9;
+            --sidebar-bg: #1e272e;
+            --sidebar-text: #ecf0f1;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --border-color: #e0e0e0;
+            --diagram-bg: #f8f9fa;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --accent-color: #4da3ff;
+            --sidebar-bg: #181818;
+            --sidebar-text: #f7df1e;
+            --code-bg: #000000;
+            --border-color: #333333;
+            --diagram-bg: #252525;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: #000;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+
+        .theme-btn {
+            background: #1e272e;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .theme-btn:hover { background: #333; transform: translateY(-1px); }
+
+        /* Layout */
+        .container {
+            display: flex;
+            max-width: 1300px;
+            margin: 25px auto;
+            gap: 25px;
+            padding: 0 15px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 310px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 85px;
+            height: calc(100vh - 105px);
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { margin-bottom: 10px; }
+        .sidebar ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: block;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .sidebar ul li a:hover {
+            background: rgba(247, 223, 30, 0.15);
+            color: var(--primary-color);
+            padding-left: 16px;
+        }
+
+        /* Main Content */
+        .main-content { flex: 1; min-width: 0; }
+
+        .section-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: #d4a000;
+            margin-bottom: 18px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            font-size: 1.45rem;
+        }
+        [data-theme="dark"] h2 { color: var(--primary-color); }
+
+        h3 { margin: 20px 0 10px; color: var(--accent-color); font-size: 1.2rem; }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 10px; }
+
+        /* Visual / Illustration Box */
+        .illustration-box {
+            background: var(--diagram-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .illustration-box svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .caption {
+            font-size: 0.88rem;
+            color: #7f8c8d;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 15px 0 25px 0;
+        }
+        .code-label {
+            display: inline-block;
+            background: #333;
+            color: var(--primary-color);
+            padding: 3px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+        }
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 18px;
+            border-radius: 0 8px 8px 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 1px solid #333;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 32px;
+            right: 10px;
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .copy-btn:hover { background: var(--primary-dark); }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            text-align: left;
+        }
+        th { background-color: var(--sidebar-bg); color: var(--primary-color); }
+        tr:nth-child(even) { background-color: rgba(0,0,0,0.02); }
+
+        @media (max-width: 850px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><span>💛</span> JavaScript (ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್) ಪ್ರಾರಂಭಿಕ ನೋಟ್ಸ್ - 1</h1>
+        <button class="theme-btn" onclick="toggleTheme()">🌙 Dark Mode</button>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h3>ಪರಿವಿಡಿ (Index)</h3>
+            <ul>
+                <li><a href="#sec1">1. JavaScript ಎಂದರೇನು?</a></li>
+                <li><a href="#sec2">2. ಅದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</a></li>
+                <li><a href="#sec3">3. JavaScript ಎಂಜಿನ್ ಯಾವುದು?</a></li>
+                <li><a href="#sec4">4. Tools ಮತ್ತು Extensions</a></li>
+                <li><a href="#sec5">5. ES6 ಎಂದರೇನು?</a></li>
+                <li><a href="#sec6">6. HTML ಗೆ JS Connect ಮಾಡುವುದು</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- SECTION 1 -->
+            <section id="sec1" class="section-card">
+                <h2>1. JavaScript (ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್) ಎಂದರೇನು?</h2>
+                <p>ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ನಾವು ಒಂದು ಮಾನವನ ದೇಹದ ಉದಾಹರಣೆ ತೆಗೆದುಕೊಳ್ಳೋಣ:</p>
+                <ul>
+                    <li><strong>HTML (ಮೂಳೆಗಳು):</strong> ಇದು ವೆಬ್‌ಸೈಟ್‌ಗೆ ಒಂದು ಆಕಾರ ಮತ್ತು ರಚನೆಯನ್ನು (Structure) ಕೊಡುತ್ತದೆ. (ಉದಾಹರಣೆಗೆ: ಪಠ್ಯ, ಚಿತ್ರಗಳನ್ನು ಹಾಕುವುದು).</li>
+                    <li><strong>CSS (ಚರ್ಮ ಮತ್ತು ಬಟ್ಟೆ):</strong> ಇದು ವೆಬ್‌ಸೈಟ್ ಸುಂದರವಾಗಿ ಕಾಣುವಂತೆ ಮಾಡುತ್ತದೆ. (ಬಣ್ಣ, ವಿನ್ಯಾಸ).</li>
+                    <li><strong>JavaScript (ಮೆದುಳು ಮತ್ತು ಸ್ನಾಯುಗಳು):</strong> ಇದು ವೆಬ್‌ಸೈಟ್‌‌ಗೆ ಜೀವ ತುಂಬುತ್ತದೆ! ಮನುಷ್ಯ ಹೇಗೆ ನಡೆಯುತ್ತಾನೆ, ಮಾತನಾಡುತ್ತಾನೆ ಅದೇ ರೀತಿ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿರುವ ಒಂದು ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಏನಾಗಬೇಕು, ಅನಿಮೇಷನ್ ಹೇಗೆ ಬರಬೇಕು ಎಂಬುದನ್ನು JavaScript ನಿರ್ಧರಿಸುತ್ತದೆ.</li>
+                </ul>
+                <p>ಸರಳವಾಗಿ ಹೇಳಬೇಕೆಂದರೆ, ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ಇಂಟರಾಕ್ಟಿವ್ (ಜನರ ಜೊತೆ ಸಂವಹನ ನಡೆಸುವಂತೆ) ಮಾಡುವ ಒಂದು ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಭಾಷೆಯೇ JavaScript.</p>
+
+                <!-- Illustration 1: HTML, CSS, JS Human Body Analogy -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 750 220" xmlns="http://www.w3.org/2000/svg">
+                        <!-- HTML Card -->
+                        <rect x="20" y="20" width="200" height="180" rx="12" fill="#e34f26" opacity="0.12" stroke="#e34f26" stroke-width="2"/>
+                        <circle cx="120" cy="65" r="28" fill="#e34f26"/>
+                        <text x="120" y="72" font-size="22" text-anchor="middle" fill="#fff">🦴</text>
+                        <text x="120" y="120" font-size="16" font-weight="bold" text-anchor="middle" fill="#e34f26">HTML (ಮೂಳೆಗಳು)</text>
+                        <text x="120" y="145" font-size="13" text-anchor="middle" fill="#555">ಆಕಾರ ಮತ್ತು ರಚನೆ</text>
+                        <text x="120" y="168" font-size="12" text-anchor="middle" fill="#777">(Structure)</text>
+
+                        <!-- Plus Sign -->
+                        <text x="248" y="115" font-size="28" font-weight="bold" text-anchor="middle" fill="#888">+</text>
+
+                        <!-- CSS Card -->
+                        <rect x="275" y="20" width="200" height="180" rx="12" fill="#2965f1" opacity="0.12" stroke="#2965f1" stroke-width="2"/>
+                        <circle cx="375" cy="65" r="28" fill="#2965f1"/>
+                        <text x="375" y="72" font-size="22" text-anchor="middle" fill="#fff">👕</text>
+                        <text x="375" y="120" font-size="16" font-weight="bold" text-anchor="middle" fill="#2965f1">CSS (ಚರ್ಮ &amp; ಬಟ್ಟೆ)</text>
+                        <text x="375" y="145" font-size="13" text-anchor="middle" fill="#555">ಬಣ್ಣ ಮತ್ತು ವಿನ್ಯಾಸ</text>
+                        <text x="375" y="168" font-size="12" text-anchor="middle" fill="#777">(Style &amp; Design)</text>
+
+                        <!-- Plus Sign -->
+                        <text x="502" y="115" font-size="28" font-weight="bold" text-anchor="middle" fill="#888">+</text>
+
+                        <!-- JS Card -->
+                        <rect x="530" y="20" width="200" height="180" rx="12" fill="#f7df1e" opacity="0.2" stroke="#d4b800" stroke-width="2"/>
+                        <circle cx="630" cy="65" r="28" fill="#f39c12"/>
+                        <text x="630" y="72" font-size="22" text-anchor="middle" fill="#fff">🧠</text>
+                        <text x="630" y="120" font-size="16" font-weight="bold" text-anchor="middle" fill="#d35400">JavaScript (ಮೆದುಳು)</text>
+                        <text x="630" y="145" font-size="13" text-anchor="middle" fill="#555">ಜೀವ ಮತ್ತು ಚಲನೆ</text>
+                        <text x="630" y="168" font-size="12" text-anchor="middle" fill="#777">(Interactive Brain)</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 1: ಮಾನವನ ದೇಹಕ್ಕೆ HTML, CSS ಮತ್ತು JavaScript ಹೋಲಿಕೆ</div>
+                </div>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section id="sec2" class="section-card">
+                <h2>2. ಅದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h2>
+                <p>ನೀವು ಬ್ರೌಸರ್‌ನಲ್ಲಿ (Chrome, Firefox) ಒಂದು ವೆಬ್‌ಸೈಟ್ ತೆರೆದಾಗ, JavaScript ಹೀಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ:</p>
+                <ul>
+                    <li><strong>ಡೌನ್‌ಲೋಡ್:</strong> ಮೊದಲು ಇಂಟರ್ನೆಟ್‌ನಿಂದ HTML, CSS ಜೊತೆಗೆ JavaScript ಕೋಡ್ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ಗೆ ಬರುತ್ತದೆ.</li>
+                    <li><strong>ಓದುವುದು (Parsing):</strong> ಬ್ರೌಸರ್‌ನಲ್ಲಿರುವ ಒಂದು 'ಎಂಜಿನ್' ಆ ಕೋಡ್ ಅನ್ನು ಓದುತ್ತದೆ.</li>
+                    <li><strong>ಅನುವಾದ (Compilation):</strong> ಕಂಪ್ಯೂಟರ್‌ಗೆ ಇಂಗ್ಲಿಷ್ ಅರ್ಥವಾಗುವುದಿಲ್ಲ, ಅದಕ್ಕೆ ಕೇವಲ 0 ಮತ್ತು 1 (ಮಷಿನ್ ಭಾಷೆ) ಮಾತ್ರ ಅರ್ಥವಾಗುತ್ತದೆ. ಎಂಜಿನ್ ನಮ್ಮ ಕೋಡ್ ಅನ್ನು ಮಷಿನ್ ಭಾಷೆಗೆ ಕ್ಷಣಾರ್ಧದಲ್ಲಿ ಬದಲಾಯಿಸುತ್ತದೆ.</li>
+                    <li><strong>ಕಾರ್ಯಾಚರಣೆ (Execution):</strong> ತಕ್ಷಣವೇ ಆ ಕೋಡ್ ರನ್ ಆಗಿ, ನೀವು ಬಟನ್ ಒತ್ತಿದಾಗ ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗದೆ ಹೊಸ ಮಾಹಿತಿ ಬರುವಂತೆ ಮಾಡುತ್ತದೆ.</li>
+                </ul>
+
+                <!-- Illustration 2: JS Execution Pipeline -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Step 1 -->
+                        <rect x="15" y="30" width="160" height="100" rx="10" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                        <text x="95" y="65" font-size="22" text-anchor="middle">🌐 ⬇️</text>
+                        <text x="95" y="92" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">1. ಡೌನ್‌ಲೋಡ್</text>
+                        <text x="95" y="112" font-size="11" fill="#ecf0f1" text-anchor="middle">HTML + CSS + JS</text>
+
+                        <!-- Arrow 1 -->
+                        <path d="M 180 80 L 210 80" stroke="#888" stroke-width="3" marker-end="url(#arrow)"/>
+
+                        <!-- Step 2 -->
+                        <rect x="215" y="30" width="160" height="100" rx="10" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+                        <text x="295" y="65" font-size="22" text-anchor="middle">📖 🔍</text>
+                        <text x="295" y="92" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">2. ಓದುವುದು</text>
+                        <text x="295" y="112" font-size="11" fill="#ecf0f1" text-anchor="middle">(Parsing by Engine)</text>
+
+                        <!-- Arrow 2 -->
+                        <path d="M 380 80 L 410 80" stroke="#888" stroke-width="3"/>
+
+                        <!-- Step 3 -->
+                        <rect x="415" y="30" width="160" height="100" rx="10" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
+                        <text x="495" y="65" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">010101 ⚙️</text>
+                        <text x="495" y="92" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">3. ಅನುವಾದ</text>
+                        <text x="495" y="112" font-size="11" fill="#ecf0f1" text-anchor="middle">(Compilation: 0 &amp; 1)</text>
+
+                        <!-- Arrow 3 -->
+                        <path d="M 580 80 L 610 80" stroke="#888" stroke-width="3"/>
+
+                        <!-- Step 4 -->
+                        <rect x="615" y="30" width="165" height="100" rx="10" fill="#27ae60" stroke="#1e8449" stroke-width="2"/>
+                        <text x="697" y="65" font-size="22" text-anchor="middle">🚀 ✨</text>
+                        <text x="697" y="92" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">4. ಕಾರ್ಯಾಚರಣೆ</text>
+                        <text x="697" y="112" font-size="11" fill="#ecf0f1" text-anchor="middle">(Execution / Output)</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 2: ಬ್ರೌಸರ್‌ನಲ್ಲಿ JavaScript ಕೋಡ್ ರನ್ ಆಗುವ 4 ಹಂತಗಳು</div>
+                </div>
+            </section>
+
+            <!-- SECTION 3 -->
+            <section id="sec3" class="section-card">
+                <h2>3. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಬಳಸುವ JavaScript ಎಂಜಿನ್ ಯಾವುದು?</h2>
+                <p>ಪ್ರತಿಯೊಂದು ಬ್ರೌಸರ್‌ಗೂ ಅದರದ್ದೇ ಆದ ಒಂದು "ಮೆದುಳು" ಇರುತ್ತದೆ. ಅದನ್ನೇ ನಾವು JavaScript Engine ಎನ್ನುತ್ತೇವೆ. ಇದು ಕೋಡ್ ಅನ್ನು ಓದಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತದೆ.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ಬ್ರೌಸರ್ (Browser)</th>
+                            <th>ಎಂಜಿನ್ ಹೆಸರು (Engine Name)</th>
+                            <th>ವಿಶೇಷತೆ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Google Chrome</strong></td>
+                            <td><strong>V8 Engine</strong></td>
+                            <td>ಪ್ರಪಂಚದಲ್ಲೇ ಅತಿ ವೇಗವಾದ ಎಂಜಿನ್. (ಇದನ್ನು ಬಳಸಿ Node.js ಅನ್ನು ಕೂಡ ಮಾಡಲಾಗಿದೆ).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mozilla Firefox</strong></td>
+                            <td><strong>SpiderMonkey</strong></td>
+                            <td>ಇದು ಜಗತ್ತಿನ ಮೊಟ್ಟಮೊದಲ JavaScript ಎಂಜಿನ್.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Apple Safari</strong></td>
+                            <td><strong>JavaScriptCore</strong></td>
+                            <td>ಆಪಲ್ ಸಾಧನಗಳಲ್ಲಿ (Mac, iPhone) ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Illustration 3: Browser Engines -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 720 150" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Chrome V8 -->
+                        <rect x="20" y="15" width="210" height="120" rx="10" fill="#ea4335" opacity="0.1" stroke="#ea4335" stroke-width="2"/>
+                        <text x="125" y="50" font-size="16" font-weight="bold" fill="#c0392b" text-anchor="middle">🌐 Google Chrome</text>
+                        <rect x="65" y="65" width="120" height="32" rx="6" fill="#2c3e50"/>
+                        <text x="125" y="86" font-size="14" font-weight="bold" fill="#f7df1e" text-anchor="middle">⚡ V8 Engine</text>
+                        <text x="125" y="118" font-size="11" fill="#666" text-anchor="middle">ಅತಿ ವೇಗದ ಎಂಜಿನ್ + Node.js</text>
+
+                        <!-- Firefox SpiderMonkey -->
+                        <rect x="255" y="15" width="210" height="120" rx="10" fill="#e67e22" opacity="0.1" stroke="#e67e22" stroke-width="2"/>
+                        <text x="360" y="50" font-size="16" font-weight="bold" fill="#d35400" text-anchor="middle">🦊 Mozilla Firefox</text>
+                        <rect x="290" y="65" width="140" height="32" rx="6" fill="#2c3e50"/>
+                        <text x="360" y="86" font-size="14" font-weight="bold" fill="#f7df1e" text-anchor="middle">🕷️ SpiderMonkey</text>
+                        <text x="360" y="118" font-size="11" fill="#666" text-anchor="middle">ಮೊಟ್ಟಮೊದಲ JS ಎಂಜಿನ್</text>
+
+                        <!-- Safari JavaScriptCore -->
+                        <rect x="490" y="15" width="210" height="120" rx="10" fill="#3498db" opacity="0.1" stroke="#3498db" stroke-width="2"/>
+                        <text x="595" y="50" font-size="16" font-weight="bold" fill="#2980b9" text-anchor="middle">🧭 Apple Safari</text>
+                        <rect x="520" y="65" width="150" height="32" rx="6" fill="#2c3e50"/>
+                        <text x="595" y="86" font-size="13" font-weight="bold" fill="#f7df1e" text-anchor="middle">🍏 JavaScriptCore</text>
+                        <text x="595" y="118" font-size="11" fill="#666" text-anchor="middle">Mac ಮತ್ತು iPhone ಗಾಗಿ</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 3: ಪ್ರಮುಖ ಬ್ರೌಸರ್‌‌ಗಳು ಮತ್ತು ಅವುಗಳ JavaScript ಎಂಜಿನ್‌ಗಳು</div>
+                </div>
+            </section>
+
+            <!-- SECTION 4 -->
+            <section id="sec4" class="section-card">
+                <h2>4. ಇದಕ್ಕೆ ಬೇಕಾಗುವ Tools ಮತ್ತು Extensions ಯಾವುವು?</h2>
+                <p>JavaScript ಕಲಿಯಲು ಅಥವಾ ಪ್ರೊಫೆಷನಲ್ ಆಗಿ ಕೆಲಸ ಮಾಡಲು ನಿಮಗೆ ದುಬಾರಿ ಸಾಫ್ಟ್‌ವೇರ್ ಬೇಕಾಗಿಲ್ಲ. ಕೇವಲ ಎರಡು ಪ್ರಮುಖ ಟೂಲ್‌ಗಳು ಸಾಕು:</p>
+
+                <h3>1. ವೆಬ್ ಬ್ರೌಸರ್ (Web Browser):</h3>
+                <p>ಕೋಡ್ ರನ್ ಮಾಡಿ ನೋಡಲು Google Chrome ಅತ್ಯುತ್ತಮವಾಗಿದೆ. ಇದರಲ್ಲಿರುವ 'Developer Tools' (F12 ಒತ್ತಿದರೆ ಬರುತ್ತದೆ) ಕೋಡ್‌ನಲ್ಲಿರುವ ತಪ್ಪುಗಳನ್ನು ಹುಡುಕಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.</p>
+
+                <h3>2. ಕೋಡ್ ಎಡಿಟರ್ (Code Editor):</h3>
+                <p>ಕೋಡ್ ಬರೆಯಲು ಇರುವ ಅತ್ಯಂತ ಜನಪ್ರಿಯ ಮತ್ತು ಉಚಿತ ಸಾಫ್ಟ್‌ವೇರ್ ಎಂದರೆ VS Code (Visual Studio Code).</p>
+                
+                <p><strong>VS Code ನಲ್ಲಿ ಬೇಕಾಗುವ ಪ್ರಮುಖ Extensions (ಎಕ್ಸ್‌ಟೆನ್ಶನ್‌ಗಳು):</strong></p>
+                <ul>
+                    <li><strong>Live Server:</strong> ನೀವು ಕೋಡ್ ಬರೆದು ಸೇವ್ ಮಾಡಿದ ತಕ್ಷಣ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಬದಲಾವಣೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ (ಪೇಜ್ ರಿಫ್ರೆಶ್ ಮಾಡುವ ಅಗತ್ಯವಿಲ್ಲ).</li>
+                    <li><strong>Prettier - Code formatter:</strong> ನೀವು ಬರೆದ ಕೋಡ್ ಅನ್ನು ಸುಂದರವಾಗಿ, ಓದಲು ಸುಲಭವಾಗುವಂತೆ ಜೋಡಿಸುತ್ತದೆ.</li>
+                    <li><strong>JavaScript (ES6) code snippets:</strong> ಕೋಡ್ ಅನ್ನು ವೇಗವಾಗಿ ಟೈಪ್ ಮಾಡಲು ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ನೀಡುತ್ತದೆ.</li>
+                </ul>
+
+                <!-- Illustration 4: Tools & VS Code Extensions -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Browser Box -->
+                        <rect x="20" y="20" width="250" height="130" rx="10" fill="#2c3e50"/>
+                        <text x="145" y="55" font-size="16" font-weight="bold" fill="#f7df1e" text-anchor="middle">💻 1. Google Chrome</text>
+                        <rect x="45" y="70" width="200" height="55" rx="6" fill="#34495e"/>
+                        <text x="145" y="95" font-size="13" fill="#fff" text-anchor="middle">Press [F12] Key</text>
+                        <text x="145" y="115" font-size="12" fill="#2ecc71" text-anchor="middle">🛠️ Developer Tools / Console</text>
+
+                        <!-- VS Code Box -->
+                        <rect x="300" y="20" width="400" height="130" rx="10" fill="#007acc"/>
+                        <text x="500" y="50" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">📝 2. VS Code + 3 ಪ್ರಮುಖ Extensions</text>
+                        
+                        <rect x="315" y="68" width="115" height="62" rx="6" fill="#fff"/>
+                        <text x="372" y="95" font-size="12" font-weight="bold" fill="#007acc" text-anchor="middle">📡 Live Server</text>
+                        <text x="372" y="115" font-size="10" fill="#555" text-anchor="middle">Auto Refresh</text>
+
+                        <rect x="442" y="68" width="115" height="62" rx="6" fill="#fff"/>
+                        <text x="500" y="95" font-size="12" font-weight="bold" fill="#c0392b" text-anchor="middle">✨ Prettier</text>
+                        <text x="500" y="115" font-size="10" fill="#555" text-anchor="middle">Code Formatter</text>
+
+                        <rect x="570" y="68" width="115" height="62" rx="6" fill="#fff"/>
+                        <text x="627" y="95" font-size="12" font-weight="bold" fill="#27ae60" text-anchor="middle">⚡ ES6 Snippets</text>
+                        <text x="627" y="115" font-size="10" fill="#555" text-anchor="middle">Fast Shortcuts</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 4: JavaScript ಕೋಡಿಂಗ್‌ಗೆ ಬೇಕಾಗುವ ಬ್ರೌಸರ್ ಮತ್ತು VS Code ಎಕ್ಸ್‌ಟೆನ್ಶನ್‌ಗಳು</div>
+                </div>
+            </section>
+
+            <!-- SECTION 5 -->
+            <section id="sec5" class="section-card">
+                <h2>5. ES6 ಎಂದರೇನು?</h2>
+                <p>ನಿಮ್ಮ ಮೊಬೈಲ್‌ನಲ್ಲಿ ಸಾಫ್ಟ್‌‌ವೇರ್ ಅಪ್‌ಡೇಟ್ (ಉದಾಹರಣೆಗೆ Android 13 ರಿಂದ Android 14) ಬರುವಂತೆ, JavaScript ಭಾಷೆಗೂ ಅಪ್‌ಡೇಟ್‌ಗಳು ಬರುತ್ತವೆ.</p>
+                <p><strong>ES6 (ECMAScript 2015)</strong> ಎನ್ನುವುದು JavaScript ನ 2015 ರ ಅತಿ ದೊಡ್ಡ ಅಪ್‌ಡೇಟ್.</p>
+                <p>ಇದಕ್ಕೂ ಮುನ್ನ ಕೋಡ್ ಬರೆಯುವುದು ಸ್ವಲ್ಪ ಕಷ್ಟವಿತ್ತು. ES6 ಬಂದ ಮೇಲೆ ಕೋಡ್ ಬರೆಯುವುದು ತುಂಬಾ ಸುಲಭವಾಯಿತು. ಇದರಲ್ಲಿ ಹೊಸ ಫೀಚರ್‌ಗಳನ್ನು ಪರಿಚಯಿಸಲಾಯಿತು:</p>
+                <ul>
+                    <li>ವೇರಿಯೇಬಲ್ (Variables) ಮಾಡಲು <code>var</code> ಬದಲಿಗೆ ಹೊಸದಾಗಿ <code>let</code> ಮತ್ತು <code>const</code> ತರಲಾಯಿತು.</li>
+                    <li>ಫಂಕ್ಷನ್‌ಗಳನ್ನು (Functions) ಚಿಕ್ಕದಾಗಿ ಬರೆಯಲು <strong>Arrow Functions (=>)</strong> ತರಲಾಯಿತು.</li>
+                </ul>
+
+                <!-- Illustration 5: ES6 Update Comparison -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="30" y="20" width="240" height="110" rx="10" fill="#95a5a6" opacity="0.2" stroke="#7f8c8d" stroke-width="2"/>
+                        <text x="150" y="50" font-size="15" font-weight="bold" fill="#7f8c8d" text-anchor="middle">ಹಳೆಯ JavaScript (Pre-2015)</text>
+                        <text x="150" y="80" font-size="13" fill="#555" text-anchor="middle">• ಕೇವಲ var ಬಳಕೆ</text>
+                        <text x="150" y="105" font-size="13" fill="#555" text-anchor="middle">• ಉದ್ದನೆಯ function() ಕೋಡ್</text>
+
+                        <text x="345" y="82" font-size="28" text-anchor="middle">📲 ➔</text>
+
+                        <rect x="415" y="20" width="255" height="110" rx="10" fill="#2ecc71" opacity="0.15" stroke="#27ae60" stroke-width="2"/>
+                        <text x="542" y="50" font-size="15" font-weight="bold" fill="#27ae60" text-anchor="middle">🚀 ES6 ಅಪ್‌ಡೇಟ್ (2015)</text>
+                        <text x="542" y="80" font-size="13" font-weight="bold" fill="#2c3e50" text-anchor="middle">• ಹೊಸ let ಮತ್ತು const</text>
+                        <text x="542" y="105" font-size="13" font-weight="bold" fill="#2c3e50" text-anchor="middle">• ಚಿಕ್ಕದಾದ Arrow Functions (=>)</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 5: ES6 (ECMAScript 2015) ತಂದ ಪ್ರಮುಖ ಬದಲಾವಣೆಗಳು</div>
+                </div>
+            </section>
+
+            <!-- SECTION 6 -->
+            <section id="sec6" class="section-card">
+                <h2>6. HTML ಗೆ ಯಾವ ರೀತಿ JavaScript Connect ಮಾಡುವುದು?</h2>
+                <p>JavaScript ಅನ್ನು HTML ಜೊತೆ ಸೇರಿಸಲು ಮುಖ್ಯವಾಗಿ 3 ವಿಧಾನಗಳಿವೆ. ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳು ಯಾವಾಗಲೂ 3ನೇ ವಿಧಾನವನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+
+                <!-- Illustration 6: 3 Ways to Connect JS -->
+                <div class="illustration-box">
+                    <svg viewBox="0 0 740 140" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Inline -->
+                        <rect x="15" y="15" width="215" height="110" rx="8" fill="#e74c3c" opacity="0.1" stroke="#e74c3c" stroke-width="2"/>
+                        <text x="122" y="45" font-size="15" font-weight="bold" fill="#c0392b" text-anchor="middle">1. Inline JS ⚠️</text>
+                        <text x="122" y="72" font-size="12" fill="#555" text-anchor="middle">HTML ಟ್ಯಾಗ್ ಒಳಗೇ ಬರೆಯುವುದು</text>
+                        <text x="122" y="98" font-size="11" fill="#c0392b" text-anchor="middle">(ಹೆಚ್ಚಾಗಿ ಬಳಸಬಾರದು)</text>
+
+                        <!-- Internal -->
+                        <rect x="260" y="15" width="215" height="110" rx="8" fill="#f39c12" opacity="0.1" stroke="#f39c12" stroke-width="2"/>
+                        <text x="367" y="45" font-size="15" font-weight="bold" fill="#d35400" text-anchor="middle">2. Internal JS 📄</text>
+                        <text x="367" y="72" font-size="12" fill="#555" text-anchor="middle">&lt;script&gt; ಟ್ಯಾಗ್ ಒಳಗೆ</text>
+                        <text x="367" y="98" font-size="11" fill="#d35400" text-anchor="middle">(ಕಲಿಯಲು ಮಾತ್ರ ಸೂಕ್ತ)</text>
+
+                        <!-- External -->
+                        <rect x="505" y="15" width="220" height="110" rx="8" fill="#2ecc71" opacity="0.15" stroke="#27ae60" stroke-width="2"/>
+                        <text x="615" y="45" font-size="15" font-weight="bold" fill="#27ae60" text-anchor="middle">3. External JS 🏆</text>
+                        <text x="615" y="72" font-size="12" fill="#555" text-anchor="middle">ಪ್ರತ್ಯೇಕ script.js ಫೈಲ್ ಲಿಂಕ್</text>
+                        <text x="615" y="98" font-size="11" font-weight="bold" fill="#27ae60" text-anchor="middle">(ಪ್ರೊಫೆಷನಲ್ ವಿಧಾನ)</text>
+                    </svg>
+                    <div class="caption">ಚಿತ್ರ 6: HTML ಜೊತೆಗೆ JavaScript ಜೋಡಿಸುವ 3 ವಿಧಾನಗಳು</div>
+                </div>
+
+                <h3>ವಿಧಾನ 1: Inline (ಸಾಲಿನೊಳಗೆ - ಇದನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸಬಾರದು)</h3>
+                <p>HTML ಟ್ಯಾಗ್‌ನ ಒಳಗೇ ನೇರವಾಗಿ ಬರೆಯುವುದು.</p>
+                <div class="code-container">
+                    <span class="code-label">1. HTML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>&lt;button onclick="alert('ಹಲೋ, ಸ್ವಾಗತ!')"&gt;ಕ್ಲಿಕ್ ಮಾಡಿ&lt;/button&gt;</code></pre>
+                </div>
+
+                <h3>ವಿಧಾನ 2: Internal (ಒಳಗಿನ ಫೈಲ್ - ಕಲಿಯಲು ಮಾತ್ರ ಸೂಕ್ತ)</h3>
+                <p>HTML ಫೈಲ್‌ನ ತಳಭಾಗದಲ್ಲಿ (body ಮುಗಿಯುವ ಮುನ್ನ) <code>&lt;script&gt;</code> ಟ್ಯಾಗ್ ಬಳಸಿ ಬರೆಯುವುದು.</p>
+                <div class="code-container">
+                    <span class="code-label">HTML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;ನನ್ನ ವೆಬ್‌ಸೈಟ್&lt;/h1&gt;
+
+    &lt;!-- ಇಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸೇರಿಸಲಾಗಿದೆ --&gt;
+    &lt;script&gt;
+        console.log("ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ!");
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+
+                <h3>ವಿಧಾನ 3: External (ಹೊರಗಿನ ಫೈಲ್ - ಪ್ರೊಫೆಷನಲ್ ವಿಧಾನ 🏆)</h3>
+                <p>JavaScript ಕೋಡ್ ಅನ್ನು ಬೇರೆಯದೇ ಆದ ಒಂದು ಫೈಲ್‌ನಲ್ಲಿ (ಉದಾಹರಣೆಗೆ: <code>script.js</code>) ಬರೆದು, ಅದನ್ನು HTML ಗೆ ಲಿಂಕ್ ಮಾಡುವುದು. ಇದು ಅತ್ಯಂತ ಶುದ್ಧ ಮತ್ತು ಉತ್ತಮ ವಿಧಾನ.</p>
+
+                <p><strong>index.html ಫೈಲ್‌ನಲ್ಲಿ ಹೀಗೆ ಬರೆಯಿರಿ:</strong></p>
+                <div class="code-container">
+                    <span class="code-label">1. HTML (index.html)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;ನನ್ನ ಪ್ರೊಫೆಷನಲ್ ವೆಬ್‌ಸೈಟ್&lt;/h1&gt;
+
+    &lt;!-- ಹೊರಗಿನ JS ಫೈಲ್ ಅನ್ನು ಇಲ್ಲಿ ಕನೆಕ್ಟ್ ಮಾಡಲಾಗಿದೆ --&gt;
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+
+                <p><strong>script.js ಫೈಲ್‌ನಲ್ಲಿ ಹೀಗೆ ಬರೆಯಿರಿ:</strong></p>
+                <div class="code-container">
+                    <span class="code-label">1. JavaScript (script.js)</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>// ಇದು ಪ್ರತ್ಯೇಕ ಫೈಲ್
+alert("ಹೊರಗಿನ ಫೈಲ್‌ನಿಂದ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕನೆಕ್ಟ್ ಆಗಿದೆ!");</code></pre>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-btn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.textContent = '🌙 Dark Mode';
+                localStorage.setItem('js_notes_theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ Light Mode';
+                localStorage.setItem('js_notes_theme', 'dark');
+            }
+        }
+
+        if (localStorage.getItem('js_notes_theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-btn').textContent = '☀️ Light Mode';
+        }
+
+        function copyCode(button) {
+            const codeText = button.nextElementSibling.innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied! ✅';
+                button.style.background = '#2ecc71';
+                button.style.color = '#fff';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--primary-color)';
+                    button.style.color = '#000';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
