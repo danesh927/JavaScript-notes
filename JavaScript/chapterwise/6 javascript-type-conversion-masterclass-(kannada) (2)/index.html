@@ -1,0 +1,1635 @@
+<!doctype html>
+<html lang="kn" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Type Conversion Masterclass (Kannada)</title>
+    <meta name="description" content="An interactive, visual, and comprehensive JavaScript Type Conversion learning platform in Kannada with step-by-step animations, live lab, code playground, and self-assessment quizzes." />
+    <meta property="og:title" content="JavaScript Type Conversion Masterclass (Kannada)" />
+    <meta property="og:description" content="An interactive, visual, and comprehensive JavaScript Type Conversion learning platform in Kannada with step-by-step animations, live lab, code playground, and self-assessment quizzes." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <header class="top-nav" role="banner">
+      <div class="nav-left">
+        <button id="menuToggleBtn" class="menu-toggle-btn" aria-label="Toggle Navigation Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <a href="#hero" class="brand">
+          <div class="brand-icon">JS</div>
+          <div>
+            <div class="brand-title">Type Conversion</div>
+            <div class="brand-kannada">ಪ್ರಕಾರ ಪರಿವರ್ತನೆ ಮಾಸ್ಟರ್‌ಕ್ಲಾಸ್</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="nav-center">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="ಹುಡುಕಿ: Number(), parseInt, Coercion, == vs ===, NaN..." aria-label="Search content" />
+          <button id="searchClearBtn" class="search-clear-btn" aria-label="Clear Search">✕</button>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <a href="#lab" class="nav-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2v7.31"></path>
+            <path d="M14 2v7.31"></path>
+            <path d="M8.5 2h7"></path>
+            <path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path>
+            <path d="M5.52 16h12.96"></path>
+          </svg>
+          <span>Live Lab</span>
+        </a>
+        <button id="themeToggleBtn" class="nav-action-btn" aria-label="Toggle Theme">
+          <svg id="themeIconSun" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Top Reading Progress Indicator -->
+      <div class="reading-progress-track">
+        <div id="readingProgressBar" class="reading-progress-bar"></div>
+      </div>
+    </header>
+
+    <!-- Main Container Grid -->
+    <div class="app-container">
+      
+      <!-- Left Sidebar (Table of Contents & Progress) -->
+      <aside id="sidebarLeft" class="sidebar sidebar-left" aria-label="Course Navigation">
+        <div class="sidebar-header">
+          <span class="sidebar-heading">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            ವಿಷಯ ಸೂಚಿ (Contents)
+          </span>
+          <span class="toc-link-badge"><span id="completedCount">0</span>/<span id="totalCount">8</span></span>
+        </div>
+
+        <div class="toc-group">
+          <div class="toc-group-title">Section 1: ಪರಿಚಯ</div>
+          <ul class="toc-list">
+            <li>
+              <a href="#sec-intro" class="toc-link">
+                <span>1. Introduction to Type Conversion</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="toc-group">
+          <div class="toc-group-title">Section 2: Explicit Conversion</div>
+          <ul class="toc-list">
+            <li>
+              <a href="#sec-to-number" class="toc-link">
+                <span>2A. Converting to Number</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-to-string" class="toc-link">
+                <span>2B. Converting to String</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-to-boolean" class="toc-link">
+                <span>2C. Converting to Boolean</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="toc-group">
+          <div class="toc-group-title">Section 3: Implicit Conversion</div>
+          <ul class="toc-list">
+            <li>
+              <a href="#sec-string-coercion" class="toc-link">
+                <span>3A. String Coercion (+)</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-number-coercion" class="toc-link">
+                <span>3B. Number Coercion (-, *, /, %)</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="toc-group">
+          <div class="toc-group-title">Section 4: Advanced Concepts</div>
+          <ul class="toc-list">
+            <li>
+              <a href="#sec-equality" class="toc-link">
+                <span>4A. == vs === Comparison</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-object-primitive" class="toc-link">
+                <span>4B. Object to Primitive Conversion</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-edge-cases" class="toc-link">
+                <span>4C. Tricky Edge Cases & Traps</span>
+                <svg class="completed-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="toc-group">
+          <div class="toc-group-title">Interactive Tools</div>
+          <ul class="toc-list">
+            <li>
+              <a href="#sec-tables" class="toc-link">
+                <span>Comparison Tables</span>
+              </a>
+            </li>
+            <li>
+              <a href="#lab" class="toc-link">
+                <span>Live Conversion Lab</span>
+              </a>
+            </li>
+            <li>
+              <a href="#sec-quiz" class="toc-link">
+                <span>Self-Assessment Quizzes</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content" id="mainContent">
+
+        <!-- Hero Banner -->
+        <section class="hero-banner" id="hero">
+          <div class="hero-kicker">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            Complete Professional Guide in Kannada
+          </div>
+          <h1 class="hero-title">JavaScript Type Conversion<br><span style="color: var(--primary);">ಪ್ರಕಾರ ಪರಿವರ್ತನೆ ಮಾಸ್ಟರ್‌ಕ್ಲಾಸ್</span></h1>
+          <p class="hero-subtitle">
+            Non-IT ಅಥವಾ ಬಿಗಿನರ್ ವಿದ್ಯಾರ್ಥಿಗೂ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ನ ಅತ್ಯಂತ ಪ್ರಮುಖವಾದ Data Type Conversion ಮತ್ತು Type Coercion ಪರಿಕಲ್ಪನೆಯನ್ನು ಸುಲಭ ಕನ್ನಡ, ರಿಯಲ್-ಲೈಫ್ ಹೋಲಿಕೆಗಳು, ವಿಶುವಲ್ ಅನಿಮೇಷನ್‌ಗಳು ಮತ್ತು ಲೈವ್ ಲ್ಯಾಬ್ ಮೂಲಕ ಆಳವಾಗಿ ಕಲಿಯಿರಿ.
+          </p>
+
+          <div class="hero-meta">
+            <div class="hero-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span>100% ಮೂಲ ನೋಟ್ಸ್ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ</span>
+            </div>
+            <div class="hero-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Step-by-step ECMAScript ವಿವರಣೆ</span>
+            </div>
+            <div class="hero-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Interactive Code Playground</span>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="#sec-intro" class="btn-primary">
+              ಕಲಿಕೆ ಪ್ರಾರಂಭಿಸಿ (Start Learning)
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <a href="#lab" class="btn-secondary">
+              Live Conversion Lab ಗೆ ಹೋಗಿ
+            </a>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 1: INTRODUCTION TO TYPE CONVERSION
+             =================================================================== -->
+        <section class="topic-section" id="sec-intro">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 1 · Foundation</span>
+            <button class="section-complete-btn" data-target="sec-intro">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">Introduction to Type Conversion</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            JavaScript ನಲ್ಲಿ ಒಂದು Data Type ನ ಮೌಲ್ಯವನ್ನು ಮತ್ತೊಂದು Data Type ಗೆ ಬದಲಾಯಿಸುವ ಮೂಲ ಪ್ರಕ್ರಿಯೆ.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p><strong>Type Conversion (Type Casting):</strong> JavaScript ನಲ್ಲಿ ಒಂದು data type ನ ಮೌಲ್ಯವನ್ನು (value) ಮತ್ತೊಂದು data type ಗೆ ಬದಲಾಯಿಸುವ ಪ್ರಕ್ರಿಯೆಯನ್ನು Type Conversion ಅಥವಾ Type Casting ಎನ್ನುತ್ತಾರೆ.</p>
+              <p>JavaScript ನಲ್ಲಿ Type Conversion ಎರಡು ರೀತಿಯಲ್ಲಿ ನಡೆಯುತ್ತದೆ:</p>
+              <ol>
+                <li><strong>Implicit Conversion (Type Coercion):</strong> JavaScript ತನ್ನಷ್ಟಕ್ಕೆ ತಾನೇ (ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ) ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಬದಲಾಯಿಸುವುದು.</li>
+                <li><strong>Explicit Conversion:</strong> ಡೆವಲಪರ್ ಅಥವಾ ಪ್ರೋಗ್ರಾಮರ್ ಕೋಡ್ ಮೂಲಕ ಸ್ವತಃ ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಬದಲಾಯಿಸುವುದು.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 9-Part Pedagogical Breakdown -->
+          <div class="pedagogy-grid">
+            <!-- 1. ಸರಳ ಅರ್ಥ -->
+            <div class="pedagogy-card card-analogy">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">1. ಸರಳ ಅರ್ಥ (Simple Beginner Meaning)</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಪ್ರತಿಯೊಂದು ಮಾಹಿತಿಗೂ ಒಂದು "ಜಾತಿ" ಅಥವಾ "ವಿಧ" (Type) ಇರುತ್ತದೆ. ಉದಾಹರಣೆಗೆ: ಅಕ್ಷರಗಳು <strong>String</strong> (ಉದಾ: <code>"100"</code>), ಗಣಿತದ ಅಂಕಿಸಂಖ್ಯೆಗಳು <strong>Number</strong> (ಉದಾ: <code>100</code>). ನಾವು ಸ್ಟ್ರಿಂಗ್ ರೂಪದಲ್ಲಿರುವ <code>"100"</code> ಅನ್ನು ಗಣಿತ ಮಾಡಲು ಸಂಖ್ಯಾತ್ಮಕ <code>100</code> ಗೆ ಬದಲಾಯಿಸುವುದೇ <strong>Type Conversion</strong>.
+              </div>
+            </div>
+
+            <!-- 2. Real-Life Analogy -->
+            <div class="pedagogy-card card-analogy">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">2. Real-Life Analogy (ನೈಜ ಜೀವನದ ಉದಾಹರಣೆ)</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                <strong>Explicit Conversion:</strong> ನೀವು ಹಾಲನ್ನು ತೆಗೆದುಕೊಂಡು ಅದಕ್ಕೆ ಹೆಪ್ಪು ಹಾಕಿ ಮೊಸರು ಮಾಡುವುದು (ನೀವೇ ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಬದಲಾಯಿಸಿದ್ದೀರಿ).<br>
+                <strong>Implicit Conversion:</strong> ಬೇಸಿಗೆಯಲ್ಲಿ ಹಾಲನ್ನು ಹಾಗೆಯೇ ಹೊರಗೆ ಇಟ್ಟಾಗ ತನ್ನಷ್ಟಕ್ಕೆ ತಾನೇ ಹುಳಿಯಾಗಿ ಒಡೆದು ಹೋಗುವುದು (ಪರಿಸರದಿಂದ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಬದಲಾವಣೆ).
+              </div>
+            </div>
+
+            <!-- 3. Technical Explanation -->
+            <div class="pedagogy-card card-technical">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">3. Technical Explanation (JS Engine ಒಳಗೆ ಏನಾಗುತ್ತದೆ?)</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                JavaScript ಒಂದು <em>Dynamically Typed</em> ಭಾಷೆ. ವೇರಿಯೇಬಲ್‌ಗಳಿಗೆ ಸ್ಥಿರ ಟೈಪ್ ಇರುವುದಿಲ್ಲ, ಬದಲಿಗೆ ಮೌಲ್ಯಗಳಿಗೆ ಇರುತ್ತದೆ. JavaScript Engine (V8, SpiderMonkey) ಆಂತರಿಕವಾಗಿ ECMAScript ನ <code>ToNumber()</code>, <code>ToString()</code>, ಮತ್ತು <code>ToBoolean()</code> ಎಂಬ <strong>Abstract Operations</strong> ಗಳನ್ನು ಚಲಾಯಿಸುತ್ತದೆ.
+              </div>
+            </div>
+
+            <!-- 4. Common Mistakes -->
+            <div class="pedagogy-card card-mistakes">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">4. Common Mistakes (ಆರಂಭಿಕರು ಮಾಡುವ ತಪ್ಪುಗಳು)</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                HTML Form <code>&lt;input&gt;</code> ನಿಂದ ಬಳಕೆದಾರರು ನಮೂದಿಸಿದ ಸಂಖ್ಯೆಗಳನ್ನು (ಉದಾ: ವಯಸ್ಸು, ಮೊಬೈಲ್ ನಂಬರ್) ಓದುವಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅವುಗಳನ್ನು ಯಾವಾಗಲೂ <strong>String</strong> ರೂಪದಲ್ಲಿಯೇ ನೀಡುತ್ತದೆ! ಅದನ್ನು ಸಂಖ್ಯಾತ್ಮಕವಾಗಿ ಪರಿವರ್ತಿಸದೆ ಕೂಡಿಸಿದರೆ <code>"25" + 5 = "255"</code> ಆಗಿ ದೊಡ್ಡ ಬಗ್ ಉಂಟಾಗುತ್ತದೆ!
+              </div>
+            </div>
+
+            <!-- 5. Professional Insight -->
+            <div class="pedagogy-card card-interview">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">5. Professional Insight & Interview Perspective</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                <strong>ಸಂದರ್ಶನದ ಪ್ರಶ್ನೆ:</strong> Type Coercion ಮತ್ತು Type Conversion ನಡುವಿನ ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸವೇನು?<br>
+                <strong>ಉತ್ತರ:</strong> Type Conversion ಎಂಬುದು ಸಮಗ್ರ ಪರಿಕಲ್ಪನೆ (ಉದ್ದೇಶಪೂರ್ವಕ Explicit ಮತ್ತು ಆಟೋಮ್ಯಾಟಿಕ್ Implicit ಎರಡನ್ನೂ ಒಳಗೊಂಡಿದೆ). Type Coercion ಎಂಬುದು ಕೇವಲ JavaScript Engine ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಮಾಡುವ Implicit Conversion ಅನ್ನು ಮಾತ್ರ ಸೂಚಿಸುತ್ತದೆ. ಉತ್ಪಾದನಾ ಹಂತದ (Production) ಕೋಡ್‌ನಲ್ಲಿ Implicit Coercion ಅನ್ನು ತಪ್ಪಿಸಿ Explicit Conversion ಮತ್ತು <code>===</code> ಬಳಸುವುದು ಬೆಸ್ಟ್ ಪ್ರಾಕ್ಟೀಸ್ ಆಗಿದೆ.
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 1 -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">intro-conversion.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. Explicit Conversion (ಪ್ರೋಗ್ರಾಮರ್ ಸ್ಪಷ್ಟವಾಗಿ ಬದಲಾಯಿಸುವುದು)
+let inputString = "100";
+let explicitNumber = Number(inputString);
+console.log("Explicit:", explicitNumber, "Type:", typeof explicitNumber);
+
+// 2. Implicit Conversion / Coercion (JS ತಾನಾಗಿಯೇ ಬದಲಾಯಿಸುವುದು)
+let implicitResult = "100" - 20; 
+console.log("Implicit:", implicitResult, "Type:", typeof implicitResult);</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 2A: CONVERTING TO NUMBER
+             =================================================================== -->
+        <section class="topic-section" id="sec-to-number">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 2A · Explicit Conversion</span>
+            <button class="section-complete-btn" data-target="sec-to-number">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">A. Converting to Number (ಸಂಖ್ಯೆಗೆ ಪರಿವರ್ತನೆ)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            <code>Number()</code>, Unary <code>+</code>, <code>parseInt()</code>, ಮತ್ತು <code>parseFloat()</code> ವಿಧಾನಗಳ ಸಮಗ್ರ ವಿವರಣೆ.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p><strong>1. Number() Function:</strong></p>
+              <ul>
+                <li>String ನಿಂದ Number: <code>Number("123")</code> ➔ ಫಲಿತಾಂಶ: <code>123</code></li>
+                <li>Empty String ನಿಂದ Number: <code>Number("")</code> ➔ ಫಲಿತಾಂಶ: <code>0</code></li>
+                <li>Invalid String ನಿಂದ Number: <code>Number("Hello")</code> ➔ ಫಲಿತಾಂಶ: <code>NaN</code> (Not a Number)</li>
+                <li>Boolean ನಿಂದ Number:
+                  <ul>
+                    <li><code>Number(true)</code> ➔ ಫಲಿತಾಂಶ: <code>1</code></li>
+                    <li><code>Number(false)</code> ➔ ಫಲಿತಾಂಶ: <code>0</code></li>
+                  </ul>
+                </li>
+              </ul>
+              <p><strong>2. Unary + Operator:</strong></p>
+              <p>ಮೌಲ್ಯದ ಮುಂದೆ ಕೇವಲ <code>+</code> ಚಿಹ್ನೆ ಹಾಕಿದರೆ ಅದು Number ಆಗಿ ಬದಲಾಗುತ್ತದೆ.</p>
+              <p>ಉದಾಹರಣೆ: <code>let x = +"50";</code> (ಇಲ್ಲಿ x ನ ಮೌಲ್ಯ 50 ಮತ್ತು type number ಆಗಿರುತ್ತದೆ).</p>
+              <p><strong>3. parseInt() ಮತ್ತು parseFloat():</strong></p>
+              <ul>
+                <li><code>parseInt("100px")</code> ➔ ಫಲಿತಾಂಶ: <code>100</code> (ಕೇವಲ ಪೂರ್ಣಾಂಕವನ್ನು ಮಾತ್ರ ಹೊರತೆಗೆಯುತ್ತದೆ).</li>
+                <li><code>parseFloat("10.55em")</code> ➔ ಫಲಿತಾಂಶ: <code>10.55</code> (ದಶಮಾಂಶ ಸಹಿತ ಸಂಖ್ಯೆಯನ್ನು ಹೊರತೆಗೆಯುತ್ತದೆ).</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Technical Clarification Note -->
+          <div style="background: var(--accent-amber-light); border-left: 4px solid var(--accent-amber); padding: 1rem 1.25rem; border-radius: var(--radius-sm); margin: 1.25rem 0;">
+            <div style="font-weight: 700; color: var(--accent-amber); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              Technical Clarification (ತಾಂತ್ರಿಕ ಸ್ಪಷ್ಟೀಕರಣ):
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-main); line-height: 1.5;">
+              <code>Number(" ")</code> (ಕೇವಲ ಸ್ಪೇಸ್ ಇರುವ ಸ್ಟ್ರಿಂಗ್) ಕೂಡ <code>0</code> ಆಗುತ್ತದೆ. ಆದರೆ <code>parseInt("px100")</code> ಅಥವಾ <code>Number("100px")</code> ಮಾಡಿದಾಗ <code>NaN</code> ಬರುತ್ತದೆ. ಏಕೆಂದರೆ <code>Number()</code> ಇಡೀ ಸ್ಟ್ರಿಂಗ್ ಕಟ್ಟುನಿಟ್ಟಾಗಿ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕೆಂದು ಬಯಸುತ್ತದೆ, ಆದರೆ <code>parseInt()</code> ಮೊದಲಿಂದ ಓದಿ ಅಕ್ಷರ ಸಿಕ್ಕ ತಕ್ಷಣ ನಿಲ್ಲಿಸುತ್ತದೆ.
+            </div>
+          </div>
+
+          <!-- Visual Animation Stage: Number Conversion -->
+          <div class="animation-stage" id="numAnimStage">
+            <div class="animation-header">
+              <div class="animation-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Visual Step: "123" ➔ 123 Conversion Animation
+              </div>
+              <div class="animation-controls">
+                <button class="anim-btn" id="numAnimPlay">Play Step ▶</button>
+                <button class="anim-btn" id="numAnimReset">Reset ↺</button>
+              </div>
+            </div>
+
+            <div class="anim-canvas">
+              <div class="anim-flow">
+                <!-- Source Box -->
+                <div class="anim-box">
+                  <div class="anim-box-title">Source Value</div>
+                  <div class="anim-box-val">"123"</div>
+                  <div class="anim-box-type">string</div>
+                </div>
+
+                <!-- Arrow with Function -->
+                <div class="anim-arrow-container">
+                  <span class="anim-op-label">Number()</span>
+                  <svg class="anim-arrow-svg" viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="2" y1="12" x2="36" y2="12"></line>
+                    <polyline points="30 6 38 12 30 18"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Destination Box -->
+                <div class="anim-box anim-target-box">
+                  <div class="anim-box-title">Converted Value</div>
+                  <div class="anim-box-val anim-target-val">?</div>
+                  <div class="anim-box-type anim-target-type">waiting...</div>
+                </div>
+              </div>
+            </div>
+            <div class="anim-explanation-text">
+              "Play Step" ಒತ್ತಿ ನೋಡಿ: JavaScript Engine ಆಂತರಿಕವಾಗಿ ಸ್ಟ್ರಿಂಗ್ ಬಾಕ್ಸ್ನಿಂದ ಅಕ್ಷರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, <code>ToNumber</code> ಆಲ್ಗೋರಿದಂ ಮೂಲಕ ಗಣಿತದ ಮೆಮೊರಿ ರಿಜಿಸ್ಟರ್‌ನಲ್ಲಿ <code>123</code> (IEEE 754 float) ಎಂದು ಸಂಗ್ರಹಿಸುತ್ತದೆ.
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 2A -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">convert-to-number.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">Step-by-Step Info</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. Number() ಮೂಲ ಉದಾಹರಣೆಗಳು
+console.log('Number("123"):', Number("123")); // 123
+console.log('Number(""):', Number(""));       // 0
+console.log('Number("Hello"):', Number("Hello")); // NaN
+
+// 2. Boolean to Number
+console.log('Number(true):', Number(true));   // 1
+console.log('Number(false):', Number(false)); // 0
+
+// 3. Unary + Operator
+let val = +"50";
+console.log('Unary + "50":', val, typeof val);
+
+// 4. parseInt & parseFloat
+console.log('parseInt("100px"):', parseInt("100px", 10)); // 100
+console.log('parseFloat("10.55em"):', parseFloat("10.55em")); // 10.55
+console.log('Number("100px"):', Number("100px")); // NaN (strict!)</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>ಹಂತ-ಹಂತದ ತಾರ್ಕಿಕ ವಿವರಣೆ:</strong><br>
+              • <code>Number("123")</code>: String ಒಳಗಿರುವ ಎಲ್ಲಾ ಅಕ್ಷರಗಳು ಮಾನ್ಯ ಸಂಖ್ಯೆಗಳಾಗಿವೆ ➔ 123.<br>
+              • <code>Number("")</code>: ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ECMAScript ಮಾನದಂಡವು 0 ಗೆ ಮ್ಯಾಪ್ ಮಾಡುತ್ತದೆ.<br>
+              • <code>parseInt("100px")</code>: ಮೊದಲಿಂದ ಓದುತ್ತಾ ಹೋಗಿ 'p' ಅಕ್ಷರ ಕಂಡ ತಕ್ಷಣ ನಿಲ್ಲಿಸಿ ಕೇವಲ '100' ಅನ್ನು ನೀಡುತ್ತದೆ.<br>
+              • <code>Number("100px")</code>: 'px' ಇರುವುದರಿಂದ ಇಡೀ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ಸಂಖ್ಯೆಯಾಗಿ ಸ್ವೀಕರಿಸದೆ NaN ನೀಡುತ್ತದೆ.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 2B: CONVERTING TO STRING
+             =================================================================== -->
+        <section class="topic-section" id="sec-to-string">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 2B · Explicit Conversion</span>
+            <button class="section-complete-btn" data-target="sec-to-string">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">B. Converting to String (ಸ್ಟ್ರಿಂಗ್‌ಗೆ ಪರಿವರ್ತನೆ)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            <code>String()</code> ಮತ್ತು <code>.toString()</code> ವಿಧಾನಗಳು, ಹಾಗೂ <code>null</code>/<code>undefined</code> ಮೇಲಿನ ಅನಿರೀಕ್ಷಿತ ದೋಷಗಳು.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p>ಯಾವುದೇ data type ಅನ್ನು String ಆಗಿ ಬದಲಾಯಿಸಲು ಎರಡು ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ:</p>
+              <p><strong>1. String() Function:</strong></p>
+              <ul>
+                <li><code>String(123)</code> ➔ ಫಲಿತಾಂಶ: <code>"123"</code></li>
+                <li><code>String(true)</code> ➔ ಫಲಿತಾಂಶ: <code>"true"</code></li>
+                <li><code>String(null)</code> ➔ ಫಲಿತಾಂಶ: <code>"null"</code></li>
+                <li><code>String(undefined)</code> ➔ ಫಲಿತಾಂಶ: <code>"undefined"</code></li>
+              </ul>
+              <p><strong>2. .toString() Method:</strong></p>
+              <ul>
+                <li><code>(123).toString()</code> ➔ ಫಲಿತಾಂಶ: <code>"123"</code></li>
+                <li><code>(false).toString()</code> ➔ ಫಲಿತಾಂಶ: <code>"false"</code></li>
+              </ul>
+              <p><strong>ಮುಖ್ಯವಾದ ವ್ಯತ್ಯಾಸ (Important Warning):</strong></p>
+              <p><code>null.toString()</code> ಅಥವಾ <code>undefined.toString()</code> ಬಳಸಿದರೆ JavaScript ನಲ್ಲಿ <strong>TypeError</strong> ಬರುತ್ತದೆ (ದೋಷ ಉಂಟಾಗುತ್ತದೆ). ಆದರೆ <code>String(null)</code> ಮತ್ತು <code>String(undefined)</code> ಯಾವುದೇ error ಇಲ್ಲದೆ ಸುರಕ್ಷಿತವಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+            </div>
+          </div>
+
+          <!-- Deep Dive Pedagogical Card -->
+          <div class="pedagogy-grid">
+            <div class="pedagogy-card card-technical">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">ಏಕೆ null.toString() ದೋಷ (TypeError) ನೀಡುತ್ತದೆ?</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                JavaScript ನಲ್ಲಿ <code>.toString()</code> ಎಂಬುದು Object Prototype ಮೆಥಡ್ ಆಗಿದೆ. ಸಂಖ್ಯೆಗಳು (123) ಮತ್ತು ಬೂಲಿಯನ್‌ಗಳ (true) ಮೇಲೆ ಡಾಟ್ (.) ಇಟ್ಟಾಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆಂತರಿಕವಾಗಿ <code>Number()</code> ಅಥವಾ <code>Boolean()</code> ಎಂಬ Wrapper Objects ಸೃಷ್ಟಿಸಿ ಆ ಮೆಥಡ್ ಕರೆಯುತ್ತದೆ. ಆದರೆ <strong>null</strong> ಮತ್ತು <strong>undefined</strong> ಗಳಿಗೆ ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಅಥವಾ ಪ್ರೋಟೋಟೈಪ್ ಇರುವುದಿಲ್ಲ! ಆದ್ದರಿಂದ ಅವುಗಳ ಮೇಲೆ ಡಾಟ್ ಇಟ್ಟರೆ <code>TypeError: Cannot read properties of null (reading 'toString')</code> ಬರುತ್ತದೆ!
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 2B -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">convert-to-string.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">Step-by-Step Info</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. String() function (ಯಾವಾಗಲೂ ಸುರಕ್ಷಿತ)
+console.log('String(123):', String(123));           // "123"
+console.log('String(true):', String(true));         // "true"
+console.log('String(null):', String(null));         // "null"
+console.log('String(undefined):', String(undefined)); // "undefined"
+
+// 2. .toString() method
+console.log('(123).toString():', (123).toString());
+console.log('(false).toString():', (false).toString());
+
+// 3. Dangerous: null.toString()
+try {
+  let val = null;
+  val.toString();
+} catch (err) {
+  console.log("Error caught:", err.name, "-", err.message);
+}</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>ಪ್ರೊಫೆಷನಲ್ ಸಲಹೆ:</strong> ನಿಮ್ಮ ವೇರಿಯೇಬಲ್‌ನಲ್ಲಿ <code>null</code> ಅಥವಾ <code>undefined</code> ಬರುವ ಸಾಧ್ಯತೆಯಿದ್ದರೆ (ಉದಾಹರಣೆಗೆ API Response ಅಥವಾ User Input), ಎಂದಿಗೂ <code>.toString()</code> ಬಳಸಬೇಡಿ. ಬದಲಿಗೆ ಗ್ಲೋಬಲ್ <code>String(val)</code> ಬಳಸಿ!
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 2C: CONVERTING TO BOOLEAN
+             =================================================================== -->
+        <section class="topic-section" id="sec-to-boolean">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 2C · Explicit Conversion</span>
+            <button class="section-complete-btn" data-target="sec-to-boolean">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">C. Converting to Boolean (ಬೂಲಿಯನ್‌ಗೆ ಪರಿವರ್ತನೆ)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            <code>Boolean()</code> ಫಂಕ್ಷನ್, ಆರು Falsy ಮೌಲ್ಯಗಳು ಮತ್ತು Truthy ಮೌಲ್ಯಗಳ ನಿಯಮಗಳು.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p><code>Boolean()</code> function ಬಳಸಿ ಮೌಲ್ಯಗಳನ್ನು <code>true</code> ಅಥವಾ <code>false</code> ಆಗಿ ಬದಲಾಯಿಸಬಹುದು.</p>
+              <p>JavaScript ನಲ್ಲಿ ಕೇವಲ <strong>6 ಮೌಲ್ಯಗಳು ಮಾತ್ರ Falsy (false)</strong> ಆಗುತ್ತವೆ:</p>
+              <ol>
+                <li><code>0</code> (ಸೊನ್ನೆ)</li>
+                <li><code>""</code> (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್)</li>
+                <li><code>null</code></li>
+                <li><code>undefined</code></li>
+                <li><code>NaN</code></li>
+                <li><code>false</code></li>
+              </ol>
+              <p>ಉಳಿದ ಯಾವುದೇ ಮೌಲ್ಯವನ್ನು ಕೊಟ್ಟರೂ ಅದು <strong>Truthy (true)</strong> ಆಗಿರುತ್ತದೆ!</p>
+              <p><strong>ಉದಾಹರಣೆಗೆ:</strong></p>
+              <ul>
+                <li><code>Boolean("Hello")</code> ➔ <code>true</code> (ಅಕ್ಷರಗಳು ಇರುವ ಸ್ಟ್ರಿಂಗ್)</li>
+                <li><code>Boolean(" ")</code> ➔ <code>true</code> (ಸ್ಪೇಸ್ ಕೂಡ ಒಂದು ಕ್ಯಾರೆಕ್ಟರ್ ಆಗಿರುವುದರಿಂದ true ಆಗುತ್ತದೆ!)</li>
+                <li><code>Boolean([])</code> ➔ <code>true</code> (ಖಾಲಿ ಅರೇ ಕೂಡ true!)</li>
+                <li><code>Boolean({})</code> ➔ <code>true</code> (ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ ಕೂಡ true!)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Truthy vs Falsy Matrix Interactive Demo -->
+          <div class="pedagogy-grid">
+            <div class="pedagogy-card card-analogy">
+              <div class="pedagogy-card-header">
+                <div class="pedagogy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+                </div>
+                <div>
+                  <span class="pedagogy-card-title">ಖಾಲಿ ಅರೇ [] ಮತ್ತು ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ {} ಏಕೆ True ಆಗುತ್ತವೆ?</span>
+                </div>
+              </div>
+              <div class="pedagogy-card-content">
+                ಪೈಥಾನ್ (Python) ಮುಂತಾದ ಭಾಷೆಗಳಲ್ಲಿ ಖಾಲಿ ಲಿಸ್ಟ್ ಅಥವಾ ಡಿಕ್ಷನರಿ <code>false</code> ಆಗುತ್ತದೆ. ಆದರೆ JavaScript ನಲ್ಲಿ <strong>ಪ್ರತಿಯೊಂದು Object ಮತ್ತು Array (ಖಾಲಿಯಾಗಿದ್ದರೂ ಸಹ) ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು Ref Address ಹೊಂದಿರುತ್ತದೆ!</strong> ECMAScript ನಿಯಮಾವಳಿ ಪ್ರಕಾರ ಪ್ರತಿಯೊಂದು Object Reference ಕೂಡ <code>Truthy</code> ಆಗಿರುತ್ತದೆ. ಆದ್ದರಿಂದ <code>Boolean([]) === true</code> ಮತ್ತು <code>Boolean({}) === true</code>!
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 2C -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">convert-to-boolean.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">Step-by-Step Info</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. ಆರು Falsy ಮೌಲ್ಯಗಳು (ಯಾವಾಗಲೂ false)
+console.log('Boolean(0):', Boolean(0));                 // false
+console.log('Boolean(""):', Boolean(""));               // false
+console.log('Boolean(null):', Boolean(null));           // false
+console.log('Boolean(undefined):', Boolean(undefined)); // false
+console.log('Boolean(NaN):', Boolean(NaN));             // false
+console.log('Boolean(false):', Boolean(false));         // false
+
+// 2. Truthy ಮೌಲ್ಯಗಳು (ಎಲ್ಲವೂ true)
+console.log('Boolean("Hello"):', Boolean("Hello"));     // true
+console.log('Boolean(" "):', Boolean(" "));             // true (ಸ್ಪೇಸ್ ಇದೆ!)
+console.log('Boolean([]):', Boolean([]));               // true (Empty Array)
+console.log('Boolean({}):', Boolean({}));               // true (Empty Object)
+console.log('Boolean(-10):', Boolean(-10));             // true</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>Double NOT (!!) ಟ್ರಿಕ್:</strong> ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳು ಕೋಡ್‌ನಲ್ಲಿ <code>Boolean(val)</code> ಬದಲಿಗೆ ಶಾರ್ಟ್‌ಹ್ಯಾಂಡ್ ಆಗಿ <code>!!val</code> ಬಳಸುತ್ತಾರೆ. <code>!!"Hello"</code> ಮೊದಲ '!' ಇಂದ <code>false</code> ಆಗಿ, ಎರಡನೇ '!' ಇಂದ <code>true</code> ಆಗುತ್ತದೆ!
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 3A: IMPLICIT STRING COERCION (+)
+             =================================================================== -->
+        <section class="topic-section" id="sec-string-coercion">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 3A · Implicit Conversion (Type Coercion)</span>
+            <button class="section-complete-btn" data-target="sec-string-coercion">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">3A. String Coercion with '+' Operator</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            ಪ್ಲಸ್ (+) ಆಪರೇಟರ್ನ ದ್ವಿಮುಖ ಸ್ವಭಾವ: ಸಂಕಲನ (Addition) vs ಜೋಡಣೆ (Concatenation).
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p><code>+</code> operator ಅನ್ನು ಬಳಸಿದಾಗ, ಯಾವುದೇ ಒಂದು operand (value) String ಆಗಿದ್ದರೆ, JavaScript ಉಳಿದ ಎಲ್ಲಾ ಮೌಲ್ಯಗಳನ್ನು String ಆಗಿ ಪರಿವರ್ತಿಸಿ ಜೋಡಿಸುತ್ತದೆ (Concatenation).</p>
+              <ul>
+                <li><code>"5" + 2</code> ➔ ಫಲಿತಾಂಶ: <code>"52"</code></li>
+                <li><code>"Hello " + 5</code> ➔ ಫಲಿತಾಂಶ: <code>"Hello 5"</code></li>
+                <li><code>"5" + true</code> ➔ ಫಲಿತಾಂಶ: <code>"5true"</code></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Interactive Animation Operator Toggle -->
+          <div class="animation-stage">
+            <div class="animation-header">
+              <div class="animation-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                Operator Behavior: "+" vs "-" Interactive Visualizer
+              </div>
+              <div class="animation-controls">
+                <button class="anim-btn active" id="opAnimPlus">Test "5" + 2</button>
+                <button class="anim-btn" id="opAnimMinus">Test "5" - 2</button>
+              </div>
+            </div>
+
+            <div class="anim-canvas">
+              <div class="anim-flow">
+                <div class="anim-box">
+                  <div class="anim-box-title">Operand 1</div>
+                  <div class="anim-box-val">"5"</div>
+                  <div class="anim-box-type">string</div>
+                </div>
+                <div class="anim-arrow-container">
+                  <span class="anim-op-label" id="opSymbolLabel">Operator</span>
+                  <svg class="anim-arrow-svg" viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="2" y1="12" x2="36" y2="12"></line>
+                    <polyline points="30 6 38 12 30 18"></polyline>
+                  </svg>
+                </div>
+                <div class="anim-box">
+                  <div class="anim-box-title">Operand 2</div>
+                  <div class="anim-box-val">2</div>
+                  <div class="anim-box-type">number</div>
+                </div>
+                <div class="anim-arrow-container">
+                  <span class="anim-op-label">=</span>
+                  <svg class="anim-arrow-svg" viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="2" y1="12" x2="36" y2="12"></line>
+                    <polyline points="30 6 38 12 30 18"></polyline>
+                  </svg>
+                </div>
+                <div class="anim-box" style="border-color: var(--primary);">
+                  <div class="anim-box-title">Final Result</div>
+                  <div class="anim-box-val" id="opAnimResultVal">"52"</div>
+                  <div class="anim-box-type" id="opAnimResultType">string</div>
+                </div>
+              </div>
+            </div>
+            <div class="anim-explanation-text" id="opAnimDesc">
+              "+" ಆಪರೇಟರ್ನಲ್ಲಿ ಒಂದು ಬದಿಯಲ್ಲಿ String ("5") ಇದ್ದರೆ, JavaScript ಎರಡನೇ ಮೌಲ್ಯವಾದ 2 ಅನ್ನು String ("2") ಆಗಿ ಪರಿವರ್ತಿಸಿ Concatenation (ಜೋಡಣೆ) ಮಾಡುತ್ತದೆ. ಫಲಿತಾಂಶ: "52".
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 3A -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">implicit-string-coercion.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">Order of Evaluation</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// ಮೂಲ ನೋಟ್ಸ್ ಉದಾಹರಣೆಗಳು:
+console.log('"5" + 2 =', "5" + 2);           // "52"
+console.log('"Hello " + 5 =', "Hello " + 5);   // "Hello 5"
+console.log('"5" + true =', "5" + true);       // "5true"
+
+// Order of Evaluation (ಎಡದಿಂದ ಬಲಕ್ಕೆ):
+console.log('1 + 2 + "3" =', 1 + 2 + "3");     // "33" (1+2=3, ನಂತರ 3+"3"="33")
+console.log('"1" + 2 + 3 =', "1" + 2 + 3);     // "123" ("1"+2="12", ನಂತರ "12"+3="123")</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>Order of Operations ಎಚ್ಚರಿಕೆ:</strong> <code>1 + 2 + "3"</code> ನಲ್ಲಿ ಮೊದಲು ಮೊದಲ ಎರಡು ಸಂಖ್ಯೆಗಳಾದ <code>1 + 2</code> ಕೂಡಿ <code>3</code> ಆಗುತ್ತದೆ. ನಂತರ <code>3 + "3"</code> ಜೋಡಣೆಯಾಗಿ <code>"33"</code> ಬರುತ್ತದೆ! ಆದರೆ <code>"1" + 2 + 3</code> ನಲ್ಲಿ ಮೊದಲೇ ಸ್ಟ್ರಿಂಗ್ ಸಿಕ್ಕಿಬಿಟ್ಟಿದ್ದರಿಂದ ಎಲ್ಲವೂ ಸ್ಟ್ರಿಂಗ್ ಆಗಿ <code>"123"</code> ಆಗುತ್ತದೆ!
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 3B: IMPLICIT NUMBER COERCION (-, *, /, %)
+             =================================================================== -->
+        <section class="topic-section" id="sec-number-coercion">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 3B · Implicit Conversion</span>
+            <button class="section-complete-btn" data-target="sec-number-coercion">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">3B. Number Coercion with -, *, /, % Operators</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            ಗಣಿತದ ಆಪರೇಟರ್‌ಗಳು ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಂಖ್ಯೆಯನ್ನಾಗಿ ಪರಿವರ್ತಿಸುವ ನಿಯಮಗಳು.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p>ಗಣಿತದ ಇತರ operators ಆದ <code>-</code> (ವ್ಯವಕಲನ), <code>*</code> (ಗುಣಾಕಾರ), <code>/</code> (ಭಾಗಾಕಾರ), <code>%</code> (ಶೇಷ) ಬಳಸಿದಾಗ, String ಗಳನ್ನು JavaScript ಸ್ವಯಂಚಾಲಿತವಾಗಿ <strong>Number</strong> ಆಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+              <ul>
+                <li><code>"10" - 2</code> ➔ ಫಲಿತಾಂಶ: <code>8</code></li>
+                <li><code>"10" * "2"</code> ➔ ಫಲಿತಾಂಶ: <code>20</code></li>
+                <li><code>"10" / 2</code> ➔ ಫಲಿತಾಂಶ: <code>5</code></li>
+                <li><code>"Hello" - 2</code> ➔ ಫಲಿತಾಂಶ: <code>NaN</code> (ಏಕೆಂದರೆ "Hello" ಅನ್ನು ಸಂಖ್ಯೆಯಾಗಿ ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ).</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 3B -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">implicit-number-coercion.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">Step-by-Step Info</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// ಗಣಿತದ ಆಪರೇಟರ್‌ಗಳು ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು Number ಗೆ ತಳ್ಳುತ್ತವೆ:
+console.log('"10" - 2 =', "10" - 2);         // 8
+console.log('"10" * "2" =', "10" * "2");     // 20
+console.log('"10" / 2 =', "10" / 2);         // 5
+console.log('"10" % 3 =', "10" % 3);         // 1
+
+// ಸಾಧ್ಯವಾಗದ ಸಂಖ್ಯಾ ರೂಪ:
+console.log('"Hello" - 2 =', "Hello" - 2);   // NaN
+console.log('"10" - null =', "10" - null);   // 10 (null -> 0)
+console.log('"10" - undefined =', "10" - undefined); // NaN (undefined -> NaN)</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>ಯಾಕೆ "Hello" - 2 ಫಲಿತಾಂಶ NaN?</strong><br>
+              <code>-</code> ಆಪರೇಟರ್ ಎರಡೂ ಬದಿಯ ಮೌಲ್ಯಗಳ ಮೇಲೆ <code>ToNumber()</code> ರನ್ ಮಾಡುತ್ತದೆ. <code>Number("Hello")</code> ಮೌಲ್ಯ <code>NaN</code> (Not a Number) ಆಗುತ್ತದೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <code>NaN</code> ಜೊತೆಗೆ ಯಾವುದೇ ಗಣಿತದ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿದರೂ ಫಲಿತಾಂಶ <code>NaN</code> ಆಗಿರುತ್ತದೆ!
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 4A: == VS === EQUALITY COMPARISON
+             =================================================================== -->
+        <section class="topic-section" id="sec-equality">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 4A · Advanced & Professional</span>
+            <button class="section-complete-btn" data-target="sec-equality">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">4A. == (Loose Equality) vs === (Strict Equality)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            ಟೈಪ್ ಕೋಯರ್ಷನ್ ಹೋಲಿಕೆ ನಿಯಮಗಳು ಮತ್ತು ಪ್ರೊಫೆಷನಲ್ ಬೆಸ್ಟ್ ಪ್ರಾಕ್ಟೀಸ್‌ಗಳು.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p><strong>1. == (Loose Equality):</strong></p>
+              <p>ಇದು ಕೇವಲ ಮೌಲ್ಯವನ್ನು (value) ಮಾತ್ರ ಪರಿಶೀಲಿಸುತ್ತದೆ. Data types ಬೇರೆ ಬೇರೆಯಾಗಿದ್ದರೆ, ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ Type Coercion ಮಾಡಿ ಹೋಲಿಸುತ್ತದೆ.</p>
+              <ul>
+                <li><code>"5" == 5</code> ➔ ಫಲಿತಾಂಶ: <code>true</code> (ಏಕೆಂದರೆ String "5" ಅನ್ನು Number 5 ಆಗಿ ಬದಲಾಯಿಸಿ ಹೋಲಿಸುತ್ತದೆ).</li>
+                <li><code>0 == false</code> ➔ ಫಲಿತಾಂಶ: <code>true</code> (false ಅನ್ನು 0 ಆಗಿ ಬದಲಾಯಿಸುತ್ತದೆ).</li>
+                <li><code>null == undefined</code> ➔ ಫಲಿತಾಂಶ: <code>true</code></li>
+              </ul>
+              <p><strong>2. === (Strict Equality):</strong></p>
+              <p>ಇದು ಮೌಲ್ಯ (value) ಮತ್ತು Data Type ಎರಡನ್ನೂ ಕಟ್ಟುನಿಟ್ಟಾಗಿ ಪರಿಶೀಲಿಸುತ್ತದೆ. ಯಾವುದೇ Type Coercion ಮಾಡುವುದಿಲ್ಲ.</p>
+              <ul>
+                <li><code>"5" === 5</code> ➔ ಫಲಿತಾಂಶ: <code>false</code> (value ಒಂದೇ ಆದರೂ, ಒಂದು String ಮತ್ತು ಇನ್ನೊಂದು Number).</li>
+                <li><code>0 === false</code> ➔ ಫಲಿತಾಂಶ: <code>false</code></li>
+                <li><code>null === undefined</code> ➔ ಫಲಿತಾಂಶ: <code>false</code></li>
+              </ul>
+              <p><strong>Professional Tip:</strong> ಯಾವಾಗಲೂ ನೈಜ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ ಬಗ್‌ಗಳನ್ನು ತಪ್ಪಿಸಲು ಕಡ್ಡಾಯವಾಗಿ <code>===</code> (Strict Equality) ಬಳಸಬೇಕು!</p>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 4A -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">equality-comparison.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">ECMAScript Rules</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. Loose Equality (==) -> Type Coercion ಅನ್ವಯವಾಗುತ್ತದೆ
+console.log('"5" == 5:', "5" == 5);                 // true
+console.log('0 == false:', 0 == false);             // true
+console.log('"" == false:', "" == false);           // true
+console.log('null == undefined:', null == undefined); // true (ECMA Special Rule)
+console.log('null == 0:', null == 0);               // false (null ಕೇವಲ undefined ಗೆ ಮಾತ್ರ ==)
+
+// 2. Strict Equality (===) -> ಯಾವುದೇ Coercion ಇಲ್ಲ
+console.log('"5" === 5:', "5" === 5);               // false
+console.log('0 === false:', 0 === false);           // false
+console.log('null === undefined:', null === undefined); // false</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>ಸಂದರ್ಶನದ ಗೋಲ್ಡನ್ ಪ್ರಶ್ನೆ:</strong> <code>null == 0</code> ಏಕೆ false ಬರುತ್ತದೆ?<br>
+              ಯಾಕೆಂದರೆ ECMAScript Abstract Equality algorithm ನಲ್ಲಿ <code>null</code> ಕೇವಲ <code>undefined</code> ಗೆ ಮಾತ್ರ ಸರಿಸಮಾನ (equal) ಎಂದು ಸ್ಪಷ್ಟವಾಗಿ ನಿಯಮವಿದೆ. ಗಣಿತದ ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ <code>null</code> ಸೊನ್ನೆ (0) ಆದರೂ, <code>==</code> ಹೋಲಿಕೆಯಲ್ಲಿ ಸೊನ್ನೆಯಾಗಿ ಬದಲಾಗುವುದಿಲ್ಲ!
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 4B: OBJECT TO PRIMITIVE CONVERSION
+             =================================================================== -->
+        <section class="topic-section" id="sec-object-primitive">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 4B · Advanced Concepts</span>
+            <button class="section-complete-btn" data-target="sec-object-primitive">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">4B. Object to Primitive Conversion</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            <code>valueOf()</code>, <code>toString()</code>, ಅರೇ ಮತ್ತು ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ಪ್ರಿಮಿಟಿವ್ ಪರಿವರ್ತನೆ ಪ್ರಕ್ರಿಯೆ.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p>JavaScript ನಲ್ಲಿ Array ಅಥವಾ Object ಗಳನ್ನು Primitive type ಗೆ ಬದಲಾಯಿಸುವಾಗ ಆಂತರಿಕವಾಗಿ <code>valueOf()</code> ಮತ್ತು <code>toString()</code> ಮೆಥಡ್‌ಗಳು ಕೆಲಸ ಮಾಡುತ್ತವೆ.</p>
+              <ul>
+                <li><strong>Array to String:</strong>
+                  <ul>
+                    <li><code>[1, 2] + ""</code> ➔ ಫಲಿತಾಂಶ: <code>"1,2"</code> (Array ನ <code>toString()</code> ಮೆಥಡ್ ಕಾಲ್ ಆಗಿ ಕಾಮಾದಿಂದ ಬೇರ್ಪಟ್ಟ ಸ್ಟ್ರಿಂಗ್ ಆಗುತ್ತದೆ).</li>
+                  </ul>
+                </li>
+                <li><strong>Object to String:</strong>
+                  <ul>
+                    <li><code>{} + ""</code> ಉದಾಹರಣೆಯ Context ಕುರಿತು ಎಚ್ಚರಿಕೆ: ಬ್ರೌಸರ್ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ <code>{}</code> ಅನ್ನು ಆರಂಭದಲ್ಲಿ ಬರೆದರೆ ಅದು ಖಾಲಿ block ಎಂದು ಭಾವಿಸಬಹುದು, ಆದರೆ expression ರೂಪದಲ್ಲಿ <code>({} + "")</code> ಬರೆದರೆ ಅದು <code>"[object Object]"</code> ಫಲಿತಾಂಶ ನೀಡುತ್ತದೆ.</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 4B -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">object-to-primitive.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-step">ToPrimitive Algorithm</button>
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// 1. Array Primitive Conversion
+console.log('[].toString():', [].toString());           // "" (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್)
+console.log('[1, 2].toString():', [1, 2].toString());   // "1,2"
+console.log('[1, 2] + "":', [1, 2] + "");               // "1,2"
+
+// 2. Object Primitive Conversion
+console.log('({}).toString():', ({}).toString());       // "[object Object]"
+console.log('({} + ""):', ({} + ""));                   // "[object Object]"
+
+// 3. Custom valueOf & toString
+const user = {
+  name: "Arun",
+  points: 50,
+  valueOf() { return this.points; },
+  toString() { return this.name; }
+};
+console.log('user + 10:', user + 10); // 60 (valueOf() ಚಾಲನೆಗೊಂಡಿತು!)</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+            <div class="step-explanation-box">
+              <strong>ECMAScript ToPrimitive ಅಲ್ಗೋರಿದಂ:</strong><br>
+              ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಪ್ರಿಮಿಟಿವ್ ಆಗಿ ಬದಲಾಯಿಸುವಾಗ, JavaScript ಮೊದಲು <code>[Symbol.toPrimitive]</code> ನೋಡುತ್ತದೆ. ಅದು ಇಲ್ಲದಿದ್ದರೆ, ಗಣಿತಕ್ಕಾಗಿ (Number Hint) <code>valueOf()</code> ➔ <code>toString()</code> ಕರೆಯುತ್ತದೆ. ಸ್ಟ್ರಿಂಗ್‌ಗಾಗಿ (String Hint) <code>toString()</code> ➔ <code>valueOf()</code> ಕರೆಯುತ್ತದೆ.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 4C: TRICKY EDGE CASES
+             =================================================================== -->
+        <section class="topic-section" id="sec-edge-cases">
+          <div class="section-badge-bar">
+            <span class="section-tag">Section 4C · Tricky Edge Cases & Traps</span>
+            <button class="section-complete-btn" data-target="sec-edge-cases">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span class="btn-text">Mark Completed (ಓದಿದ್ದೇನೆ)</span>
+            </button>
+          </div>
+
+          <h2 class="topic-heading">4C. Tricky Edge Cases (ಸಂದರ್ಶನಗಳ ಕುತೂಹಲಕಾರಿ ಉದಾಹರಣೆಗಳು)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            ಮೂಲ ನೋಟ್ಸ್ನ ಎಲ್ಲಾ Tricky Code Examples, ಹಂತ-ಹಂತದ ತಾರ್ಕಿಕ ವಿವರಣೆ ಮತ್ತು ಸಾಮಾನ್ಯ ತಪ್ಪು ಕಲ್ಪನೆಗಳು.
+          </p>
+
+          <!-- Original Notes Preserved Fully -->
+          <div class="original-notes-block">
+            <div class="notes-header">
+              <span>ಮೂಲ ನೋಟ್ಸ್ (Original Notes Content)</span>
+              <span>100% Preserved</span>
+            </div>
+            <div class="notes-body">
+              <p>ಕೆಳಗಿನ ಪ್ರತಿಯೊಂದು Code Example ಅನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ವಿವರಿಸಲಾಗಿದೆ:</p>
+              <ul>
+                <li><code>true + false</code> ➔ ಫಲಿತಾಂಶ: <code>1</code> (ಏಕೆಂದರೆ true = 1, false = 0 ➔ 1 + 0 = 1).</li>
+                <li><code>12 / "6"</code> ➔ ಫಲಿತಾಂಶ: <code>2</code> (String "6" ಅನ್ನು Number 6 ಆಗಿ ಪರಿವರ್ತಿಸಿ 12/6 = 2).</li>
+                <li><code>null + 1</code> ➔ ಫಲಿತಾಂಶ: <code>1</code> (null ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತನೆಗೊಂಡಾಗ 0 ಆಗುತ್ತದೆ ➔ 0 + 1 = 1).</li>
+                <li><code>undefined + 1</code> ➔ ಫಲಿತಾಂಶ: <code>NaN</code> (undefined ಸಂಖ್ಯೆಯಾಗಿ ಬದಲಾದಾಗ NaN ಆಗುತ್ತದೆ ➔ NaN + 1 = NaN).</li>
+                <li><code>+""</code> ➔ ಫಲಿತಾಂಶ: <code>0</code> (ಖಾಲಿ string ಅನ್ನು unary + ಮೂಲಕ ಸಂಖ್ಯೆಯಾಗಿಸಿದಾಗ 0).</li>
+                <li><code>[] + []</code> ➔ ಫಲಿತಾಂಶ: <code>""</code> (ಖಾಲಿ string).</li>
+                <li><code>[] + {}</code> ➔ ಫಲಿತಾಂಶ: <code>"[object Object]"</code></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Interactive Edge Cases Step-by-Step Player -->
+          <div class="animation-stage">
+            <div class="animation-header">
+              <div class="animation-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                Edge Cases Step-by-Step Interactive Inspector
+              </div>
+              <div class="animation-controls">
+                <button class="anim-btn" id="edgePrevBtn">◀ Previous</button>
+                <button class="anim-btn" id="edgeNextBtn">Next Case ▶</button>
+              </div>
+            </div>
+
+            <div class="anim-canvas" style="flex-direction: column; align-items: flex-start; text-align: left;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">Expression:</div>
+              <div style="font-family: var(--font-mono); font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 0.25rem 0 0.75rem 0;" id="edgeExpr">true + false</div>
+              
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">Conversion Steps:</div>
+              <div style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-amber); margin: 0.25rem 0 0.75rem 0;" id="edgeStep1">true → 1, false → 0 ➔ 1 + 0</div>
+
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">Final Evaluated Result:</div>
+              <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; color: var(--accent-emerald); margin: 0.25rem 0 0.75rem 0;" id="edgeResult">1 (number)</div>
+
+              <div style="font-size: 0.875rem; color: var(--text-muted); background: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-sm); border-left: 3px solid var(--primary); width: 100%; margin-top: 0.5rem;" id="edgeDesc">
+                Boolean ಮೌಲ್ಯಗಳು ಗಣಿತದ "+" ಆಪರೇಟರ್ನಲ್ಲಿ 1 ಮತ್ತು 0 ಆಗಿ ಪರಿವರ್ತನೆಗೊಳ್ಳುತ್ತವೆ.
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Playground for Section 4C -->
+          <div class="code-wrapper">
+            <div class="code-header">
+              <div class="code-header-left">
+                <div class="window-dots">
+                  <span class="dot dot-red"></span>
+                  <span class="dot dot-yellow"></span>
+                  <span class="dot dot-green"></span>
+                </div>
+                <span class="code-filename">tricky-edge-cases.js</span>
+              </div>
+              <div class="code-controls">
+                <button class="code-btn btn-copy">Copy</button>
+                <button class="code-btn btn-reset">Reset</button>
+                <button class="code-btn btn-run">Run Code ▶</button>
+              </div>
+            </div>
+            <pre class="code-pre"><code>// ಪ್ರಮುಖ 7 Tricky Edge Cases:
+console.log('1. true + false =', true + false);       // 1
+console.log('2. 12 / "6" =', 12 / "6");               // 2
+console.log('3. null + 1 =', null + 1);               // 1
+console.log('4. undefined + 1 =', undefined + 1);     // NaN
+console.log('5. +"" =', +"");                         // 0
+console.log('6. [] + [] =', JSON.stringify([] + [])); // ""
+console.log('7. [] + {} =', [] + {});                 // "[object Object]"</code></pre>
+            <div class="code-output-panel">
+              <div class="output-label">Console Output:</div>
+              <div class="output-content">Click "Run Code ▶" to execute and see actual console logs.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 5: COMPARISON TABLES MATRIX
+             =================================================================== -->
+        <section class="topic-section" id="sec-tables">
+          <div class="section-badge-bar">
+            <span class="section-tag">Comparison Matrix · ತ್ವರಿತ ಕೋಷ್ಟಕಗಳು</span>
+          </div>
+
+          <h2 class="topic-heading">Quick Comparison Tables (ಹೋಲಿಕೆ ಕೋಷ್ಟಕಗಳು)</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">
+            ಪರೀಕ್ಷೆಗಳು ಮತ್ತು ಸಂದರ್ಶನಗಳಿಗೆ ನೆನಪಿನಲ್ಲಿಡಬೇಕಾದ ಪ್ರಮುಖ ಸಾರಾಂಶ ಕೋಷ್ಟಕಗಳು.
+          </p>
+
+          <!-- Table 1: Explicit vs Implicit -->
+          <div class="topic-subheading">1. Explicit vs Implicit Conversion</div>
+          <div class="table-wrapper">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>ವೈಶಿಷ್ಟ್ಯ (Feature)</th>
+                  <th>Explicit Conversion (Type Casting)</th>
+                  <th>Implicit Conversion (Type Coercion)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ಯಾರು ಮಾಡುತ್ತಾರೆ?</strong></td>
+                  <td>ಡೆವಲಪರ್ ಕೋಡ್ ಮೂಲಕ ಸ್ವತಃ ನಿರ್ದೇಶಿಸುತ್ತಾರೆ</td>
+                  <td>JavaScript Engine ತಾನಾಗಿಯೇ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮಾಡುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><strong>ಉದಾಹರಣೆ</strong></td>
+                  <td><span class="table-code">Number("123")</span>, <span class="table-code">String(50)</span></td>
+                  <td><span class="table-code">"5" + 2</span>, <span class="table-code">"10" - 2</span></td>
+                </tr>
+                <tr>
+                  <td><strong>ಸುರಕ್ಷತೆ (Safety)</strong></td>
+                  <td>ಅತ್ಯಂತ ಸುರಕ್ಷಿತ ಮತ್ತು ಊಹಿಸಬಹುದಾದ ವರ್ತನೆ</td>
+                  <td>ಅನಿರೀಕ್ಷಿತ ಬಗ್‌ಗಳಿಗೆ ಕಾರಣವಾಗಬಹುದು</td>
+                </tr>
+                <tr>
+                  <td><strong>ಉತ್ಪಾದನಾ ಶಿಫಾರಸು</strong></td>
+                  <td>ಯಾವಾಗಲೂ ಆದ್ಯತೆ ನೀಡಿ (Best Practice)</td>
+                  <td>ಸಾಧ್ಯವಾದಷ್ಟು ತಪ್ಪಿಸಿ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table 2: Number() vs parseInt() vs parseFloat() -->
+          <div class="topic-subheading">2. Number() vs parseInt() vs parseFloat()</div>
+          <div class="table-wrapper">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Input Value</th>
+                  <th>Number(val)</th>
+                  <th>parseInt(val)</th>
+                  <th>parseFloat(val)</th>
+                  <th>ವಿವರಣೆ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>"123"</code></td>
+                  <td><span class="table-code">123</span></td>
+                  <td><span class="table-code">123</span></td>
+                  <td><span class="table-code">123</span></td>
+                  <td>ಮೂರರಲ್ಲೂ ಪರಿಪೂರ್ಣ ಸಂಖ್ಯೆ</td>
+                </tr>
+                <tr>
+                  <td><code>"123.45"</code></td>
+                  <td><span class="table-code">123.45</span></td>
+                  <td><span class="table-code">123</span></td>
+                  <td><span class="table-code">123.45</span></td>
+                  <td>parseInt ಪೂರ್ಣಾಂಕ ಮಾತ್ರ ಉಳಿಸುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>"100px"</code></td>
+                  <td><span class="table-code">NaN</span></td>
+                  <td><span class="table-code">100</span></td>
+                  <td><span class="table-code">100</span></td>
+                  <td>Number() ಅಕ್ಷರಗಳಿದ್ದರೆ ಸಂಪೂರ್ಣವಾಗಿ ವಿಫಲವಾಗುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>"" (empty)</code></td>
+                  <td><span class="table-code">0</span></td>
+                  <td><span class="table-code">NaN</span></td>
+                  <td><span class="table-code">NaN</span></td>
+                  <td>Number() ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು 0 ಮಾಡುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>true</code></td>
+                  <td><span class="table-code">1</span></td>
+                  <td><span class="table-code">NaN</span></td>
+                  <td><span class="table-code">NaN</span></td>
+                  <td>parseInt/parseFloat ಕೇವಲ ಸ್ಟ್ರಿಂಗ್ ಓದುತ್ತವೆ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table 3: == vs === -->
+          <div class="topic-subheading">3. == (Loose) vs === (Strict) Comparison Matrix</div>
+          <div class="table-wrapper">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Expression</th>
+                  <th>== (Loose)</th>
+                  <th>=== (Strict)</th>
+                  <th>ತಾರ್ಕಿಕ ವಿವರಣೆ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>"5" and 5</code></td>
+                  <td><span class="table-code" style="color:var(--accent-emerald);">true</span></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td>== String ಅನ್ನು Number ಗೆ ಬದಲಾಯಿಸುತ್ತದೆ; === ಪ್ರಕಾರಗಳನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>null and undefined</code></td>
+                  <td><span class="table-code" style="color:var(--accent-emerald);">true</span></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td>ECMAScript Abstract Equality ನಲ್ಲಿ ವಿಶೇಷ ನಿಯಮ</td>
+                </tr>
+                <tr>
+                  <td><code>0 and false</code></td>
+                  <td><span class="table-code" style="color:var(--accent-emerald);">true</span></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td>false ಅನ್ನು 0 ಗೆ ಬದಲಾಯಿಸಲಾಗುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>"" and false</code></td>
+                  <td><span class="table-code" style="color:var(--accent-emerald);">true</span></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td>ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್ 0 ಆಗುತ್ತದೆ, false ಕೂಡ 0 ಆಗುತ್ತದೆ</td>
+                </tr>
+                <tr>
+                  <td><code>null and 0</code></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td><span class="table-code" style="color:var(--accent-rose);">false</span></td>
+                  <td>null ಕೇವಲ undefined ಗೆ ಮಾತ್ರ == ಆಗಿರುತ್ತದೆ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 6: LIVE CONVERSION LAB
+             =================================================================== -->
+        <section class="topic-section" id="lab">
+          <div class="lab-card">
+            <div class="lab-header">
+              <div class="section-tag" style="margin-bottom:0.25rem;">Interactive Sandbox</div>
+              <h2 class="lab-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"></path><path d="M14 2v7.31"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path></svg>
+                Live Type Conversion Lab (ಪ್ರಾಕ್ಟಿಕಲ್ ಲ್ಯಾಬ್)
+              </h2>
+              <p class="lab-subtitle">
+                ಯಾವುದೇ ಇನ್‌ಪುಟ್ ಮೌಲ್ಯ ಮತ್ತು ಕನ್ವರ್ಷನ್ ವಿಧಾನವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ. ಫಲಿತಾಂಶ, ನೈಜ Type ಮತ್ತು ಆಂತರಿಕ ECMAScript ನಿಯಮವನ್ನು ತಕ್ಷಣವೇ ಪರಿಶೀಲಿಸಿ.
+              </p>
+            </div>
+
+            <div class="lab-grid">
+              <div class="lab-control-group">
+                <label class="lab-label" for="labValueInput">1. ಇನ್‌ಪುಟ್ ಮೌಲ್ಯ (Input Value)</label>
+                <input type="text" id="labValueInput" class="lab-input" value='"123"' placeholder='ಉದಾ: "123", true, null, []' />
+                <div class="lab-presets">
+                  <span style="font-size:0.75rem; color:var(--text-subtle); align-self:center; margin-right:4px;">Presets:</span>
+                  <button class="preset-chip" data-val='"123"'>"123"</button>
+                  <button class="preset-chip" data-val='""'>"" (empty)</button>
+                  <button class="preset-chip" data-val='" "'>" " (space)</button>
+                  <button class="preset-chip" data-val='"hello"'>"hello"</button>
+                  <button class="preset-chip" data-val='0'>0</button>
+                  <button class="preset-chip" data-val='true'>true</button>
+                  <button class="preset-chip" data-val='false'>false</button>
+                  <button class="preset-chip" data-val='null'>null</button>
+                  <button class="preset-chip" data-val='undefined'>undefined</button>
+                  <button class="preset-chip" data-val='[]'>[] (array)</button>
+                  <button class="preset-chip" data-val='{}'>{} (object)</button>
+                  <button class="preset-chip" data-val='NaN'>NaN</button>
+                </div>
+              </div>
+
+              <div class="lab-control-group">
+                <label class="lab-label" for="labMethodSelect">2. Conversion Method (ವಿಧಾನ)</label>
+                <select id="labMethodSelect" class="lab-select">
+                  <option value="Number">Number(val)</option>
+                  <option value="String">String(val)</option>
+                  <option value="Boolean">Boolean(val)</option>
+                  <option value="parseInt">parseInt(val, 10)</option>
+                  <option value="parseFloat">parseFloat(val)</option>
+                  <option value="unaryPlus">+val (Unary Plus)</option>
+                  <option value="toString">val.toString()</option>
+                </select>
+                <span style="font-size: 0.775rem; color: var(--text-subtle);">
+                  ಯಾವುದೇ ವಿಧಾನವನ್ನು ಆಯ್ಕೆ ಮಾಡಿದ ತಕ್ಷಣ ಕೆಳಗಿನ ಫಲಿತಾಂಶ ನವೀಕರಣಗೊಳ್ಳುತ್ತದೆ.
+                </span>
+              </div>
+            </div>
+
+            <!-- Lab Result Display -->
+            <div class="lab-result-display">
+              <div class="lab-metrics-row">
+                <div class="lab-metric-card">
+                  <div class="lab-metric-title">Original Type</div>
+                  <div class="lab-metric-val" id="labOriginalType">string</div>
+                </div>
+                <div class="lab-metric-card">
+                  <div class="lab-metric-title">Converted Value</div>
+                  <div class="lab-metric-val" id="labConvertedValue" style="color:var(--primary);">123</div>
+                </div>
+                <div class="lab-metric-card">
+                  <div class="lab-metric-title">Converted Type</div>
+                  <div class="lab-metric-val" id="labConvertedType" style="color:var(--accent-emerald);">number</div>
+                </div>
+                <div class="lab-metric-card">
+                  <div class="lab-metric-title">Status</div>
+                  <div class="lab-metric-val" id="labStatusBadge" style="font-size:0.9rem;">Success</div>
+                </div>
+              </div>
+
+              <div class="lab-explanation">
+                <div class="lab-explanation-title">
+                  ಕನ್ನಡ ವಿವರಣೆ &amp; ECMAScript Rule:
+                </div>
+                <div class="lab-explanation-body" id="labExplanationText">
+                  ಇಲ್ಲಿ ನಿಮ್ಮ ಆಯ್ಕೆಯ ಫಲಿತಾಂಶದ ವಿವರಣೆ ಕಾಣಿಸುತ್ತದೆ.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             SECTION 7: QUIZ & SELF-ASSESSMENT
+             =================================================================== -->
+        <section class="topic-section" id="sec-quiz">
+          <div class="quiz-section-wrapper">
+            <div class="quiz-header">
+              <div>
+                <span class="section-tag">Self-Assessment</span>
+                <h2 class="quiz-title">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  ಜ್ಞಾನ ಮೌಲ್ಯಮಾಪನ ರಸಪ್ರಶ್ನೆ (Interactive Quiz)
+                </h2>
+              </div>
+              <div class="quiz-score-badge">
+                ಅಂಕ: <span id="quizScoreDisplay">0 / 6</span>
+              </div>
+            </div>
+
+            <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.95rem;">
+              ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ. ಸರಿಯಾದ ಉತ್ತರ, ತಪ್ಪು ಆಯ್ಕೆಗಳು ಏಕೆ ತಪ್ಪು ಮತ್ತು ಸಂಪೂರ್ಣ ತಾರ್ಕಿಕ ವಿವರಣೆಯನ್ನು ತಕ್ಷಣವೇ ಪಡೆಯಿರಿ.
+            </p>
+
+            <!-- Quiz Q1 -->
+            <div class="quiz-card" data-correct="1" data-explanation="JavaScript ನಲ್ಲಿ String '5' ಮತ್ತು Number 2 ಅನ್ನು '+' ಮಾಡಿದಾಗ, '+' ಆಪರೇಟರ್ String Concatenation ಮಾಡುತ್ತದೆ. ಆದ್ದರಿಂದ '5' + '2' = '52' ಬರುತ್ತದೆ. ಆದರೆ '-' ಆಪರೇಟರ್ ವ್ಯವಕಲನ ಮಾತ್ರ ಮಾಡುವುದರಿಂದ '5' ಅನ್ನು ಸಂಖ್ಯೆ 5 ಆಗಿ ಬದಲಾಯಿಸಿ 5 - 2 = 3 ನೀಡುತ್ತದೆ.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 1 (Beginner)</div>
+              <div class="quiz-question-text">
+                <code>"5" + 2</code> ಮತ್ತು <code>"5" - 2</code> ನ ಫಲಿತಾಂಶಗಳು ಕ್ರಮವಾಗಿ ಏನಾಗಿರುತ್ತವೆ?
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> 7 ಮತ್ತು 3</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> "52" ಮತ್ತು 3</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> "52" ಮತ್ತು NaN</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> 7 ಮತ್ತು "3"</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="quiz-card" data-correct="2" data-explanation="null ಅಥವಾ undefined ಗೆ ಯಾವುದೇ Prototype ಅಥವಾ Object Wrapper ಇರುವುದಿಲ್ಲ. ಆದ್ದರಿಂದ null.toString() ಕರೆದಾಗ JavaScript 'TypeError: Cannot read properties of null' ಎಂಬ ರನ್‌ಟೈಮ್ ದೋಷ ಎಸೆಯುತ್ತದೆ. ಸುರಕ್ಷಿತವಾಗಿ String(null) ಬಳಸಬೇಕು.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 2 (Intermediate)</div>
+              <div class="quiz-question-text">
+                JavaScript ನಲ್ಲಿ <code>null.toString()</code> ಕೋಡ್ ರನ್ ಮಾಡಿದಾಗ ಏನಾಗುತ್ತದೆ?
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> "null" ಎಂಬ ಸ್ಟ್ರಿಂಗ್ ಬರುತ್ತದೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್ "" ಬರುತ್ತದೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> TypeError ದೋಷ ಉಂಟಾಗುತ್ತದೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> undefined ರಿಟರ್ನ್ ಆಗುತ್ತದೆ</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Quiz Q3 -->
+            <div class="quiz-card" data-correct="0" data-explanation="JavaScript ನಲ್ಲಿ ಖಾಲಿ ಅರೇ [] ಕೂಡ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ರೆಫರೆನ್ಸ್ ಆಗಿರುವುದರಿಂದ ಅದು Truthy ಆಗಿದೆ! ಕೇವಲ 0, '', null, undefined, NaN ಮತ್ತು false ಮಾತ್ರ Falsy ಆಗುತ್ತವೆ.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 3 (Core Concepts)</div>
+              <div class="quiz-question-text">
+                ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು JavaScript ನಲ್ಲಿ 'Truthy' ಮೌಲ್ಯವಾಗಿದೆ (Boolean ಮಾಡಿದಾಗ true ಬರುತ್ತದೆ)?
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> [] (ಖಾಲಿ ಅರೇ)</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> "" (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್)</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> NaN</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> 0</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Quiz Q4 -->
+            <div class="quiz-card" data-correct="3" data-explanation="true ಸಂಖ್ಯೆಯಾಗಿ ಬದಲಾದಾಗ 1 ಆಗುತ್ತದೆ, false ಸಂಖ್ಯೆಯಾಗಿ 0 ಆಗುತ್ತದೆ. ಆದ್ದರಿಂದ ಗಣಿತದ '+' ಆಪರೇಟರ್ನಲ್ಲಿ 1 + 0 = 1 ಫಲಿತಾಂಶ ಬರುತ್ತದೆ.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 4 (Tricky Edge Case)</div>
+              <div class="quiz-question-text">
+                <code>true + false</code> ನ ಅಂತಿಮ ಫಲಿತಾಂಶವೇನು?
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> "truefalse"</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> NaN</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> true</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> 1</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Quiz Q5 -->
+            <div class="quiz-card" data-correct="1" data-explanation="ECMAScript Abstract Equality (==) ಅಲ್ಗೋರಿದಂ ಪ್ರಕಾರ null ಕೇವಲ undefined ಗೆ ಮಾತ್ರ ಸಮಾನ (true). ಆದರೆ Strict Equality (===) ನಲ್ಲಿ ಅವುಗಳ ಪ್ರಕಾರಗಳು (Types) ಭಿನ್ನವಾಗಿರುವುದರಿಂದ false ನೀಡುತ್ತದೆ.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 5 (Interview Classic)</div>
+              <div class="quiz-question-text">
+                <code>null == undefined</code> ಮತ್ತು <code>null === undefined</code> ಫಲಿತಾಂಶಗಳು ಕ್ರಮವಾಗಿ:
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> false ಮತ್ತು false</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> true ಮತ್ತು false</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> true ಮತ್ತು true</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> false ಮತ್ತು true</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Quiz Q6 -->
+            <div class="quiz-card" data-correct="2" data-explanation="Number('100px') ಕಟ್ಟುನಿಟ್ಟಾಗಿ ಇಡೀ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ಸಂಖ್ಯೆಯಾಗಿ ನಿರೀಕ್ಷಿಸಿ NaN ನೀಡುತ್ತದೆ. ಆದರೆ parseInt('100px') ಆರಂಭದಿಂದ ಅಕ್ಷರಗಳು ಸಿಗುವವರೆಗೂ ಓದಿ 100 ಹೊರತೆಗೆಯುತ್ತದೆ.">
+              <div class="quiz-q-num">ಪ್ರಶ್ನೆ 6 (Professional Choice)</div>
+              <div class="quiz-question-text">
+                <code>Number("100px")</code> ಮತ್ತು <code>parseInt("100px")</code> ನ ವ್ಯತ್ಯಾಸವೇನು?
+              </div>
+              <div class="quiz-options">
+                <button class="quiz-option-btn"><span class="quiz-option-letter">A</span> ಎರಡೂ 100 ನೀಡುತ್ತವೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">B</span> ಎರಡೂ NaN ನೀಡುತ್ತವೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">C</span> Number() NaN ನೀಡುತ್ತದೆ, parseInt() 100 ನೀಡುತ್ತದೆ</button>
+                <button class="quiz-option-btn"><span class="quiz-option-letter">D</span> Number() 100 ನೀಡುತ್ತದೆ, parseInt() NaN ನೀಡುತ್ತದೆ</button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" aria-label="Topic Paging">
+          <a href="#sec-intro" class="btn-nav-page">
+            <span class="nav-page-dir">ಪ್ರಾರಂಭ (Start)</span>
+            <span class="nav-page-title">1. Introduction</span>
+          </a>
+          <a href="#lab" class="btn-nav-page" style="text-align:right;">
+            <span class="nav-page-dir">ಮುಂದಿನ ಹೆಜ್ಜೆ (Interactive)</span>
+            <span class="nav-page-title">Live Conversion Lab ➔</span>
+          </a>
+        </nav>
+      </main>
+
+      <!-- Right Sidebar (Quick Revision & Gotchas) -->
+      <aside class="sidebar sidebar-right" aria-label="Quick Reference">
+        <div class="quick-widget">
+          <div class="widget-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            Quick Revision (ತ್ವರಿತ ನೆನಪು)
+          </div>
+          <ul class="axiom-list">
+            <li class="axiom-item">
+              <span>•</span>
+              <div><code>+</code> ಜೊತೆಗೆ string ಬಂದರೆ <strong>Concatenation</strong> ಆಗುತ್ತದೆ.</div>
+            </li>
+            <li class="axiom-item">
+              <span>•</span>
+              <div><code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> ಯಾವಾಗಲೂ <strong>Number Coercion</strong> ಮಾಡುತ್ತವೆ.</div>
+            </li>
+            <li class="axiom-item">
+              <span>•</span>
+              <div>ಕೇವಲ <strong>6 ಮೌಲ್ಯಗಳು Falsy</strong>: <code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code>, <code>false</code>.</div>
+            </li>
+            <li class="axiom-item">
+              <span>•</span>
+              <div><code>[]</code> ಮತ್ತು <code>{}</code> ಯಾವಾಗಲೂ <strong>Truthy</strong>!</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="quick-widget">
+          <div class="widget-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            Gotcha Warnings (ಎಚ್ಚರಿಕೆಗಳು)
+          </div>
+          <div class="gotcha-box">
+            <div class="gotcha-title">null.toString() ➔ TypeError</div>
+            <div class="gotcha-desc">null ಮತ್ತು undefined ಮೇಲೆ .toString() ಕರೆಯಬೇಡಿ. ಬದಲಿಗೆ <code>String()</code> ಬಳಸಿ.</div>
+          </div>
+          <div class="gotcha-box" style="background:var(--accent-purple-light); border-left-color:var(--accent-purple);">
+            <div class="gotcha-title" style="color:var(--accent-purple);">" " ಸ್ಪೇಸ್ Truthy!</div>
+            <div class="gotcha-desc"><code>Boolean("")</code> false ಆದರೂ, <code>Boolean(" ")</code> true ಆಗಿರುತ್ತದೆ.</div>
+          </div>
+          <div class="gotcha-box" style="background:var(--accent-rose-light); border-left-color:var(--accent-rose);">
+            <div class="gotcha-title" style="color:var(--accent-rose);">typeof NaN === "number"</div>
+            <div class="gotcha-desc">NaN ಎಂದರೆ Not a Number ಆದರೂ ಅದರ data type 'number' ಆಗಿದೆ!</div>
+          </div>
+        </div>
+
+        <div class="quick-widget">
+          <div class="widget-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            Best Practices
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.45;">
+            ನೈಜ ಸಾಫ್ಟ್‌ವೇರ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನಲ್ಲಿ ಅನಿರೀಕ್ಷಿತ Type Coercion ಬಗ್‌ಗಳನ್ನು ತಪ್ಪಿಸಲು ಯಾವಾಗಲೂ <strong>Strict Equality <code>===</code></strong> ಮತ್ತು Explicit Conversion ವಿಧಾನಗಳಾದ <strong><code>Number()</code></strong>, <strong><code>String()</code></strong> ಮತ್ತು <strong><code>Boolean()</code></strong> ಬಳಸಿ.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Floating Back to Top Button -->
+    <button id="backToTopBtn" class="back-to-top-btn" aria-label="Back to Top">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    </button>
+
+    <!-- Pure Vanilla JavaScript (Directly executable in any browser without bundlers) -->
+    <script src="./script.js"></script>
+  </body>
+</html>

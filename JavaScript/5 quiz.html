@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced JS Type & Objects Pro Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --primary: #3b82f6;
+            --secondary: #60a5fa;
+            --border: #334155;
+            --code-bg: #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Noto Sans Kannada', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); transition: var(--transition); line-height: 1.6; }
+
+        header { background: linear-gradient(135deg, #1e3a8a, var(--primary)); color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .theme-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: var(--transition); }
+        
+        .container { max-width: 1250px; margin: 30px auto; padding: 0 20px; display: flex; gap: 30px; }
+        @media (max-width: 950px) { .container { flex-direction: column-reverse; } }
+
+        .quiz-main { flex: 1; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 25px; }
+        .timer { font-size: 1.2rem; font-weight: bold; color: var(--danger); }
+        .progress-bar { flex: 1; margin: 0 20px; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.3s; }
+
+        .question-card { background: var(--bg-card); padding: 35px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .q-meta { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; color: #64748b; }
+        .q-badge { background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 6px; }
+        .q-text { font-size: 1.25rem; margin-bottom: 25px; font-weight: 600; }
+        
+        pre { background: var(--code-bg); color: var(--code-text); padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 15px 0; overflow-x: auto; border-left: 4px solid var(--primary); }
+
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { background: var(--bg-card); border: 2px solid var(--border); color: var(--text-main); padding: 15px; border-radius: 8px; font-size: 1.05rem; cursor: pointer; text-align: left; transition: var(--transition); display: flex; align-items: center; gap: 15px; }
+        .option-btn:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+        .option-btn.selected { border-color: var(--primary); background: rgba(37, 99, 235, 0.1); font-weight: bold; }
+        .opt-char { background: var(--border); padding: 4px 12px; border-radius: 6px; font-weight: bold; }
+
+        .actions { display: flex; justify-content: space-between; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-warning { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+        .btn-danger { background: var(--danger); color: #fff; width: 100%; margin-top: 20px; }
+
+        .sidebar { width: 320px; }
+        .palette-card { background: var(--bg-card); padding: 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); position: sticky; top: 90px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+        .pal-btn { aspect-ratio: 1; border: 2px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-main); font-weight: bold; cursor: pointer; }
+        .pal-btn.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+        .pal-btn.answered { background: var(--success); color: #fff; border-color: var(--success); }
+        .pal-btn.review { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .legend { margin-top: 20px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .legend-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border); display: inline-block; vertical-align: middle; }
+
+        #result-view { display: none; max-width: 950px; margin: 0 auto; }
+        .score-box { text-align: center; background: var(--bg-card); padding: 40px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .circle-score { width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 20px auto; font-size: 2.5rem; font-weight: bold; }
+        .review-item { background: var(--bg-card); padding: 25px; border-radius: 10px; margin-top: 25px; border-left: 6px solid var(--danger); box-shadow: var(--shadow); }
+        .review-item.correct { border-left-color: var(--success); }
+        .exp-box { background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary); }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div style="font-size: 1.5rem; font-weight: bold;"><i class="fab fa-js-square" style="color: #f7df1e;"></i> JS Deep Concepts Quiz</div>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i> Dark Mode</button>
+    </header>
+
+    <div class="container" id="quiz-view">
+        <main class="quiz-main">
+            <div class="quiz-header">
+                <label style="font-weight: bold; font-size: 0.95rem;"><input type="checkbox" id="neg-mark" checked> -0.5 Negative Marking</label>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="timer" id="timer"><i class="fas fa-clock"></i> 20:00</div>
+            </div>
+
+            <div class="question-card">
+                <div class="q-meta">
+                    <span id="q-number">Question 1 of 10</span>
+                    <span id="q-type" class="q-badge">Concept</span>
+                </div>
+                <div class="q-text" id="q-text">Loading...</div>
+                <div class="options-grid" id="options-grid"></div>
+                
+                <div class="actions">
+                    <button class="btn btn-outline" onclick="clearAnswer()"><i class="fas fa-eraser"></i> Clear</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-warning" onclick="markReview()" id="btn-review">⭐ Review</button>
+                        <button class="btn btn-outline" onclick="nav(-1)" id="btn-prev">Prev</button>
+                        <button class="btn btn-primary" onclick="nav(1)" id="btn-next">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="palette-card">
+                <h3>Question Palette</h3>
+                <div class="palette-grid" id="palette-grid"></div>
+                <div class="legend">
+                    <div><span class="legend-box" style="background:var(--success)"></span> Answered</div>
+                    <div><span class="legend-box" style="background:transparent"></span> Unanswered</div>
+                    <div><span class="legend-box" style="background:var(--accent)"></span> Marked for Review</div>
+                </div>
+                <button class="btn btn-danger" onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submit Quiz</button>
+            </div>
+        </aside>
+    </div>
+
+    <div class="container" id="result-view">
+        <div style="width: 100%;">
+            <div class="score-box">
+                <h2>Quiz Completed! 🎉</h2>
+                <div class="circle-score">
+                    <span id="score-text">0</span>
+                    <span style="font-size: 1rem; color: #64748b;">Out of 10</span>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 25px;">
+                    <div><h3 style="color: var(--success);" id="stat-c">0</h3><p>Correct</p></div>
+                    <div><h3 style="color: var(--danger);" id="stat-w">0</h3><p>Wrong</p></div>
+                    <div><h3 style="color: #64748b;" id="stat-u">0</h3><p>Unattempted</p></div>
+                </div>
+                <button class="btn btn-primary" onclick="location.reload()"><i class="fas fa-redo"></i> Retake Quiz</button>
+            </div>
+            <div id="review-section"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "Code Output Prediction",
+                q: "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿರುವ <code>typeof</code> ನ ಮಿತಿಗಳ ಆಧಾರದ ಮೇಲೆ, ಕೆಳಗಿನ ಕೋಡ್‌ನ ಔಟ್‌ಪುಟ್ ಏನಾಗಿರುತ್ತದೆ?<br><pre><code>console.log(typeof null);\nconsole.log(typeof NaN);\nconsole.log(typeof [1, 2, 3]);</code></pre>",
+                options: [
+                    "\"null\", \"NaN\", \"array\"",
+                    "\"object\", \"number\", \"object\"",
+                    "\"undefined\", \"number\", \"array\"",
+                    "\"object\", \"undefined\", \"object\""
+                ],
+                ans: 1,
+                exp: "<code>typeof null</code> ಎಂಬುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹಳೆಯ ಬಗ್ ಆಗಿದ್ದು, ಅದು \"object\" ಎಂದು ತೋರಿಸುತ್ತದೆ. <code>typeof NaN</code> \"number\" ಎಂದು ಮತ್ತು Array ಗಳನ್ನು ಕೂಡ \"object\" ಎಂದೇ ತೋರಿಸುತ್ತದೆ[cite: 5]."
+            },
+            {
+                type: "Advanced Execution",
+                q: "Explicit Type Conversion: ಈ ಕೆಳಗಿನ ಕೋಡ್‌ಗಳನ್ನು ರನ್ ಮಾಡಿದರೆ ಬರುವ ಸರಿಯಾದ ಫಲಿತಾಂಶ ಯಾವುದು?<br><pre><code>console.log(Number(\"150.75px\"));\nconsole.log(parseInt(\"150.75px\"));\nconsole.log(parseFloat(\"150.75px\"));</code></pre>",
+                options: [
+                    "NaN, 150, 150.75",
+                    "150.75, 150.75, 150.75",
+                    "Error, 150, 150",
+                    "NaN, 150, 150"
+                ],
+                ans: 0,
+                exp: "<code>Number()</code> ಅಕ್ಷರಗಳು ಇದ್ದರೆ ಅದನ್ನು NaN ಮಾಡುತ್ತದೆ. <code>parseInt()</code> ಕೇವಲ ಪೂರ್ಣ ಸಂಖ್ಯೆಯನ್ನು (150) ತೆಗೆದುಕೊಂಡು ಉಳಿದದ್ದನ್ನು ಬಿಡುತ್ತದೆ. <code>parseFloat()</code> ದಶಮಾಂಶ ಸಂಖ್ಯೆಯನ್ನು (150.75) ಅಕ್ಷರಗಳನ್ನು ಬಿಟ್ಟು ನಿಖರವಾಗಿ ಕೊಡುತ್ತದೆ[cite: 5]."
+            },
+            {
+                type: "Deep Conceptual",
+                q: "6 Falsy ಮೌಲ್ಯಗಳನ್ನು ಹೊರತುಪಡಿಸಿ, ಕೆಳಗಿನವುಗಳಲ್ಲಿ ಯಾವುದು Truthy (ಸರಿಯಾದ) ಮೌಲ್ಯವಾಗಿದೆ?",
+                options: [
+                    "0",
+                    "\"\" (ಖಾಲಿ ಸ್ಟ್ರಿಂಗ್)",
+                    "\"false\"",
+                    "null"
+                ],
+                ans: 2,
+                exp: "6 Falsy ಮೌಲ್ಯಗಳು: false, 0, \"\", null, undefined, NaN. ಇಲ್ಲಿ <code>\"false\"</code> ಎಂಬುದು ಒಂದು String (ಪದ) ಆಗಿರುವುದರಿಂದ ಅದು Truthy ಆಗಿರುತ್ತದೆ[cite: 5]."
+            },
+            {
+                type: "Technical Knowledge",
+                q: "ಯಾವುದೇ ಡೇಟಾದ (null, Array, Date ಸೇರಿದಂತೆ) 100% ಅಸಲಿ ಜಾತಿಯನ್ನು (Type) ನಿಖರವಾಗಿ ಕಂಡುಹಿಡಿಯಲು ಬಳಸುವ 'ಮಾಸ್ಟರ್ ಡಿಟೆಕ್ಟಿವ್' ಬ್ರಹ್ಮಾಸ್ತ್ರ ಯಾವುದು?",
+                options: [
+                    "Object.is()",
+                    "typeof",
+                    "instanceof",
+                    "Object.prototype.toString.call()"
+                ],
+                ans: 3,
+                exp: "ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಮತ್ತು ದೊಡ್ಡ ಸಾಫ್ಟ್‌ವೇರ್‌ಗಳಲ್ಲಿ ಯಾವುದೇ ಡೇಟಾದ 100% ಅಸಲಿ ಜಾತಿಯನ್ನು ಕಂಡುಹಿಡಿಯಲು <code>Object.prototype.toString.call()</code> ಬಳಸುತ್ತಾರೆ. ಉದಾ: <code>[object Null]</code>, <code>[object Array]</code>[cite: 5]."
+            },
+            {
+                type: "Scenario-Based Problem",
+                q: "ದೊಡ್ಡ Object ನಲ್ಲಿ ಮಾಹಿತಿ ಇಲ್ಲದಿದ್ದಾಗ <code>Uncaught TypeError</code> ಬಂದು ಕೋಡ್ ಕ್ರ್ಯಾಶ್ ಆಗುವುದನ್ನು ತಡೆಯಲು (ಏರ್‌ಬ್ಯಾಗ್ ನಂತೆ) ಬಳಸುವ ಆಧುನಿಕ ಆಪರೇಟರ್ ಯಾವುದು?",
+                options: [
+                    "?? (Nullish Coalescing)",
+                    "?. (Optional Chaining)",
+                    "|| (OR Operator)",
+                    "=== (Strict Equality)"
+                ],
+                ans: 1,
+                exp: "<code>?.</code> (Optional Chaining) ಮುಂದೆ ದಾರಿ ಇಲ್ಲದಿದ್ದರೆ (ಮಾಹಿತಿ ಇಲ್ಲದಿದ್ದರೆ) ಅಪಘಾತವಾಗಲು ಬಿಡುವುದಿಲ್ಲ, ಬದಲಿಗೆ ಸುರಕ್ಷಿತವಾಗಿ <code>undefined</code> ಎಂದು ಹೇಳುತ್ತದೆ (ಉದಾ: <code>student?.address?.city</code>)[cite: 5]."
+            },
+            {
+                type: "Logic & Operator",
+                q: "Nullish Coalescing (??) ಮತ್ತು OR (||) ಆಪರೇಟರ್‌ನ ವ್ಯತ್ಯಾಸ ಗುರುತಿಸಿ: ಕೆಳಗಿನ ಕೋಡ್‌ನ ಔಟ್‌ಪುಟ್ ಏನು?<br><pre><code>let marks = 0;\nconsole.log(marks || \"ಗೈರು\");\nconsole.log(marks ?? \"ಗೈರು\");</code></pre>",
+                options: [
+                    "0, 0",
+                    "\"ಗೈರು\", \"ಗೈರು\"",
+                    "\"ಗೈರು\", 0",
+                    "0, \"ಗೈರು\""
+                ],
+                ans: 2,
+                exp: "<code>||</code> ಆಪರೇಟರ್ 0 ಯನ್ನು Falsy ಎಂದು ಪರಿಗಣಿಸಿ ಬದಲಿ ಬೆಲೆ (\"ಗೈರು\") ಕೊಡುತ್ತದೆ. ಆದರೆ <code>??</code> ಕೇವಲ null/undefined ಇದ್ದರೆ ಮಾತ್ರ ಬದಲಿ ಬೆಲೆ ಕೊಡುತ್ತದೆ, ಇಲ್ಲವಾದರೆ 0 ಯನ್ನೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತದೆ[cite: 5]."
+            },
+            {
+                type: "Comparison Equality",
+                q: "ಸಾಮಾನ್ಯ <code>===</code> ಪರೀಕ್ಷಕ <code>NaN === NaN</code> ಎಂದು ಪರೀಕ್ಷಿಸಿದರೆ <code>false</code> ಎನ್ನುತ್ತದೆ. ಇದನ್ನು ನಿಖರವಾಗಿ ಪರಿಹರಿಸುವ ವಿಧಾನ ಯಾವುದು?",
+                options: [
+                    "Object.is(NaN, NaN)",
+                    "Number.isNaN(NaN)",
+                    "isNaN === NaN",
+                    "Object.hasOwn(NaN)"
+                ],
+                ans: 0,
+                exp: "<code>===</code> ಪರೀಕ್ಷಕ NaN ಗಳನ್ನು ಅಥವಾ +0 ಮತ್ತು -0 ಗಳನ್ನು ನಿಖರವಾಗಿ ಹೋಲಿಸಲು ವಿಫಲವಾಗುತ್ತದೆ. ಇದನ್ನು ಸರಿಪಡಿಸಲು <code>Object.is()</code> (ಸೂಕ್ಷ್ಮದರ್ಶಕ ಹೋಲಿಕೆ) ಬಳಸುತ್ತಾರೆ[cite: 5]."
+            },
+            {
+                type: "Analytical Question",
+                q: "<code>==</code> (Loose Equality) ಮತ್ತು <code>===</code> (Strict Equality) ನಡುವಿನ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "== ಬೆಲೆಯನ್ನು ಮಾತ್ರ ನೋಡುತ್ತದೆ; === ಕೇವಲ ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಮಾತ್ರ ನೋಡುತ್ತದೆ.",
+                    "== ಡೇಟಾ ಟೈಪ್ ಬದಲಾಯಿಸುತ್ತದೆ (Coercion); === ಬೆಲೆ (Value) ಮತ್ತು ಡೇಟಾ ಟೈಪ್ ಎರಡನ್ನೂ ಪರಿಶೀಲಿಸುತ್ತದೆ.",
+                    "ಎರಡೂ ಒಂದೇ ಆಗಿವೆ.",
+                    "== ಕೇವಲ Numbers ಗೆ; === ಕೇವಲ Strings ಗೆ."
+                ],
+                ans: 1,
+                exp: "<code>==</code> (ಸಾಮಾನ್ಯ ಗಾರ್ಡ್) ಕೇವಲ ಬೆಲೆಯನ್ನು ನೋಡುತ್ತದೆ. <code>===</code> (ಪೊಲೀಸ್) ಕಟ್ಟುನಿಟ್ಟಾಗಿ ಬೆಲೆ ಮತ್ತು Data Type ಎರಡನ್ನೂ ಪರಿಶೀಲಿಸುತ್ತದೆ[cite: 5]."
+            },
+            {
+                type: "Concept Differences",
+                q: "<code>Object.freeze()</code> ಮತ್ತು <code>Object.seal()</code> ನಡುವಿನ ಮುಖ್ಯ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "freeze() ಹೊಸ ಪ್ರಾಪರ್ಟಿ ಸೇರಿಸಲು ಬಿಡುತ್ತದೆ, seal() ಬಿಡುವುದಿಲ್ಲ.",
+                    "ಎರಡೂ ಒಂದೇ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+                    "freeze() ಸಂಪೂರ್ಣ ಲಾಕ್ ಮಾಡುತ್ತದೆ (ಯಾವುದೇ ಬದಲಾವಣೆ ಸಾಧ್ಯವಿಲ್ಲ); seal() ನಲ್ಲಿ ಇರುವ ಬೆಲೆಗಳನ್ನು ತಿದ್ದಬಹುದು.",
+                    "seal() ಅನ್ನು Arrays ಗೆ ಮಾತ್ರ ಬಳಸಲಾಗುತ್ತದೆ."
+                ],
+                ans: 2,
+                exp: "<code>Object.freeze()</code> 100% ಬೀಗ ಹಾಕುತ್ತದೆ (ಸೇರಿಸಲು ❌, ತೆಗೆಯಲು ❌, ತಿದ್ದಲು ❌). <code>Object.seal()</code> ಲಕೋಟೆ ಸೀಲ್ ಇದ್ದಂತೆ, ಇದರಲ್ಲಿರುವ ಮಾಹಿತಿಯ ಬೆಲೆಯನ್ನು ಮಾತ್ರ ತಿದ್ದಬಹುದು[cite: 5]."
+            },
+            {
+                type: "Implementation",
+                q: "Nested Object ಗಳನ್ನು (Object ಒಳಗಿನ Object) 100% ಹೊಸ ವಿಳಾಸದಲ್ಲಿ ಕಾಪಿ ಮಾಡಲು (Deep Copy) ಬಳಸುವ ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಫಂಕ್ಷನ್ ಯಾವುದು?",
+                options: [
+                    "Spread Operator (...)",
+                    "Object.assign()",
+                    "structuredClone()",
+                    "Object.copy()"
+                ],
+                ans: 2,
+                exp: "Spread Operator ಕೇವಲ ಮೇಲ್ಪದರವನ್ನು ಮಾತ್ರ ಕಾಪಿ ಮಾಡುತ್ತದೆ (Shallow Copy). ಒಳಗಿರುವ Object ಅನ್ನೂ ಪೂರ್ತಿಯಾಗಿ ಹೊಸ ವಿಳಾಸದಲ್ಲಿ ಕಾಪಿ ಮಾಡಲು (Deep Copy) <code>structuredClone()</code> ಬಳಸುತ್ತಾರೆ[cite: 5]."
+            }
+        ];
+
+        let currentQ = 0;
+        let answers = new Array(questions.length).fill(null);
+        let reviewFlags = new Array(questions.length).fill(false);
+        let timeLeft = 1200; // 20 minutes
+        let timerId;
+
+        window.onload = () => { renderPalette(); loadQuestion(0); startTimer(); };
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun" style="color:var(--accent)"></i> Light Mode';
+            }
+        }
+
+        function loadQuestion(idx) {
+            currentQ = idx;
+            const q = questions[idx];
+            document.getElementById('q-number').innerText = `Question ${idx + 1} of ${questions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerHTML = q.q;
+            
+            const optsContainer = document.getElementById('options-grid');
+            optsContainer.innerHTML = '';
+            const chars = ['A', 'B', 'C', 'D'];
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn ${answers[idx] === i ? 'selected' : ''}`;
+                btn.onclick = () => { answers[idx] = i; reviewFlags[idx] = false; loadQuestion(idx); };
+                btn.innerHTML = `<span class="opt-char">${chars[i]}</span> <span>${opt}</span>`;
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('progress-fill').style.width = `${((idx+1)/questions.length)*100}%`;
+            document.getElementById('btn-prev').disabled = idx === 0;
+            document.getElementById('btn-next').innerHTML = idx === questions.length-1 ? 'Submit <i class="fas fa-check"></i>' : 'Next <i class="fas fa-arrow-right"></i>';
+            
+            const revBtn = document.getElementById('btn-review');
+            if(reviewFlags[idx]) { revBtn.style.background = 'var(--accent)'; revBtn.style.color = '#fff'; }
+            else { revBtn.style.background = 'transparent'; revBtn.style.color = 'var(--accent)'; }
+            
+            updatePalette();
+        }
+
+        function clearAnswer() { answers[currentQ] = null; loadQuestion(currentQ); }
+        function markReview() { reviewFlags[currentQ] = !reviewFlags[currentQ]; loadQuestion(currentQ); }
+        function nav(step) {
+            const next = currentQ + step;
+            if(next >= 0 && next < questions.length) loadQuestion(next);
+            else if(next === questions.length) submitQuiz();
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.innerText = i + 1;
+                btn.id = `pal-${i}`;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePalette() {
+            questions.forEach((_, i) => {
+                const btn = document.getElementById(`pal-${i}`);
+                btn.className = 'pal-btn';
+                if(i === currentQ) btn.classList.add('active');
+                if(answers[i] !== null) btn.classList.add('answered');
+                if(reviewFlags[i]) btn.classList.add('review');
+            });
+        }
+
+        function startTimer() {
+            timerId = setInterval(() => {
+                if(timeLeft <= 0) { clearInterval(timerId); submitQuiz(); return; }
+                timeLeft--;
+                const m = Math.floor(timeLeft/60).toString().padStart(2, '0');
+                const s = (timeLeft%60).toString().padStart(2, '0');
+                document.getElementById('timer').innerHTML = `<i class="fas fa-clock"></i> ${m}:${s}`;
+            }, 1000);
+        }
+
+        function submitQuiz() {
+            if(timeLeft > 0 && !confirm("Are you sure you want to submit?")) return;
+            clearInterval(timerId);
+            document.getElementById('quiz-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+            window.scrollTo(0,0);
+            
+            let correct = 0, wrong = 0, unattempted = 0;
+            const neg = document.getElementById('neg-mark').checked;
+            const revSec = document.getElementById('review-section');
+            revSec.innerHTML = '<h3>Detailed Analytics & Solutions</h3><hr style="margin: 15px 0; border-color: var(--border);">';
+
+            questions.forEach((q, i) => {
+                const uAns = answers[i];
+                let isCorr = (uAns === q.ans);
+                if(uAns === null) unattempted++;
+                else if(isCorr) correct++;
+                else wrong++;
+
+                const chars = ['A', 'B', 'C', 'D'];
+                const status = uAns === null ? `<span style="color:#64748b"><i class="fas fa-minus-circle"></i> Unattempted</span>` 
+                    : (isCorr ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Correct</span>` 
+                    : `<span style="color:var(--danger)"><i class="fas fa-times-circle"></i> Wrong (Your Answer: ${chars[uAns]})</span>`);
+
+                revSec.innerHTML += `
+                    <div class="review-item ${isCorr ? 'correct' : ''}">
+                        <div style="font-size:0.9rem; color:#64748b; margin-bottom:8px;">Q${i+1} | ${q.type}</div>
+                        <div style="font-size:1.15rem; font-weight:600; margin-bottom:15px;">${q.q}</div>
+                        <div style="margin-bottom:10px;">Status: <b>${status}</b></div>
+                        <div style="color:var(--success); font-weight:bold; margin-bottom: 10px;">Correct Answer: ${chars[q.ans]}. ${q.options[q.ans]}</div>
+                        <div class="exp-box"><strong><i class="fas fa-lightbulb"></i> ವಿವರಣೆ:</strong> ${q.exp}</div>
+                    </div>
+                `;
+            });
+
+            let finalScore = correct;
+            if(neg) finalScore -= (wrong * 0.5);
+            finalScore = Math.max(0, finalScore);
+
+            document.getElementById('stat-c').innerText = correct;
+            document.getElementById('stat-w').innerText = wrong;
+            document.getElementById('stat-u').innerText = unattempted;
+            document.getElementById('score-text').innerText = finalScore % 1 === 0 ? finalScore : finalScore.toFixed(1);
+        }
+    </script>
+</body>
+</html>

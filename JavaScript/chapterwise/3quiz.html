@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Data Types - Advanced Pro Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary-color: #2563eb;
+            --accent-color: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border-color: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --code-bg: #000000;
+            --shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Noto Sans Kannada', sans-serif; }
+        body { background: var(--bg-color); color: var(--text-color); transition: var(--transition); }
+
+        /* Header */
+        header { background: linear-gradient(135deg, #1e3a8a, var(--primary-color)); color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .header-title { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .theme-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: var(--transition); }
+        .theme-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Container & Layout */
+        .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; display: flex; gap: 30px; }
+        @media (max-width: 992px) { .container { flex-direction: column-reverse; } }
+
+        /* Quiz Main Area */
+        .quiz-main { flex: 1; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 25px; }
+        .timer { font-size: 1.2rem; font-weight: bold; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 5px 15px; border-radius: 8px; }
+        .progress-bar { flex: 1; margin: 0 20px; height: 10px; background: var(--border-color); border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary-color); width: 0%; transition: 0.3s; }
+
+        .question-card { background: var(--card-bg); padding: 35px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .q-meta { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; color: #64748b; }
+        .q-badge { background: rgba(37, 99, 235, 0.1); color: var(--primary-color); padding: 4px 10px; border-radius: 6px; }
+        .q-text { font-size: 1.3rem; margin-bottom: 25px; line-height: 1.6; }
+        
+        pre { background: var(--code-bg); color: var(--code-text); padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 15px 0; overflow-x: auto; border-left: 4px solid var(--primary-color); font-size: 0.95rem; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 15px; }
+        .option-btn { background: var(--card-bg); border: 2px solid var(--border-color); color: var(--text-color); padding: 15px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; text-align: left; transition: var(--transition); display: flex; align-items: center; gap: 15px; }
+        .option-btn:hover:not(:disabled) { border-color: var(--primary-color); background: rgba(37, 99, 235, 0.05); }
+        .option-btn.selected { border-color: var(--primary-color); background: rgba(37, 99, 235, 0.1); font-weight: bold; }
+        .opt-char { background: var(--border-color); padding: 4px 12px; border-radius: 6px; font-weight: bold; }
+
+        .actions { display: flex; justify-content: space-between; margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 2px solid var(--border-color); color: var(--text-color); }
+        .btn-outline:hover { background: var(--border-color); }
+        .btn-review { background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); }
+        .btn-primary { background: var(--primary-color); color: #fff; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-danger { background: var(--danger); color: #fff; width: 100%; margin-top: 20px; }
+
+        /* Sidebar & Palette */
+        .sidebar { width: 320px; }
+        .palette-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-color); position: sticky; top: 90px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+        .pal-btn { aspect-ratio: 1; border: 2px solid var(--border-color); border-radius: 8px; background: transparent; color: var(--text-color); font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .pal-btn.active { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+        .pal-btn.answered { background: var(--success); color: #fff; border-color: var(--success); }
+        .pal-btn.review { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+        
+        .legend { margin-top: 25px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; }
+        .legend-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border-color); }
+
+        /* Result View */
+        #result-view { display: none; text-align: center; max-width: 900px; margin: 0 auto; }
+        .score-box { background: var(--card-bg); padding: 40px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .circle-score { width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--primary-color); display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 2.5rem; font-weight: bold; }
+        
+        .review-section { margin-top: 40px; text-align: left; }
+        .review-item { background: var(--card-bg); padding: 25px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--danger); box-shadow: var(--shadow); }
+        .review-item.correct { border-left-color: var(--success); }
+        .review-exp { background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--primary-color); }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- Header -->
+    <header>
+        <div class="header-title"><i class="fab fa-js-square" style="color: #f7df1e; font-size: 2rem;"></i> JS Data Types Pro Quiz</div>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i> Dark Mode</button>
+    </header>
+
+    <div class="container" id="quiz-view">
+        <!-- Main Quiz Area -->
+        <main class="quiz-main">
+            <div class="quiz-header">
+                <div style="display: flex; gap: 10px;">
+                    <label style="font-weight: bold;"><input type="checkbox" id="neg-mark" checked> -0.5 Negative Marking</label>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="timer" id="timer"><i class="fas fa-clock"></i> 15:00</div>
+            </div>
+
+            <div class="question-card">
+                <div class="q-meta">
+                    <span id="q-number">Question 1 of 12</span>
+                    <span id="q-type" class="q-badge">Concept</span>
+                </div>
+                <div class="q-text" id="q-text">Loading question...</div>
+                <div class="options-grid" id="options-grid"></div>
+                
+                <div class="actions">
+                    <button class="btn btn-outline" onclick="clearAnswer()"><i class="fas fa-eraser"></i> Clear</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-review" onclick="markReview()" id="btn-review"><i class="fas fa-star"></i> Review</button>
+                        <button class="btn btn-outline" onclick="nav(-1)" id="btn-prev">Prev</button>
+                        <button class="btn btn-primary" onclick="nav(1)" id="btn-next">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Palette -->
+        <aside class="sidebar">
+            <div class="palette-card">
+                <h3 style="border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">Question Palette</h3>
+                <div class="palette-grid" id="palette-grid"></div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-box" style="background:var(--success)"></div> Answered</div>
+                    <div class="legend-item"><div class="legend-box" style="background:transparent"></div> Unanswered</div>
+                    <div class="legend-item"><div class="legend-box" style="background:var(--accent-color)"></div> Marked for Review</div>
+                </div>
+                <button class="btn btn-danger" onclick="submitQuiz()"><i class="fas fa-paper-plane"></i> Submit Final Quiz</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Result View -->
+    <div class="container" id="result-view">
+        <div style="width: 100%;">
+            <div class="score-box">
+                <h2>Quiz Completed! 🎉</h2>
+                <div class="circle-score">
+                    <span id="score-text">0</span>
+                    <span style="font-size: 1rem; color: #64748b;">Out of 12</span>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 30px; margin: 20px 0;">
+                    <div><h3 style="color: var(--success);" id="stat-c">0</h3><p>Correct</p></div>
+                    <div><h3 style="color: var(--danger);" id="stat-w">0</h3><p>Wrong</p></div>
+                    <div><h3 style="color: #64748b;" id="stat-u">0</h3><p>Unattempted</p></div>
+                </div>
+                <button class="btn btn-primary" style="margin: 0 auto;" onclick="location.reload()"><i class="fas fa-redo"></i> Retake Quiz</button>
+            </div>
+
+            <div class="review-section" id="review-section">
+                <!-- Detailed review injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Extraction & Questions Generation based on "3 Java Script Data Types1.html"
+        const questions = [
+            {
+                type: "Deep Conceptual",
+                q: "Primitive ಮತ್ತು Non-Primitive Data Types ನಡುವಿನ ಮುಖ್ಯ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "Primitive ಡೇಟಾ Array ಗಳನ್ನು ಬಳಸುತ್ತದೆ, Non-Primitive ನಂಬರ್‌ಗಳನ್ನು ಬಳಸುತ್ತದೆ.",
+                    "Primitive ಡೇಟಾ Heap ಮೆಮೊರಿಯಲ್ಲಿ ಸೇವ್ ಆಗುತ್ತದೆ, Non-Primitive Stack ಮೆಮೊರಿಯಲ್ಲಿ ಸೇವ್ ಆಗುತ್ತದೆ.",
+                    "Primitive ಮೌಲ್ಯದ ಮೂಲಕ ನಕಲಾಗುತ್ತದೆ (Copy by Value), Non-Primitive ವಿಳಾಸದ ಮೂಲಕ ನಕಲಾಗುತ್ತದೆ (Copy by Reference).",
+                    "ಎರಡೂ Stack ಮೆಮೊರಿಯಲ್ಲಿಯೇ ಸೇವ್ ಆಗುತ್ತವೆ."
+                ],
+                ans: 2,
+                exp: "Primitive Types (ಉದಾ: Number, String) ನೇರವಾಗಿ Stack Memory ಯಲ್ಲಿ ಸೇವ್ ಆಗುತ್ತವೆ ಮತ್ತು ಕಾಪಿ ಮಾಡಿದಾಗ ಜೆರಾಕ್ಸ್ ಪ್ರತಿಯಂತೆ ಹೊಸ ಮೌಲ್ಯ ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ (Copy by Value). ಆದರೆ Non-Primitive (Object, Array) Heap Memory ಯಲ್ಲಿರುತ್ತವೆ ಮತ್ತು ಕೇವಲ ವಿಳಾಸ ಕಾಪಿ ಆಗುತ್ತದೆ (Copy by Reference)."
+            },
+            {
+                type: "Code Output Prediction",
+                q: "Type Coercion (ಸ್ವಯಂ ರೂಪಾಂತರ) ನಿಯಮದ ಪ್ರಕಾರ ಕೆಳಗಿನ ಕೋಡ್‌ನ ಔಟ್‌ಪುಟ್ ಏನಾಗಿರುತ್ತದೆ?<br><pre><code>console.log('5' + 2);\nconsole.log('5' - 2);</code></pre>",
+                options: [
+                    "7 ಮತ್ತು 3",
+                    "'52' ಮತ್ತು 3",
+                    "Error ಬರುತ್ತದೆ",
+                    "'52' ಮತ್ತು '3'"
+                ],
+                ans: 1,
+                exp: "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ String ಜೊತೆ `+` ಬಳಸಿದರೆ ಅದು ಪಕ್ಕದಲ್ಲಿ ಜೋಡಿಸುತ್ತದೆ (Concatenation: '5' + 2 = '52'). ಆದರೆ `-` ಬಳಸಿದರೆ String ಅನ್ನು Number ಆಗಿ ಪರಿವರ್ತಿಸಿ ಲೆಕ್ಕ ಮಾಡುತ್ತದೆ ('5' - 2 = 3)."
+            },
+            {
+                type: "Debugging / Error Identification",
+                q: "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹಳೆಯ ಬಗ್ (Bug) ನಿಂದಾಗಿ, ಕೆಳಗಿನ ಕೋಡ್‌ನ ಔಟ್‌ಪುಟ್ ಏನಾಗಿರುತ್ತದೆ?<br><pre><code>console.log(typeof null);</code></pre>",
+                options: ["'null'", "'undefined'", "'object'", "'string'"],
+                ans: 2,
+                exp: "`typeof null` ಪರೀಕ್ಷಿಸಿದಾಗ ಅದು 'object' ಎಂದು ತೋರಿಸುತ್ತದೆ. Null ಎಂಬುದು Primitive Type ಆಗಿದ್ದರೂ, ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಆರಂಭದ ದಿನಗಳಲ್ಲಿ ಆದ ಒಂದು ತಾಂತ್ರಿಕ ಬಗ್ ಆಗಿದೆ."
+            },
+            {
+                type: "Find the Error",
+                q: "ಈ ಕೆಳಗಿನ ಕೋಡ್‌ನಲ್ಲಿ Array ಯ ಡೇಟಾ ಟೈಪ್ ಅನ್ನು ಪರೀಕ್ಷಿಸಲಾಗಿದೆ. ಇದರ ಔಟ್‌ಪುಟ್ ಏನು?<br><pre><code>let fruits = ['Apple', 'Banana'];\nconsole.log(typeof fruits);</code></pre>",
+                options: ["'array'", "'object'", "'list'", "undefined"],
+                ans: 1,
+                exp: "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Array ಎಂಬುದು ಪ್ರತ್ಯೇಕ ಡೇಟಾ ಟೈಪ್ ಅಲ್ಲ, ಅದು ಮೂಲತಃ ಒಂದು ವಿಶೇಷ ರೀತಿಯ Object! ಆದ್ದರಿಂದ typeof ಪರೀಕ್ಷಿಸಿದರೆ 'object' ಎಂದೇ ಬರುತ್ತದೆ."
+            },
+            {
+                type: "Advanced Interview",
+                q: "<code>const</code> ಬಳಸಿ ಒಂದು Object ಅನ್ನು ಸೃಷ್ಟಿಸಿದರೂ, ಅದರ ಒಳಗಿನ ಮೌಲ್ಯವನ್ನು (Property) ಬದಲಾಯಿಸಲು ಸಾಧ್ಯವಿದೆ. ಇದಕ್ಕೆ ತಾಂತ್ರಿಕ ಕಾರಣವೇನು?<br><pre><code>const player = { runs: 100 };\nplayer.runs = 150; // ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ!</code></pre>",
+                options: [
+                    "const ಕೇವಲ ನಂಬರ್‌ಗಳಿಗೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುತ್ತದೆ, Object ಗಳಿಗೆ ಅಲ್ಲ.",
+                    "const ಬೀಗ ಹಾಕುವುದು Stack ನಲ್ಲಿರುವ ವಿಳಾಸದ (Address) ಚೀಟಿಗೆ ಮಾತ್ರ, Heap ಗೋದಾಮಿನಲ್ಲಿರುವ ವಸ್ತುಗಳಿಗಲ್ಲ.",
+                    "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ const ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ (Bug).",
+                    "Object ಅನ್ನು let ನಿಂದ ಮಾತ್ರ ಸೃಷ್ಟಿಸಬೇಕು."
+                ],
+                ans: 1,
+                exp: "Non-Primitive ಡೇಟಾಗಳ ವಿಳಾಸ (Reference) ಮಾತ್ರ Stack ನಲ್ಲಿರುತ್ತದೆ. `const` ಆ ವಿಳಾಸವನ್ನು ಮಾತ್ರ ಬದಲಾಯಿಸದಂತೆ ಲಾಕ್ ಮಾಡುತ್ತದೆ. ಆದರೆ Heap ನಲ್ಲಿರುವ ಅಸಲಿ ಡೇಟಾದ ಒಳಹೋಗಿ ಪ್ರಾಪರ್ಟಿಗಳನ್ನು ತಿದ್ದಬಹುದು (Mutation)."
+            },
+            {
+                type: "Conceptual Analysis",
+                q: "Null ಮತ್ತು Undefined ನಡುವಿನ ನಿಖರವಾದ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "ಎರಡೂ ಒಂದೇ, ಯಾವುದೇ ವ್ಯತ್ಯಾಸವಿಲ್ಲ.",
+                    "Undefined ಎಂದರೆ ಡಬ್ಬಿ ತಂದಿದ್ದೇವೆ ಆದರೆ ಏನೂ ಹಾಕಿಲ್ಲ; Null ಎಂದರೆ ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಖಾಲಿ ಇಟ್ಟ ಸ್ಥಿತಿ.",
+                    "Null ಎಂದರೆ Error; Undefined ಎಂದರೆ ಸರಿಯಾದ ಮೌಲ್ಯ.",
+                    "Undefined ಮೆಮೊರಿ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ, Null ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ."
+                ],
+                ans: 1,
+                exp: "ಹೊಸ ವೇರಿಯೇಬಲ್ ಸೃಷ್ಟಿಸಿ ಬೆಲೆ ಕೊಡದಿದ್ದರೆ ಅದು `undefined` ಆಗಿರುತ್ತದೆ (ತಾನಾಗಿಯೇ ಖಾಲಿ ಇರುವ ಸ್ಥಿತಿ). ಆದರೆ ನಾವೇ ಸ್ವತಃ 'ಇದರಲ್ಲಿ ಸದ್ಯ ಏನೂ ಇಲ್ಲ' ಎಂದು ಸೂಚಿಸಲು `null` ಬಳಸುತ್ತೇವೆ."
+            },
+            {
+                type: "Advanced Execution",
+                q: "Object ಗಳ ಹೋಲಿಕೆ (Equality): ಕೆಳಗಿನ ಕೋಡ್‌ನ ಔಟ್‌ಪುಟ್ ಏನು?<br><pre><code>let box1 = { item: 'ಚೆಂಡು' };\nlet box2 = { item: 'ಚೆಂಡು' };\nconsole.log(box1 === box2);</code></pre>",
+                options: ["true", "false", "TypeError", "undefined"],
+                ans: 1,
+                exp: "Non-Primitive ಡೇಟಾಗಳನ್ನು `===` ಬಳಸಿ ಹೋಲಿಸಿದಾಗ, ಅದು ಒಳಗಿನ ವಸ್ತುಗಳನ್ನು ನೋಡುವುದಿಲ್ಲ; ಬದಲಿಗೆ ಅವುಗಳ ಮೆಮೊರಿ ವಿಳಾಸ (Address) ಒಂದೇ ಇದೆಯೇ ಎಂದು ನೋಡುತ್ತದೆ. ಇಲ್ಲಿ ಎರಡು ಪ್ರತ್ಯೇಕ Object ಗಳಿರುವುದರಿಂದ ವಿಳಾಸ ಬೇರೆ ಬೇರೆಯಾಗಿರುತ್ತದೆ, ಹಾಗಾಗಿ `false` ಬರುತ್ತದೆ."
+            },
+            {
+                type: "Data Structure Selection",
+                q: "ನಿಮ್ಮ Array ನಲ್ಲಿರುವ ನಕಲಿ (Duplicate) ಡೇಟಾಗಳನ್ನು ಸುಲಭವಾಗಿ ಮತ್ತು ವೇಗವಾಗಿ ತೆಗೆದುಹಾಕಲು ES6 ನ ಯಾವ ಹೊಸ Data Type ಬಳಸಬಹುದು?",
+                options: ["Map", "Symbol", "Set", "BigInt"],
+                ans: 2,
+                exp: "`Set` ಎನ್ನುವುದು ಕೇವಲ ಅನನ್ಯ (Unique) ಮೌಲ್ಯಗಳನ್ನು ಮಾತ್ರ ಸಂಗ್ರಹಿಸುವ ಕಲೆಕ್ಷನ್. ಇದರಲ್ಲಿ ಒಂದೇ ಮೌಲ್ಯವನ್ನು ಎರಡು ಬಾರಿ ಹಾಕಿದರೆ ಅದು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ನಕಲಿಯನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ."
+            },
+            {
+                type: "Practical Implementation",
+                q: "Object ಒಂದರ (ಉದಾ: user1) ವಿಳಾಸದ ಲಿಂಕ್ ಕಟ್ ಮಾಡಿ, Heap ನಲ್ಲಿ ಸಂಪೂರ್ಣ ಹೊಸ ಪ್ರತಿ (Clone) ತಯಾರಿಸಲು ಯಾವ ವಿಧಾನವನ್ನು ಬಳಸಲಾಗುತ್ತದೆ?",
+                options: [
+                    "let user2 = user1;",
+                    "let user2 = user1.copy();",
+                    "let user2 = { ...user1 };",
+                    "let user2 = clone(user1);"
+                ],
+                ans: 2,
+                exp: "Object ನ ವಿಳಾಸದ ಕಾಪಿ ಮಾಡದೆ ಹೊಸ ಜಾಗದಲ್ಲೇ ಕಾಪಿ ಮಾಡಬೇಕಾದರೆ Spread Operator (`...`) ಅನ್ನು ಬಳಸಬೇಕು. `let user2 = { ...user1 };` ಎಂದರೆ user2 ಹೊಸ ವಿಳಾಸವನ್ನು ಪಡೆಯುತ್ತದೆ."
+            },
+            {
+                type: "Internal Mechanism",
+                q: "Heap Memory ಯಲ್ಲಿರುವ ಯಾವುದಾದರೂ Object ಗೆ, Stack ನಿಂದ ಯಾವುದೇ 'ವಿಳಾಸದ ಲಿಂಕ್' ಇಲ್ಲದಿದ್ದರೆ (ಅನಾಥವಾಗಿದ್ದರೆ), ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದನ್ನು ಹೇಗೆ ಸ್ವಚ್ಛಗೊಳಿಸುತ್ತದೆ?",
+                options: [
+                    "Developer ಖುದ್ದಾಗಿ ಡಿಲೀಟ್ ಮಾಡಬೇಕು.",
+                    "Garbage Collector ನ 'Mark-and-Sweep' ಪ್ರಕ್ರಿಯೆಯ ಮೂಲಕ.",
+                    "ಕಂಪ್ಯೂಟರ್ ರಿಸ್ಟಾರ್ಟ್ ಮಾಡಿದಾಗ ಮಾತ್ರ ಹೋಗುತ್ತದೆ.",
+                    "ಅದು ಶಾಶ್ವತವಾಗಿ Heap ನಲ್ಲೇ ಉಳಿಯುತ್ತದೆ (Memory Leak)."
+                ],
+                ans: 1,
+                exp: "ಯಾವುದೇ ವೇರಿಯೇಬಲ್‌ನಿಂದ ರೆಫರೆನ್ಸ್ ಇಲ್ಲದ ಡೇಟಾವನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಸ್ವಯಂಚಾಲಿತ Garbage Collector (Mark-and-Sweep ಅಲ್ಗಾರಿದಮ್) ಮೆಮೊರಿಯಿಂದ ಅಳಿಸಿಹಾಕುತ್ತದೆ."
+            },
+            {
+                type: "Syntax Evaluation",
+                q: "ಅಕ್ಷರಗಳನ್ನು ಸಂಖ್ಯೆಯ ಜೊತೆ ತಪ್ಪಾಗಿ ಲೆಕ್ಕ (ಉದಾ: ಗುಣಾಕಾರ) ಮಾಡಲು ಹೋದರೆ ಬರುವ <code>NaN</code> ನ Data Type ಯಾವುದು?",
+                options: ["string", "undefined", "number", "object"],
+                ans: 2,
+                exp: "ಸಂಖ್ಯೆಯಲ್ಲದ ಲೆಕ್ಕಾಚಾರವು `NaN` (Not a Number) ಮೌಲ್ಯವನ್ನು ನೀಡುತ್ತದೆ. ಆದರೆ ಆಶ್ಚರ್ಯಕರವಾಗಿ `typeof NaN` ಎಂದು ಪರೀಕ್ಷಿಸಿದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದನ್ನು 'number' ಎಂದೇ ಪರಿಗಣಿಸುತ್ತದೆ!"
+            },
+            {
+                type: "Basic Comparison",
+                q: "Object ಮತ್ತು Map ನಡುವಿನ ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "Map ನಲ್ಲಿ ಕೇವಲ ನಂಬರ್‌ಗಳನ್ನು ಮಾತ್ರ ಸೇವ್ ಮಾಡಬಹುದು.",
+                    "Object ನಲ್ಲಿ Keys ಕೇವಲ String/Symbol ಆಗಿರಬಲ್ಲವು, ಆದರೆ Map ನಲ್ಲಿ ಯಾವುದೇ Data type ಅನ್ನು Key ಆಗಿ ಬಳಸಬಹುದು.",
+                    "Object ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ, Map ನಿಧಾನ.",
+                    "ಯಾವುದೇ ವ್ಯತ್ಯಾಸವಿಲ್ಲ, ಎರಡೂ ಒಂದೇ."
+                ],
+                ans: 1,
+                exp: "ಸಾಮಾನ್ಯ Object ನಲ್ಲಿ ನೀವು ಬರೆಯುವ Key ಗಳು ಸ್ವಯಂಚಾಲಿತವಾಗಿ String ಗೆ ಬದಲಾಗುತ್ತವೆ. ಆದರೆ ES6 ನ `Map` ನಲ್ಲಿ ನೀವು ನಂಬರ್, ಫಂಕ್ಷನ್ ಅಥವಾ ಇನ್ನೊಂದು Object ಅನ್ನು ಕೂಡ Key ಆಗಿ ಬಳಸಬಹುದು."
+            }
+        ];
+
+        // App State
+        let currentQ = 0;
+        let answers = new Array(questions.length).fill(null);
+        let reviewFlags = new Array(questions.length).fill(false);
+        let timeLeft = 900; // 15 mins
+        let timerId;
+
+        // Init
+        window.onload = () => {
+            renderPalette();
+            loadQuestion(0);
+            startTimer();
+        };
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun" style="color:var(--accent-color)"></i> Light Mode';
+            }
+        }
+
+        // Render Question
+        function loadQuestion(index) {
+            currentQ = index;
+            const q = questions[index];
+            document.getElementById('q-number').innerText = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerHTML = q.q;
+            
+            const optsContainer = document.getElementById('options-grid');
+            optsContainer.innerHTML = '';
+            const chars = ['A', 'B', 'C', 'D'];
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn ${answers[index] === i ? 'selected' : ''}`;
+                btn.onclick = () => selectOpt(i);
+                btn.innerHTML = `<span class="opt-char">${chars[i]}</span> <span>${opt}</span>`;
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('progress-fill').style.width = `${((index+1)/questions.length)*100}%`;
+            document.getElementById('btn-prev').disabled = index === 0;
+            document.getElementById('btn-next').innerHTML = index === questions.length-1 ? 'Submit <i class="fas fa-check"></i>' : 'Next <i class="fas fa-arrow-right"></i>';
+            
+            const revBtn = document.getElementById('btn-review');
+            if(reviewFlags[index]) {
+                revBtn.style.background = 'var(--accent-color)'; revBtn.style.color = '#fff';
+            } else {
+                revBtn.style.background = 'transparent'; revBtn.style.color = 'var(--accent-color)';
+            }
+            
+            updatePaletteUI();
+        }
+
+        // Actions
+        function selectOpt(i) { answers[currentQ] = i; reviewFlags[currentQ] = false; loadQuestion(currentQ); }
+        function clearAnswer() { answers[currentQ] = null; loadQuestion(currentQ); }
+        function markReview() { reviewFlags[currentQ] = !reviewFlags[currentQ]; loadQuestion(currentQ); }
+        
+        function nav(step) {
+            const next = currentQ + step;
+            if(next >= 0 && next < questions.length) loadQuestion(next);
+            else if(next === questions.length) submitQuiz();
+        }
+
+        // Palette
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.innerText = i + 1;
+                btn.id = `pal-${i}`;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePaletteUI() {
+            questions.forEach((_, i) => {
+                const btn = document.getElementById(`pal-${i}`);
+                btn.className = 'pal-btn';
+                if(i === currentQ) btn.classList.add('active');
+                if(answers[i] !== null) btn.classList.add('answered');
+                if(reviewFlags[i]) btn.classList.add('review');
+            });
+        }
+
+        // Timer
+        function startTimer() {
+            timerId = setInterval(() => {
+                if(timeLeft <= 0) { clearInterval(timerId); submitQuiz(); return; }
+                timeLeft--;
+                const m = Math.floor(timeLeft/60).toString().padStart(2, '0');
+                const s = (timeLeft%60).toString().padStart(2, '0');
+                document.getElementById('timer').innerHTML = `<i class="fas fa-clock"></i> ${m}:${s}`;
+            }, 1000);
+        }
+
+        // Submit & Review
+        function submitQuiz() {
+            if(timeLeft > 0 && !confirm("Are you sure you want to submit?")) return;
+            clearInterval(timerId);
+            document.getElementById('quiz-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+            window.scrollTo(0,0);
+            
+            let correct = 0, wrong = 0, unattempted = 0;
+            const neg = document.getElementById('neg-mark').checked;
+            const revSec = document.getElementById('review-section');
+            revSec.innerHTML = '<h3>Detailed Analytics & Solutions</h3><hr style="margin: 15px 0; border-color: var(--border-color);">';
+
+            questions.forEach((q, i) => {
+                const uAns = answers[i];
+                let isCorr = (uAns === q.ans);
+                if(uAns === null) unattempted++;
+                else if(isCorr) correct++;
+                else wrong++;
+
+                const chars = ['A', 'B', 'C', 'D'];
+                const statusHtml = uAns === null ? `<span style="color:#64748b">Unattempted ⚠️</span>` 
+                    : (isCorr ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Correct</span>` 
+                    : `<span style="color:var(--danger)"><i class="fas fa-times-circle"></i> Wrong (Your Answer: ${chars[uAns]})</span>`);
+
+                revSec.innerHTML += `
+                    <div class="review-item ${isCorr ? 'correct' : ''}">
+                        <div style="font-size:0.9rem; color:#64748b; margin-bottom:8px;">Q${i+1} | ${q.type}</div>
+                        <div style="font-size:1.1rem; font-weight:600; margin-bottom:10px;">${q.q}</div>
+                        <div style="margin-bottom:10px;">Status: <b>${statusHtml}</b></div>
+                        <div style="color:var(--success); font-weight:bold;">Correct Answer: ${chars[q.ans]}. ${q.options[q.ans]}</div>
+                        <div class="review-exp"><strong><i class="fas fa-lightbulb"></i> ವಿವರಣೆ:</strong> ${q.exp}</div>
+                    </div>
+                `;
+            });
+
+            let finalScore = correct;
+            if(neg) finalScore -= (wrong * 0.5);
+            finalScore = Math.max(0, finalScore);
+
+            document.getElementById('stat-c').innerText = correct;
+            document.getElementById('stat-w').innerText = wrong;
+            document.getElementById('stat-u').innerText = unattempted;
+            document.getElementById('score-text').innerText = finalScore % 1 === 0 ? finalScore : finalScore.toFixed(1);
+        }
+    </script>
+</body>
+</html>

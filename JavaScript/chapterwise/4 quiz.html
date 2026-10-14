@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Debugging Pro Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --primary: #1e3a8a;
+            --secondary: #2563eb;
+            --accent: #f59e0b;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --border: #e2e8f0;
+            --code-bg: #0f172a;
+            --code-text: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --primary: #3b82f6;
+            --border: #334155;
+            --code-bg: #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Noto Sans Kannada', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); transition: var(--transition); line-height: 1.6; }
+
+        /* Header */
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .theme-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: var(--transition); }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: flex; gap: 30px; }
+        @media (max-width: 900px) { .container { flex-direction: column-reverse; } }
+
+        /* Quiz Main */
+        .quiz-main { flex: 1; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 25px; }
+        .timer { font-size: 1.2rem; font-weight: bold; color: var(--danger); }
+        .progress-bar { flex: 1; margin: 0 20px; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: 0.3s; }
+
+        .question-card { background: var(--bg-card); padding: 35px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .q-meta { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; color: #64748b; }
+        .q-badge { background: rgba(37, 99, 235, 0.1); color: var(--secondary); padding: 4px 10px; border-radius: 6px; }
+        .q-text { font-size: 1.2rem; margin-bottom: 25px; }
+        
+        pre { background: var(--code-bg); color: var(--code-text); padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; margin: 15px 0; overflow-x: auto; border-left: 4px solid var(--secondary); }
+
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-btn { background: var(--bg-card); border: 2px solid var(--border); color: var(--text-main); padding: 15px; border-radius: 8px; font-size: 1rem; cursor: pointer; text-align: left; transition: var(--transition); display: flex; align-items: center; gap: 15px; }
+        .option-btn:hover { border-color: var(--secondary); background: rgba(37, 99, 235, 0.05); }
+        .option-btn.selected { border-color: var(--secondary); background: rgba(37, 99, 235, 0.1); font-weight: bold; }
+        .opt-char { background: var(--border); padding: 4px 12px; border-radius: 6px; font-weight: bold; }
+
+        .actions { display: flex; justify-content: space-between; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-primary { background: var(--secondary); color: #fff; }
+        .btn-warning { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+
+        /* Sidebar */
+        .sidebar { width: 300px; }
+        .palette-card { background: var(--bg-card); padding: 25px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); position: sticky; top: 90px; }
+        .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
+        .pal-btn { aspect-ratio: 1; border: 2px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-main); font-weight: bold; cursor: pointer; }
+        .pal-btn.active { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+        .pal-btn.answered { background: var(--success); color: #fff; border-color: var(--success); }
+        .pal-btn.review { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        /* Result View */
+        #result-view { display: none; max-width: 900px; margin: 0 auto; }
+        .score-box { text-align: center; background: var(--bg-card); padding: 40px; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .circle-score { width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 20px auto; font-size: 2.5rem; font-weight: bold; }
+        .review-item { background: var(--bg-card); padding: 25px; border-radius: 10px; margin-top: 20px; border-left: 6px solid var(--danger); box-shadow: var(--shadow); }
+        .review-item.correct { border-left-color: var(--success); }
+        .exp-box { background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid var(--secondary); }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div style="font-size: 1.5rem; font-weight: bold;"><i class="fas fa-bug"></i> JS Debugging Pro</div>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i> Dark Mode</button>
+    </header>
+
+    <div class="container" id="quiz-view">
+        <main class="quiz-main">
+            <div class="quiz-header">
+                <label style="font-weight: bold;"><input type="checkbox" id="neg-mark" checked> -0.5 Negative Marking</label>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="timer" id="timer"><i class="fas fa-clock"></i> 15:00</div>
+            </div>
+
+            <div class="question-card">
+                <div class="q-meta">
+                    <span id="q-number">Question 1 of 10</span>
+                    <span id="q-type" class="q-badge">Concept</span>
+                </div>
+                <div class="q-text" id="q-text">Loading...</div>
+                <div class="options-grid" id="options-grid"></div>
+                
+                <div class="actions">
+                    <button class="btn btn-outline" onclick="clearAnswer()">Clear</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-warning" onclick="markReview()" id="btn-review">⭐ Review</button>
+                        <button class="btn btn-outline" onclick="nav(-1)" id="btn-prev">Prev</button>
+                        <button class="btn btn-primary" onclick="nav(1)" id="btn-next">Next ➔</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="palette-card">
+                <h3>Question Palette</h3>
+                <div class="palette-grid" id="palette-grid"></div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px; background: var(--danger);" onclick="submitQuiz()">Submit Quiz</button>
+            </div>
+        </aside>
+    </div>
+
+    <div class="container" id="result-view">
+        <div style="width: 100%;">
+            <div class="score-box">
+                <h2>Quiz Completed! 🎉</h2>
+                <div class="circle-score">
+                    <span id="score-text">0</span>
+                    <span style="font-size: 1rem; color: #64748b;">Out of 10</span>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px;">
+                    <div><h3 style="color: var(--success);" id="stat-c">0</h3><p>Correct</p></div>
+                    <div><h3 style="color: var(--danger);" id="stat-w">0</h3><p>Wrong</p></div>
+                    <div><h3 style="color: #64748b;" id="stat-u">0</h3><p>Unattempted</p></div>
+                </div>
+                <button class="btn btn-primary" onclick="location.reload()">Retake Quiz</button>
+            </div>
+            <div id="review-section"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "Basic Understanding",
+                q: "ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಡೆವಲಪರ್ ಕನ್ಸೋಲ್ (Console) ತೆರೆಯಲು ಬಳಸುವ ಸರಿಯಾದ ಶಾರ್ಟ್‌ಕಟ್ ಯಾವುದು?",
+                options: [
+                    "Right Click ➔ Inspect ಅಥವಾ F12",
+                    "Ctrl + P",
+                    "Shift + Enter",
+                    "Alt + F4"
+                ],
+                ans: 0,
+                exp: "ಬ್ರೌಸರ್‌‌ನಲ್ಲಿ ಕನ್ಸೋಲ್ ತೆರೆಯಲು ಮೌಸ್‌ನಿಂದ Right Click ಮಾಡಿ 'Inspect' ಕ್ಲಿಕ್ ಮಾಡಬೇಕು, ಅಥವಾ ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ F12 ಅಥವಾ Ctrl + Shift + I ಒತ್ತಬೇಕು[cite: 4]."
+            },
+            {
+                type: "Concept Identification",
+                q: "ನಿಮ್ಮ ಬಳಿ ಇರುವ ದೊಡ್ಡ Array ಅಥವಾ Object ಡೇಟಾವನ್ನು ಸುಂದರವಾದ ಕೋಷ್ಟಕದ (Table) ರೂಪದಲ್ಲಿ ನೋಡಲು ಯಾವ ವಿಧಾನ ಬಳಸುತ್ತೀರಿ?",
+                options: [
+                    "console.log()",
+                    "console.table()",
+                    "console.warn()",
+                    "console.error()"
+                ],
+                ans: 1,
+                exp: "ನಿಮ್ಮ ಬಳಿ ದೊಡ್ಡ Array ಅಥವಾ Object ಇದ್ದರೆ, ಅದನ್ನು ಸುಂದರವಾದ ಟೇಬಲ್ (Table) ರೂಪದಲ್ಲಿ ತೋರಿಸಲು `console.table()` ಬಳಸಲಾಗುತ್ತದೆ (ಉದಾಹರಣೆಗೆ: ಶಾಲೆಯ ಹಾಜರಾತಿ ಪಟ್ಟಿ)[cite: 4]."
+            },
+            {
+                type: "Analytical Evaluation",
+                q: "Error Message <code>Uncaught ReferenceError: marks is not defined at script.js:12:13</code> ಅನ್ನು ಗಮನಿಸಿ. ಇದರಲ್ಲಿ 'script.js:12' ಏನನ್ನು ಸೂಚಿಸುತ್ತದೆ?",
+                options: [
+                    "marks ಎಂಬ ವೇರಿಯೇಬಲ್‌ನ ಮೌಲ್ಯ 12 ಆಗಿದೆ.",
+                    "script.js ಫೈಲ್‌ನಲ್ಲಿ 12ನೇ ಸಾಲಿನಲ್ಲಿ (Line 12) ತಪ್ಪಾಗಿದೆ.",
+                    "12ನೇ ಬಾರಿಗೆ Error ಬಂದಿದೆ.",
+                    "12 ಬೇರೆ ಬೇರೆ ಫೈಲ್‌ಗಳಲ್ಲಿ ತಪ್ಪಾಗಿದೆ."
+                ],
+                ans: 1,
+                exp: "ಮೂರನೇ ಭಾಗ (at script.js:12:13) ತಪ್ಪು ಇರುವ ವಿಳಾಸವನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಇಲ್ಲಿ `script.js` ಫೈಲ್ ಹೆಸರು ಮತ್ತು `12` ಎಂದರೆ 12ನೇ ಸಾಲಿನಲ್ಲಿ (Line Number 12) ತಪ್ಪಾಗಿದೆ ಎಂದರ್ಥ[cite: 4]."
+            },
+            {
+                type: "Advanced Technical Questions",
+                q: "ಕೋಡಿಂಗ್ ಬರೆಯುವಾಗ ಬ್ರಾಕೆಟ್ <code>)</code> ಅಥವಾ ಕೋಟ್ಸ್ <code>\" \"</code> ಮುಚ್ಚಲು ಮರೆತರೆ ಯಾವ Error ಬರುತ್ತದೆ?",
+                options: [
+                    "ReferenceError",
+                    "TypeError",
+                    "SyntaxError",
+                    "Logical Error"
+                ],
+                ans: 2,
+                exp: "ಕೋಟ್ಸ್ (\" \") ಮುಚ್ಚಲು ಮರೆತಾಗ, ಬ್ರಾಕೆಟ್ ) ಬಿಟ್ಟಾಗ ಅಥವಾ ಕೀವರ್ಡ್ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪು ಬರೆದಾಗ `SyntaxError` (ವ್ಯಾಕರಣದ ತಪ್ಪು) ಬರುತ್ತದೆ[cite: 4]."
+            },
+            {
+                type: "Application-Based",
+                q: "ನೀವು <code>const</code> ಮೂಲಕ ಸೃಷ್ಟಿಸಿದ ವೇರಿಯೇಬಲ್‌ನ ಬೆಲೆಯನ್ನು ಬದಲಾಯಿಸಲು (Reassign) ಹೋದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಯಾವ Error ಅನ್ನು ಎಸೆಯುತ್ತದೆ?",
+                options: [
+                    "SyntaxError",
+                    "ReferenceError",
+                    "TypeError",
+                    "Logical Error"
+                ],
+                ans: 2,
+                exp: "ವಸ್ತುವಿನ ಗುಣಕ್ಕೆ ವಿರುದ್ಧವಾದ ಕೆಲಸ ಮಾಡಿದಾಗ (ಉದಾ: ನೀರಿನ ಬಾಟಲಿಯಿಂದ ಇಸ್ತ್ರಿ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದಂತೆ) `TypeError` ಬರುತ್ತದೆ. `const` ವೇರಿಯೇಬಲ್ ಬೆಲೆಯನ್ನು ಬದಲಾಯಿಸಲು ಹೋದಾಗ ಈ Error ಬರುತ್ತದೆ[cite: 4]."
+            },
+            {
+                type: "Deep Conceptual Questions",
+                q: "ಈ ಕೆಳಗಿನ ಕೋಡ್‌ನಲ್ಲಿ <code>Logical Error</code> (ಸೈಲೆಂಟ್ ಕಿಲ್ಲರ್) ಇದೆ. ಇದರ ಫಲಿತಾಂಶ 90 ಬರುವ ಬದಲು 130 ಬರುತ್ತದೆ. ತಪ್ಪೇನು?<br><pre><code>let m1 = 80;\nlet m2 = 100;\nlet average = m1 + m2 / 2;</code></pre>",
+                options: [
+                    "ವೇರಿಯೇಬಲ್ ಡಿಕ್ಲೇರ್ ಮಾಡಿಲ್ಲ.",
+                    "m1 ಮತ್ತು m2 ಅನ್ನು ಸೇರಿಸುವಾಗ ಬ್ರಾಕೆಟ್ <code>(m1 + m2)</code> ಹಾಕಿಲ್ಲ.",
+                    "console.log() ಬಳಸಿಲ್ಲ.",
+                    "JavaScript ನಲ್ಲಿ ಭಾಗಾಕಾರ ಮಾಡಲು / ಬಳಸಬಾರದು."
+                ],
+                ans: 1,
+                exp: "ಸರಾಸರಿ ಕಂಡುಹಿಡಿಯುವಾಗ ಮೊದಲು ಕೂಡಿಸಬೇಕು. ಆದರೆ ಬ್ರಾಕೆಟ್ ಹಾಕದಿದ್ದರೆ, ಗಣಿತದ ನಿಯಮದಂತೆ ಮೊದಲು ಭಾಗಾಕಾರ (100/2 = 50) ಆಗಿ, ನಂತರ ಕೂಡಿಸಲಾಗುತ್ತದೆ (80 + 50 = 130). ಯಾವುದೇ ಕೆಂಪು Error ಬರುವುದಿಲ್ಲ, ಆದರೆ ಉತ್ತರ ತಪ್ಪು ಬರುತ್ತದೆ. ಇದೇ `Logical Error`[cite: 4]."
+            },
+            {
+                type: "Debugging Practice",
+                q: "ಕೋಡ್ ರನ್ ಆಗಲು ಎಷ್ಟು ಮಿಲಿಸೆಕೆಂಡ್ ಸಮಯ ತೆಗೆದುಕೊಂಡಿತು ಎಂದು ಅಳೆಯಲು ಯಾವ ವಿಧಾನ ಬಳಸಲಾಗುತ್ತದೆ?",
+                options: [
+                    "console.stopwatch()",
+                    "console.time() ಮತ್ತು console.timeEnd()",
+                    "console.count()",
+                    "console.measure()"
+                ],
+                ans: 1,
+                exp: "ನಿಮ್ಮ ಕೋಡ್ ರನ್ ಆಗಲು ಎಷ್ಟು ಮಿಲಿಸೆಕೆಂಡ್ ಸಮಯ ತೆಗೆದುಕೊಂಡಿತು ಎಂದು ಸ್ಟಾಪ್‌ವಾಚ್ (Stopwatch) ಹಿಡಿದು ಅಳೆಯಲು `console.time()` & `console.timeEnd()` ಬಳಸಲಾಗುತ್ತದೆ[cite: 4]."
+            },
+            {
+                type: "Comparison",
+                q: "<code>console.warn()</code> ಮತ್ತು <code>console.error()</code> ನಡುವಿನ ಮುಖ್ಯ ವ್ಯತ್ಯಾಸವೇನು?",
+                options: [
+                    "warn() ಕೆಂಪು ಬಣ್ಣದಲ್ಲಿರುತ್ತದೆ, error() ಹಳದಿ ಬಣ್ಣದಲ್ಲಿರುತ್ತದೆ.",
+                    "warn() ಕೋಡ್ ಅನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ, error() ನಿಲ್ಲಿಸುವುದಿಲ್ಲ.",
+                    "warn() ಎಚ್ಚರಿಕೆ (ಹಳದಿ) ನೀಡುತ್ತದೆ ಆದರೆ ಕೋಡ್ ನಿಲ್ಲುವುದಿಲ್ಲ; error() ದೊಡ್ಡ ತಪ್ಪು (ಕೆಂಪು) ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+                    "ಎರಡೂ ಒಂದೇ, ಯಾವುದೇ ವ್ಯತ್ಯಾಸವಿಲ್ಲ."
+                ],
+                ans: 2,
+                exp: "`console.warn()` ಟ್ರಾಫಿಕ್ ಸಿಗ್ನಲ್‌ನ ಹಳದಿ ಲೈಟ್ ಇದ್ದಂತೆ; ಕೋಡ್ ನಿಲ್ಲುವುದಿಲ್ಲ, ಆದರೆ ಎಚ್ಚರಿಕೆ ನೀಡುತ್ತದೆ. `console.error()` ಕೆಂಪು ಲೈಟ್ ಇದ್ದಂತೆ; ದೊಡ್ಡ ತಪ್ಪಾಗಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ[cite: 4]."
+            },
+            {
+                type: "Best Practice",
+                q: "ತಪ್ಪನ್ನು ಹುಡುಕುವ 4 ಹಂತದ ಸೂತ್ರದಲ್ಲಿ (Debugging Steps), ಕೆಲವೊಮ್ಮೆ ಸಂಖ್ಯೆ (10) ಬದಲು ಅಕ್ಷರ (\"10\") ಬಂದಿರುತ್ತದೆ. ಇದನ್ನು ಪರೀಕ್ಷಿಸಲು ಯಾವ ಹಂತ ಬಳಸಬೇಕು?",
+                options: [
+                    "Line Number ಗುರುತಿಸುವುದು",
+                    "console.table() ಬಳಸುವುದು",
+                    "typeof ಪರೀಕ್ಷಿಸುವುದು",
+                    "ಬ್ರೌಸರ್ ರಿಸ್ಟಾರ್ಟ್ ಮಾಡುವುದು"
+                ],
+                ans: 2,
+                exp: "4ನೇ ಹಂತದಲ್ಲಿ: ಕೆಲವೊಮ್ಮೆ ಸಂಖ್ಯೆ (10) ಬದಲು ಅಕ್ಷರ (\"10\") ಬಂದಿರುತ್ತದೆ. ಆಗ `console.log(typeof variableName)` ಬಳಸಿ ಡೇಟಾ ಟೈಪ್ ಪರೀಕ್ಷಿಸಬೇಕು[cite: 4]."
+            },
+            {
+                type: "Scenario-Based Problem",
+                q: "ನೀವು ಡಿಕ್ಲೇರ್ ಮಾಡದ <code>userAge</code> ಬದಲು <code>userage</code> ಎಂದು ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪು ಬರೆದು ಪ್ರಿಂಟ್ ಮಾಡಲು ಹೋದರೆ ಯಾವ Error ಬರುತ್ತದೆ?",
+                options: [
+                    "SyntaxError",
+                    "Logical Error",
+                    "TypeError",
+                    "ReferenceError"
+                ],
+                ans: 3,
+                exp: "ವೇರಿಯೇಬಲ್ ಅನ್ನು ಡಿಕ್ಲೇರ್ ಮಾಡದೆಯೇ ಬಳಸಲು ಹೋದಾಗ ಅಥವಾ ಹೆಸರಿನ ಸ್ಪೆಲ್ಲಿಂಗ್ ತಪ್ಪು ಬರೆದಾಗ `ReferenceError` ಬರುತ್ತದೆ (ಶಾಲೆಗೆ ಬರದ ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಕರೆದಂತೆ)[cite: 4]."
+            }
+        ];
+
+        let currentQ = 0;
+        let answers = new Array(questions.length).fill(null);
+        let reviewFlags = new Array(questions.length).fill(false);
+        let timeLeft = 900;
+        let timerId;
+
+        window.onload = () => { renderPalette(); loadQuestion(0); startTimer(); };
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '<i class="fas fa-sun" style="color:var(--accent)"></i> Light Mode';
+            }
+        }
+
+        function loadQuestion(idx) {
+            currentQ = idx;
+            const q = questions[idx];
+            document.getElementById('q-number').innerText = `Question ${idx + 1} of ${questions.length}`;
+            document.getElementById('q-type').innerText = q.type;
+            document.getElementById('q-text').innerHTML = q.q;
+            
+            const optsContainer = document.getElementById('options-grid');
+            optsContainer.innerHTML = '';
+            const chars = ['A', 'B', 'C', 'D'];
+            
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn ${answers[idx] === i ? 'selected' : ''}`;
+                btn.onclick = () => { answers[idx] = i; reviewFlags[idx] = false; loadQuestion(idx); };
+                btn.innerHTML = `<span class="opt-char">${chars[i]}</span> <span>${opt}</span>`;
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('progress-fill').style.width = `${((idx+1)/questions.length)*100}%`;
+            document.getElementById('btn-prev').disabled = idx === 0;
+            document.getElementById('btn-next').innerHTML = idx === questions.length-1 ? 'Submit' : 'Next ➔';
+            
+            const revBtn = document.getElementById('btn-review');
+            if(reviewFlags[idx]) { revBtn.style.background = 'var(--accent)'; revBtn.style.color = '#fff'; }
+            else { revBtn.style.background = 'transparent'; revBtn.style.color = 'var(--accent)'; }
+            
+            updatePalette();
+        }
+
+        function clearAnswer() { answers[currentQ] = null; loadQuestion(currentQ); }
+        function markReview() { reviewFlags[currentQ] = !reviewFlags[currentQ]; loadQuestion(currentQ); }
+        function nav(step) {
+            const next = currentQ + step;
+            if(next >= 0 && next < questions.length) loadQuestion(next);
+            else if(next === questions.length) submitQuiz();
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'pal-btn';
+                btn.innerText = i + 1;
+                btn.id = `pal-${i}`;
+                btn.onclick = () => loadQuestion(i);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePalette() {
+            questions.forEach((_, i) => {
+                const btn = document.getElementById(`pal-${i}`);
+                btn.className = 'pal-btn';
+                if(i === currentQ) btn.classList.add('active');
+                if(answers[i] !== null) btn.classList.add('answered');
+                if(reviewFlags[i]) btn.classList.add('review');
+            });
+        }
+
+        function startTimer() {
+            timerId = setInterval(() => {
+                if(timeLeft <= 0) { clearInterval(timerId); submitQuiz(); return; }
+                timeLeft--;
+                const m = Math.floor(timeLeft/60).toString().padStart(2, '0');
+                const s = (timeLeft%60).toString().padStart(2, '0');
+                document.getElementById('timer').innerHTML = `<i class="fas fa-clock"></i> ${m}:${s}`;
+            }, 1000);
+        }
+
+        function submitQuiz() {
+            if(timeLeft > 0 && !confirm("Are you sure you want to submit?")) return;
+            clearInterval(timerId);
+            document.getElementById('quiz-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+            window.scrollTo(0,0);
+            
+            let correct = 0, wrong = 0, unattempted = 0;
+            const neg = document.getElementById('neg-mark').checked;
+            const revSec = document.getElementById('review-section');
+            revSec.innerHTML = '<h3>Detailed Analytics & Solutions</h3><hr style="margin: 15px 0; border-color: var(--border);">';
+
+            questions.forEach((q, i) => {
+                const uAns = answers[i];
+                let isCorr = (uAns === q.ans);
+                if(uAns === null) unattempted++;
+                else if(isCorr) correct++;
+                else wrong++;
+
+                const chars = ['A', 'B', 'C', 'D'];
+                const status = uAns === null ? `<span style="color:#64748b">Unattempted ⚠️</span>` 
+                    : (isCorr ? `<span style="color:var(--success)">Correct ✅</span>` 
+                    : `<span style="color:var(--danger)">Wrong ❌ (Your Answer: ${chars[uAns]})</span>`);
+
+                revSec.innerHTML += `
+                    <div class="review-item ${isCorr ? 'correct' : ''}">
+                        <div style="font-size:0.9rem; color:#64748b; margin-bottom:8px;">Q${i+1} | ${q.type}</div>
+                        <div style="font-size:1.1rem; font-weight:600; margin-bottom:10px;">${q.q}</div>
+                        <div style="margin-bottom:10px;">Status: <b>${status}</b></div>
+                        <div style="color:var(--success); font-weight:bold;">Correct Answer: ${chars[q.ans]}. ${q.options[q.ans]}</div>
+                        <div class="exp-box"><strong><i class="fas fa-lightbulb"></i> ವಿವರಣೆ:</strong> ${q.exp}</div>
+                    </div>
+                `;
+            });
+
+            let finalScore = correct;
+            if(neg) finalScore -= (wrong * 0.5);
+            finalScore = Math.max(0, finalScore);
+
+            document.getElementById('stat-c').innerText = correct;
+            document.getElementById('stat-w').innerText = wrong;
+            document.getElementById('stat-u').innerText = unattempted;
+            document.getElementById('score-text').innerText = finalScore % 1 === 0 ? finalScore : finalScore.toFixed(1);
+        }
+    </script>
+</body>
+</html>
