@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS ಲೂಪ್‌ಗಳ ಲೈವ್ ಅನಿಮೇಷನ್ (Live Animation)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --highlight: rgba(59, 130, 246, 0.3);
+            --border: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .header h1 {
+            color: var(--accent-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: -webkit-linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Animator Card */
+        .animator-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+
+        .btn-play {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .btn-play:hover { background: #059669; transform: scale(1.05); }
+        .btn-play:disabled { background: #475569; cursor: not-allowed; transform: none; }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .btn-reset:hover { border-color: var(--text-main); color: var(--text-main); }
+
+        .animator-body {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .animator-body { flex-direction: column; }
+        }
+
+        /* Code Editor Side */
+        .code-panel {
+            flex: 1;
+            background: #020617;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            position: relative;
+        }
+
+        .code-line {
+            padding: 4px 10px;
+            border-radius: 5px;
+            margin: 2px 0;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .code-line.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left-color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+        .code-line.active-green {
+            background: rgba(16, 185, 129, 0.2);
+            border-left-color: var(--accent-green);
+        }
+        .code-line.active-purple {
+            background: rgba(139, 92, 246, 0.2);
+            border-left-color: var(--accent-purple);
+        }
+
+        .keyword { color: #c792ea; }
+        .variable { color: #82aaff; }
+        .number { color: #f78c6c; }
+        .function { color: #82aaff; }
+        .string { color: #c3e88d; }
+
+        /* Output & Memory Side */
+        .state-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .memory-box, .output-box {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .box-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        .memory-var {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.5rem;
+            color: var(--accent-pink);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .memory-val {
+            background: rgba(236, 72, 153, 0.1);
+            padding: 5px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            transition: 0.3s;
+        }
+        .memory-val.updating { transform: scale(1.2); color: white; background: var(--accent-pink); }
+
+        .terminal {
+            font-family: 'Fira Code', monospace;
+            min-height: 120px;
+            color: var(--accent-green);
+        }
+        .terminal-line { animation: slideIn 0.3s ease forwards; opacity: 0; transform: translateX(-10px); margin-bottom: 5px;}
+        
+        .status-text {
+            color: var(--accent-blue);
+            font-weight: 600;
+            min-height: 24px;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಲೂಪ್‌ಗಳ ಲೈವ್ ಅನಿಮೇಷನ್</h1>
+        <p>ಲೂಪ್‌ಗಳು ಪ್ರೊಸೆಸರ್‌ನಲ್ಲಿ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ ಎಂಬುದನ್ನು ಹಂತ-ಹಂತವಾಗಿ ವೀಕ್ಷಿಸಿ.</p>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. FOR LOOP ANIMATOR -->
+        <div class="animator-card">
+            <div class="card-header">
+                <h2 style="color: var(--accent-blue);">1. For ಲೂಪ್ ಅನಿಮೇಷನ್</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-reset" onclick="resetFor()">ಮರುಹೊಂದಿಸಿ (Reset)</button>
+                    <button class="btn-play" id="btn-for" onclick="startForLoop()">
+                        ▶ ಶುರುಮಾಡಿ
+                    </button>
+                </div>
+            </div>
+            <div class="animator-body">
+                <div class="code-panel">
+                    <div><span class="keyword">for</span> (</div>
+                    <div class="code-line" id="f-init">&nbsp;&nbsp;<span class="keyword">let</span> <span class="variable">i</span> = <span class="number">1</span>; <span style="color:#697098">// 1. ಪ್ರಾರಂಭ</span></div>
+                    <div class="code-line" id="f-cond">&nbsp;&nbsp;<span class="variable">i</span> &lt;= <span class="number">3</span>;  <span style="color:#697098">// 2. ಷರತ್ತು ಪರಿಶೀಲನೆ</span></div>
+                    <div class="code-line" id="f-inc">&nbsp;&nbsp;<span class="variable">i</span>++      <span style="color:#697098">// 4. ಮೌಲ್ಯ ಹೆಚ್ಚಳ</span></div>
+                    <div>) {</div>
+                    <div class="code-line" id="f-body">&nbsp;&nbsp;<span class="function">console.log</span>(<span class="variable">i</span>); <span style="color:#697098">// 3. ಕೋಡ್ ರನ್</span></div>
+                    <div>}</div>
+                    <div class="status-text" id="f-status">ಅನಿಮೇಷನ್ ಪ್ರಾರಂಭಿಸಲು 'ಶುರುಮಾಡಿ' ಒತ್ತಿ.</div>
+                </div>
+                
+                <div class="state-panel">
+                    <div class="memory-box">
+                        <div class="box-title">ಮೆಮೊರಿ (RAM)</div>
+                        <div class="memory-var">
+                            i = <span class="memory-val" id="f-var">undefined</span>
+                        </div>
+                    </div>
+                    <div class="output-box">
+                        <div class="box-title">ಔಟ್‌ಪುಟ್ (Console)</div>
+                        <div class="terminal" id="f-out"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. WHILE LOOP ANIMATOR -->
+        <div class="animator-card">
+            <div class="card-header">
+                <h2 style="color: var(--accent-purple);">2. While ಲೂಪ್ ಅನಿಮೇಷನ್</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-reset" onclick="resetWhile()">ಮರುಹೊಂದಿಸಿ (Reset)</button>
+                    <button class="btn-play" id="btn-while" style="background: var(--accent-purple);" onclick="startWhileLoop()">
+                        ▶ ಶುರುಮಾಡಿ
+                    </button>
+                </div>
+            </div>
+            <div class="animator-body">
+                <div class="code-panel">
+                    <div class="code-line" id="w-init"><span class="keyword">let</span> <span class="variable">i</span> = <span class="number">1</span>;</div>
+                    <br>
+                    <div class="code-line" id="w-cond"><span class="keyword">while</span> (<span class="variable">i</span> &lt;= <span class="number">3</span>) {</div>
+                    <div class="code-line" id="w-body">&nbsp;&nbsp;<span class="function">console.log</span>(<span class="variable">i</span>);</div>
+                    <div class="code-line" id="w-inc">&nbsp;&nbsp;<span class="variable">i</span>++;</div>
+                    <div>}</div>
+                    <div class="status-text" id="w-status" style="color: var(--accent-purple);">ಮೊದಲು ಷರತ್ತು ಪರಿಶೀಲಿಸಿ ನಂತರ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ.</div>
+                </div>
+                
+                <div class="state-panel">
+                    <div class="memory-box">
+                        <div class="box-title">ಮೆಮೊರಿ (RAM)</div>
+                        <div class="memory-var" style="color: var(--accent-purple);">
+                            i = <span class="memory-val" id="w-var" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3);">undefined</span>
+                        </div>
+                    </div>
+                    <div class="output-box">
+                        <div class="box-title">ಔಟ್‌ಪುಟ್ (Console)</div>
+                        <div class="terminal" id="w-out"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. DO...WHILE LOOP ANIMATOR -->
+        <div class="animator-card">
+            <div class="card-header">
+                <h2 style="color: var(--accent-pink);">3. Do...While ಲೂಪ್ ಅನಿಮೇಷನ್</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-reset" onclick="resetDoWhile()">ಮರುಹೊಂದಿಸಿ (Reset)</button>
+                    <button class="btn-play" id="btn-dowhile" style="background: var(--accent-pink);" onclick="startDoWhileLoop()">
+                        ▶ ಶುರುಮಾಡಿ
+                    </button>
+                </div>
+            </div>
+            <div class="animator-body">
+                <div class="code-panel">
+                    <div class="code-line" id="d-init"><span class="keyword">let</span> <span class="variable">i</span> = <span class="number">1</span>;</div>
+                    <br>
+                    <div><span class="keyword">do</span> {</div>
+                    <div class="code-line" id="d-body">&nbsp;&nbsp;<span class="function">console.log</span>(<span class="variable">i</span>);</div>
+                    <div class="code-line" id="d-inc">&nbsp;&nbsp;<span class="variable">i</span>++;</div>
+                    <div class="code-line" id="d-cond">} <span class="keyword">while</span> (<span class="variable">i</span> &lt;= <span class="number">3</span>);</div>
+                    <div class="status-text" id="d-status" style="color: var(--accent-pink);">ಮೊದಲು ಒಮ್ಮೆ ಕೋಡ್ ರನ್ ಆಗಿ, ಆಮೇಲೆ ಷರತ್ತು ಪರಿಶೀಲನೆ!</div>
+                </div>
+                
+                <div class="state-panel">
+                    <div class="memory-box">
+                        <div class="box-title">ಮೆಮೊರಿ (RAM)</div>
+                        <div class="memory-var" style="color: var(--accent-pink);">
+                            i = <span class="memory-val" id="d-var" style="background: rgba(236, 72, 153, 0.1); border-color: rgba(236, 72, 153, 0.3);">undefined</span>
+                        </div>
+                    </div>
+                    <div class="output-box">
+                        <div class="box-title">ಔಟ್‌ಪುಟ್ (Console)</div>
+                        <div class="terminal" id="d-out"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript logic for Animations -->
+    <script>
+        // Utility function for delay
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        const speed = 1200; // Animation speed in ms
+
+        // Clear all highlights
+        function clearHighlights(prefix) {
+            document.querySelectorAll(`[id^=${prefix}-]`).forEach(el => {
+                if(el.classList.contains('code-line')) {
+                    el.classList.remove('active', 'active-green', 'active-purple');
+                }
+            });
+        }
+
+        // Highlight specific line
+        function highlightLine(id, type = 'active') {
+            document.getElementById(id).classList.add(type);
+        }
+
+        // Update Memory Box
+        function updateMemory(id, val) {
+            const el = document.getElementById(id);
+            el.innerText = val;
+            el.classList.add('updating');
+            setTimeout(() => el.classList.remove('updating'), 300);
+        }
+
+        // Add Output
+        function addOutput(id, val) {
+            const out = document.getElementById(id);
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerText = `> ${val}`;
+            out.appendChild(line);
+        }
+
+        // Set Status
+        function setStatus(id, text) {
+            document.getElementById(id).innerText = text;
+        }
+
+        /* ------------------ 1. FOR LOOP LOGIC ------------------ */
+        function resetFor() {
+            clearHighlights('f');
+            document.getElementById('f-var').innerText = 'undefined';
+            document.getElementById('f-out').innerHTML = '';
+            setStatus('f-status', 'ಅನಿಮೇಷನ್ ಪ್ರಾರಂಭಿಸಲು "ಶುರುಮಾಡಿ" ಒತ್ತಿ.');
+            document.getElementById('btn-for').disabled = false;
+        }
+
+        async function startForLoop() {
+            document.getElementById('btn-for').disabled = true;
+            resetFor();
+            document.getElementById('btn-for').disabled = true; // disable again after reset
+
+            // Step 1: Init
+            highlightLine('f-init');
+            setStatus('f-status', 'ಹಂತ 1: ಮೆಮೊರಿಯಲ್ಲಿ "i" ವೇರಿಯೇಬಲ್ ಸೃಷ್ಟಿಯಾಗಿದೆ (i = 1).');
+            let i = 1;
+            updateMemory('f-var', i);
+            await sleep(speed);
+            clearHighlights('f');
+
+            while (true) {
+                // Step 2: Condition
+                highlightLine('f-cond', 'active-purple');
+                setStatus('f-status', `ಹಂತ 2: ಷರತ್ತು ಪರಿಶೀಲನೆ: ${i} <= 3 (${i <= 3 ? 'True / ಸರಿ' : 'False / ತಪ್ಪು'})`);
+                await sleep(speed);
+                clearHighlights('f');
+
+                if (i <= 3) {
+                    // Step 3: Body
+                    highlightLine('f-body', 'active-green');
+                    setStatus('f-status', `ಹಂತ 3: ಷರತ್ತು ಸರಿ ಇದೆ. ಲೂಪ್ ಒಳಗಿನ ಕೋಡ್ ರನ್ ಆಗುತ್ತಿದೆ.`);
+                    addOutput('f-out', i);
+                    await sleep(speed);
+                    clearHighlights('f');
+
+                    // Step 4: Increment
+                    highlightLine('f-inc');
+                    setStatus('f-status', `ಹಂತ 4: i ಮೌಲ್ಯ 1 ರಷ್ಟು ಹೆಚ್ಚಾಗುತ್ತಿದೆ (i++).`);
+                    i++;
+                    updateMemory('f-var', i);
+                    await sleep(speed);
+                    clearHighlights('f');
+                } else {
+                    setStatus('f-status', `ಷರತ್ತು ತಪ್ಪಾಗಿದೆ (False). ಲೂಪ್ ಕಾರ್ಯಾಚರಣೆ ಮುಕ್ತಾಯವಾಯಿತು!`);
+                    break;
+                }
+            }
+            document.getElementById('btn-for').disabled = false;
+        }
+
+        /* ------------------ 2. WHILE LOOP LOGIC ------------------ */
+        function resetWhile() {
+            clearHighlights('w');
+            document.getElementById('w-var').innerText = 'undefined';
+            document.getElementById('w-out').innerHTML = '';
+            setStatus('w-status', 'ಮೊದಲು ಷರತ್ತು ಪರಿಶೀಲಿಸಿ ನಂತರ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ.');
+            document.getElementById('btn-while').disabled = false;
+        }
+
+        async function startWhileLoop() {
+            document.getElementById('btn-while').disabled = true;
+            resetWhile();
+            document.getElementById('btn-while').disabled = true;
+
+            highlightLine('w-init');
+            setStatus('w-status', 'ಆರಂಭ: i ಮೌಲ್ಯವನ್ನು 1 ಕ್ಕೆ ಹೊಂದಿಸಲಾಗಿದೆ.');
+            let i = 1;
+            updateMemory('w-var', i);
+            await sleep(speed);
+            clearHighlights('w');
+
+            while (true) {
+                highlightLine('w-cond', 'active-purple');
+                setStatus('w-status', `ಷರತ್ತು: ${i} <= 3 ನಿಜವೇ? (${i <= 3 ? 'ಹೌದು (True)' : 'ಇಲ್ಲ (False)'})`);
+                await sleep(speed);
+                clearHighlights('w');
+
+                if (i <= 3) {
+                    highlightLine('w-body', 'active-green');
+                    setStatus('w-status', `ಕೋಡ್ ರನ್ ಆಗುತ್ತಿದೆ. ಪ್ರಿಂಟ್: ${i}`);
+                    addOutput('w-out', i);
+                    await sleep(speed);
+                    clearHighlights('w');
+
+                    highlightLine('w-inc');
+                    setStatus('w-status', `ಮೌಲ್ಯ ಹೆಚ್ಚಳ: i ಬೆಲೆ ${i + 1} ಆಗುತ್ತದೆ.`);
+                    i++;
+                    updateMemory('w-var', i);
+                    await sleep(speed);
+                    clearHighlights('w');
+                } else {
+                    setStatus('w-status', `ಷರತ್ತು False ಆದ್ದರಿಂದ ಲೂಪ್ ನಿಂತಿದೆ!`);
+                    break;
+                }
+            }
+            document.getElementById('btn-while').disabled = false;
+        }
+
+        /* ------------------ 3. DO...WHILE LOOP LOGIC ------------------ */
+        function resetDoWhile() {
+            clearHighlights('d');
+            document.getElementById('d-var').innerText = 'undefined';
+            document.getElementById('d-out').innerHTML = '';
+            setStatus('d-status', 'ಮೊದಲು ಒಮ್ಮೆ ಕೋಡ್ ರನ್ ಆಗಿ, ಆಮೇಲೆ ಷರತ್ತು ಪರಿಶೀಲನೆ!');
+            document.getElementById('btn-dowhile').disabled = false;
+        }
+
+        async function startDoWhileLoop() {
+            document.getElementById('btn-dowhile').disabled = true;
+            resetDoWhile();
+            document.getElementById('btn-dowhile').disabled = true;
+
+            highlightLine('d-init');
+            setStatus('d-status', 'ಆರಂಭ: i ಮೌಲ್ಯವನ್ನು 1 ಕ್ಕೆ ಹೊಂದಿಸಲಾಗಿದೆ.');
+            let i = 1;
+            updateMemory('d-var', i);
+            await sleep(speed);
+            clearHighlights('d');
+
+            do {
+                // Execute Body directly without condition first
+                highlightLine('d-body', 'active-green');
+                setStatus('d-status', `ವಿಶೇಷತೆ: ಯಾವುದೇ ಷರತ್ತು ಇಲ್ಲದೆ ಕೋಡ್ ನೇರವಾಗಿ ರನ್ ಆಗುತ್ತಿದೆ.`);
+                addOutput('d-out', i);
+                await sleep(speed);
+                clearHighlights('d');
+
+                highlightLine('d-inc');
+                setStatus('d-status', `ಮೌಲ್ಯ ಹೆಚ್ಚಳ: i ಬೆಲೆ ${i + 1} ಆಗುತ್ತಿದೆ.`);
+                i++;
+                updateMemory('d-var', i);
+                await sleep(speed);
+                clearHighlights('d');
+
+                // Condition check at the end
+                highlightLine('d-cond', 'active-purple');
+                setStatus('d-status', `ಕೊನೆಯಲ್ಲಿ ಷರತ್ತು ಪರಿಶೀಲನೆ: ${i} <= 3 (${i <= 3 ? 'True (ಮತ್ತೆ ರನ್ ಆಗುತ್ತದೆ)' : 'False (ನಿಲ್ಲುತ್ತದೆ)'})`);
+                await sleep(speed);
+                clearHighlights('d');
+
+            } while (i <= 3);
+
+            setStatus('d-status', `ಷರತ್ತು False ಆದ್ದರಿಂದ ಲೂಪ್ ಕಾರ್ಯಾಚರಣೆ ಮುಕ್ತಾಯ!`);
+            document.getElementById('btn-dowhile').disabled = false;
+        }
+
+    </script>
+</body>
+</html>

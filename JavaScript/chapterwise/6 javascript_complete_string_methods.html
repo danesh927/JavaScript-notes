@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ಸಂಪೂರ್ಣ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸ್ಟ್ರಿಂಗ್ ವಿಧಾನಗಳು | Complete JS String Methods</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes gradientX {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .animate-float {
+            animation: float 5s ease-in-out infinite;
+        }
+        
+        /* Delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-600 { animation-delay: 600ms; }
+        .delay-700 { animation-delay: 700ms; }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 15px 40px -10px rgba(168, 85, 247, 0.2);
+        }
+
+        /* Syntax Highlight Styles for Code Blocks */
+        .code-block {
+            background: #011627;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        .kw { color: #c792ea; font-weight: 500; } /* Keyword */
+        .func { color: #82aaff; } /* Function */
+        .str { color: #ecc48d; } /* String */
+        .num { color: #f78c6c; } /* Number */
+        .cmt { color: #637777; font-style: italic; } /* Comment */
+        .var { color: #d6deeb; } /* Variable */
+        .op { color: #89ddff; } /* Operator */
+        
+        .method-title {
+            background-size: 200% auto;
+            animation: gradientX 5s ease infinite;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-fuchsia-500 selection:text-white">
+
+    <!-- Background Gradients -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[150px]"></div>
+        <div class="absolute top-[30%] -right-[20%] w-[60%] h-[60%] rounded-full bg-blue-900/20 blur-[150px]"></div>
+        <div class="absolute -bottom-[20%] left-[20%] w-[50%] h-[50%] rounded-full bg-emerald-900/15 blur-[150px]"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-20 relative z-10 max-w-5xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-20 animate-fade-in-up">
+            <div class="inline-block p-4 rounded-full bg-yellow-400/10 mb-6 animate-float">
+                <svg width="64" height="64" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h256v256H0V0z" fill="#F7DF1E" rx="32"/>
+                    <path d="M67.312 213.932c-19.59-11.413-28.718-31.066-28.718-53.111h35.918c0 14.512 6.275 22.923 18.067 22.923 10.638 0 17.51-5.718 17.51-14.717 0-9.833-8.835-14.288-24.316-20.91-23.774-10.155-40.354-22.373-40.354-49.467 0-26.79 19.336-46.772 50.198-46.772 31.983 0 49.331 20.306 49.331 51.523H109.11c-.347-15.01-6.732-23.013-18.067-23.013-9.524 0-16.149 5.867-16.149 14.248 0 8.683 7.828 13.064 22.932 19.464 25.105 10.668 41.875 21.65 41.875 50.963 0 31.127-23.633 48.067-54.673 48.067-27.172-.036-47.502-12.723-57.716-29.198M161.42 209.68v-35.32c10.339 6.274 21.848 9.537 32.553 9.537 13.565 0 20.14-5.32 20.14-14.526 0-11.458-15.688-15.228-31.956-21.758-20.106-8.082-35.535-21.037-35.535-46.064 0-24.582 17.65-43.197 46.854-43.197 18.232 0 33.151 5.385 43.16 11.892v35.378c-10.198-7.393-23.364-11.666-34.544-11.666-10.592 0-17.398 4.708-17.398 13.149 0 10.17 12.394 13.396 29.807 20.218 22.756 8.948 37.893 21.785 37.893 46.541 0 28.536-22.39 44.536-50.602 44.536-19.535 0-38.384-5.918-50.372-13.722" fill="#000"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸ್ಟ್ರಿಂಗ್ ವಿಧಾನಗಳು
+            </h1>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಸ್ಟ್ರಿಂಗ್ (String) ಎಂದರೆ ಪಠ್ಯವನ್ನು (Text) ನಿರ್ವಹಿಸಲು ಬಳಸುವ ಡೇಟಾ ಪ್ರಕಾರ. ಸ್ಟ್ರಿಂಗ್‌ಗಳನ್ನು ಮ್ಯಾನಿಪುಲೇಟ್ ಮಾಡಲು ಲಭ್ಯವಿರುವ <strong>ಎಲ್ಲಾ</strong> ಇನ್-ಬಿಲ್ಟ್ ವಿಧಾನಗಳ ಸಂಪೂರ್ಣ ತಾಂತ್ರಿಕ ವಿವರಣೆ ಇಲ್ಲಿದೆ.
+            </p>
+        </header>
+
+        <div class="space-y-12">
+            
+            <!-- Section 1: Basic -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-100">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-blue-500/20 p-3 rounded-xl text-blue-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">1. ಮೂಲಭೂತ ಮತ್ತು ಅಕ್ಷರ ಪಡೆಯುವಿಕೆ (Basic & Character Access)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- length -->
+                    <div>
+                        <h3 class="text-xl font-code text-blue-400 mb-2">.length</h3>
+                        <p class="text-slate-300 mb-3">ಇದು ಮೆಥಡ್ ಅಲ್ಲ, ಪ್ರಾಪರ್ಟಿ. ಸ್ಟ್ರಿಂಗ್‌ನಲ್ಲಿರುವ ಒಟ್ಟು ಅಕ್ಷರಗಳ ಸಂಖ್ಯೆಯನ್ನು (ಸ್ಪೇಸ್ ಸೇರಿ) ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">text</span> <span class="op">=</span> <span class="str">"Hello Kannada"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">text</span>.<span class="func">length</span>); <span class="cmt">// Output: 13</span>
+                        </div>
+                    </div>
+                    <!-- charAt -->
+                    <div>
+                        <h3 class="text-xl font-code text-blue-400 mb-2">.charAt(index)</h3>
+                        <p class="text-slate-300 mb-3">ಸೂಚಿಸಿದ ಇಂಡೆಕ್ಸ್ (Index - 0 ಯಿಂದ ಆರಂಭ) ನಲ್ಲಿರುವ ನಿರ್ದಿಷ್ಟ ಅಕ್ಷರವನ್ನು ಹಿಂತಿರುಗಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"JavaScript"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">charAt</span>(<span class="num">4</span>)); <span class="cmt">// Output: "S"</span>
+                        </div>
+                    </div>
+                    <!-- charCodeAt -->
+                    <div>
+                        <h3 class="text-xl font-code text-blue-400 mb-2">.charCodeAt(index)</h3>
+                        <p class="text-slate-300 mb-3">ಸೂಚಿಸಿದ ಇಂಡೆಕ್ಸ್‌ನಲ್ಲಿರುವ ಅಕ್ಷರದ ಯುನಿಕೋಡ್ (Unicode / UTF-16) ಮೌಲ್ಯವನ್ನು (0 ರಿಂದ 65535 ವರೆಗಿನ ಸಂಖ್ಯೆ) ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"A"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">charCodeAt</span>(<span class="num">0</span>)); <span class="cmt">// Output: 65</span>
+                        </div>
+                    </div>
+                    <!-- at -->
+                    <div>
+                        <h3 class="text-xl font-code text-blue-400 mb-2">.at(index) <span class="text-xs bg-green-900/50 text-green-400 px-2 py-1 rounded ml-2 font-sans">ES2022</span></h3>
+                        <p class="text-slate-300 mb-3">ಇದು `charAt()` ನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಆದರೆ ಇದರ ವಿಶೇಷತೆ ಎಂದರೆ ಇದು ಋಣಾತ್ಮಕ (negative) ಇಂಡೆಕ್ಸ್ ಅನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ. ಅಂದರೆ ಕೊನೆಯಿಂದ ಹಿಂದಕ್ಕೆ ಲೆಕ್ಕಾಚಾರ ಮಾಡಬಹುದು.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"Hello"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">at</span>(<span class="num">-1</span>)); <span class="cmt">// Output: "o" (ಕೊನೆಯ ಅಕ್ಷರ)</span><br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">at</span>(<span class="num">-2</span>)); <span class="cmt">// Output: "l"</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Extracting -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-200">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-purple-500/20 p-3 rounded-xl text-purple-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">2. ಭಾಗಗಳನ್ನು ಬೇರ್ಪಡಿಸುವಿಕೆ (Extracting String Parts)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- slice -->
+                    <div>
+                        <h3 class="text-xl font-code text-purple-400 mb-2">.slice(start, end)</h3>
+                        <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್‌ನ ಒಂದು ಭಾಗವನ್ನು ಕತ್ತರಿಸಿ, ಹೊಸ ಸ್ಟ್ರಿಂಗ್ ಆಗಿ ಹಿಂತಿರುಗಿಸುತ್ತದೆ. ಋಣಾತ್ಮಕ (negative) ಮೌಲ್ಯಗಳನ್ನು ಕೊಟ್ಟರೆ ಕೊನೆಯಿಂದ ಎಣಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">fruits</span> <span class="op">=</span> <span class="str">"Apple, Banana, Kiwi"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">fruits</span>.<span class="func">slice</span>(<span class="num">7</span>, <span class="num">13</span>)); <span class="cmt">// Output: "Banana"</span><br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">fruits</span>.<span class="func">slice</span>(<span class="num">-4</span>)); <span class="cmt">// Output: "Kiwi"</span>
+                        </div>
+                    </div>
+                    <!-- substring -->
+                    <div>
+                        <h3 class="text-xl font-code text-purple-400 mb-2">.substring(start, end)</h3>
+                        <p class="text-slate-300 mb-3">`slice()` ನಂತೆಯೇ ಇರುತ್ತದೆ, ಆದರೆ ಇದು ಋಣಾತ್ಮಕ ಮೌಲ್ಯಗಳನ್ನು ಸ್ವೀಕರಿಸುವುದಿಲ್ಲ (ಅದನ್ನು 0 ಎಂದು ಪರಿಗಣಿಸುತ್ತದೆ).</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"Apple, Banana"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">substring</span>(<span class="num">7</span>, <span class="num">13</span>)); <span class="cmt">// Output: "Banana"</span>
+                        </div>
+                    </div>
+                    <!-- substr -->
+                    <div>
+                        <h3 class="text-xl font-code text-purple-400 mb-2">.substr(start, length) <span class="text-xs bg-red-900/50 text-red-400 px-2 py-1 rounded ml-2 font-sans">Deprecated</span></h3>
+                        <p class="text-slate-300 mb-3">ಎಲ್ಲಿಂದ ಶುರುಮಾಡಬೇಕು (start) ಮತ್ತು ಅಲ್ಲಿಂದ ಎಷ್ಟು ಅಕ್ಷರಗಳು ಬೇಕು (length) ಎಂಬುದನ್ನು ಆಧರಿಸಿ ಕತ್ತರಿಸುತ್ತದೆ. <em>(ಗಮನಿಸಿ: ಇದು ಹಳೆಯ ವಿಧಾನ, ಈಗ `slice` ಬಳಸುವುದು ಉತ್ತಮ)</em>.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"Apple, Banana"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">substr</span>(<span class="num">7</span>, <span class="num">6</span>)); <span class="cmt">// Output: "Banana"</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Modifying -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-300">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-pink-500/20 p-3 rounded-xl text-pink-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">3. ಸ್ಟ್ರಿಂಗ್ ಮಾರ್ಪಡಿಸುವಿಕೆ (Modifying Strings)</h2>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Case Changing -->
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.toUpperCase()</h3>
+                            <p class="text-slate-300 mb-3">ಎಲ್ಲಾ ಅಕ್ಷರಗಳನ್ನು ದೊಡ್ಡಕ್ಷರಕ್ಕೆ (Capital letters) ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code">
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="str">"hello"</span>.<span class="func">toUpperCase</span>()); <span class="cmt">// "HELLO"</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.toLowerCase()</h3>
+                            <p class="text-slate-300 mb-3">ಎಲ್ಲಾ ಅಕ್ಷರಗಳನ್ನು ಸಣ್ಣಕ್ಷರಕ್ಕೆ (Small letters) ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code">
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="str">"WORLD"</span>.<span class="func">toLowerCase</span>()); <span class="cmt">// "world"</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.concat(str1, str2...)</h3>
+                            <p class="text-slate-300 mb-3">ಎರಡು ಅಥವಾ ಅದಕ್ಕಿಂತ ಹೆಚ್ಚು ಸ್ಟ್ರಿಂಗ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಸೇರಿಸುತ್ತದೆ. (+ ಆಪರೇಟರ್ ಬದಲಿಗೆ ಬಳಸಬಹುದು).</p>
+                            <div class="code-block font-code">
+                                <span class="kw">let</span> <span class="var">text1</span> <span class="op">=</span> <span class="str">"Hello"</span>;<br>
+                                <span class="kw">let</span> <span class="var">text2</span> <span class="op">=</span> <span class="str">"World"</span>;<br>
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="var">text1</span>.<span class="func">concat</span>(<span class="str">" "</span>, <span class="var">text2</span>)); <span class="cmt">// "Hello World"</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Trimming and Padding -->
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.trim() / .trimStart() / .trimEnd()</h3>
+                            <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್‌ನ ಆರಂಭ ಮತ್ತು ಅಂತ್ಯದಲ್ಲಿರುವ ಅನಗತ್ಯ ಖಾಲಿ ಜಾಗಗಳನ್ನು (Whitespace) ತೆಗೆದುಹಾಕುತ್ತದೆ.</p>
+                            <div class="code-block font-code">
+                                <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"  Hello  "</span>;<br>
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">trim</span>()); <span class="cmt">// "Hello"</span><br>
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">trimStart</span>()); <span class="cmt">// "Hello  "</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.padStart() / .padEnd()</h3>
+                            <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ನಿರ್ದಿಷ್ಟ ಉದ್ದಕ್ಕೆ ತರಲು ಆರಂಭದಲ್ಲಿ ಅಥವಾ ಕೊನೆಯಲ್ಲಿ ಅಕ್ಷರಗಳನ್ನು ಸೇರಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code">
+                                <span class="kw">let</span> <span class="var">num</span> <span class="op">=</span> <span class="str">"5"</span>;<br>
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="var">num</span>.<span class="func">padStart</span>(<span class="num">3</span>, <span class="str">"0"</span>)); <span class="cmt">// "005"</span><br>
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="var">num</span>.<span class="func">padEnd</span>(<span class="num">3</span>, <span class="str">"x"</span>)); <span class="cmt">// "5xx"</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-code text-pink-400 mb-2">.repeat(count)</h3>
+                            <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ನಿರ್ದಿಷ್ಟ ಬಾರಿ ಪುನರಾವರ್ತಿಸಿ ಹೊಸ ಸ್ಟ್ರಿಂಗ್ ನೀಡುತ್ತದೆ.</p>
+                            <div class="code-block font-code">
+                                <span class="var">console</span>.<span class="func">log</span>(<span class="str">"Ha!"</span>.<span class="func">repeat</span>(<span class="num">3</span>)); <span class="cmt">// "Ha!Ha!Ha!"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Searching -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-400">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">4. ಹುಡುಕುವಿಕೆ (Searching in Strings)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- indexOf / lastIndexOf -->
+                    <div>
+                        <h3 class="text-xl font-code text-emerald-400 mb-2">.indexOf() / .lastIndexOf()</h3>
+                        <p class="text-slate-300 mb-3">ಪದವು ಮೊದಲ ಬಾರಿ ಅಥವಾ ಕೊನೆಯದಾಗಿ ಸಿಗುವ ಇಂಡೆಕ್ಸ್ ಅನ್ನು ನೀಡುತ್ತದೆ. ಪದ ಸಿಗದಿದ್ದರೆ `-1` ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"locate please locate"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">indexOf</span>(<span class="str">"locate"</span>)); <span class="cmt">// Output: 0</span><br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">lastIndexOf</span>(<span class="str">"locate"</span>)); <span class="cmt">// Output: 14</span>
+                        </div>
+                    </div>
+                    <!-- includes -->
+                    <div>
+                        <h3 class="text-xl font-code text-emerald-400 mb-2">.includes(searchString)</h3>
+                        <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್‌ನಲ್ಲಿ ನಿರ್ದಿಷ್ಟ ಪದವಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ ಮತ್ತು `true` ಅಥವಾ `false` ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"Hello world"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">includes</span>(<span class="str">"world"</span>)); <span class="cmt">// Output: true</span>
+                        </div>
+                    </div>
+                    <!-- startsWith / endsWith -->
+                    <div>
+                        <h3 class="text-xl font-code text-emerald-400 mb-2">.startsWith() / .endsWith()</h3>
+                        <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್ ನಿರ್ದಿಷ್ಟ ಪದದಿಂದ ಆರಂಭವಾಗುತ್ತದೆಯೇ ಅಥವಾ ಕೊನೆಗೊಳ್ಳುತ್ತದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"John Doe"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">startsWith</span>(<span class="str">"John"</span>)); <span class="cmt">// Output: true</span><br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">endsWith</span>(<span class="str">"oe"</span>)); <span class="cmt">// Output: true</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Replacing & Splitting -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-500">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">5. ಬದಲಾಯಿಸುವ ಮತ್ತು ವಿಭಜಿಸುವಿಕೆ (Replacing & Splitting)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- replace -->
+                    <div>
+                        <h3 class="text-xl font-code text-amber-400 mb-2">.replace(search, replaceWith)</h3>
+                        <p class="text-slate-300 mb-3">ಮೊದಲ ಬಾರಿಗೆ ಮ್ಯಾಚ್ ಆಗುವ ಪದವನ್ನು ಮಾತ್ರ ಹೊಸ ಪದದಿಂದ ಬದಲಾಯಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"I love cats. cats are nice."</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">replace</span>(<span class="str">"cats"</span>, <span class="str">"dogs"</span>)); <br>
+                            <span class="cmt">// Output: "I love dogs. cats are nice."</span>
+                        </div>
+                    </div>
+                    <!-- replaceAll -->
+                    <div>
+                        <h3 class="text-xl font-code text-amber-400 mb-2">.replaceAll(search, replaceWith) <span class="text-xs bg-green-900/50 text-green-400 px-2 py-1 rounded ml-2 font-sans">ES2021</span></h3>
+                        <p class="text-slate-300 mb-3">ಸ್ಟ್ರಿಂಗ್‌ನಲ್ಲಿರುವ <strong>ಎಲ್ಲಾ</strong> ಮ್ಯಾಚ್‌ಗಳನ್ನು ಬದಲಾಯಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"I love cats. cats are nice."</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">replaceAll</span>(<span class="str">"cats"</span>, <span class="str">"dogs"</span>)); <br>
+                            <span class="cmt">// Output: "I love dogs. dogs are nice."</span>
+                        </div>
+                    </div>
+                    <!-- split -->
+                    <div>
+                        <h3 class="text-xl font-code text-amber-400 mb-2">.split(separator)</h3>
+                        <p class="text-slate-300 mb-3">ನಿರ್ದಿಷ್ಟ ಅಕ್ಷರದ ಆಧಾರದ ಮೇಲೆ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ತುಂಡರಿಸಿ, ಅರೇ (Array) ಆಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"a,b,c,d"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">split</span>(<span class="str">","</span>)); <span class="cmt">// Output: ["a", "b", "c", "d"]</span><br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">split</span>(<span class="str">""</span>)); <span class="cmt">// Output: ["a", ",", "b", ",", "c", ",", "d"]</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Regex -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-600">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-red-500/20 p-3 rounded-xl text-red-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">6. Regex ಆಧಾರಿತ ವಿಧಾನಗಳು (Regular Expressions)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-code text-red-400 mb-2">.search(regex)</h3>
+                        <p class="text-slate-300 mb-3">Regex ಮೂಲಕ ಹುಡುಕಿ, ಪದವು ಇರುವ ಮೊದಲ ಇಂಡೆಕ್ಸ್ ಅನ್ನು ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"Visit W3Schools!"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">search</span>(<span class="op">/w3schools/i</span>)); <span class="cmt">// Output: 6 (i = case insensitive)</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-code text-red-400 mb-2">.match(regex)</h3>
+                        <p class="text-slate-300 mb-3">ಮ್ಯಾಚ್ ಆಗುವ ಡೇಟಾವನ್ನು ಅರೇ ರೂಪದಲ್ಲಿ ಹಿಂತಿರುಗಿಸುತ್ತದೆ. Regex ನಲ್ಲಿ `g` (global) ಫ್ಲ್ಯಾಗ್ ಬಳಸಿದರೆ ಎಲ್ಲಾ ಮ್ಯಾಚ್‌ಗಳನ್ನು ನೀಡುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"ain, ain, and ain"</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">str</span>.<span class="func">match</span>(<span class="op">/ain/g</span>)); <span class="cmt">// Output: ["ain", "ain", "ain"]</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-code text-red-400 mb-2">.matchAll(regex)</h3>
+                        <p class="text-slate-300 mb-3">ಎಲ್ಲಾ ಮ್ಯಾಚ್ ಆಗುವ ಡೇಟಾಗಳನ್ನು ವಿಸ್ತೃತ ಮಾಹಿತಿಯೊಂದಿಗೆ ಐಟರೇಟರ್ (iterator) ರೂಪದಲ್ಲಿ ನೀಡುತ್ತದೆ. (Regex `g` ಫ್ಲ್ಯಾಗ್ ಕಡ್ಡಾಯ).</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">str</span> <span class="op">=</span> <span class="str">"test1 test2"</span>;<br>
+                            <span class="kw">let</span> <span class="var">results</span> <span class="op">=</span> [...<span class="var">str</span>.<span class="func">matchAll</span>(<span class="op">/test\d/g</span>)];<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">results</span>[<span class="num">0</span>][<span class="num">0</span>]); <span class="cmt">// Output: "test1"</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Advanced -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-700">
+                <div class="flex items-center gap-4 mb-8 border-b border-gray-700/50 pb-4">
+                    <div class="bg-cyan-500/20 p-3 rounded-xl text-cyan-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">7. ಸುಧಾರಿತ ವಿಧಾನಗಳು (Advanced Methods)</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Template Literals -->
+                    <div>
+                        <h3 class="text-xl font-code text-cyan-400 mb-2">Template Literals (ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್)</h3>
+                        <p class="text-slate-300 mb-3">ಇದು ಮೆಥಡ್ ಅಲ್ಲದಿದ್ದರೂ, ಸ್ಟ್ರಿಂಗ್ ಒಳಗೆ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ನೇರವಾಗಿ ಬಳಸಲು (Interpolation) ಅನುಮತಿಸುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="kw">let</span> <span class="var">name</span> <span class="op">=</span> <span class="str">"Ravi"</span>;<br>
+                            <span class="kw">let</span> <span class="var">msg</span> <span class="op">=</span> <span class="str">`Hello ${<span class="var">name</span>}, Welcome!`</span>; <span class="cmt">// "Hello Ravi, Welcome!"</span>
+                        </div>
+                    </div>
+
+                    <!-- localeCompare -->
+                    <div>
+                        <h3 class="text-xl font-code text-cyan-400 mb-2">.localeCompare(compareString)</h3>
+                        <p class="text-slate-300 mb-3">ಭಾಷೆಯ ನಿಯಮಗಳ ಆಧಾರದ ಮೇಲೆ ಸ್ಟ್ರಿಂಗ್‌ಗಳನ್ನು ಆಲ್ಫಾಬೆಟಿಕಲ್ ಆಗಿ ವಿಂಗಡಿಸಲು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                        <div class="code-block font-code">
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="str">"apple"</span>.<span class="func">localeCompare</span>(<span class="str">"banana"</span>)); <span class="cmt">// Output: -1 (apple ಮೊದಲು ಬರುತ್ತದೆ)</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- fromCharCode -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2">String.fromCharCode()</h3>
+                            <p class="text-sm text-slate-300 mb-2">ಯುನಿಕೋಡ್ ಸಂಖ್ಯೆಗಳನ್ನು ಅಕ್ಷರಗಳಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="var">String</span>.<span class="func">fromCharCode</span>(<span class="num">65</span>); <span class="cmt">// "A"</span>
+                            </div>
+                        </div>
+                        
+                        <!-- fromCodePoint -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2">String.fromCodePoint()</h3>
+                            <p class="text-sm text-slate-300 mb-2">`fromCharCode` ನಂತೆಯೇ, ಆದರೆ ಎಮೋಜಿಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="var">String</span>.<span class="func">fromCodePoint</span>(<span class="num">128512</span>); <span class="cmt">// "😀"</span>
+                            </div>
+                        </div>
+
+                        <!-- normalize -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2">.normalize()</h3>
+                            <p class="text-sm text-slate-300 mb-2">ಸ್ಟ್ರಿಂಗ್‌ನ ಯುನಿಕೋಡ್ ರೂಪವನ್ನು ಸಾಮಾನ್ಯೀಕರಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="str">"\u00F1"</span>.<span class="func">normalize</span>(); <span class="cmt">// "ñ"</span>
+                            </div>
+                        </div>
+
+                        <!-- String.raw -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2">String.raw``</h3>
+                            <p class="text-sm text-slate-300 mb-2">ಎಸ್ಕೇಪ್ ಅಕ್ಷರಗಳನ್ನು (ಉದಾ: \n) ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="var">String</span>.<span class="func">raw</span><span class="str">`Hi\nThere`</span>; <span class="cmt">// "Hi\nThere"</span>
+                            </div>
+                        </div>
+                        
+                        <!-- toString & valueOf -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2">.toString() / .valueOf()</h3>
+                            <p class="text-sm text-slate-300 mb-2">ಸ್ಟ್ರಿಂಗ್‌ನ ಮೂಲ (primitive) ಮೌಲ್ಯವನ್ನು ನೀಡುತ್ತವೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="kw">let</span> <span class="var">s</span> <span class="op">=</span> <span class="kw">new</span> <span class="var">String</span>(<span class="str">"A"</span>);<br>
+                                <span class="var">s</span>.<span class="func">valueOf</span>(); <span class="cmt">// "A"</span>
+                            </div>
+                        </div>
+
+                        <!-- isWellFormed & toWellFormed -->
+                        <div>
+                            <h3 class="text-lg font-code text-cyan-400 mb-2 text-wrap">.isWellFormed() / .toWellFormed() <span class="text-[10px] bg-green-900/50 text-green-400 px-1 py-0.5 rounded ml-1 font-sans">ES2024</span></h3>
+                            <p class="text-sm text-slate-300 mb-2">ಸರಿಯಾದ ಯುನಿಕೋಡ್ ಇದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸಿ/ಸರಿಪಡಿಸುತ್ತದೆ.</p>
+                            <div class="code-block font-code text-sm">
+                                <span class="str">"abc"</span>.<span class="func">isWellFormed</span>(); <span class="cmt">// true</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <footer class="mt-16 text-center text-slate-500 pb-10">
+            <p>JavaScript String Methods Guide in Kannada</p>
+        </footer>
+    </div>
+</body>
+</html>

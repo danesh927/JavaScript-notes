@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್ | JS Template Literals</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Delays */
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-600 { animation-delay: 600ms; }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 15px 40px -10px rgba(139, 92, 246, 0.2);
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        /* IDE Style Code Blocks */
+        .code-block {
+            background: #011627;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        /* Syntax Colors */
+        .kw { color: #c792ea; font-weight: 500; } /* Keyword */
+        .var { color: #d6deeb; } /* Variable/Text */
+        .str { color: #ecc48d; } /* String */
+        .tpl { color: #addb67; } /* Template Literal Backticks */
+        .interp { color: #f78c6c; } /* ${} Interpolation */
+        .num { color: #f78c6c; } /* Number */
+        .func { color: #82aaff; } /* Function */
+        .op { color: #89ddff; } /* Operator */
+        .cmt { color: #637777; font-style: italic; } /* Comment */
+        .tag { color: #ffeb95; } /* HTML Tag */
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 min-h-screen relative selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Decorative Gradients -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-[10%] left-[10%] w-[40%] h-[40%] rounded-full bg-violet-900/20 blur-[150px]"></div>
+        <div class="absolute top-[40%] right-[10%] w-[40%] h-[40%] rounded-full bg-blue-900/15 blur-[120px]"></div>
+        <div class="absolute -bottom-[10%] left-[30%] w-[50%] h-[50%] rounded-full bg-fuchsia-900/15 blur-[150px]"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-16 relative z-10 max-w-5xl">
+        
+        <!-- Header / Introduction -->
+        <header class="text-center mb-20 animate-fade-in-up">
+            <div class="inline-flex justify-center items-center w-20 h-20 rounded-2xl bg-indigo-500/20 text-indigo-400 mb-6 animate-float border border-indigo-500/30 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M16 13H8"></path><path d="M16 17H8"></path><path d="M10 9H8"></path></svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 tracking-tight">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್
+            </h1>
+            <div class="glass-card rounded-2xl p-6 md:p-8 max-w-3xl mx-auto border-t-4 border-t-indigo-500">
+                <p class="text-lg text-slate-300 leading-relaxed mb-4">
+                    <strong>Template Literals</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ES6 (2015) ತಂದ ಅತ್ಯಂತ ಉಪಯುಕ್ತವಾದ ಹೊಸ ವೈಶಿಷ್ಟ್ಯವಾಗಿದೆ. ಇದು ಸ್ಟ್ರಿಂಗ್‌ಗಳನ್ನು (ಪಠ್ಯಗಳನ್ನು) ನಿರ್ವಹಿಸುವ ವಿಧಾನವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಸುಲಭಗೊಳಿಸಿದೆ. 
+                </p>
+                <p class="text-md text-slate-400 bg-slate-900/50 p-4 rounded-xl inline-block border border-slate-700/50">
+                    ಇದನ್ನು ಸಾಮಾನ್ಯ ಸಿಂಗಲ್ ಅಥವಾ ಡಬಲ್ ಕೋಟ್ಸ್ ಬದಲಿಗೆ <strong class="text-white">ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್ (<code class="font-code text-indigo-400 text-xl px-1">` `</code>)</strong> ಬಳಸಿ ಬರೆಯಲಾಗುತ್ತದೆ.
+                </p>
+            </div>
+        </header>
+
+        <div class="space-y-10">
+
+            <!-- 1. Backticks Syntax -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-100">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-blue-500/20 p-3 rounded-xl text-blue-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">1. ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್ ಬಳಕೆ (Syntax & Quotes)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="text-slate-300 mb-4 leading-relaxed">
+                            ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್ ಅನ್ನು ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್ (`` ` ``) ಬಳಸಿ ಡಿಕ್ಲೇರ್ ಮಾಡಲಾಗುತ್ತದೆ. 
+                            ಇದರ ಬಹುದೊಡ್ಡ ಲಾಭವೆಂದರೆ, ನಾವು ಸ್ಟ್ರಿಂಗ್ ಒಳಗೆ <strong>ಸಿಂಗಲ್ ಕೋಟ್ಸ್ (' ')</strong> ಮತ್ತು <strong>ಡಬಲ್ ಕೋಟ್ಸ್ (" ")</strong> ಎರಡನ್ನೂ ಯಾವುದೇ ಅಡೆತಡೆಯಿಲ್ಲದೆ (Escape characters ಇಲ್ಲದೆ) ಬಳಸಬಹುದು.
+                        </p>
+                    </div>
+                    <div class="code-block font-code">
+                        <span class="cmt">// ಹಳೆಯ ವಿಧಾನ (Old Method):</span><br>
+                        <span class="kw">let</span> <span class="var">oldStr</span> <span class="op">=</span> <span class="str">"He said \"Hello\""</span>;<br><br>
+                        <span class="cmt">// ಹೊಸ ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್:</span><br>
+                        <span class="kw">let</span> <span class="var">newStr</span> <span class="op">=</span> <span class="tpl">`</span><span class="str">He said "Hello" and 'Bye'</span><span class="tpl">`</span>;<br>
+                        <span class="var">console</span>.<span class="func">log</span>(<span class="var">newStr</span>);
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Multi-line Strings -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-200">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">2. ಮಲ್ಟಿ-ಲೈನ್ ಸ್ಟ್ರಿಂಗ್ಸ್ (Multi-line Strings)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="code-block font-code order-2 md:order-1">
+                        <span class="cmt">// ❌ ಹಳೆಯ ವಿಧಾನ (Using \n):</span><br>
+                        <span class="kw">let</span> <span class="var">text1</span> <span class="op">=</span> <span class="str">"ನಮಸ್ಕಾರ,\nಇದು ಮೊದಲ ಸಾಲು.\nಇದು ಎರಡನೇ ಸಾಲು."</span>;<br><br>
+                        <span class="cmt">// ✅ ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್ (Directly pressing Enter):</span><br>
+                        <span class="kw">let</span> <span class="var">text2</span> <span class="op">=</span> <span class="tpl">`</span><span class="str">ನಮಸ್ಕಾರ,</span><br>
+                        <span class="str">ಇದು ಮೊದಲ ಸಾಲು.</span><br>
+                        <span class="str">ಇದು ಎರಡನೇ ಸಾಲು.</span><span class="tpl">`</span>;
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <p class="text-slate-300 mb-4 leading-relaxed">
+                            ಹಿಂದೆ ಸ್ಟ್ರಿಂಗ್‌ನಲ್ಲಿ ಹೊಸ ಸಾಲನ್ನು (New line) ಸೇರಿಸಬೇಕಾದರೆ <code class="font-code text-emerald-300">\n</code> ಬಳಸಬೇಕಿತ್ತು. 
+                            ಆದರೆ ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್ ಒಳಗೆ ನೀವು ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ ಎಂಟರ್ (Enter) ಒತ್ತಿ ನೇರವಾಗಿ ಮಲ್ಟಿ-ಲೈನ್ ಸ್ಟ್ರಿಂಗ್‌ಗಳನ್ನು ರಚಿಸಬಹುದು. ಕೋಡ್ ಓದಲು ಇದು ತುಂಬಾ ಸುಲಭ.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. String Interpolation -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-300 border-l-4 border-l-pink-500">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-pink-500/20 p-3 rounded-xl text-pink-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">3. ಸ್ಟ್ರಿಂಗ್ ಇಂಟರ್‌ಪೋಲೇಶನ್ (String Interpolation)</h2>
+                </div>
+                <div class="space-y-6">
+                    <p class="text-slate-300 leading-relaxed">
+                        ಇದು ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್‌ನ ಅತ್ಯಂತ ಪ್ರಬಲವಾದ ವೈಶಿಷ್ಟ್ಯ! ಸ್ಟ್ರಿಂಗ್ ಮಧ್ಯದಲ್ಲಿ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು (Variables) ಅಥವಾ ಲೆಕ್ಕಾಚಾರಗಳನ್ನು (Expressions) ಸೇರಿಸಲು 
+                        <code class="font-code bg-slate-900 px-2 py-1 rounded text-pink-400">${...}</code> ಸಿಂಟ್ಯಾಕ್ಸ್ ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. 
+                        ಇದರಿಂದ <code class="font-code text-slate-400">+</code> ಆಪರೇಟರ್ ಬಳಸಿ ಸ್ಟ್ರಿಂಗ್ ಜೋಡಿಸುವ ಕಷ್ಟ ತಪ್ಪುತ್ತದೆ.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="code-block font-code">
+                            <span class="cmt">// ವೇರಿಯೇಬಲ್ ಸೇರಿಸುವುದು (Variables):</span><br>
+                            <span class="kw">let</span> <span class="var">name</span> <span class="op">=</span> <span class="str">"Ravi"</span>;<br>
+                            <span class="kw">let</span> <span class="var">age</span> <span class="op">=</span> <span class="num">25</span>;<br><br>
+                            <span class="cmt">// ಹಳೆಯ ರೀತಿ:</span><br>
+                            <span class="cmt">// "My name is " + name + " and I am " + age;</span><br><br>
+                            <span class="cmt">// ಹೊಸ ರೀತಿ:</span><br>
+                            <span class="kw">let</span> <span class="var">info</span> <span class="op">=</span> <span class="tpl">`</span><span class="str">My name is </span><span class="interp">${</span><span class="var">name</span><span class="interp">}</span><span class="str"> and I am </span><span class="interp">${</span><span class="var">age</span><span class="interp">}</span><span class="tpl">`</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">info</span>);
+                        </div>
+                        <div class="code-block font-code">
+                            <span class="cmt">// ಲೆಕ್ಕಾಚಾರಗಳನ್ನು ಸೇರಿಸುವುದು (Expressions):</span><br>
+                            <span class="kw">let</span> <span class="var">price</span> <span class="op">=</span> <span class="num">100</span>;<br>
+                            <span class="kw">let</span> <span class="var">tax</span> <span class="op">=</span> <span class="num">18</span>;<br><br>
+                            <span class="kw">let</span> <span class="var">totalMsg</span> <span class="op">=</span> <span class="tpl">`</span><span class="str">Total price is: ₹</span><span class="interp">${</span><span class="var">price</span> <span class="op">+</span> <span class="var">tax</span><span class="interp">}</span><span class="tpl">`</span>;<br>
+                            <span class="var">console</span>.<span class="func">log</span>(<span class="var">totalMsg</span>); <span class="cmt">// "Total price is: ₹118"</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. HTML Templates -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-400">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-orange-500/20 p-3 rounded-xl text-orange-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">4. HTML ಟೆಂಪ್ಲೇಟ್‌ಗಳು (HTML Templates)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-slate-300 mb-4 leading-relaxed">
+                            ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಬಳಸಿ ಡೈನಾಮಿಕ್ ಆಗಿ HTML ಕೋಡ್ ಅನ್ನು ರಚಿಸುವಾಗ ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್ ಅತ್ಯಂತ ಸಹಕಾರಿಯಾಗಿದೆ. ಮಲ್ಟಿ-ಲೈನ್ ಬೆಂಬಲ ಮತ್ತು ಇಂಟರ್‌ಪೋಲೇಶನ್ ಇರುವುದರಿಂದ, ಪೂರ್ತಿ HTML ಬ್ಲಾಕ್ ಅನ್ನು ಒಂದೇ ವೇರಿಯೇಬಲ್ ಒಳಗೆ ಸುಂದರವಾಗಿ ವಿನ್ಯಾಸಗೊಳಿಸಬಹುದು.
+                        </p>
+                    </div>
+                    <div class="code-block font-code">
+                        <span class="kw">let</span> <span class="var">header</span> <span class="op">=</span> <span class="str">"Welcome"</span>;<br>
+                        <span class="kw">let</span> <span class="var">content</span> <span class="op">=</span> <span class="str">"This is a JS tutorial."</span>;<br><br>
+                        
+                        <span class="kw">let</span> <span class="var">htmlCard</span> <span class="op">=</span> <span class="tpl">`</span><br>
+                        <span class="str">  </span><span class="tag">&lt;div class="card"&gt;</span><br>
+                        <span class="str">    </span><span class="tag">&lt;h2&gt;</span><span class="interp">${</span><span class="var">header</span><span class="interp">}</span><span class="tag">&lt;/h2&gt;</span><br>
+                        <span class="str">    </span><span class="tag">&lt;p&gt;</span><span class="interp">${</span><span class="var">content</span><span class="interp">}</span><span class="tag">&lt;/p&gt;</span><br>
+                        <span class="str">  </span><span class="tag">&lt;/div&gt;</span><br>
+                        <span class="tpl">`</span>;<br><br>
+                        <span class="var">document</span>.<span class="var">body</span>.<span class="var">innerHTML</span> <span class="op">=</span> <span class="var">htmlCard</span>;
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Tagged Templates -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-500">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-purple-500/20 p-3 rounded-xl text-purple-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">5. ಟ್ಯಾಗ್ಡ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು (Tagged Templates)</h2>
+                </div>
+                <div class="space-y-6">
+                    <p class="text-slate-300 leading-relaxed">
+                        ಇದು ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್‌ನ ಒಂದು ಸುಧಾರಿತ (Advanced) ವೈಶಿಷ್ಟ್ಯವಾಗಿದೆ. ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ ಅನ್ನು ಪಾರ್ಸ್ (Parse) ಮಾಡಲು ನೀವು ಒಂದು <strong>ಫಂಕ್ಷನ್ (Function)</strong> ಅನ್ನು ಬಳಸಬಹುದು. ಆ ಫಂಕ್ಷನ್‌ನ ಹೆಸರನ್ನು ಬ್ಯಾಕ್‌ಟಿಕ್ಸ್‌ಗೂ ಮುಂಚೆ ಬರೆಯಲಾಗುತ್ತದೆ. ಆ ಫಂಕ್ಷನ್ ಸ್ಟ್ರಿಂಗ್‌ನ ಭಾಗಗಳನ್ನು ಮತ್ತು ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಸ್ವೀಕರಿಸಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+                    </p>
+                    
+                    <div class="code-block font-code">
+                        <span class="cmt">// ಟ್ಯಾಗ್ ಫಂಕ್ಷನ್ ರಚನೆ</span><br>
+                        <span class="kw">function</span> <span class="func">highlight</span>(<span class="var">strings</span>, ...<span class="var">values</span>) {<br>
+                        &nbsp;&nbsp;<span class="kw">let</span> <span class="var">str0</span> <span class="op">=</span> <span class="var">strings</span>[<span class="num">0</span>]; <span class="cmt">// "Hi, I am "</span><br>
+                        &nbsp;&nbsp;<span class="kw">let</span> <span class="var">str1</span> <span class="op">=</span> <span class="var">strings</span>[<span class="num">1</span>]; <span class="cmt">// " and I live in "</span><br>
+                        <br>
+                        &nbsp;&nbsp;<span class="cmt">// values ಅರೇ ವೇರಿಯೇಬಲ್ ಮೌಲ್ಯಗಳನ್ನು ಹೊಂದಿರುತ್ತದೆ</span><br>
+                        &nbsp;&nbsp;<span class="kw">return</span> <span class="tpl">`</span><span class="interp">${</span><span class="var">str0</span><span class="interp">}</span><span class="tag">&lt;b&gt;</span><span class="interp">${</span><span class="var">values</span>[<span class="num">0</span>]<span class="interp">}</span><span class="tag">&lt;/b&gt;</span><span class="interp">${</span><span class="var">str1</span><span class="interp">}</span><span class="tag">&lt;b&gt;</span><span class="interp">${</span><span class="var">values</span>[<span class="num">1</span>]<span class="interp">}</span><span class="tag">&lt;/b&gt;</span><span class="tpl">`</span>;<br>
+                        }<br><br>
+                        
+                        <span class="kw">let</span> <span class="var">person</span> <span class="op">=</span> <span class="str">"John"</span>;<br>
+                        <span class="kw">let</span> <span class="var">city</span> <span class="op">=</span> <span class="str">"Bengaluru"</span>;<br><br>
+                        
+                        <span class="cmt">// ಫಂಕ್ಷನ್ ಅನ್ನು ಟ್ಯಾಗ್ ಆಗಿ ಬಳಸುವುದು (() ಇಲ್ಲದೆ)</span><br>
+                        <span class="kw">let</span> <span class="var">result</span> <span class="op">=</span> <span class="func">highlight</span><span class="tpl">`</span><span class="str">Hi, I am </span><span class="interp">${</span><span class="var">person</span><span class="interp">}</span><span class="str"> and I live in </span><span class="interp">${</span><span class="var">city</span><span class="interp">}</span><span class="tpl">`</span>;<br>
+                        
+                        <span class="var">console</span>.<span class="func">log</span>(<span class="var">result</span>);<br>
+                        <span class="cmt">// Output: "Hi, I am &lt;b&gt;John&lt;/b&gt; and I live in &lt;b&gt;Bengaluru&lt;/b&gt;"</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. String.raw -->
+            <section class="glass-card rounded-2xl p-6 md:p-10 animate-fade-in-up delay-600">
+                <div class="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-4">
+                    <div class="bg-cyan-500/20 p-3 rounded-xl text-cyan-400">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">6. String.raw (Raw Strings)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <p class="text-slate-300 mb-4 leading-relaxed">
+                            <code class="font-code text-cyan-300">String.raw</code> ಎಂಬುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿರುವ ಒಂದು ಬಿಲ್ಟ್-ಇನ್ (built-in) ಟ್ಯಾಗ್ ಫಂಕ್ಷನ್ ಆಗಿದೆ. 
+                            ಇದನ್ನು ಬಳಸಿದಾಗ ಸ್ಟ್ರಿಂಗ್‌ನಲ್ಲಿರುವ ಎಸ್ಕೇಪ್ ಅಕ್ಷರಗಳನ್ನು (ಉದಾಹರಣೆಗೆ <code class="font-code text-cyan-300">\n</code>, <code class="font-code text-cyan-300">\t</code>) ನಿರ್ಲಕ್ಷಿಸಲಾಗುತ್ತದೆ ಮತ್ತು ಸ್ಟ್ರಿಂಗ್ ಹೇಗಿದೆಯೋ ಹಾಗೆಯೇ (Raw ಆಗಿ) ಉಳಿಯುತ್ತದೆ. ಫೈಲ್ ಪಾತ್‌ಗಳನ್ನು (File paths) ಬರೆಯುವಾಗ ಇದು ತುಂಬಾ ಸಹಕಾರಿ.
+                        </p>
+                    </div>
+                    <div class="code-block font-code">
+                        <span class="cmt">// ಸಾಮಾನ್ಯ ಸ್ಟ್ರಿಂಗ್ ( \n ಹೊಸ ಲೈನ್ ಸೃಷ್ಟಿಸುತ್ತದೆ):</span><br>
+                        <span class="var">console</span>.<span class="func">log</span>(<span class="tpl">`</span><span class="str">C:\folder\newFile.txt</span><span class="tpl">`</span>);<br>
+                        <span class="cmt">/* Output:
+                        C:\folder
+                        ewFile.txt */</span><br><br>
+                        
+                        <span class="cmt">// String.raw ಬಳಸುವುದು (ಬ್ಯಾಕ್‌ಸ್ಲ್ಯಾಶ್ ಹಾಗೇ ಇರುತ್ತದೆ):</span><br>
+                        <span class="var">console</span>.<span class="func">log</span>(<span class="var">String</span>.<span class="func">raw</span><span class="tpl">`</span><span class="str">C:\folder\newFile.txt</span><span class="tpl">`</span>);<br>
+                        <span class="cmt">// Output: C:\folder\newFile.txt</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="mt-20 text-center text-slate-500 pb-10 animate-fade-in-up delay-600">
+            <p>JavaScript Template Literals Guide in Kannada</p>
+        </footer>
+    </div>
+</body>
+</html>

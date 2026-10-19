@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Multiple Element Selectors - Pro Notes</title>
+
+    <!-- Tailwind CSS for Modern Responsive Design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Noto Sans Kannada & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(56, 189, 248, 0.4)' },
+                            '50%': { boxShadow: '0 0 25px rgba(56, 189, 248, 0.8)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-700/50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="bg-yellow-400/20 p-2 rounded-lg group-hover:animate-float">
+                    <i class="fa-brands fa-js text-yellow-400 text-3xl"></i>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold gradient-text">DOM MasterClass</h1>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-semibold text-slate-300">
+                <span class="hover:text-sky-400 transition cursor-pointer"><i class="fa-solid fa-layer-group mr-1"></i> Multiple Selectors</span>
+                <span class="hover:text-sky-400 transition cursor-pointer"><i class="fa-solid fa-code-compare mr-1"></i> Live vs Static</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Intro -->
+    <section class="max-w-4xl mx-auto px-4 pt-12 pb-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="p-4 bg-sky-500/20 rounded-2xl text-sky-400 animate-pulse-glow">
+                <i class="fa-solid fa-object-group text-3xl"></i>
+            </div>
+            <div>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Multiple Element Selectors</h2>
+                <p class="text-slate-400 font-mono text-sm">ಗುಂಪಿನಲ್ಲಿ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡುವ ಕಲೆ</p>
+            </div>
+        </div>
+        <div class="bg-slate-800/60 border-l-4 border-sky-500 p-5 rounded-r-xl">
+            <p class="text-lg leading-relaxed text-slate-200">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಕೇವಲ ಒಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದರ ಬದಲು, ಒಂದೇ ಬಾರಿಗೆ ಅನೇಕ ಎಲಿಮೆಂಟ್‌ಗಳ ಗುಂಪನ್ನು (ಉದಾಹರಣೆಗೆ: ಎಲ್ಲಾ ಲಿಸ್ಟ್ ಐಟಂಗಳು, ಎಲ್ಲಾ ಬಟನ್‌ಗಳು) ಆಯ್ಕೆ ಮಾಡಲು Multiple Element Selectors ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.
+            </p>
+        </div>
+        <div class="mt-6 inline-flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full text-sm text-slate-300 border border-slate-700">
+            <i class="fa-solid fa-graduation-cap text-purple-400"></i> ಬಿಗಿನರ್ ಹಂತದಿಂದ ಪ್ರೊ ಹಂತದವರೆಗಿನ ಸಂಪೂರ್ಣ ಮಾಹಿತಿ ಇಲ್ಲಿದೆ <i class="fa-solid fa-arrow-down ml-2 text-sky-400 animate-bounce"></i>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 pb-20 space-y-8">
+
+        <!-- 1. Beginner Level: getElementsByClassName -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold font-mono border border-emerald-500/30">Beginner Level</span>
+                <h3 class="text-2xl font-bold text-white">1. getElementsByClassName()</h3>
+            </div>
+            <p class="text-slate-300 mb-4 leading-relaxed">
+                ಇದು ಒಂದು ನಿರ್ದಿಷ್ಟ 'class' ಹೊಂದಿರುವ ಎಲ್ಲಾ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ. ಇದು ನಮಗೆ ಒಂದು <strong>HTMLCollection</strong> (ಒಂದು ರೀತಿಯ ಅರೇ/ಪಟ್ಟಿ) ಅನ್ನು ನೀಡುತ್ತದೆ.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700">
+                    <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs flex items-center border-b border-slate-700"><i class="fa-brands fa-html5 mr-2 text-orange-500 text-base"></i> HTML</div>
+<pre class="m-0 text-sm"><code class="language-html">&lt;ul&gt;
+    &lt;li class="item"&gt;ಕಾಫಿ&lt;/li&gt;
+    &lt;li class="item"&gt;ಟೀ&lt;/li&gt;
+    &lt;li class="item"&gt;ಹಾಲು&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </div>
+                
+                <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700">
+                    <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs flex items-center border-b border-slate-700"><i class="fa-brands fa-js mr-2 text-yellow-400 text-base"></i> JavaScript</div>
+<pre class="m-0 text-sm"><code class="language-javascript">// 'item' ಕ್ಲಾಸ್ ಇರುವ ಎಲ್ಲವನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದು
+const allItems = document.getElementsByClassName('item');</code></pre>
+                </div>
+            </div>
+
+            <div class="bg-orange-900/20 border border-orange-500/50 rounded-xl p-4 mt-4">
+                <h4 class="text-orange-400 font-bold mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>ಎಚ್ಚರಿಕೆ:</h4>
+                <p class="text-sm text-slate-300 mb-2">ಇದು ಒಂದು ಗುಂಪು (Collection). ಹೀಗಾಗಿ <code>allItems.style.color = "red"</code> ಎಂದು ನೇರವಾಗಿ ಬರೆದರೆ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ! ಬದಲಿಗೆ, <strong>for loop</strong> ಬಳಸಿ ಒಂದೊಂದಾಗಿ ಬದಲಾಯಿಸಬೇಕು:</p>
+                <div class="rounded-lg overflow-hidden bg-[#1d1f21]">
+<pre class="m-0 text-sm"><code class="language-javascript">for (let i = 0; i < allItems.length; i++) {
+    allItems[i].style.color = "red"; 
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Beginner/Intermediate Level: getElementsByTagName -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-bold font-mono border border-blue-500/30">Beginner/Intermediate</span>
+                <h3 class="text-2xl font-bold text-white">2. getElementsByTagName()</h3>
+            </div>
+            <p class="text-slate-300 mb-4 leading-relaxed">
+                ಇದು ಕ್ಲಾಸ್ ಬದಲಿಗೆ, HTML ನ 'ಟ್ಯಾಗ್' (ಉದಾ: p, div, a, li) ಮೂಲಕ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಹುಡುಕುತ್ತದೆ. ಇದು ಕೂಡ <strong>HTMLCollection</strong> ಅನ್ನು ನೀಡುತ್ತದೆ.
+            </p>
+            <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700">
+<pre class="m-0 text-sm"><code class="language-javascript">// ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ &lt;p&gt; (ಪ್ಯಾರಾಗ್ರಾಫ್) ಟ್ಯಾಗ್‌ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ
+const allParagraphs = document.getElementsByTagName('p');
+
+for (let i = 0; i < allParagraphs.length; i++) {
+    allParagraphs[i].style.fontSize = "18px";
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 3. Pro Level (Modern): querySelectorAll -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <!-- Background Decoration -->
+            <div class="absolute -right-10 -top-10 text-purple-500/10 text-9xl"><i class="fa-solid fa-crown"></i></div>
+            
+            <div class="relative z-10">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-xs font-bold font-mono border border-purple-500/30 shadow-[0_0_10px_rgba(168,85,247,0.4)]">Pro Level (Modern)</span>
+                    <h3 class="text-2xl font-bold text-white">3. querySelectorAll()</h3>
+                </div>
+                <p class="text-slate-300 mb-4 leading-relaxed">
+                    ಇದು ಇಂದಿನ ದಿನಗಳಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಬಳಸುವ ಮತ್ತು ಅತ್ಯಂತ ಶಕ್ತಿಶಾಲಿ ವಿಧಾನ. <code>querySelector</code> ಕೇವಲ ಮೊದಲನೇ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹಿಡಿದರೆ, <code>querySelectorAll</code> ಮ್ಯಾಚ್ ಆಗುವ ಎಲ್ಲಾ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಹಿಡಿದು ಒಂದು <strong>NodeList</strong> ಅನ್ನು ನೀಡುತ್ತದೆ.
+                </p>
+                <div class="bg-purple-900/20 border-l-4 border-purple-500 p-4 rounded-r-xl mb-6">
+                    <p class="text-purple-200 text-sm font-semibold"><i class="fa-solid fa-star text-yellow-400 mr-2"></i>ಇದರ ಅತಿದೊಡ್ಡ ಪ್ಲಸ್ ಪಾಯಿಂಟ್ ಎಂದರೆ, ಇದರಲ್ಲಿ ನೇರವಾಗಿ <code>.forEach()</code> ಲೂಪ್ ಅನ್ನು ಬಳಸಬಹುದು (ಹಳೆಯ for ಲೂಪ್ ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ).</p>
+                </div>
+
+                <div class="grid md:grid-cols-5 gap-4">
+                    <div class="md:col-span-2 rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700 flex flex-col">
+                        <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs flex items-center border-b border-slate-700"><i class="fa-brands fa-html5 mr-2 text-orange-500 text-base"></i> HTML</div>
+<pre class="m-0 text-sm flex-grow"><code class="language-html">&lt;button class="btn"&gt;ಬಟನ್ 1&lt;/button&gt;
+&lt;button class="btn"&gt;ಬಟನ್ 2&lt;/button&gt;
+&lt;button class="btn"&gt;ಬಟನ್ 3&lt;/button&gt;</code></pre>
+                    </div>
+                    <div class="md:col-span-3 rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700 flex flex-col">
+                        <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs flex items-center border-b border-slate-700"><i class="fa-brands fa-js mr-2 text-yellow-400 text-base"></i> JavaScript</div>
+<pre class="m-0 text-sm flex-grow"><code class="language-javascript">// CSS ಸೆಲೆಕ್ಟರ್ ಮೂಲಕ ಎಲ್ಲಾ ಬಟನ್‌ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದು
+const buttons = document.querySelectorAll('.btn');
+
+// forEach ಬಳಸಿ ಪ್ರತಿಯೊಂದು ಬಟನ್‌ಗೂ ಸ್ಟೈಲ್ ಅಪ್ಲೈ ಮಾಡುವುದು
+buttons.forEach(function(btn) {
+    btn.style.backgroundColor = "blue";
+    btn.style.color = "white";
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. The Core Secret: HTMLCollection vs NodeList -->
+        <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.5s;">
+            <div class="text-center mb-8">
+                <span class="inline-block py-1 px-3 rounded-full bg-rose-500/20 text-rose-400 font-mono text-sm border border-rose-500/30 mb-3">Expert Level Knowledge</span>
+                <h2 class="text-3xl font-extrabold text-white mb-4">4. HTMLCollection <span class="text-slate-500 font-light mx-2">vs</span> NodeList</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">ಇವೆರಡರ ನಡುವಿನ ವ್ಯತ್ಯಾಸವು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಕೇಳಲಾಗುವ ಪ್ರಶ್ನೆಗಳಲ್ಲಿ ಒಂದಾಗಿದೆ. ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ನಾವು ಒಂದು ನೈಜ ಉದಾಹರಣೆ ಮತ್ತು ಕಾಲ್ಪನಿಕ ಕಥೆಯನ್ನು ಬಳಸೋಣ.</p>
+            </div>
+
+            <!-- Context Setup -->
+            <div class="bg-slate-800/80 rounded-xl p-5 border border-slate-700 text-center max-w-lg mx-auto mb-10 shadow-lg">
+                <i class="fa-solid fa-basket-shopping text-4xl text-amber-500 mb-3"></i>
+                <p class="text-slate-200 mb-3">ಊಹಿಸಿಕೊಳ್ಳಿ, ನಿಮ್ಮ ಬಳಿ ಒಂದು ಬುಟ್ಟಿ ಇದೆ ಮತ್ತು ಅದರಲ್ಲಿ 2 ಸೇಬುಗಳಿವೆ.</p>
+                <div class="rounded-lg overflow-hidden bg-[#1d1f21] text-left">
+<pre class="m-0 text-xs"><code class="language-html">&lt;ul id="fruit-basket"&gt;
+    &lt;li class="apple"&gt;ಸೇಬು 1&lt;/li&gt;
+    &lt;li class="apple"&gt;ಸೇಬು 2&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                </div>
+                <p class="text-sm text-sky-400 mt-3 font-semibold">ಈಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಈ ಸೇಬುಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡೋಣ.</p>
+            </div>
+
+            <!-- Comparison Grid -->
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- CCTV Camera (HTMLCollection) -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group hover:border-rose-500/50 transition duration-300">
+                    <div class="absolute -right-6 -top-6 text-rose-500/10 text-9xl group-hover:scale-110 transition duration-500"><i class="fa-solid fa-video"></i></div>
+                    
+                    <div class="flex items-center gap-4 mb-4 relative z-10">
+                        <div class="w-14 h-14 rounded-full bg-rose-500/20 flex items-center justify-center border border-rose-500/30">
+                            <i class="fa-solid fa-video text-2xl text-rose-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-white">1. HTMLCollection</h4>
+                            <span class="bg-rose-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full flex items-center w-max mt-1">
+                                <span class="w-2 h-2 rounded-full bg-white animate-pulse mr-1.5"></span> LIVE (CCTV ಇದ್ದಂತೆ)
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-slate-300 mb-4 relative z-10">
+                        ನೀವು <code>getElementsByClassName</code> ಬಳಸಿದಾಗ ಅದು ಒಂದು <strong>CCTV ಕ್ಯಾಮೆರಾ</strong> ತರಹ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಅದು ಪೇಜ್ ಅನ್ನು ಸದಾ ಕಾಲ ಗಮನಿಸುತ್ತಲೇ ಇರುತ್ತದೆ. ನೀವು ಪೇಜ್‌ಗೆ ಹೊಸ ಎಲಿಮೆಂಟ್ ಸೇರಿಸಿದರೆ, ಇದು ತಕ್ಷಣವೇ ಅದನ್ನು ತನ್ನ ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿಸಿಕೊಳ್ಳುತ್ತದೆ (Auto-update).
+                    </p>
+                    
+                    <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700 mb-4 relative z-10">
+<pre class="m-0 text-xs"><code class="language-javascript">// CCTV ಕ್ಯಾಮೆರಾ ಆನ್ ಮಾಡೋಣ (Live Collection)
+const liveBasket = document.getElementsByClassName('apple');
+console.log(liveBasket.length); // ಔಟ್‌ಪುಟ್: 2
+
+// ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಬುಟ್ಟಿಗೆ ಹೊಸ ಸೇಬು ಸೇರಿಸೋಣ
+const newApple = document.createElement('li');
+newApple.className = "apple";
+newApple.innerText = "ಸೇಬು 3";
+document.getElementById('fruit-basket').appendChild(newApple);
+
+// ಈಗ ಮತ್ತೆ ಚೆಕ್ ಮಾಡೋಣ
+console.log(liveBasket.length); 
+// ಔಟ್‌ಪುಟ್: 3 (ಮ್ಯಾಜಿಕ್! ತಾನಾಗಿಯೇ ಅಪ್‌ಡೇಟ್ ಆಗಿದೆ)</code></pre>
+                    </div>
+
+                    <div class="bg-rose-900/30 border-l-4 border-rose-500 p-3 rounded-r-lg relative z-10">
+                        <p class="text-xs text-rose-200">
+                            <strong class="text-rose-400">ಸಮಸ್ಯೆ (The forEach problem):</strong> ಇದು ಅಪ್ಪಟ ಅರೇ (Array) ಅಲ್ಲ, ಇದೊಂದು "Array-like Object". ಹೀಗಾಗಿ ಹಳೆಯ ಬ್ರೌಸರ್ ನಿಯಮಗಳ ಪ್ರಕಾರ ಇದರಲ್ಲಿ <code>.forEach()</code> ಲೂಪ್ ಅನ್ನು ನೇರವಾಗಿ ಬಳಸಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಬಿಡುವುದಿಲ್ಲ. ಬಳಸಿದರೆ TypeError ಬರುತ್ತದೆ.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Snapshot Camera (NodeList) -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/50 transition duration-300">
+                    <div class="absolute -right-6 -top-6 text-emerald-500/10 text-9xl group-hover:scale-110 transition duration-500"><i class="fa-solid fa-camera"></i></div>
+                    
+                    <div class="flex items-center gap-4 mb-4 relative z-10">
+                        <div class="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                            <i class="fa-solid fa-camera-retro text-2xl text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-white">2. NodeList</h4>
+                            <span class="bg-slate-600 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full flex items-center w-max mt-1">
+                                <i class="fa-solid fa-lock mr-1.5"></i> STATIC (ಫೋಟೋ ತೆಗೆದಂತೆ)
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-slate-300 mb-4 relative z-10">
+                        ನೀವು <code>querySelectorAll</code> ಬಳಸಿದಾಗ ಅದು ಒಂದು <strong>ಕ್ಯಾಮೆರಾದಲ್ಲಿ ಫೋಟೋ (Snapshot)</strong> ಕ್ಲಿಕ್ ಮಾಡಿದಂತೆ. ಆ ಕ್ಷಣದಲ್ಲಿ ಪೇಜ್‌ನಲ್ಲಿ ಎಷ್ಟಿವೆಯೋ ಅಷ್ಟನ್ನು ಮಾತ್ರ ಹಿಡಿಯುತ್ತದೆ. ಫೋಟೋ ತೆಗೆದ ನಂತರ ನೀವು ಬುಟ್ಟಿಗೆ 100 ಸೇಬುಗಳನ್ನು ಸೇರಿಸಿದರೂ, ಫೋಟೋದಲ್ಲಿರುವ ಸೇಬುಗಳ ಸಂಖ್ಯೆ ಬದಲಾಗುವುದಿಲ್ಲ.
+                    </p>
+                    
+                    <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700 mb-4 relative z-10">
+<pre class="m-0 text-xs"><code class="language-javascript">// ಫೋಟೋ ಕ್ಲಿಕ್ ಮಾಡೋಣ (Static Collection)
+const staticBasket = document.querySelectorAll('.apple');
+console.log(staticBasket.length); // ಔಟ್‌ಪುಟ್: 2
+
+// ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಬುಟ್ಟಿಗೆ ಮತ್ತೊಂದು ಸೇಬು ಸೇರಿಸೋಣ
+const newApple2 = document.createElement('li');
+newApple2.className = "apple";
+newApple2.innerText = "ಸೇಬು 4";
+document.getElementById('fruit-basket').appendChild(newApple2);
+
+// ಈಗ ಮತ್ತೆ ಚೆಕ್ ಮಾಡೋಣ
+console.log(staticBasket.length); 
+// ಔಟ್‌ಪುಟ್: 2 (ಎಣಿಕೆ ಅಪ್‌ಡೇಟ್ ಆಗಿಲ್ಲ)</code></pre>
+                    </div>
+
+                    <div class="bg-emerald-900/30 border-l-4 border-emerald-500 p-3 rounded-r-lg relative z-10">
+                        <p class="text-xs text-emerald-200">
+                            <strong class="text-emerald-400">ಲಾಭ (The forEach advantage):</strong> ಇದು ಫಿಕ್ಸ್ (Static) ಆಗಿರುವುದರಿಂದ, ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇದರಲ್ಲಿ ನೇರವಾಗಿ <code>.forEach()</code> ಬಳಸಲು ಅನುಮತಿ ನೀಡುತ್ತದೆ. ಇದು ಕೋಡ್ ಬರೆಯಲು ಅತ್ಯಂತ ಸುಲಭ ಮತ್ತು ಸೇಫ್ (ಯಾವುದೇ ಅನಿರೀಕ್ಷಿತ ಅಪ್‌ಡೇಟ್‌ಗಳು ಆಗುವುದಿಲ್ಲ).
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 5. Professional Developer Choice -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center border border-indigo-500/30 opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
+            <div class="md:w-1/3 flex flex-col items-center text-center">
+                <div class="w-24 h-24 rounded-full bg-indigo-500/20 flex items-center justify-center mb-4 border-4 border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                    <i class="fa-solid fa-user-astronaut text-4xl text-indigo-400"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white">ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳು ಏನು ಮಾಡುತ್ತಾರೆ?</h4>
+            </div>
+            <div class="md:w-2/3">
+                <p class="text-slate-300 mb-4 leading-relaxed">
+                    ಇಂದಿನ ಮಾಡರ್ನ್ ವೆಬ್ ಡೆವಲಪ್ಮೆಂಟ್‌ನಲ್ಲಿ (React, Angular ಅಥವಾ ಶುದ್ಧ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್) ಡೆವಲಪರ್‌ಗಳು ಯಾವಾಗಲೂ <strong class="text-indigo-300 bg-indigo-900/40 px-2 py-0.5 rounded">querySelectorAll (NodeList)</strong> ಅನ್ನೇ ಬಳಸುತ್ತಾರೆ. ಏಕೆಂದರೆ:
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                        <span class="text-slate-300">ಕೋಡ್ ಬರೆಯುವಾಗ ಇದು ಅನಿರೀಕ್ಷಿತವಾಗಿ ಬದಲಾಗುವುದಿಲ್ಲ (No surprise updates).</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                        <span class="text-slate-300"><code>forEach</code> ಬಳಸಲು ಸುಲಭ.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                        <span class="text-slate-300">CSS ನ ಎಲ್ಲಾ ಸಂಕೀರ್ಣ ಸೆಲೆಕ್ಟರ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 6. Pro Tip: Convert HTMLCollection to Array -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 border border-yellow-500/30 shadow-2xl relative overflow-hidden opacity-0 animate-fade-in-up" style="animation-delay: 0.7s;">
+            <!-- Decor -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-bl-full"></div>
+            
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4 flex items-center relative z-10">
+                <i class="fa-solid fa-lightbulb text-yellow-500 mr-3 animate-pulse"></i> 💡 Pro Tip: HTMLCollection ಗೆ forEach ಬಳಸುವುದು ಹೇಗೆ?
+            </h3>
+            <p class="text-slate-300 mb-6 relative z-10">
+                ನಿಮ್ಮ ಬಳಿ HTMLCollection ಇದ್ದು, ಅದಕ್ಕೆ forEach ಬಳಸಲೇಬೇಕು ಎಂದಿದ್ದರೆ, ಅದನ್ನು ಮೊದಲು ಅರೇ (Array) ಆಗಿ ಕನ್ವರ್ಟ್ ಮಾಡಬೇಕು. ಅದಕ್ಕೆ <code>Array.from()</code> ಅಥವಾ Spread Syntax <code>[...]</code> ಬಳಸಬಹುದು:
+            </p>
+
+            <div class="rounded-xl overflow-hidden bg-[#1d1f21] border border-slate-700 relative z-10">
+                <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs flex justify-between items-center border-b border-slate-700">
+                    <span><i class="fa-brands fa-js mr-2 text-yellow-400"></i> Spread Operator & Array.from Magic</span>
+                </div>
+<pre class="m-0 text-sm"><code class="language-javascript">const myItems = document.getElementsByClassName('item'); // ಇದು HTMLCollection
+
+// 1. Array.from() ಬಳಸಿ ಕನ್ವರ್ಟ್ ಮಾಡುವುದು:
+Array.from(myItems).forEach(item => {
+    item.style.fontWeight = "bold";
+});
+
+// 2. ಅಥವಾ Spread Syntax ಬಳಸುವುದು (ಇದು ಇತ್ತೀಚಿನ ಟ್ರೆಂಡ್ 🔥):
+[...myItems].forEach(item => {
+    item.style.border = "1px solid black";
+});</code></pre>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-10 py-8 text-center bg-slate-900/50 backdrop-blur">
+        <p class="text-slate-500 text-sm flex items-center justify-center gap-2">
+            Built with <i class="fa-solid fa-heart text-rose-500"></i> using HTML, Tailwind CSS & Prism.js
+        </p>
+    </footer>
+
+    <!-- Prism.js Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

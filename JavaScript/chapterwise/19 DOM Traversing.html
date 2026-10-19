@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Traversing - Pro Notes</title>
+    
+    <!-- Tailwind CSS for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Noto Sans Kannada & Fira Code for Code blocks -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0f172a',
+                        darker: '#0b1120',
+                        primary: '#38bdf8',
+                        secondary: '#818cf8',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                        'slide-up': 'slideUp 0.6s ease-out forwards',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0b1120; color: #e2e8f0; }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            background: #1e293b !important;
+            border: 1px solid #334155;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        code[class*="language-"] {
+            font-family: 'Fira Code', monospace !important;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary selection:text-white">
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden border-b border-slate-800 bg-darker py-16 lg:py-24">
+        <!-- Abstract Background SVG -->
+        <svg class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+
+        <div class="max-w-6xl mx-auto px-6 relative z-10 text-center animate-slide-up">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-primary text-sm font-semibold mb-6">
+                <i class="fa-solid fa-code-branch"></i> JavaScript DOM API
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6">DOM <span class="gradient-text">Traversing</span> Masterclass</h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                DOM (Document Object Model) ಅನ್ನು ಒಂದು <strong>Tree Structure</strong> (ಮರದ ಆಕಾರದ ರಚನೆ) ಎಂದು ಪರಿಗಣಿಸಲಾಗುತ್ತದೆ. ಬ್ರೌಸರ್ HTML ಕೋಡ್ ಅನ್ನು ಓದಿದಾಗ, ಅದು ಪ್ರತಿಯೊಂದು ಟ್ಯಾಗ್, ಟೆಕ್ಸ್ಟ್ ಮತ್ತು ಕಾಮೆಂಟ್ ಅನ್ನು ಒಂದೊಂದು <strong>Node</strong> ಆಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ. ಈ ನೋಡ್‌ಗಳ ನಡುವೆ ಚಲಿಸುವುದನ್ನೇ <strong>DOM Traversing</strong> ಎನ್ನುತ್ತಾರೆ.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- Section 0: Node vs Element -->
+        <section class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-slate-100">Node ಮತ್ತು Element ನಡುವಿನ ವ್ಯತ್ಯಾಸ</h2>
+            </div>
+            <p class="text-slate-400 mb-6 border-l-4 border-primary pl-4">ತಾಂತ್ರಿಕವಾಗಿ ಇದನ್ನು ಸರಿಯಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಮೊದಲು Node ಮತ್ತು Element ನಡುವಿನ ವ್ಯತ್ಯಾಸ ತಿಳಿಯುವುದು ಅತಿಮುಖ್ಯ:</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Node Card -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden group hover:border-orange-500/50 transition-colors">
+                    <i class="fa-solid fa-cube absolute -right-4 -bottom-4 text-6xl text-slate-800 group-hover:text-orange-500/10 transition-colors"></i>
+                    <h3 class="text-2xl font-bold text-orange-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-dot text-sm"></i> Node
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        HTML ನಲ್ಲಿನ ಪ್ರತಿಯೊಂದೂ ಒಂದು Node ಆಗಿರುತ್ತದೆ.
+                    </p>
+                    <ul class="mt-4 space-y-2 text-slate-400 text-sm list-disc list-inside">
+                        <li>ಎಂಟರ್ ಹೊಡೆದಾಗ ಬರುವ ಖಾಲಿ ಜಾಗ <span class="text-orange-300">(Text Node)</span></li>
+                        <li>ಕಾಮೆಂಟ್‌ಗಳು <span class="text-orange-300">(Comment Node)</span></li>
+                        <li>ಮತ್ತು HTML ಟ್ಯಾಗ್‌ಗಳು <span class="text-orange-300">(Element Node)</span></li>
+                    </ul>
+                </div>
+
+                <!-- Element Card -->
+                <div class="glass-card p-8 rounded-2xl relative overflow-hidden group hover:border-primary/50 transition-colors">
+                    <i class="fa-brands fa-html5 absolute -right-4 -bottom-4 text-7xl text-slate-800 group-hover:text-primary/10 transition-colors"></i>
+                    <h3 class="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-sm"></i> Element
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        ಇದು ಕೇವಲ HTML ಟ್ಯಾಗ್‌ಗಳನ್ನು <code class="bg-slate-800 px-2 py-1 rounded text-primary text-sm">&lt;div&gt;, &lt;p&gt;, &lt;li&gt;</code> ಮಾತ್ರ ಸೂಚಿಸುತ್ತದೆ.
+                    </p>
+                    <div class="mt-4 inline-block bg-primary/10 text-primary px-3 py-1 rounded text-sm font-semibold border border-primary/20">
+                        (ಇದು Node ನ ಒಂದು ನಿರ್ದಿಷ್ಟ ವಿಧ).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Base HTML Code block -->
+        <section class="glass-card rounded-2xl overflow-hidden border border-slate-700 animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="bg-slate-800 px-6 py-4 flex items-center justify-between border-b border-slate-700">
+                <h3 class="font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-file-code text-orange-400"></i> ಮಾದರಿ HTML ಸ್ಟ್ರಕ್ಚರ್ (Reference Code)
+                </h3>
+                <span class="text-xs text-slate-500 font-mono">index.html</span>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-slate-400 mb-4">ಕೆಳಗಿನ ಮಾದರಿ HTML ಸ್ಟ್ರಕ್ಚರ್ ಅನ್ನು ಆಧಾರವಾಗಿಟ್ಟುಕೊಂಡು ಪ್ರತಿಯೊಂದು ಟ್ರಾವರ್ಸಿಂಗ್ ವಿಧಾನವನ್ನು ತಾಂತ್ರಿಕವಾಗಿ ವಿವರಿಸಲಾಗಿದೆ:</p>
+<pre><code class="language-html">&lt;!-- HTML Structure --&gt;
+&lt;div id="wrapper" class="container"&gt;
+    &lt;!-- List of items --&gt;
+    &lt;ul id="myList"&gt;
+        &lt;li class="item-1"&gt;ಮೊದಲನೇ ಐಟಂ&lt;/li&gt;
+        &lt;li class="item-2"&gt;ಎರಡನೇ ಐಟಂ&lt;/li&gt;
+        &lt;li class="item-3"&gt;ಮೂರನೇ ಐಟಂ&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 1: Downward Traversing -->
+        <section class="animate-slide-up relative" style="animation-delay: 0.4s;">
+            <div class="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-transparent rounded-full hidden md:block"></div>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/30">
+                    <i class="fa-solid fa-arrow-down"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-100">1. Downward Traversing</h2>
+                    <p class="text-slate-400 text-sm mt-1">(ಮಕ್ಕಳನ್ನು ಹುಡುಕುವುದು / Child Traversing)</p>
+                </div>
+            </div>
+            <p class="text-slate-300 mb-8 max-w-3xl">ಒಂದು ಪೇರೆಂಟ್ ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಪ್ರವೇಶಿಸಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+            <div class="space-y-8">
+                <!-- 1A -->
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-300 mb-4 border-b border-slate-700 pb-2">A. childNodes <span class="text-slate-500 mx-2 text-sm font-normal">vs</span> children</h3>
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-semibold text-slate-200 mb-2"><i class="fa-solid fa-network-wired text-blue-400 mr-2 text-sm"></i>childNodes</h4>
+                            <p class="text-sm text-slate-400">ಇದು ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಎಲ್ಲಾ ರೀತಿಯ ನೋಡ್‌ಗಳನ್ನು (Text nodes, Comments, ಮತ್ತು Elements) ಒಳಗೊಂಡಿರುವ ಒಂದು <span class="text-blue-300">NodeList</span> ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-200 mb-2"><i class="fa-solid fa-tags text-primary mr-2 text-sm"></i>children</h4>
+                            <p class="text-sm text-slate-400">ಇದು ಕೇವಲ HTML ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಮಾತ್ರ ಒಳಗೊಂಡಿರುವ ಒಂದು <span class="text-primary">HTMLCollection</span> ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ. (ಇದು ಖಾಲಿ ಜಾಗ ಮತ್ತು ಕಾಮೆಂಟ್‌ಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ).</p>
+                        </div>
+                    </div>
+<pre><code class="language-javascript">const list = document.getElementById("myList");
+
+// 1. childNodes
+console.log(list.childNodes); 
+// Output: NodeList(7) [text, li.item-1, text, li.item-2, text, li.item-3, text]
+// (ಇಲ್ಲಿ 'text' ಎಂದರೆ HTML ನಲ್ಲಿರುವ 'Enter' (line-break) ಮತ್ತು ಖಾಲಿ ಜಾಗಗಳು)
+
+// 2. children
+console.log(list.children); 
+// Output: HTMLCollection(3) [li.item-1, li.item-2, li.item-3]</code></pre>
+                </div>
+
+                <!-- 1B -->
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-300 mb-4 border-b border-slate-700 pb-2">B. firstChild <span class="text-slate-500 mx-2 text-sm font-normal">vs</span> firstElementChild</h3>
+                    <ul class="space-y-2 mb-6 text-slate-300 text-sm">
+                        <li><span class="text-blue-400 font-mono font-bold">firstChild:</span> ಪೇರೆಂಟ್‌ನ ಮೊದಲನೇ ನೋಡ್ ಅನ್ನು ಕೊಡುತ್ತದೆ (ಅದು ಕಾಮೆಂಟ್ ಅಥವಾ ಖಾಲಿ ಜಾಗ ಆಗಿರಬಹುದು).</li>
+                        <li><span class="text-primary font-mono font-bold">firstElementChild:</span> ಪೇರೆಂಟ್‌ನ ನಿಖರವಾದ ಮೊದಲನೇ HTML ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">console.log(list.firstChild); 
+// Output: #text (ಏಕೆಂದರೆ &lt;ul&gt; ಮತ್ತು ಮೊದಲನೇ &lt;li&gt; ನಡುವೆ Enter ಹೊಡೆಯಲಾಗಿದೆ)
+
+console.log(list.firstElementChild); 
+// Output: &lt;li class="item-1"&gt;ಮೊದಲನೇ ಐಟಂ&lt;/li&gt;</code></pre>
+                </div>
+
+                <!-- 1C -->
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-300 mb-4 border-b border-slate-700 pb-2">C. lastChild <span class="text-slate-500 mx-2 text-sm font-normal">vs</span> lastElementChild</h3>
+                    <ul class="space-y-2 mb-6 text-slate-300 text-sm">
+                        <li><span class="text-blue-400 font-mono font-bold">lastChild:</span> ಕೊನೆಯ ನೋಡ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                        <li><span class="text-primary font-mono font-bold">lastElementChild:</span> ಕೊನೆಯ HTML ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">console.log(list.lastElementChild); 
+// Output: &lt;li class="item-3"&gt;ಮೂರನೇ ಐಟಂ&lt;/li&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Upward Traversing -->
+        <section class="animate-slide-up relative" style="animation-delay: 0.5s;">
+            <div class="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-transparent rounded-full hidden md:block"></div>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl border border-purple-500/30">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-100">2. Upward Traversing</h2>
+                    <p class="text-slate-400 text-sm mt-1">(ಪೇರೆಂಟ್ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಹುಡುಕುವುದು)</p>
+                </div>
+            </div>
+            <p class="text-slate-300 mb-8 max-w-3xl">ಪ್ರಸ್ತುತ ಎಲಿಮೆಂಟ್‌ನಿಂದ ಮೇಲ್ಮುಖವಾಗಿ (DOM ಟ್ರೀಯಲ್ಲಿ ಮೇಲಕ್ಕೆ) ಚಲಿಸಲು ಇವುಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+            <div class="space-y-8">
+                <!-- 2A -->
+                <div class="glass-card rounded-xl p-6 border-l-4 border-l-purple-500">
+                    <h3 class="text-xl font-bold text-purple-300 mb-4">A. parentNode <span class="text-slate-500 mx-2 text-sm font-normal">vs</span> parentElement</h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಇವೆರಡೂ ಪ್ರಸ್ತುತ ಎಲಿಮೆಂಟ್‌ನ ನೇರ ಪೇರೆಂಟ್ ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತವೆ. ತಾಂತ್ರಿಕವಾಗಿ ಇವೆರಡರ ನಡುವೆ ಇರುವ ಏಕೈಕ ವ್ಯತ್ಯಾಸವೆಂದರೆ, ಪೇರೆಂಟ್ ಒಂದು ವೇಳೆ Element ಆಗಿಲ್ಲದಿದ್ದರೆ <code>parentElement</code> <code>null</code> ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ. (ಉದಾ: <code>document.documentElement.parentElement</code> null ಆಗಿರುತ್ತದೆ, ಆದರೆ <code>parentNode</code> document ಆಗಿರುತ್ತದೆ).
+                    </p>
+<pre><code class="language-javascript">const item2 = document.querySelector(".item-2");
+
+console.log(item2.parentElement); 
+// Output: &lt;ul id="myList"&gt;...&lt;/ul&gt;</code></pre>
+                </div>
+
+                <!-- 2B -->
+                <div class="glass-card rounded-xl p-6 relative overflow-hidden group">
+                    <!-- Highlight background for crucial method -->
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i class="fa-solid fa-star text-6xl text-yellow-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-yellow-400 mb-2 flex items-center gap-2">
+                        B. closest(selector) 
+                        <span class="bg-yellow-400/20 text-yellow-400 text-xs px-2 py-1 rounded ml-2 border border-yellow-400/30 animate-pulse">(ಅತ್ಯಂತ ಪ್ರಮುಖ ತಾಂತ್ರಿಕ ವಿಧಾನ)</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-6 leading-relaxed max-w-4xl relative z-10">
+                        ಇದು ಕೇವಲ ಒಂದು ಹೆಜ್ಜೆ ಮೇಲಕ್ಕೆ ಹೋಗುವುದಿಲ್ಲ. ಬದಲಾಗಿ, ನೀವು ನೀಡಿದ CSS ಸೆಲೆಕ್ಟರ್‌ಗೆ ಮ್ಯಾಚ್ ಆಗುವ ಪೇರೆಂಟ್ (ಅಥವಾ ಗ್ರ್ಯಾಂಡ್-ಪೇರೆಂಟ್) ಸಿಗುವವರೆಗೂ DOM ಟ್ರೀಯಲ್ಲಿ ಮೇಲ್ಮುಖವಾಗಿ (Ancestors) ಹುಡುಕುತ್ತಲೇ ಹೋಗುತ್ತದೆ. ಮ್ಯಾಚ್ ಆಗುವ ಮೊದಲ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ. ಇದು <strong>Event Delegation</strong> ನಲ್ಲಿ ಬಹಳ ಉಪಯುಕ್ತ.
+                    </p>
+<pre class="relative z-10"><code class="language-javascript">// item-2 ನಿಂದ ಹುಡುಕುತ್ತಾ ಹೋಗಿ, .container ಕ್ಲಾಸ್ ಇರುವ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹಿಡಿಯುವುದು
+const containerDiv = item2.closest(".container");
+
+console.log(containerDiv); 
+// Output: &lt;div id="wrapper" class="container"&gt;...&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Sideways Traversing -->
+        <section class="animate-slide-up relative" style="animation-delay: 0.6s;">
+            <div class="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-transparent rounded-full hidden md:block"></div>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl border border-emerald-500/30">
+                    <i class="fa-solid fa-arrows-left-right"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-100">3. Sideways Traversing</h2>
+                    <p class="text-slate-400 text-sm mt-1">(ಸಿಬ್ಲಿಂಗ್ಸ್ / ಅಕ್ಕಪಕ್ಕದ ಚಲನೆ)</p>
+                </div>
+            </div>
+            <p class="text-slate-300 mb-8 max-w-3xl">ಒಂದೇ ಪೇರೆಂಟ್‌ನ ಒಳಗೆ ಇರುವ ಎಲಿಮೆಂಟ್‌ಗಳ ನಡುವೆ ಚಲಿಸಲು (ಉದಾ: ಒಂದು <code>&lt;li&gt;</code> ಇಂದ ಮತ್ತೊಂದು <code>&lt;li&gt;</code> ಗೆ) ಇವುಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- 3A -->
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-emerald-300 mb-4 border-b border-slate-700 pb-2">A. nextSibling <br/><span class="text-slate-500 text-sm font-normal">vs</span> nextElementSibling</h3>
+                    <ul class="space-y-2 mb-6 text-slate-300 text-sm">
+                        <li><span class="text-emerald-400 font-mono font-bold">nextSibling:</span> ಮುಂದಿನ ನೋಡ್ (ಖಾಲಿ ಜಾಗ ಇರಬಹುದು) ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                        <li><span class="text-primary font-mono font-bold">nextElementSibling:</span> ಮುಂದಿನ ನಿಖರವಾದ HTML ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">const currentItem = document.querySelector(".item-2");
+
+console.log(currentItem.nextSibling); 
+// Output: #text (ಖಾಲಿ ಜಾಗ)
+
+console.log(currentItem.nextElementSibling); 
+// Output: &lt;li class="item-3"&gt;ಮೂರನೇ ಐಟಂ&lt;/li&gt;</code></pre>
+                </div>
+
+                <!-- 3B -->
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-emerald-300 mb-4 border-b border-slate-700 pb-2">B. previousSibling <br/><span class="text-slate-500 text-sm font-normal">vs</span> previousElementSibling</h3>
+                    <ul class="space-y-2 mb-6 text-slate-300 text-sm">
+                        <li><span class="text-emerald-400 font-mono font-bold">previousSibling:</span> ಹಿಂದಿನ ನೋಡ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                        <li><span class="text-primary font-mono font-bold">previousElementSibling:</span> ಹಿಂದಿನ HTML ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕೊಡುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">console.log(currentItem.previousElementSibling); 
+// Output: &lt;li class="item-1"&gt;ಮೊದಲನೇ ಐಟಂ&lt;/li&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Best Practice -->
+        <section class="animate-slide-up" style="animation-delay: 0.7s;">
+            <div class="bg-gradient-to-r from-red-900/40 to-slate-800 border border-red-500/30 p-8 rounded-2xl relative overflow-hidden shadow-2xl">
+                <!-- Decorative Icon -->
+                <i class="fa-solid fa-code absolute -right-6 -bottom-6 text-8xl text-red-500/10 transform rotate-12"></i>
+                
+                <h3 class="text-2xl font-bold text-red-400 mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-shield-halved"></i> ತಾಂತ್ರಿಕ ಸಾರಾಂಶ (Technical Best Practice)
+                </h3>
+                
+                <p class="text-slate-300 leading-relaxed mb-6">
+                    ಆಧುನಿಕ ವೆಬ್ ಡೆವಲಪ್ಮೆಂಟ್‌ನಲ್ಲಿ, <code class="text-red-300 bg-red-950/50 px-1 rounded">childNodes</code>, <code class="text-red-300 bg-red-950/50 px-1 rounded">firstChild</code>, <code class="text-red-300 bg-red-950/50 px-1 rounded">nextSibling</code> ಗಳನ್ನು ಬಳಸುವುದು ಬಹಳ ಅಪರೂಪ. ಏಕೆಂದರೆ, HTML ಕೋಡ್‌ನಲ್ಲಿ ನಾವು ಎಂಟರ್ (Enter/Line-break) ಹೊಡೆದಾಗ ಅಥವಾ ಸ್ಪೇಸ್ (Space) ಕೊಟ್ಟಾಗ ಬ್ರೌಸರ್ ಅದನ್ನು ಒಂದು <strong>'Text Node'</strong> ಆಗಿ ಪರಿಗಣಿಸಿ ಬಗ್‌ಗಳಿಗೆ (Bugs) ಕಾರಣವಾಗುತ್ತದೆ. 
+                </p>
+                
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-emerald-500/20">
+                    <p class="text-emerald-400 font-semibold mb-2"><i class="fa-solid fa-check-double mr-2"></i>ಆದ್ದರಿಂದ, ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳು ಯಾವಾಗಲೂ ಕೇವಲ ಎಲಿಮೆಂಟ್‌ಗಳ ಮೇಲೆ ಕೆಲಸ ಮಾಡುವ ಇವುಗಳನ್ನು ಮಾತ್ರ ಬಳಸುತ್ತಾರೆ:</p>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm">children</span>
+                        <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm">firstElementChild</span>
+                        <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm">lastElementChild</span>
+                        <span class="bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm">nextElementSibling</span>
+                        <span class="bg-yellow-500/10 text-yellow-300 border border-yellow-500/30 px-3 py-1.5 rounded-lg font-mono text-sm font-bold shadow-sm"><i class="fa-solid fa-star mr-1 text-xs"></i>closest()</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-800 mt-16 py-8 text-center text-slate-500 text-sm">
+        <p>Crafted with ♥ for DOM Mastery • HTML5, Tailwind & JavaScript</p>
+    </footer>
+
+    <!-- Prism.js Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+</body>
+</html>

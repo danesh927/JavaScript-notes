@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="kn" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Scope (ಸ್ಕೋಪ್) | Master Class</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Variables (Light & Dark Theme) --- */
+        :root[data-theme="dark"] {
+            --bg-main: #0f172a; --bg-surface: #1e293b; --bg-surface-hover: #334155;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border: #334155; --primary: #0ea5e9; --primary-hover: #0284c7; 
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --purple: #8b5cf6;
+            --code-bg: #020617;
+        }
+        :root[data-theme="light"] {
+            --bg-main: #f8fafc; --bg-surface: #ffffff; --bg-surface-hover: #f1f5f9;
+            --text-main: #0f172a; --text-muted: #475569;
+            --border: #e2e8f0; --primary: #0284c7; --primary-hover: #0369a1;
+            --success: #059669; --warning: #d97706; --danger: #dc2626; --purple: #7c3aed;
+            --code-bg: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans Kannada', sans-serif; background: var(--bg-main); color: var(--text-main); line-height: 1.8; transition: background 0.3s, color 0.3s; scroll-behavior: smooth; }
+
+        /* --- Layout --- */
+        .app-container { display: flex; max-width: 1400px; margin: 0 auto; }
+        
+        /* --- Sidebar Navigation --- */
+        .sidebar { width: 300px; height: 100vh; position: sticky; top: 0; background: var(--bg-surface); padding: 20px; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; z-index: 100;}
+        .progress-container { width: 100%; background: var(--bg-main); border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+        .nav-links { list-style: none; margin-top: 20px; }
+        .nav-links li { margin-bottom: 10px; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); display: block; padding: 10px; border-radius: 8px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: var(--bg-surface-hover); color: var(--primary); font-weight: bold; border-left: 4px solid var(--primary); }
+
+        /* --- Topbar & Theme Toggle --- */
+        .topbar { display: flex; justify-content: flex-end; padding: 15px 40px; }
+        .theme-toggle { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .theme-toggle:hover { background: var(--primary); color: white; }
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; padding: 20px 60px 80px 60px; max-width: 1000px; }
+        h1 { font-size: 2.8rem; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-size: 1.8rem; margin-top: 50px; border-bottom: 2px solid var(--border); padding-bottom: 10px; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        h3 { font-size: 1.3rem; margin-top: 25px; color: var(--purple); }
+        p, li { color: var(--text-muted); margin-bottom: 15px; }
+        strong { color: var(--text-main); }
+
+        /* --- Alert Cards --- */
+        .card { background: var(--bg-surface); border-radius: 10px; padding: 20px; border: 1px solid var(--border); margin: 20px 0; border-left: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card.info { border-left-color: var(--primary); }
+        .card.success { border-left-color: var(--success); }
+        .card.warning { border-left-color: var(--warning); background: rgba(245, 158, 11, 0.05); }
+        .card.danger { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+
+        /* --- Animations & Visuals (Real World Analogy) --- */
+        .analogy-container { display: flex; gap: 20px; margin: 30px 0; flex-wrap: wrap; }
+        .analogy-box { flex: 1; min-width: 250px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; position: relative; overflow: hidden; transition: 0.3s; }
+        .analogy-box:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .analogy-icon { font-size: 3rem; margin-bottom: 10px; }
+        .analogy-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 10px; }
+        .scope-boundary { border: 2px dashed var(--danger); padding: 15px; border-radius: 10px; margin-top: 15px; background: rgba(239, 68, 68, 0.1); }
+        
+        .var-ball { display: inline-block; padding: 5px 15px; background: var(--primary); color: white; border-radius: 20px; font-weight: bold; font-family: 'Fira Code'; margin: 5px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* --- Code Editor --- */
+        .code-block { background: var(--code-bg); border-radius: 10px; border: 1px solid var(--border); margin: 25px 0; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .code-header { background: var(--bg-surface); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-muted); }
+        pre { padding: 20px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.95rem; color: #a6accd; margin: 0; line-height: 1.5; }
+        code .keyword { color: #c792ea; } code .string { color: #c3e88d; } code .function { color: #82aaff; } code .comment { color: #697098; } code .number { color: #f78c6c; } code .variable { color: #ffcb6b; }
+        
+        .copy-btn { background: var(--bg-main); border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .copy-btn:hover { background: var(--primary); color: white; }
+
+        /* --- Interactive Playground --- */
+        .playground { border: 2px solid var(--primary); border-radius: 10px; overflow: hidden; margin: 30px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .play-header { background: var(--primary); color: white; padding: 10px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .play-body { display: flex; flex-direction: column; }
+        textarea.code-input { width: 100%; height: 250px; background: var(--code-bg); color: #a6accd; font-family: 'Fira Code', monospace; font-size: 1rem; padding: 15px; border: none; resize: vertical; outline: none; }
+        .play-controls { background: var(--bg-surface); padding: 10px 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .btn-run { background: var(--success); color: white; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-run:hover { background: #059669; transform: translateY(-2px); }
+        .output-panel { background: var(--bg-main); padding: 20px; min-height: 120px; font-family: 'Fira Code', monospace; color: var(--text-main); white-space: pre-wrap; font-size: 1rem; }
+
+        /* --- Step Boxes (Memory/Execution) --- */
+        .step-box { background: var(--bg-main); padding: 20px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 15px; display: flex; gap: 20px; align-items: flex-start; }
+        .step-num { background: var(--purple); color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; flex-shrink: 0; font-size: 1.2rem; }
+
+        /* --- Quiz Section --- */
+        .quiz-container { background: var(--bg-surface); padding: 30px; border-radius: 10px; border: 1px solid var(--border); margin: 30px 0; }
+        .quiz-option { display: block; width: 100%; text-align: left; padding: 15px; margin: 10px 0; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--text-main); transition: 0.3s; font-size: 1rem; font-family: inherit;}
+        .quiz-option:hover:not([disabled]) { border-color: var(--primary); transform: translateX(5px); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); font-weight: bold;}
+        .quiz-option.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); font-weight: bold;}
+        .quiz-feedback { margin-top: 15px; font-weight: bold; display: none; padding: 15px; border-radius: 8px; line-height: 1.5;}
+        
+        .btn-anim { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: 0.3s; font-weight: bold; margin-top: 15px;}
+        .btn-anim:hover { background: var(--primary-hover); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); padding: 15px; }
+            .main-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 10px;">JS Masterclass</h2>
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">ಓದುವಿಕೆಯ ಪ್ರಗತಿ</p>
+            <ul class="nav-links">
+                <li><a href="#intro" class="active">1. ಪೀಠಿಕೆ (Scope ಎಂದರೇನು?)</a></li>
+                <li><a href="#real-world">2. ನೈಜ ಉದಾಹರಣೆ (Real-World)</a></li>
+                <li><a href="#global-scope">3. Global Scope (ಗ್ಲೋಬಲ್)</a></li>
+                <li><a href="#local-scope">4. Local/Function Scope</a></li>
+                <li><a href="#block-scope">5. Block Scope (ES6)</a></li>
+                <li><a href="#shadowing">6. Variable Shadowing <span style="color:var(--warning)">*ಹೊಸದು*</span></a></li>
+                <li><a href="#lexical-scope">7. Lexical Scope (Pro Level)</a></li>
+                <li><a href="#memory">8. Execution Context & Memory</a></li>
+                <li><a href="#playground">9. Interactive Playground</a></li>
+                <li><a href="#quiz">10. ಪರೀಕ್ಷೆ (Quiz)</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <button class="theme-toggle" onclick="toggleTheme()">☀️ Light / Dark</button>
+            </div>
+
+            <section id="intro">
+                <h1>JavaScript Local & Global Scope</h1>
+                <p><strong>ಶೂನ್ಯದಿಂದ ವೃತ್ತಿಪರ ಹಂತದವರೆಗೆ (Beginner to Pro) ಸಂಪೂರ್ಣ ಕೈಪಿಡಿ.</strong></p>
+                
+                <div class="card info">
+                    <strong style="color: var(--primary); font-size: 1.2rem;">Concept ಎಂದರೇನು? (Definition)</strong>
+                    <p style="margin-top: 10px;"><strong>Scope (ಸ್ಕೋಪ್)</strong> ಎಂದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ವೇರಿಯೇಬಲ್‌ಗಳ (Variables) <strong>"ವ್ಯಾಪ್ತಿ" ಅಥವಾ "ಗಡಿ"</strong>. ಒಂದು ವೇರಿಯೇಬಲ್ ಅನ್ನು ನೀವು ಎಲ್ಲಿ ಬರೆಯುತ್ತೀರಿ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ, ಆ ವೇರಿಯೇಬಲ್ ಅನ್ನು ಪ್ರೋಗ್ರಾಂನ ಯಾವ ಭಾಗದಲ್ಲಿ ಬಳಸಬಹುದು ಅಥವಾ ಬಳಸಬಾರದು ಎಂದು ನಿರ್ಧರಿಸುವ ನಿಯಮವೇ Scope.</p>
+                    
+                    <strong style="color: var(--text-main);">ಈ Concept ಏಕೆ ಬೇಕು? (Why do we need it?)</strong>
+                    <p style="margin-bottom:0;">ಭದ್ರತೆ (Security) ಮತ್ತು ಮೆಮೊರಿ ಉಳಿಸಲು! ಎಲ್ಲವನ್ನೂ ಒಂದೇ ಜಾಗದಲ್ಲಿ ಹಾಕಿದರೆ ಹೆಸರುಗಳು ಕ್ಲ್ಯಾಶ್ (Name collision) ಆಗುತ್ತವೆ. ಯಾವುದನ್ನು ಎಲ್ಲಿ ಮುಚ್ಚಿಡಬೇಕು ಎಂದು ನಿರ್ಧರಿಸಲು ಸ್ಕೋಪ್ ಸಹಾಯ ಮಾಡುತ್ತದೆ.</p>
+                </div>
+            </section>
+
+            <section id="real-world">
+                <h2>ನೈಜ ಜೀವನದ ಉದಾಹರಣೆ (Real-World Example)</h2>
+                <p>ಸ್ಕೋಪ್ ಅನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು <strong>ಪಬ್ಲಿಕ್ ಪಾರ್ಕ್ (Public Park)</strong> ಮತ್ತು ನಿಮ್ಮ <strong>ಮನೆಯ ಬೆಡ್‌ರೂಮ್ (Bedroom)</strong> ಅನ್ನು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ.</p>
+
+                <div class="analogy-container">
+                    <!-- Global Scope Analogy -->
+                    <div class="analogy-box">
+                        <div class="analogy-icon">🏞️</div>
+                        <div class="analogy-title" style="color: var(--success);">ಪಬ್ಲಿಕ್ ಪಾರ್ಕ್ (Global Scope)</div>
+                        <p style="font-size: 0.9rem;">ಪಾರ್ಕ್‌ನಲ್ಲಿರುವ ಬೆಂಚ್ ಅನ್ನು ಯಾರು ಬೇಕಾದರೂ ಬಳಸಬಹುದು. ಇದು ಎಲ್ಲರಿಗೂ ಮುಕ್ತವಾಗಿದೆ.</p>
+                        <div class="var-ball" style="background: var(--success);">var parkBench = "Free";</div>
+                    </div>
+
+                    <!-- Local Scope Analogy -->
+                    <div class="analogy-box">
+                        <div class="analogy-icon">🏠</div>
+                        <div class="analogy-title" style="color: var(--danger);">ಮನೆಯ ಬೆಡ್‌ರೂಮ್ (Local Scope)</div>
+                        <p style="font-size: 0.9rem;">ನಿಮ್ಮ ಮನೆಯ ಒಳಗಿರುವ ಟಿವಿ ನಿಮ್ಮ ಮನೆಯವರಿಗೆ ಮಾತ್ರ. ಹೊರಗಿನವರಿಗೆ (ಪಾರ್ಕ್‌ನಲ್ಲಿರುವವರಿಗೆ) ಇದು ಸಿಗುವುದಿಲ್ಲ!</p>
+                        <div class="scope-boundary">
+                            <div class="var-ball" style="background: var(--danger);">var myTV = "Private";</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="global-scope">
+                <h2>1. Global Scope (ಗ್ಲೋಬಲ್ ಸ್ಕೋಪ್)</h2>
+                <p>ಯಾವುದೇ ಫಂಕ್ಷನ್ ಅಥವಾ ಬ್ಲಾಕ್‌ನ <code>{ }</code> <strong>ಹೊರಗಡೆ</strong> ಸೃಷ್ಟಿಸುವ ವೇರಿಯೇಬಲ್‌ಗಳು Global Scope ನಲ್ಲಿರುತ್ತವೆ. ಇವುಗಳನ್ನು ಕೋಡ್‌ನ ಎಲ್ಲಿಂದಲಾದರೂ (ಯಾವ ಫಂಕ್ಷನ್ ಒಳಗಿಂದಲಾದರೂ) ಬಳಸಬಹುದು.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Global Scope</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// ಫಂಕ್ಷನ್ ಹೊರಗಿದೆ, ಹಾಗಾಗಿ ಇದು Global Variable (ಪಬ್ಲಿಕ್ ಪಾರ್ಕ್)</span>
+<span class="keyword">let</span> <span class="variable">playerName</span> = <span class="string">"ವಿರಾಟ್"</span>; 
+
+<span class="keyword">function</span> <span class="function">playGame</span>() {
+    <span class="comment">// ಫಂಕ್ಷನ್ ಒಳಗಿಂದ Global Variable ಅನ್ನು ಕರೆಯುತ್ತಿದ್ದೇವೆ</span>
+    <span class="function">console.log</span>(<span class="variable">playerName</span> + <span class="string">" ಆಡುತ್ತಿದ್ದಾರೆ!"</span>); 
+}
+
+<span class="function">playGame</span>(); <span class="comment">// ಔಟ್‌ಪುಟ್: ವಿರಾಟ್ ಆಡುತ್ತಿದ್ದಾರೆ!</span>
+<span class="function">console.log</span>(<span class="variable">playerName</span>); <span class="comment">// ಔಟ್‌ಪುಟ್: ವಿರಾಟ್</span></code></pre>
+                </div>
+            </section>
+
+            <section id="local-scope">
+                <h2>2. Local / Function Scope (ಲೋಕಲ್ ಸ್ಕೋಪ್)</h2>
+                <p>ಒಂದು ಫಂಕ್ಷನ್ <code>function() { ... }</code> ಒಳಗೆ ಸೃಷ್ಟಿಸಿದ ವೇರಿಯೇಬಲ್‌ಗಳು <strong>Local Scope</strong> ನಲ್ಲಿರುತ್ತವೆ. ಅಂದರೆ ಆ ಫಂಕ್ಷನ್ ಮುಗಿದ ತಕ್ಷಣ ಆ ವೇರಿಯೇಬಲ್ ಸಾಯುತ್ತದೆ. ಅದನ್ನು ಫಂಕ್ಷನ್‌ನ ಹೊರಗಡೆ ಬಳಸಲು ಸಾಧ್ಯವಿಲ್ಲ.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Local/Function Scope</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">function</span> <span class="function">secretMission</span>() {
+    <span class="comment">// ಇದು Local Variable (ಮನೆಯ ಒಳಗಿನ ಟಿವಿ)</span>
+    <span class="keyword">let</span> <span class="variable">secretCode</span> = <span class="number">1234</span>; 
+    <span class="function">console.log</span>(<span class="string">"ಮಿಷನ್ ಒಳಗೆ: "</span> + <span class="variable">secretCode</span>); <span class="comment">// ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ</span>
+}
+
+<span class="function">secretMission</span>();
+
+<span class="comment">// ಫಂಕ್ಷನ್ ಹೊರಗಡೆ ಕರೆಯಲು ಪ್ರಯತ್ನಿಸಿದರೆ...</span>
+<span class="function">console.log</span>(<span class="variable">secretCode</span>); 
+<span class="comment">// ಔಟ್‌ಪುಟ್: ❌ ReferenceError: secretCode is not defined</span></code></pre>
+                </div>
+            </section>
+
+            <section id="block-scope">
+                <h2>3. Block Scope (ಬ್ಲಾಕ್ ಸ್ಕೋಪ್ - ES6 2015)</h2>
+                <p>ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (Modern JS) ನಲ್ಲಿ <code>let</code> ಮತ್ತು <code>const</code> ಕೀವರ್ಡ್‌ಗಳು ಬಂದ ಮೇಲೆ <strong>Block Scope</strong> ಪರಿಚಯವಾಯಿತು.</p>
+                <p>ಯಾವುದೇ <code>{ }</code> (ಉದಾಹರಣೆಗೆ <code>if</code>, <code>for</code> ಲೂಪ್) ಒಳಗೆ <code>let</code> ಅಥವಾ <code>const</code> ಬಳಸಿದರೆ, ಅವು ಆ ಬ್ಲಾಕ್‌ನ ಹೊರಗೆ ಬರುವುದಿಲ್ಲ. (ಇದು ಬೀರುವಿನ ಒಳಗೆ ಲಾಕ್ ಮಾಡಿದ ಹಾಗೆ).</p>
+
+                <div class="card danger">
+                    <strong style="color: var(--danger);">ಹಳೆಯ ವಿಧಾನದ ಎಚ್ಚರಿಕೆ (Deprecated Warning):</strong> 
+                    <code>var</code> ಕೀವರ್ಡ್‌ಗೆ Block Scope ಅರ್ಥವಾಗುವುದಿಲ್ಲ! <code>{ }</code> ಒಳಗೆ <code>var</code> ಬರೆದರೂ ಅದು ಹೊರಬಂದುಬಿಡುತ್ತದೆ. ಆದ್ದರಿಂದ ಆಧುನಿಕ ಕೋಡಿಂಗ್‌ನಲ್ಲಿ <code>var</code> ಬಳಸಬಾರದು.
+                </div>
+            </section>
+
+            <!-- ಹೊಸ ಸೇರ್ಪಡೆ: Variable Shadowing -->
+            <section id="shadowing">
+                <h2>4. Variable Shadowing (ಒಂದೇ ಹೆಸರಿನ ವೇರಿಯೇಬಲ್‌ಗಳಿದ್ದರೆ?)</h2>
+                <p>ಸ್ಕೋಪ್ ಒಳಗಡೆ (Local) ಮತ್ತು ಹೊರಗಡೆ (Global) <strong>ಒಂದೇ ಹೆಸರಿನ ವೇರಿಯೇಬಲ್</strong> ಇದ್ದರೆ ಏನಾಗುತ್ತದೆ? ಇದನ್ನು ತಾಂತ್ರಿಕವಾಗಿ <strong>"Variable Shadowing" (ವೇರಿಯೇಬಲ್ ಶ್ಯಾಡೋಯಿಂಗ್)</strong> ಎನ್ನುತ್ತಾರೆ.</p>
+                
+                <div class="card success">
+                    <strong style="color: var(--success);">ಸರಳ ಉದಾಹರಣೆ:</strong> 
+                    ನಿಮ್ಮ ಕ್ಲಾಸ್‌ನಲ್ಲಿ ಇಬ್ಬರು "ರಾಜು" ಇದ್ದಾರೆ. ಒಬ್ಬ ನಿಮ್ಮ ಕ್ಲಾಸ್‌ನ ಒಳಗಿದ್ದಾನೆ (Local), ಮತ್ತೊಬ್ಬ ಪಕ್ಕದ ಕ್ಲಾಸ್‌ನಲ್ಲಿದ್ದಾನೆ (Global). ಮೇಷ್ಟ್ರು ಕ್ಲಾಸ್ ಒಳಗಡೆ ನಿಂತು "ರಾಜು ಬಾರೋ" ಅಂದರೆ, <strong>ಕ್ಲಾಸ್ ಒಳಗಿರುವ ರಾಜು (Local) ಬರುತ್ತಾನೆ</strong> ವಿನಹ ಪಕ್ಕದ ಕ್ಲಾಸ್‌ನವನಲ್ಲ! 
+                    <br><br>ಅಂದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಳಗಿರುವ (Local) ವೇರಿಯೇಬಲ್‌ಗೆ ಮೊದಲ ಆದ್ಯತೆ ನೀಡುತ್ತದೆ. ಹೊರಗಿನ ವೇರಿಯೇಬಲ್ ತಾತ್ಕಾಲಿಕವಾಗಿ "ನೆರಳಿನಲ್ಲಿ (Shadow)" ಮರೆಯಾಗುತ್ತದೆ.
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Variable Shadowing</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> <span class="variable">heroName</span> = <span class="string">"ದರ್ಶನ್"</span>; <span class="comment">// Global Variable</span>
+
+<span class="keyword">function</span> <span class="function">movieSet</span>() {
+    <span class="comment">// ಇದು ಒಳಗಿನ Local Variable. ಇದು ಹೊರಗಿನದನ್ನು "Shadow" ಮಾಡುತ್ತದೆ.</span>
+    <span class="keyword">let</span> <span class="variable">heroName</span> = <span class="string">"ಸುದೀಪ್"</span>; 
+    
+    <span class="function">console.log</span>(<span class="string">"ಫಿಲ್ಮ್ ಸೆಟ್ ಒಳಗೆ: "</span> + <span class="variable">heroName</span>); <span class="comment">// ಸುದೀಪ್ (Local ಗೆ ಆದ್ಯತೆ)</span>
+}
+
+<span class="function">movieSet</span>();
+
+<span class="comment">// ಫಂಕ್ಷನ್‌ನ ಹೊರಗಡೆ Global ವೇರಿಯೇಬಲ್ ಭದ್ರವಾಗಿರುತ್ತದೆ. ಬದಲಾಗಿರುವುದಿಲ್ಲ!</span>
+<span class="function">console.log</span>(<span class="string">"ಫಿಲ್ಮ್ ಸೆಟ್ ಹೊರಗಡೆ: "</span> + <span class="variable">heroName</span>); <span class="comment">// ದರ್ಶನ್</span></code></pre>
+                </div>
+            </section>
+
+            <section id="lexical-scope">
+                <h2>5. Lexical Scope (ವೃತ್ತಿಪರ ಹಂತ / Pro Level)</h2>
+                <p>ಒಂದು ಫಂಕ್ಷನ್ ಒಳಗಡೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಇದ್ದರೆ (Nested Functions), <strong>ಒಳಗಿನ ಫಂಕ್ಷನ್ ತನ್ನ ಹೊರಗಿನ ಫಂಕ್ಷನ್‌ನ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ಓದಬಲ್ಲದು.</strong> ಆದರೆ ಹೊರಗಿನ ಫಂಕ್ಷನ್‌ಗೆ ಒಳಗಿನ ವೇರಿಯೇಬಲ್ ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ. ಇದನ್ನೇ Lexical Scope ಎನ್ನುತ್ತಾರೆ.</p>
+                
+                <p><strong>ಸರಳ ಉದಾಹರಣೆ:</strong> ಮಕ್ಕಳು (Inner function) ಅಪ್ಪ-ಅಮ್ಮನ (Outer function) ದುಡ್ಡನ್ನು ಬಳಸಬಹುದು, ಆದರೆ ಅಪ್ಪ-ಅಮ್ಮ ಮಕ್ಕಳ ಪಿಗ್ಗಿ-ಬ್ಯಾಂಕ್ (Piggy bank) ದುಡ್ಡನ್ನು ಬಳಸುವಂತಿಲ್ಲ!</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Lexical Scope</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">function</span> <span class="function">outerFunction</span>() {
+    <span class="keyword">let</span> <span class="variable">outerMoney</span> = <span class="number">1000</span>; <span class="comment">// ಅಪ್ಪನ ದುಡ್ಡು</span>
+
+    <span class="keyword">function</span> <span class="function">innerFunction</span>() {
+        <span class="keyword">let</span> <span class="variable">innerMoney</span> = <span class="number">50</span>; <span class="comment">// ಮಗುವಿನ ಪಿಗ್ಗಿ-ಬ್ಯಾಂಕ್</span>
+        <span class="function">console.log</span>(<span class="string">"ಮಗುವಿಗೆ ಸಿಗುವುದು: "</span> + <span class="variable">outerMoney</span>); <span class="comment">// 1000 (Lexical Scope ಇಂದ ಓದುತ್ತದೆ)</span>
+    }
+    
+    <span class="function">innerFunction</span>();
+}
+<span class="function">outerFunction</span>();</code></pre>
+                </div>
+            </section>
+
+            <section id="memory">
+                <h2>6. Execution Context ಮತ್ತು Call Stack (Internal Working)</h2>
+                <p>ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ (Interviews) ಅತಿ ಹೆಚ್ಚು ಕೇಳಲಾಗುವ Technical ಕಾನ್ಸೆಪ್ಟ್. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಜಿನ್ (ಉದಾಹರಣೆಗೆ V8 Engine) ಮೆಮೊರಿಯಲ್ಲಿ Scope ಅನ್ನು ಹೇಗೆ ನಿಭಾಯಿಸುತ್ತದೆ?</p>
+
+                <div class="step-box">
+                    <div class="step-num">1</div>
+                    <div>
+                        <strong style="color: var(--purple); font-size: 1.2rem;">Global Execution Context (GEC)</strong> 
+                        <p style="margin: 5px 0 0 0;">ನೀವು ಪ್ರೋಗ್ರಾಂ ರನ್ ಮಾಡಿದ ತಕ್ಷಣ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದು ದೊಡ್ಡ ಮೆಮೊರಿ ಜಾಗವನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ (GEC). ಎಲ್ಲಾ Global ವೇರಿಯೇಬಲ್‌ಗಳು ಇಲ್ಲಿ ಸೇವ್ ಆಗುತ್ತವೆ.</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">2</div>
+                    <div>
+                        <strong style="color: var(--purple); font-size: 1.2rem;">Function Execution Context (FEC)</strong> 
+                        <p style="margin: 5px 0 0 0;">ನೀವು ಒಂದು ಫಂಕ್ಷನ್ <code>playGame()</code> ಕಾಲ್ ಮಾಡಿದಾಗ, Call Stack (ಕಾರ್ಯಗಳ ಸರದಿ) ಒಳಗೆ ಆ ಫಂಕ್ಷನ್‌ಗಾಗಿ ಒಂದು <strong>ಹೊಸ ಪ್ರತ್ಯೇಕ ಮೆಮೊರಿ ಬಾಕ್ಸ್ (FEC)</strong> ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ. ಇದೇ Local Scope ನ ಜಾಗ.</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">3</div>
+                    <div>
+                        <strong style="color: var(--purple); font-size: 1.2rem;">Scope Chain & Cleanup</strong> 
+                        <p style="margin: 5px 0 0 0;">ಫಂಕ್ಷನ್ ಒಳಗೆ ವೇರಿಯೇಬಲ್ ಸಿಗದಿದ್ದರೆ, ಅದು Scope Chain ಮೂಲಕ ಹೊರಗಿನ GEC ಯಲ್ಲಿ ಹುಡುಕುತ್ತದೆ. ಫಂಕ್ಷನ್ ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ, ಅದರ Local ಮೆಮೊರಿ (FEC) ಡಿಲೀಟ್ ಆಗುತ್ತದೆ (Garbage Collection). ಆದ್ದರಿಂದಲೇ Local ವೇರಿಯೇಬಲ್‌ಗಳು ಫಂಕ್ಷನ್ ಹೊರಗೆ ಸಿಗುವುದಿಲ್ಲ!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="playground">
+                <h2>Interactive Code Playground (ಲೈವ್ ಕೋಡ್)</h2>
+                <p>ಕೆಳಗಿನ ಕೋಡ್ ಅನ್ನು ಎಡಿಟ್ ಮಾಡಿ ಮತ್ತು "▶ Run Code" ಒತ್ತಿ ಔಟ್‌ಪುಟ್ ನೋಡಿ. <code>console.log(city)</code> ಅನ್ನು ಫಂಕ್ಷನ್ ಹೊರಗಡೆ ಪ್ರಿಂಟ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿ, Error ಬರುವುದನ್ನು ನೋಡಿ!</p>
+                
+                <div class="playground">
+                    <div class="play-header">JS Sandbox <span style="font-size:0.8rem; font-weight:normal;">(Editable)</span></div>
+                    <div class="play-body">
+                        <textarea class="code-input" id="userCode" spellcheck="false">
+let myName = "Global Name"; // Global Scope
+
+function testShadowing() {
+    let myName = "Local Name"; // Shadowing Global
+    console.log("ಫಂಕ್ಷನ್ ಒಳಗೆ: " + myName);
+}
+
+testShadowing();
+console.log("ಫಂಕ್ಷನ್ ಹೊರಗೆ: " + myName);
+                        </textarea>
+                        <div class="play-controls">
+                            <button class="btn-run" onclick="runPlayground()">▶ Run Code</button>
+                            <span style="color: var(--text-muted); font-size: 0.9rem; align-self: center;">ಕೋಡ್ ಬದಲಾಯಿಸಿ ಪರೀಕ್ಷಿಸಿ.</span>
+                        </div>
+                        <div class="output-panel" id="playOutput">ಔಟ್‌ಪುಟ್ ಇಲ್ಲಿ ಬರುತ್ತದೆ...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quiz">
+                <h2>ಪರೀಕ್ಷೆ ಮತ್ತು ಅಭ್ಯಾಸ (Interactive Quiz)</h2>
+                <p>Scope Concept ನಿಮಗೆ ಎಷ್ಟು ಅರ್ಥವಾಗಿದೆ ಎಂದು ಪರೀಕ್ಷಿಸಲು ಈ ಕೆಳಗಿನ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ:</p>
+
+                <div class="quiz-container" id="quizBlock">
+                    <h3 style="margin-top:0; color:var(--primary)" id="qText">ಪ್ರಶ್ನೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</h3>
+                    <div id="optionsBlock">
+                        <!-- Options will be injected here by JS -->
+                    </div>
+                    <div id="qFeedback" class="quiz-feedback"></div>
+                    <button id="nextQBtn" class="btn-anim" style="display:none;" onclick="nextQuestion()">ಮುಂದಿನ ಪ್ರಶ್ನೆ ➔</button>
+                    
+                    <div id="quizResult" style="display: none; text-align: center; padding: 20px;">
+                        <h2 style="color: var(--success); justify-content: center;">ರಸಪ್ರಶ್ನೆ ಮುಕ್ತಾಯ! 🎉</h2>
+                        <p style="font-size: 1.2rem;">ನಿಮ್ಮ ಸ್ಕೋರ್: <strong id="scoreText">0/0</strong></p>
+                        <button class="btn-anim" onclick="resetQuiz()">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ (Retry)</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // 1. Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+        }
+
+        // 2. Scroll Progress Bar & Active Link Update
+        window.addEventListener('scroll', () => {
+            const scrollPx = document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (scrollPx / winHeightPx) * 100;
+            if (scrolled > 100) scrolled = 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Active link highlight
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+        // 3. Copy Code Functionality
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const codeText = pre.innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.innerText = 'Copied! ✓';
+                button.style.color = 'var(--success)';
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.style.color = 'var(--text-muted)';
+                }, 2000);
+            });
+        }
+
+        // 4. Safe Interactive Playground (Sandboxed execution)
+        function runPlayground() {
+            const code = document.getElementById('userCode').value;
+            const outputPanel = document.getElementById('playOutput');
+            outputPanel.innerText = "Running...";
+            outputPanel.style.color = "var(--text-main)";
+
+            // Capture console.log securely
+            let outputStore = [];
+            const originalLog = console.log;
+            console.log = (...args) => {
+                outputStore.push(args.join(' '));
+            };
+
+            try {
+                // Strict mode eval alternative
+                const runCode = new Function(`"use strict";\n${code}`);
+                runCode();
+                
+                if(outputStore.length === 0) outputPanel.innerText = "ಯಾವುದೇ ಔಟ್‌ಪುಟ್ ಬಂದಿಲ್ಲ. (console.log ಬಳಸಿದ್ದೀರಾ?)";
+                else outputPanel.innerText = outputStore.join('\n');
+                
+            } catch (err) {
+                // Display error in Kannada context
+                let errMsg = err.message;
+                if(err instanceof ReferenceError) {
+                    errMsg = `${err.message} \n(ಅರ್ಥ: ಈ ವೇರಿಯೇಬಲ್ ಇಲ್ಲಿ ಲಭ್ಯವಿಲ್ಲ. ಬಹುಶಃ ಇದು ಬೇರೆ Scope ನಲ್ಲಿದೆ!)`;
+                }
+                outputPanel.innerText = "Error (ತಪ್ಪು): \n❌ " + errMsg;
+                outputPanel.style.color = "var(--danger)";
+            } finally {
+                console.log = originalLog; // Restore original console
+            }
+        }
+
+        // 5. Quiz Logic
+        const quizData = [
+            {
+                q: "Q1. ಒಂದು ಫಂಕ್ಷನ್ ಒಳಗಡೆ ಸೃಷ್ಟಿಸಿದ ವೇರಿಯೇಬಲ್ ಅನ್ನು ಆ ಫಂಕ್ಷನ್‌ನ ಹೊರಗಡೆ ಬಳಸಲು ಸಾಧ್ಯವೇ?",
+                options: ["1. ಹೌದು, ಸಾಧ್ಯವಿದೆ", "2. 'var' ಬಳಸಿದರೆ ಸಾಧ್ಯವಿದೆ", "3. ಇಲ್ಲ, ಸಾಧ್ಯವಿಲ್ಲ (Local Scope)", "4. Global ಆಗಿದ್ದರೆ ಮಾತ್ರ ಸಾಧ್ಯ"],
+                ans: 2, // index 2
+                exp: ["ತಪ್ಪು", "ತಪ್ಪು. 'var' ಕೂಡ Function ನಿಂದ ಹೊರಬರುವುದಿಲ್ಲ.", "ಸರಿಯಾದ ಉತ್ತರ! ಫಂಕ್ಷನ್ ಒಳಗೆ ಸೃಷ್ಟಿಸಿದ ವೇರಿಯೇಬಲ್ Local ಆಗಿರುತ್ತದೆ. ಹೊರಗೆ ಸಿಗುವುದಿಲ್ಲ.", "ತಪ್ಪು"]
+            },
+            {
+                q: "Q2. ಸ್ಕೋಪ್ ಒಳಗಡೆ ಮತ್ತು ಹೊರಗಡೆ ಒಂದೇ ಹೆಸರಿನ ವೇರಿಯೇಬಲ್ ಇದ್ದರೆ ಏನಾಗುತ್ತದೆ (Variable Shadowing)?",
+                options: ["1. ಬ್ರೌಸರ್ ಕ್ರ್ಯಾಶ್ ಆಗುತ್ತದೆ", "2. ಒಳಗಿನ (Local) ವೇರಿಯೇಬಲ್‌ಗೆ ಮೊದಲ ಆದ್ಯತೆ ಸಿಗುತ್ತದೆ", "3. ಹೊರಗಿನ (Global) ವೇರಿಯೇಬಲ್‌ಗೆ ಆದ್ಯತೆ ಸಿಗುತ್ತದೆ", "4. ಎರಡೂ ಮಿಕ್ಸ್ ಆಗುತ್ತವೆ"],
+                ans: 1, // index 1
+                exp: ["ತಪ್ಪು", "ಸರಿಯಾದ ಉತ್ತರ! ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಯಾವಾಗಲೂ ತನ್ನ ಹತ್ತಿರದ Local ವೇರಿಯೇಬಲ್ ಅನ್ನು ಮೊದಲು ಆರಿಸಿಕೊಳ್ಳುತ್ತದೆ.", "ತಪ್ಪು", "ತಪ್ಪು"]
+            },
+            {
+                q: "Q3. ಒಳಗಿನ ಫಂಕ್ಷನ್ (Inner function) ತನ್ನ ಹೊರಗಿನ ಫಂಕ್ಷನ್‌ನ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ಬಳಸಿಕೊಳ್ಳುವ ಸಾಮರ್ಥ್ಯವನ್ನು ಏನೆಂದು ಕರೆಯುತ್ತಾರೆ?",
+                options: ["1. Lexical Scope", "2. Global Scope", "3. Block Scope", "4. Public Scope"],
+                ans: 0, // index 0
+                exp: ["ಸರಿಯಾದ ಉತ್ತರ! ಇದನ್ನೇ Lexical Scope ಅಥವಾ Closure ನ ಮೂಲ ಎನ್ನುತ್ತಾರೆ.", "ತಪ್ಪು", "ತಪ್ಪು", "ತಪ್ಪು"]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+
+        function renderQuestion() {
+            if (currentQuestion >= quizData.length) {
+                showQuizResult();
+                return;
+            }
+
+            const q = quizData[currentQuestion];
+            document.getElementById('qText').innerText = q.q;
+            const optionsBlock = document.getElementById('optionsBlock');
+            optionsBlock.innerHTML = ''; // clear old options
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, index === q.ans, q.exp[index]);
+                optionsBlock.appendChild(btn);
+            });
+            
+            document.getElementById('qFeedback').style.display = "none";
+            document.getElementById('nextQBtn').style.display = "none";
+        }
+
+        function checkAnswer(button, isCorrect, explanation) {
+            // Disable all buttons
+            document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
+            
+            const feedback = document.getElementById('qFeedback');
+            feedback.style.display = "block";
+            feedback.innerText = explanation;
+
+            if(isCorrect) {
+                button.classList.add('correct');
+                feedback.style.background = "rgba(16, 185, 129, 0.1)";
+                feedback.style.border = "1px solid var(--success)";
+                feedback.style.color = "var(--success)";
+                score++;
+            } else {
+                button.classList.add('wrong');
+                feedback.style.background = "rgba(239, 68, 68, 0.1)";
+                feedback.style.border = "1px solid var(--danger)";
+                feedback.style.color = "var(--danger)";
+                
+                // Highlight correct answer
+                const allBtns = document.querySelectorAll('.quiz-option');
+                allBtns[quizData[currentQuestion].ans].classList.add('correct');
+            }
+
+            document.getElementById('nextQBtn').style.display = "inline-block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            renderQuestion();
+        }
+
+        function showQuizResult() {
+            document.getElementById('qText').style.display = "none";
+            document.getElementById('optionsBlock').style.display = "none";
+            document.getElementById('qFeedback').style.display = "none";
+            document.getElementById('nextQBtn').style.display = "none";
+            
+            const resultBlock = document.getElementById('quizResult');
+            resultBlock.style.display = "block";
+            document.getElementById('scoreText').innerText = `${score} / ${quizData.length}`;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quizResult').style.display = "none";
+            document.getElementById('qText').style.display = "block";
+            document.getElementById('optionsBlock').style.display = "block";
+            renderQuestion();
+        }
+
+        // Initialize quiz
+        renderQuestion();
+    </script>
+</body>
+</html>

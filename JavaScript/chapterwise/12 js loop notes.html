@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Loops: 0 to Pro | ಆಧುನಿಕ ನೋಟ್ಸ್</title>
+    
+    <!-- Google Fonts for Kannada and Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Eye-friendly Dark Theme Variables */
+        :root {
+            --bg-main: #0f172a;       /* Very dark blue/slate */
+            --bg-surface: #1e293b;    /* Lighter slate for cards */
+            --bg-surface-hover: #334155;
+            --text-primary: #e2e8f0;  /* Soft white */
+            --text-secondary: #94a3b8;/* Slate gray for less important text */
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --code-bg: #020617;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 300px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-surface);
+            padding: 30px 20px;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 10px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--bg-surface-hover);
+            color: var(--text-primary);
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 1000px;
+        }
+
+        /* Typography & Headings */
+        h1, h2, h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        h1 { font-size: 2.5rem; background: -webkit-linear-gradient(45deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 1.8rem; margin-top: 40px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;}
+        h3 { font-size: 1.3rem; margin-top: 25px; color: var(--accent-blue); }
+
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        
+        strong { color: var(--text-primary); }
+
+        /* Custom Lists */
+        ul, ol { margin-bottom: 20px; padding-left: 20px; color: var(--text-secondary); }
+        li { margin-bottom: 10px; }
+        ul li::marker { color: var(--accent-blue); font-size: 1.2em; }
+
+        /* Code Blocks - Professional Look */
+        .code-window {
+            background-color: var(--code-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin: 25px 0;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .code-header {
+            background-color: var(--bg-surface);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .dots { display: flex; gap: 8px; margin-right: 15px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background-color: #ff5f56; }
+        .dot.yellow { background-color: #ffbd2e; }
+        .dot.green { background-color: #27c93f; }
+
+        .copy-btn {
+            margin-left: auto;
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .copy-btn:hover { background-color: var(--bg-surface-hover); color: white; }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: #a6accd;
+            line-height: 1.5;
+        }
+        
+        code .keyword { color: #c792ea; }
+        code .string { color: #c3e88d; }
+        code .comment { color: #697098; font-style: italic; }
+        code .number { color: #f78c6c; }
+        code .function { color: #82aaff; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background-color: var(--bg-surface);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { background-color: var(--bg-surface-hover); color: var(--accent-purple); font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: rgba(255,255,255,0.02); }
+
+        /* Info/Warning Cards */
+        .alert-card {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .alert-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--accent-warning);
+        }
+        .alert-pro {
+            background-color: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        /* Animations (Animate on Scroll) */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* SVG Icons Styling */
+        .icon { width: 24px; height: 24px; fill: currentColor; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { padding: 30px 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2>
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L4.5 7 12 3.25 19.5 7 12 9.5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                ವಿಷಯ ಸೂಚಿ
+            </h2>
+            <ul class="nav-links">
+                <li><a href="#intro">ಪೀಠಿಕೆ</a></li>
+                <li><a href="#level-0">0. ಶೂನ್ಯ ಹಂತ (Basics)</a></li>
+                <li><a href="#level-1">1. ಆರಂಭಿಕ ಹಂತ (for ಲೂಪ್)</a></li>
+                <li><a href="#level-2">2. ಮಧ್ಯಮ ಹಂತ (Control Flow)</a></li>
+                <li><a href="#level-3">3. ವೃತ್ತಿಪರ ಹಂತ (Pro Level)</a></li>
+                <li><a href="#while-loop">while ಲೂಪ್</a></li>
+                <li><a href="#do-while-loop">do...while ಲೂಪ್</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <header class="fade-in-up">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <svg style="width: 50px; height: 50px; color: var(--accent-warning);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14h2v7h-2zm0 8h2v2h-2z"/></svg>
+                    <h1>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಲೂಪ್‌ಗಳು (JS Loops)</h1>
+                </div>
+                <p><strong>ಮೆಮೊರಿ ನಿರ್ವಹಣೆ (Memory Management)</strong> ಮತ್ತು <strong>ಪ್ರೊಸೆಸರ್ ಹರಿವಿನ (Processor Flow)</strong> ಆಧಾರದ ಮೇಲೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಲೂಪ್‌ಗಳ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆ. ಶೂನ್ಯದಿಂದ ವೃತ್ತಿಪರ (0 to Pro) ಹಂತದವರೆಗಿನ ವಿವರಣೆ.</p>
+            </header>
+
+            <section id="level-0" class="fade-in-up" style="margin-top: 40px;">
+                <h2>
+                    <svg class="icon" style="color: var(--accent-green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    0. ಶೂನ್ಯ ಹಂತ (The Absolute Basics)
+                </h2>
+                <div class="alert-card" style="background-color: var(--bg-surface);">
+                    <p style="margin: 0;">ಲೂಪ್ ಎನ್ನುವುದು ಒಂದೇ ಕೆಲಸವನ್ನು ಪದೇ ಪದೇ ಮಾಡುವಂತೆ ಪ್ರೊಸೆಸರ್‌ಗೆ ನೀಡುವ ಸೂಚನೆ <strong>(DRY - Don't Repeat Yourself)</strong>. ಪ್ರತಿ ಬಾರಿಯೂ ಕೋಡ್ ಬರೆಯುವ ಬದಲು, ನಿರ್ದಿಷ್ಟ ಷರತ್ತು ಪೂರ್ಣಗೊಳ್ಳುವವರೆಗೆ ಮೆಮೊರಿಯಲ್ಲಿರುವ ಒಂದೇ ಕೋಡ್ ಬ್ಲಾಕ್ ಅನ್ನು ಎಂಜಿನ್ ಮರುಬಳಕೆ ಮಾಡುತ್ತದೆ.</p>
+                </div>
+            </section>
+
+            <section id="level-1" class="fade-in-up">
+                <h2>1. ಆರಂಭಿಕ ಹಂತ (Beginner Level)</h2>
+                <p>ಇದು ಸಾಂಪ್ರದಾಯಿಕ <code>for</code> ಲೂಪ್ ಆಗಿದ್ದು, ನಿರ್ದಿಷ್ಟ ಸಂಖ್ಯೆಯ ಬಾರಿ ಕೋಡ್ ರನ್ ಮಾಡಲು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) {
+  <span class="function">console.log</span>(<span class="string">"ಸಂಖ್ಯೆ:"</span>, i);
+}</code></pre>
+                </div>
+
+                <h3>ಕಾರ್ಯಾಚರಣೆಯ ಹರಿವು ಮತ್ತು ಮೆಮೊರಿ ವಿಶ್ಲೇಷಣೆ:</h3>
+                <ul>
+                    <li><strong>for:</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್‌ಗೆ (ಉದಾ: V8 ಎಂಜಿನ್) ಇದೊಂದು ಲೂಪ್ ಎಂದು ಸೂಚಿಸುವ ಕೀವರ್ಡ್. ಇದು ಇನ್ಸ್ಟ್ರಕ್ಷನ್ ಸೆಟ್‌ನಲ್ಲಿ (Instruction set) ಪುನರಾವರ್ತಿತ ಬ್ಲಾಕ್ ಅನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ.</li>
+                    <li><strong>let i = 1 (Initialization):</strong> ಬ್ಲಾಕ್ ಸ್ಕೋಪ್ (Block-scoped) ವೇರಿಯೇಬಲ್ ಅನ್ನು ಘೋಷಿಸುವ ಕೀವರ್ಡ್. ಲೂಪ್ ಮುಗಿದ ತಕ್ಷಣ ಮೆಮೊರಿಯಿಂದ <code>i</code> ಅನ್ನು <strong>ಗಾರ್ಬೇಜ್ ಕಲೆಕ್ಟರ್ (Garbage Collector)</strong> ಅಳಿಸಿಹಾಕುತ್ತದೆ. ಇದು ಮೆಮೊರಿ ಸೋರಿಕೆಯನ್ನು (Memory leak) ತಡೆಯುತ್ತದೆ.</li>
+                    <li><strong>i &lt;= 5 (Condition):</strong> ಇದು ಬೂಲಿಯನ್ (Boolean) ಷರತ್ತು. ಪ್ರತಿ ಲೂಪ್ ಆರಂಭಕ್ಕೂ ಮುನ್ನ ಇದು <code>true</code> ಅಥವಾ <code>false</code> ಎಂದು ಮೌಲ್ಯಮಾಪನ (Evaluate) ಆಗುತ್ತದೆ.</li>
+                    <li><strong>i++ (Increment):</strong> ಪೋಸ್ಟ್-ಇನ್ಕ್ರಿಮೆಂಟ್ ಆಪರೇಟರ್ (i = i + 1). ಲೂಪ್‌ನ ಒಳಗಿನ ಕೋಡ್ ಕಾರ್ಯಗತಗೊಂಡ ನಂತರವೇ ಪ್ರೊಸೆಸರ್ ರಿಜಿಸ್ಟರ್‌ನಲ್ಲಿ <code>i</code> ಯ ಮೌಲ್ಯ 1 ಹೆಚ್ಚಾಗುತ್ತದೆ.</li>
+                    <li><strong>{ ... }:</strong> ಲೂಪ್‌ನ ಬ್ಲಾಕ್ (Block). ಷರತ್ತು <code>true</code> ಇದ್ದರೆ ಮಾತ್ರ ಇದರೊಳಗಿನ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ.</li>
+                    <li><strong>console.log:</strong> ಬ್ರೌಸರ್ ಅಥವಾ Node.js ನ ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್ ಮುಖಾಂತರ ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಔಟ್‌ಪುಟ್ (stdout) ಗೆ ಡೇಟಾವನ್ನು ಮುದ್ರಿಸುತ್ತದೆ.</li>
+                </ul>
+            </section>
+
+            <section id="level-2" class="fade-in-up">
+                <h2>2. ಮಧ್ಯಮ ಹಂತ (Intermediate Level)</h2>
+                <p>ಡೇಟಾ ಸ್ಟ್ರಕ್ಚರ್‌ಗಳ (ಉದಾಹರಣೆಗೆ ಅರೇ) ಮೇಲೆ ಲೂಪ್ ಮಾಡುವುದು ಮತ್ತು ಪ್ರೊಸೆಸರ್‌ನ ನಿಯಂತ್ರಣ ಹರಿವನ್ನು (Control flow) ಬದಲಾಯಿಸುವುದು.</p>
+                
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> fruits = [<span class="string">"Apple"</span>, <span class="string">"Banana"</span>, <span class="string">"Mango"</span>, <span class="string">"Orange"</span>, <span class="string">"Grapes"</span>, <span class="string">"Papaya"</span>];
+
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; fruits.length; i++) {
+  <span class="keyword">if</span> (i === <span class="number">2</span>) { 
+    <span class="keyword">continue</span>; <span class="comment">// 'Mango' ಅನ್ನು ಸ್ಕಿಪ್ ಮಾಡುತ್ತದೆ</span>
+  }
+  <span class="keyword">if</span> (i === <span class="number">4</span>) { 
+    <span class="keyword">break</span>;    <span class="comment">// 'Grapes' ಬಂದಾಗ ಲೂಪ್ ನಿಲ್ಲುತ್ತದೆ</span>
+  }
+  <span class="function">console.log</span>(fruits[i]);
+}</code></pre>
+                </div>
+
+                <h3>ತಾಂತ್ರಿಕ ವಿಶ್ಲೇಷಣೆ:</h3>
+                <ul>
+                    <li><strong>fruits.length:</strong> ಮೆಮೊರಿಯಲ್ಲಿ (Heap) ಇರುವ ಅರೇ ಆಬ್ಜೆಕ್ಟ್‌ನ ಆಂತರಿಕ ಪ್ರಾಪರ್ಟಿ. ಇದು ಅರೇಯಲ್ಲಿರುವ ಒಟ್ಟು ಅಂಶಗಳ ಸಂಖ್ಯೆಯನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ.</li>
+                    <li><strong>fruits[i] (Bracket notation):</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ ಮೆಮೊರಿಯಲ್ಲಿ fruits ಅರೇಯ <code>i</code> ನೇ ಇಂಡೆಕ್ಸ್‌ನ ಮೆಮೊರಿ ವಿಳಾಸವನ್ನು (Memory address pointer) ನೇರವಾಗಿ ಓದುತ್ತದೆ.</li>
+                    <li><strong>=== (Strict Equality):</strong> ಪ್ರೊಸೆಸರ್ ಮಟ್ಟದಲ್ಲಿ ಮೌಲ್ಯ (Value) ಮತ್ತು ಮೆಮೊರಿಯ ಡೇಟಾ ಪ್ರಕಾರ (Data Type) ಎರಡನ್ನೂ ಬಿಟ್-ಬೈ-ಬಿಟ್ (Bit-by-bit) ಹೋಲಿಸುತ್ತದೆ.</li>
+                    <li><strong>continue:</strong> ಮೈಕ್ರೋ-ಪ್ರೊಸೆಸರ್ ಮಟ್ಟದಲ್ಲಿ ಇದೊಂದು 'Jump' ಇನ್ಸ್ಟ್ರಕ್ಷನ್. ಇದು ತಕ್ಷಣವೇ ಕೆಳಗಿನ ಕೋಡ್ ಅನ್ನು ನಿರ್ಲಕ್ಷಿಸಿ, ಮುಂದಿನ ಇಟರೇಶನ್‌ಗೆ (i++) ಜಿಗಿಯುತ್ತದೆ.</li>
+                    <li><strong>break:</strong> ಇದು ಸಂಪೂರ್ಣ ಲೂಪ್‌ನಿಂದ ಹೊರಬಂದು, ಲೂಪ್ ಬ್ಲಾಕ್‌ನ (}) ನಂತರದ ಮೆಮೊರಿ ವಿಳಾಸದಲ್ಲಿರುವ ಕೋಡ್‌ಗೆ ನಿಯಂತ್ರಣವನ್ನು ವರ್ಗಾಯಿಸುತ್ತದೆ.</li>
+                </ul>
+            </section>
+
+            <section id="level-3" class="fade-in-up">
+                <h2>
+                    <svg class="icon" style="color: var(--accent-purple);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    3. ವೃತ್ತಿಪರ ಹಂತ (Pro Level)
+                </h2>
+                <p>ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (ES6+) ಇಟರೇಟರ್ ಪ್ರೋಟೋಕಾಲ್ ಮತ್ತು ಮೆಮೊರಿ ಲುಕಪ್ ವ್ಯವಸ್ಥೆಗಳನ್ನು ಬಳಸುತ್ತದೆ.</p>
+
+                <h3>ಅ. for...of ಲೂಪ್ (ಇಟರೇಟರ್ ಪ್ರೋಟೋಕಾಲ್ - Iterator Protocol)</h3>
+                <p>ಅರೇ, ಸ್ಟ್ರಿಂಗ್, ಮ್ಯಾಪ್ (Map), ಸೆಟ್ (Set) ಗಳಂತಹ "ಇಟರೇಬಲ್" (Iterable) ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ಮೇಲೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+                
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> colors = [<span class="string">"Red"</span>, <span class="string">"Green"</span>, <span class="string">"Blue"</span>];
+
+<span class="keyword">for</span> (<span class="keyword">let</span> color <span class="keyword">of</span> colors) {
+  <span class="function">console.log</span>(color);
+}</code></pre>
+                </div>
+                <p><strong>ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಏನಾಗುತ್ತದೆ (Under the hood):</strong></p>
+                <ol>
+                    <li>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ <code>colors</code> ಅರೇಯ ಗುಪ್ತ <code>[Symbol.iterator]()</code> ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುತ್ತದೆ.</li>
+                    <li>ಪ್ರತಿ ಹೆಜ್ಜೆಗೂ ಇಟರೇಟರ್‌ನ <code>.next()</code> ವಿಧಾನವನ್ನು (Method) ಕರೆಯುತ್ತದೆ.</li>
+                    <li>ಇದು ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ: <code>{ value: "Red", done: false }</code>.</li>
+                    <li><code>value</code> ಅನ್ನು color ವೇರಿಯೇಬಲ್‌ಗೆ ಅಸೈನ್ ಮಾಡುತ್ತದೆ. <code>done: true</code> ಆಗುವವರೆಗೆ ಇದು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮುಂದುವರಿಯುತ್ತದೆ. (ಇದು <code>for</code> ಲೂಪ್‌ಗಿಂತ ಹೆಚ್ಚು ಸುರಕ್ಷಿತ).</li>
+                </ol>
+
+                <h3 style="margin-top: 40px;">ಆ. for...in ಲೂಪ್ (ಆಬ್ಜೆಕ್ಟ್ ಎನ್ಯುಮರೇಶನ್ - Object Enumeration)</h3>
+                <p>ಆಬ್ಜೆಕ್ಟ್‌ನ ಕೀಗಳನ್ನು (Keys/Properties) ಓದಲು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> user = {
+  name: <span class="string">"Raju"</span>,
+  age: <span class="number">25</span>,
+  city: <span class="string">"Bengaluru"</span>
+};
+
+<span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> user) {
+  <span class="function">console.log</span>(key + <span class="string">": "</span> + user[key]); 
+}</code></pre>
+                </div>
+                
+                <div class="alert-card alert-pro">
+                    <svg style="width: 30px; height: 30px; fill: var(--accent-purple); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2L1 21h22M12 6l7.5 13h-15M11 10h2v4h-2m0 2h2v2h-2"/></svg>
+                    <div>
+                        <strong style="color: var(--accent-purple); display: block; margin-bottom: 5px;">ತಾಂತ್ರಿಕ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಎಚ್ಚರಿಕೆ (Pro Tip):</strong>
+                        <ul>
+                            <li><strong>ಡೈನಾಮಿಕ್ ಪ್ರಾಪರ್ಟಿ ಆಕ್ಸೆಸ್ (user[key]):</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ (ಉದಾ: V8) ಆಬ್ಜೆಕ್ಟ್‌ನ ಹಿಡನ್ ಕ್ಲಾಸ್‌ಗಳು (Hidden Classes) ಅಥವಾ ಡಿಕ್ಷನರಿ ಮೋಡ್ (Hash table) ನಲ್ಲಿ ಆ ನಿರ್ದಿಷ್ಟ key ಯನ್ನು ಹುಡುಕಿ ಅದರ ಮೌಲ್ಯವನ್ನು ತರುತ್ತದೆ.</li>
+                            <li><strong>ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ ರಿಸ್ಕ್ (Prototype Chain Risk):</strong> <code>for...in</code> ಕೇವಲ ಆಬ್ಜೆಕ್ಟ್‌ನ ಸ್ವಂತ ಕೀಗಳನ್ನು ಮಾತ್ರವಲ್ಲದೆ, ಅದರ ಪ್ರೋಟೋಟೈಪ್ (Prototype) ನಿಂದ ಆನುವಂಶಿಕವಾಗಿ (Inherit) ಪಡೆದ ಕೀಗಳನ್ನೂ ಓದುತ್ತದೆ. ಆದ್ದರಿಂದ ವೃತ್ತಿಪರರು ಯಾವಾಗಲೂ <code>Object.hasOwn(user, key)</code> ಅನ್ನು ಬಳಸಿ ಪರಿಶೀಲಿಸುತ್ತಾರೆ.</li>
+                            <li><strong>ನಿಯಮ:</strong> ಅರೇಗಳ (Arrays) ಮೇಲೆ <code>for...in</code> ಅನ್ನು ಬಳಸಬಾರದು. ಏಕೆಂದರೆ ಅದು ಇಂಡೆಕ್ಸ್‌ಗಳನ್ನು ಸ್ಟ್ರಿಂಗ್‌ಗಳಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ ಮತ್ತು ಅರೇ ಕ್ರಮವನ್ನು (Order) ಖಚಿತಪಡಿಸುವುದಿಲ್ಲ. ಅರೇಗೆ ಯಾವಾಗಲೂ <code>for...of</code> ಅಥವಾ ಸಾಂಪ್ರದಾಯಿಕ <code>for</code> ಲೂಪ್ ಬಳಸಿ.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="while-loop" class="fade-in-up">
+                <h2>while ಲೂಪ್</h2>
+                <p>JavaScript ನಲ್ಲಿ <code>while</code> ಲೂಪ್ ಅನ್ನು ಒಂದು ನಿರ್ದಿಷ್ಟ ಷರತ್ತು (condition) ನಿಜವಾಗಿರುವವರೆಗೆ (true) ಕೋಡ್‌ನ ಒಂದು ಭಾಗವನ್ನು ಮತ್ತೆ ಮತ್ತೆ ಕಾರ್ಯಗತಗೊಳಿಸಲು (execute) ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+                <h3>ಹಂತ-ಹಂತವಾಗಿ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h3>
+                <ol>
+                    <li><strong>ಷರತ್ತು ಪರಿಶೀಲನೆ (Condition Check):</strong> ಲೂಪ್ ಪ್ರಾರಂಭವಾಗುವ ಮೊದಲು ಆವರಣದ <code>()</code> ಒಳಗಿನ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ.</li>
+                    <li><strong>ಕಾರ್ಯಗತಗೊಳಿಸುವಿಕೆ (Execution):</strong> ಷರತ್ತು true (ನಿಜ) ಆಗಿದ್ದರೆ ಮಾತ್ರ, ಆವರಣದ <code>{}</code> ಒಳಗಿನ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ. false (ತಪ್ಪು) ಆಗಿದ್ದರೆ ಲೂಪ್ ಒಳಗೆ ಹೋಗುವುದಿಲ್ಲ.</li>
+                    <li><strong>ಪುನರಾವರ್ತನೆ (Repetition):</strong> ಕೋಡ್ ಒಮ್ಮೆ ರನ್ ಆದ ನಂತರ, ಲೂಪ್ ಮತ್ತೆ ಹಿಂದಕ್ಕೆ ಹೋಗಿ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇದು false ಆಗುವವರೆಗೆ ಈ ಪ್ರಕ್ರಿಯೆ ನಿರಂತರವಾಗಿ ಮುಂದುವರಿಯುತ್ತದೆ.</li>
+                </ol>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript (ಉದಾಹರಣೆ 1)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> i = <span class="number">1</span>; <span class="comment">// 1. ಪ್ರಾರಂಭದ ಮೌಲ್ಯ (Initialization)</span>
+
+<span class="keyword">while</span> (i &lt;= <span class="number">5</span>) { <span class="comment">// 2. ಷರತ್ತು (i ಐದು ಅಥವಾ ಅದಕ್ಕಿಂತ ಕಡಿಮೆ ಇರಬೇಕು)</span>
+  <span class="function">console.log</span>(i); <span class="comment">// 3. ಕೋಡ್ ಕಾರ್ಯಗತಗೊಳ್ಳುತ್ತದೆ</span>
+  i++; <span class="comment">// 4. ಪ್ರತಿ ಬಾರಿ i ನ ಬೆಲೆಯನ್ನು 1 ಹೆಚ್ಚಿಸುವುದು (Increment)</span>
+}</code></pre>
+                </div>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript (ಅರೇ ಜೊತೆ while ಲೂಪ್)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> fruits = [<span class="string">"ಸೇಬು (Apple)"</span>, <span class="string">"ಬಾಳೆಹಣ್ಣು (Banana)"</span>, <span class="string">"ಮಾವಿನಹಣ್ಣು (Mango)"</span>];
+<span class="keyword">let</span> index = <span class="number">0</span>; <span class="comment">// ಅರೇಯ ಮೊದಲನೇ ಸ್ಥಾನ 0 ಯಿಂದ ಶುರುವಾಗುತ್ತದೆ</span>
+
+<span class="keyword">while</span> (index &lt; fruits.length) { <span class="comment">// fruits.length ಇಲ್ಲಿ 3 ಆಗಿದೆ</span>
+  <span class="function">console.log</span>(fruits[index]); 
+  index++; 
+}</code></pre>
+                </div>
+
+                <div class="alert-card alert-warning">
+                    <svg style="width: 30px; height: 30px; fill: var(--accent-warning); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                    <div>
+                        <strong style="color: var(--accent-warning); display: block; margin-bottom: 5px;">ಎಚ್ಚರಿಕೆ (Infinite Loop):</strong>
+                        <p style="margin: 0; color: var(--text-secondary);">while ಲೂಪ್ ಬಳಸುವಾಗ ವೇರಿಯೇಬಲ್ ಮೌಲ್ಯವನ್ನು ಹೆಚ್ಚಿಸಲು ಅಥವಾ ಕಡಿಮೆ ಮಾಡಲು (ಉದಾಹರಣೆಗೆ <code>i++</code>) ಎಂದಿಗೂ ಮರೆಯಬಾರದು. ಒಂದು ವೇಳೆ ಮರೆತರೆ, ಷರತ್ತು ಯಾವಾಗಲೂ <code>true</code> ಆಗಿಯೇ ಇರುತ್ತದೆ ಮತ್ತು ಲೂಪ್ ಎಂದಿಗೂ ನಿಲ್ಲದೆ ಬ್ರೌಸರ್ ಕ್ರ್ಯಾಶ್ ಆಗಬಹುದು.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="do-while-loop" class="fade-in-up">
+                <h2>do...while ಲೂಪ್</h2>
+                <p>JavaScript ನಲ್ಲಿ <code>do...while</code> ಲೂಪ್ ಬಹುತೇಕ while ಲೂಪ್ ನಂತೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಆದರೆ ಒಂದು ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸವಿದೆ: <strong>ಷರತ್ತು ಪರಿಶೀಲಿಸುವ ಮೊದಲೇ ಕೋಡ್ ಅನ್ನು ಕನಿಷ್ಠ ಒಮ್ಮೆಯಾದರೂ ಕಾರ್ಯಗತಗೊಳಿಸುತ್ತದೆ.</strong></p>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript (Syntax)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> i = <span class="number">1</span>;
+
+<span class="keyword">do</span> {
+  <span class="function">console.log</span>(i); <span class="comment">// ಮೊದಲು 1 ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ</span>
+  i++;            <span class="comment">// i ಬೆಲೆ 2 ಆಗುತ್ತದೆ</span>
+} <span class="keyword">while</span> (i &lt;= <span class="number">5</span>); <span class="comment">// ಕೊನೆಯಲ್ಲಿ 2 &lt;= 5 ನಿಜವೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ</span></code></pre>
+                </div>
+
+                <h3>while ಮತ್ತು do...while ನಡುವಿನ ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸಗಳು</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ವೈಶಿಷ್ಟ್ಯ (Feature)</th>
+                            <th>while ಲೂಪ್</th>
+                            <th>do...while ಲೂಪ್</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ಷರತ್ತು ಪರಿಶೀಲನೆ</strong></td>
+                            <td>ಲೂಪ್ ಪ್ರಾರಂಭವಾಗುವ ಮೊದಲೇ ಪರಿಶೀಲಿಸುತ್ತದೆ.</td>
+                            <td>ಲೂಪ್ ಒಮ್ಮೆ ರನ್ ಆದ ನಂತರ (ಕೊನೆಯಲ್ಲಿ) ಪರಿಶೀಲಿಸುತ್ತದೆ.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ಲೂಪ್ ವಿಧ</strong></td>
+                            <td>ಎಂಟ್ರಿ-ಕಂಟ್ರೋಲ್ಡ್ ಲೂಪ್ (Entry-controlled).</td>
+                            <td>ಎಕ್ಸಿಟ್-ಕಂಟ್ರೋಲ್ಡ್ ಲೂಪ್ (Exit-controlled).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ಷರತ್ತು ತಪ್ಪು (false) ಇದ್ದಾಗ</strong></td>
+                            <td>ಕೋಡ್ ಒಮ್ಮೆಯೂ ರನ್ ಆಗುವುದಿಲ್ಲ.</td>
+                            <td>ಷರತ್ತು ತಪ್ಪಾಗಿದ್ದರೂ ಕೋಡ್ ಕನಿಷ್ಠ ಒಂದು ಬಾರಿ ರನ್ ಆಗುತ್ತದೆ.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript (ವ್ಯತ್ಯಾಸವನ್ನು ತೋರಿಸುವ ಉದಾಹರಣೆ)</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// 1. while ಲೂಪ್</span>
+<span class="keyword">let</span> x = <span class="number">10</span>;
+<span class="keyword">while</span> (x &lt; <span class="number">5</span>) { <span class="comment">// 10 &lt; 5 ಎಂಬುದು ಮೊದಲೇ false ಆಗಿದೆ</span>
+  <span class="function">console.log</span>(<span class="string">"ಇದು while ಲೂಪ್: "</span> + x); 
+}
+<span class="comment">// ಫಲಿತಾಂಶ: ಏನೂ ಪ್ರಿಂಟ್ ಆಗುವುದಿಲ್ಲ.</span>
+
+<span class="comment">// 2. do...while ಲೂಪ್</span>
+<span class="keyword">let</span> y = <span class="number">10</span>;
+<span class="keyword">do</span> {
+  <span class="function">console.log</span>(<span class="string">"ಇದು do...while ಲೂಪ್: "</span> + y); <span class="comment">// ಇದು ಒಮ್ಮೆ ರನ್ ಆಗುತ್ತದೆ</span>
+  y++;
+} <span class="keyword">while</span> (y &lt; <span class="number">5</span>); <span class="comment">// 11 &lt; 5 ತಪ್ಪು (false) ಆಗಿದ್ದರಿಂದ ಲೂಪ್ ಇಲ್ಲಿಗೆ ನಿಲ್ಲುತ್ತದೆ.</span>
+<span class="comment">// ಫಲಿತಾಂಶ: "ಇದು do...while ಲೂಪ್: 10" ಎಂದು ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.</span></code></pre>
+                </div>
+
+                <h3>ಯಾವಾಗ ಬಳಸಬೇಕು? (Use Cases)</h3>
+                <div class="alert-card" style="background-color: var(--bg-surface);">
+                    <p style="margin: 0;"><strong>User Input Validation:</strong> ಬಳಕೆದಾರರಿಂದ ಇನ್‌ಪುಟ್ ಪಡೆಯುವಾಗ ಬಳಕೆದಾರರು ಸರಿಯಾದ ಮಾಹಿತಿಯನ್ನು ನಮೂದಿಸುವವರೆಗೆ ಮತ್ತೆ ಮತ್ತೆ ಕೇಳಬೇಕಾದಾಗ ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಉದಾಹರಣೆಗೆ: ಬಳಕೆದಾರರಿಗೆ "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ" ಎಂದು ಕನಿಷ್ಠ ಒಮ್ಮೆ ಕೇಳಲೇಬೇಕು. ಅವರು ತಪ್ಪಾದ ಪಾಸ್‌ವರ್ಡ್ ನೀಡಿದರೆ ಮಾತ್ರ ಷರತ್ತು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಮತ್ತೆ ಕೇಳಬೇಕು.</p>
+                </div>
+            </section>
+            
+            <footer style="margin-top: 50px; text-align: center; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <p>Designed for Professional Reading | 0 to Pro Notes</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Animations and Features -->
+    <script>
+        // 1. Copy Code Functionality
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const codeText = pre.innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.innerText = 'Copied!';
+                button.style.backgroundColor = 'var(--accent-green)';
+                button.style.color = '#fff';
+                button.style.borderColor = 'var(--accent-green)';
+                
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.style.backgroundColor = 'transparent';
+                    button.style.color = 'var(--text-secondary)';
+                    button.style.borderColor = 'var(--border-color)';
+                }, 2000);
+            });
+        }
+
+        // 2. Scroll Animation (Fade In Up)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Stop observing once animated
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(element => {
+            observer.observe(element);
+        });
+
+        // 3. Highlight active link in sidebar on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section, header');
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

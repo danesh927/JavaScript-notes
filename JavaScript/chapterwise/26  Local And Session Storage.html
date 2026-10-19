@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ವೆಬ್ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದು: localStorage ಮತ್ತು sessionStorage</title>
+    
+    <!-- Fonts: Noto Sans Kannada for Text, Fira Code for Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans Kannada"', 'sans-serif'],
+                        mono: ['"Fira Code"', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        accent: '#38bdf8',
+                        accentHover: '#0284c7',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Code Block Styling Enhancements */
+        pre {
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
+        }
+        pre::-webkit-scrollbar {
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        pre::-webkit-scrollbar-thumb {
+            background-color: #475569;
+            border-radius: 4px;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-300 font-sans leading-relaxed antialiased selection:bg-accent selection:text-white">
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden border-b border-slate-800 bg-slate-900 pt-20 pb-16 lg:pt-28 lg:pb-24 fade-in-up">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+        <div class="relative mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+            <div class="inline-flex items-center justify-center rounded-full bg-blue-500/10 px-3 py-1 text-sm font-semibold text-accent mb-6 shadow-sm ring-1 ring-blue-500/20">
+                <i class="fa-solid fa-code mr-2"></i> Web Development Tutorial
+            </div>
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6">
+                ವೆಬ್ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದು: <br>
+                <span class="text-gradient">localStorage</span> ಮತ್ತು <span class="text-gradient">sessionStorage</span>
+            </h1>
+            <p class="mx-auto max-w-4xl text-lg text-slate-400">
+                ಬ್ರೌಸರ್‌ನಲ್ಲಿ (Chrome, Safari, Edge) ಬಳಕೆದಾರರ ಡೇಟಾವನ್ನು ಸೇವ್ ಮಾಡುವ ಎರಡು ಪ್ರಮುಖ "ವರ್ಚುವಲ್ ಸ್ಟೋರೇಜ್" (Virtual Storage) ಗಳೇ localStorage ಮತ್ತು sessionStorage.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-20">
+
+        <!-- Section 1: Beginner Level -->
+        <section class="fade-in-up">
+            <div class="flex items-center mb-8">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 mr-4">
+                    <span class="font-bold text-xl">1</span>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Beginner Level (ನಾನ್-ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ)</h2>
+            </div>
+            <p class="mb-8 text-lg">ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ನಾವು ದಿನನಿತ್ಯ ಬಳಸುವ ಎರಡು ವಸ್ತುಗಳನ್ನು ಉದಾಹರಣೆಯಾಗಿ ತೆಗೆದುಕೊಳ್ಳೋಣ: ಒಂದು <strong class="text-white">ಡೈರಿ (Diary)</strong> ಮತ್ತು ಒಂದು <strong class="text-white">ಶಾಲೆಯ ಬ್ಲಾಕ್‌ಬೋರ್ಡ್ (Blackboard)</strong>.</p>
+            
+            <div class="grid gap-8 md:grid-cols-2">
+                <!-- localStorage Card -->
+                <div class="group relative rounded-2xl bg-cardBg p-8 shadow-lg ring-1 ring-slate-800 hover:ring-accent transition-all duration-300 hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 border-4 border-darkBg text-accent shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-book text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-4">localStorage (ಡೈರಿಯಂತೆ)</h3>
+                    <p class="mb-4">ನೀವು ಡೈರಿಯಲ್ಲಿ ಏನನ್ನಾದರೂ ಬರೆದರೆ, ಅದು ಅಲ್ಲಿಯೇ ಇರುತ್ತದೆ. ನೀವು ಪುಸ್ತಕವನ್ನು ಮುಚ್ಚಿ, ಒಂದು ತಿಂಗಳ ನಂತರ ಬಂದು ನೋಡಿದರೂ ಆ ಬರಹ ಅಲ್ಲಿಯೇ ಇರುತ್ತದೆ.</p>
+                    <div class="rounded-lg bg-slate-900/50 p-4 border border-slate-700/50">
+                        <p class="text-sm text-slate-400"><strong class="text-emerald-400">ಉದಾಹರಣೆ:</strong> ನೀವು ಅಮೆಜಾನ್ (Amazon) ನಲ್ಲಿ ಡಾರ್ಕ್ ಮೋಡ್ (Dark Mode) ಆನ್ ಮಾಡಿದ್ದೀರಿ. ಲ್ಯಾಪ್‌ಟಾಪ್ ಆಫ್ ಮಾಡಿ, ನಾಳೆ ಮತ್ತೆ ಅಮೆಜಾನ್ ಓಪನ್ ಮಾಡಿದರೂ ಅದು ಡಾರ್ಕ್ ಮೋಡ್ ನಲ್ಲೇ ಇರುತ್ತದೆ. ಏಕೆಂದರೆ ಆ ಮಾಹಿತಿಯನ್ನು ಬ್ರೌಸರ್ localStorage ನಲ್ಲಿ ಬರೆದಿಟ್ಟುಕೊಂಡಿರುತ್ತದೆ.</p>
+                    </div>
+                </div>
+
+                <!-- sessionStorage Card -->
+                <div class="group relative rounded-2xl bg-cardBg p-8 shadow-lg ring-1 ring-slate-800 hover:ring-purple-400 transition-all duration-300 hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 border-4 border-darkBg text-purple-400 shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-chalkboard text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-4">sessionStorage (ಬ್ಲಾಕ್‌ಬೋರ್ಡ್‌ ನಂತೆ)</h3>
+                    <p class="mb-4">ಶಿಕ್ಷಕರು ಬ್ಲಾಕ್‌ಬೋರ್ಡ್‌ ಮೇಲೆ ಬರೆಯುತ್ತಾರೆ. ಕ್ಲಾಸ್ ಮುಗಿದ ತಕ್ಷಣ (ಟ್ಯಾಬ್ ಕ್ಲೋಸ್ ಮಾಡಿದ ತಕ್ಷಣ) ಅದನ್ನು ಅಳಿಸಿಬಿಡುತ್ತಾರೆ.</p>
+                    <div class="rounded-lg bg-slate-900/50 p-4 border border-slate-700/50">
+                        <p class="text-sm text-slate-400"><strong class="text-purple-400">ಉದಾಹರಣೆ:</strong> ನೀವು ಯಾವುದೋ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಫಾರ್ಮ್ ತುಂಬುತ್ತಿದ್ದೀರಿ, ಅರ್ಧ ತುಂಬಿದ್ದಾಗ ರಿಫ್ರೆಶ್ (Refresh) ಮಾಡಿದರೂ ಡೇಟಾ ಹಾಗೇ ಇರುತ್ತದೆ. ಆದರೆ ನೀವು ಆ ಟ್ಯಾಬ್ (Tab) ಅನ್ನೇ ಕ್ಲೋಸ್ ಮಾಡಿದರೆ ಡೇಟಾ ಸಂಪೂರ್ಣ ಡಿಲೀಟ್ ಆಗುತ್ತದೆ.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Intermediate Level -->
+        <section class="fade-in-up">
+            <div class="flex items-center mb-8">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 mr-4">
+                    <span class="font-bold text-xl">2</span>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Intermediate Level (ಡೆವಲಪರ್ ಬೇಸಿಕ್ಸ್)</h2>
+            </div>
+            <p class="mb-6 text-lg">ನೀವು ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಕಲಿಯುತ್ತಿದ್ದರೆ, ಇವೆರಡನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript)ಮೂಲಕ ಹೇಗೆ ಕಂಟ್ರೋಲ್ ಮಾಡುವುದು ಎಂದು ತಿಳಿಯಬೇಕು. ಇವೆರಡೂ ಒಂದೇ ರೀತಿಯ ಕಮಾಂಡ್‌ಗಳನ್ನು (Methods) ಬಳಸುತ್ತವೆ.</p>
+            
+            <div class="mb-8 rounded-xl bg-blue-900/20 p-5 border border-blue-500/30">
+                <h4 class="text-white font-semibold flex items-center mb-2"><i class="fa-solid fa-magnifying-glass mr-2"></i> ಡೇಟಾವನ್ನು ಎಲ್ಲಿ ನೋಡಬಹುದು?</h4>
+                <p>ಬ್ರೌಸರ್‌ನಲ್ಲಿ: <code class="bg-slate-800 px-2 py-1 rounded text-sm text-white">Right Click</code> -> <code class="bg-slate-800 px-2 py-1 rounded text-sm text-white">Inspect</code> -> <code class="bg-slate-800 px-2 py-1 rounded text-sm text-white">Application</code> (ಅಥವಾ Storage) ಟ್ಯಾಬ್‌ಗೆ ಹೋದರೆ Local Storage ಮತ್ತು Session Storage ಕಾಣಿಸುತ್ತದೆ.</p>
+            </div>
+
+            <h4 class="text-xl font-semibold text-white mb-4">ಬಳಸುವ ಪ್ರಮುಖ ಕಮಾಂಡ್‌ಗಳು:</h4>
+            <p class="mb-4">ಇವು ಕೇವಲ "Label" (Key) ಮತ್ತು "Value" ಆಧಾರದ ಮೇಲೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ.</p>
+            
+            <div class="relative rounded-xl bg-slate-900 shadow-2xl border border-slate-700 overflow-hidden mb-6">
+                <div class="flex items-center px-4 py-3 bg-slate-800 border-b border-slate-700">
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <span class="ml-4 text-xs font-mono text-slate-400">script.js</span>
+                </div>
+                <pre class="p-4 overflow-x-auto text-sm font-mono leading-relaxed"><code class="code-block">
+// 1. ಡೇಟಾ ಸೇವ್ ಮಾಡಲು (Set)
+localStorage.setItem("username", "Ravi");
+sessionStorage.setItem("theme", "dark");
+
+// 2. ಡೇಟಾ ಓದಲು (Get)
+let name = localStorage.getItem("username");
+// "Ravi" ಎಂದು ಬರುತ್ತದೆ
+
+// 3. ಒಂದು ನಿರ್ದಿಷ್ಟ ಡೇಟಾ ಅಳಿಸಲು (Remove)
+localStorage.removeItem("username");
+
+// 4. ಇಡೀ ಸ್ಟೋರೇಜ್ ಖಾಲಿ ಮಾಡಲು (Clear)
+localStorage.clear();
+                </code></pre>
+            </div>
+
+            <div class="rounded-l-4xl border-l-4 border-yellow-500 bg-yellow-500/10 p-4">
+                <p class="flex items-start">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-1 mr-3"></i>
+                    <span><strong class="text-yellow-500">ನೆನಪಿಡಿ:</strong> ಸ್ಟೋರೇಜ್ ಕೇವಲ 'ಪಠ್ಯವನ್ನು' (Strings) ಮಾತ್ರ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. Array ಅಥವಾ Object ಹಾಕಬೇಕಾದರೆ <code class="text-accent">JSON.stringify()</code> ಮತ್ತು ಓದುವಾಗ <code class="text-accent">JSON.parse()</code> ಬಳಸಲೇಬೇಕು.</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Pro Level -->
+        <section class="fade-in-up">
+            <div class="flex items-center mb-8">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400 mr-4">
+                    <span class="font-bold text-xl">3</span>
+                </div>
+                <h2 class="text-3xl font-bold text-white">Pro Level (ಅಡ್ವಾನ್ಸ್ಡ್ ಕಾನ್ಸೆಪ್ಟ್ಸ್)</h2>
+            </div>
+            <p class="mb-8 text-lg">ಒಬ್ಬ ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್ ಆಗಿ ನೀವು ಕೇವಲ ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದಷ್ಟೇ ಅಲ್ಲ, ಅದರ ಹಿಂದಿರುವ ಅಪಾಯಗಳು ಮತ್ತು ಮಿತಿಗಳನ್ನು ತಿಳಿದಿರಬೇಕು.</p>
+
+            <div class="grid gap-6 md:grid-cols-2">
+                <!-- Security -->
+                <div class="rounded-xl bg-cardBg p-6 border border-slate-700 shadow-md">
+                    <div class="flex items-center mb-4 text-red-400">
+                        <i class="fa-solid fa-shield-halved text-2xl mr-3"></i>
+                        <h3 class="text-xl font-semibold text-white">ಸೆಕ್ಯುರಿಟಿ ರಿಸ್ಕ್ (Security & XSS)</h3>
+                    </div>
+                    <p class="text-sm mb-3">localStorage ಮತ್ತು sessionStorage ಗಳಿಗೆ ಯಾವುದೇ ಭದ್ರತೆ ಇರುವುದಿಲ್ಲ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಯಾರು ಬೇಕಾದರೂ ಇದನ್ನು ಓದಬಹುದು.</p>
+                    <p class="text-sm bg-red-900/20 p-3 rounded border border-red-900/50"><strong class="text-red-400">Pro Rule:</strong> ಪಾಸ್‌ವರ್ಡ್‌ಗಳು, ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ವಿವರಗಳು ಅಥವಾ ಸೂಕ್ಷ್ಮವಾದ API Token ಗಳನ್ನು (JWT) ಎಂದಿಗೂ ಇದರಲ್ಲಿ ಸೇವ್ ಮಾಡಬಾರದು. ಹ್ಯಾಕರ್‌ಗಳು XSS ಅಟ್ಯಾಕ್ ಮೂಲಕ ಇದನ್ನು ಸುಲಭವಾಗಿ ಕದಿಯಬಹುದು. ಇಂತಹ ಡೇಟಾಗೆ HttpOnly Cookies ಬಳಸಬೇಕು.</p>
+                </div>
+
+                <!-- Limits -->
+                <div class="rounded-xl bg-cardBg p-6 border border-slate-700 shadow-md">
+                    <div class="flex items-center mb-4 text-orange-400">
+                        <i class="fa-solid fa-database text-2xl mr-3"></i>
+                        <h3 class="text-xl font-semibold text-white">ಸ್ಟೋರೇಜ್ ಮಿತಿ (Storage Capacity)</h3>
+                    </div>
+                    <p class="text-sm">ಕುಕೀಸ್ (Cookies)ಗಳಲ್ಲಿ ಕೇವಲ 4KB ಡೇಟಾ ಸೇವ್ ಮಾಡಬಹುದು. ಆದರೆ localStorage ಮತ್ತು sessionStorage ಗಳಲ್ಲಿ ಸುಮಾರು 5MB ಯಿಂದ 10MB ವರೆಗೆ ಡೇಟಾ ಸೇವ್ ಮಾಡಬಹುದು.</p>
+                </div>
+
+                <!-- Synchronous -->
+                <div class="rounded-xl bg-cardBg p-6 border border-slate-700 shadow-md">
+                    <div class="flex items-center mb-4 text-yellow-400">
+                        <i class="fa-solid fa-hourglass-half text-2xl mr-3"></i>
+                        <h3 class="text-xl font-semibold text-white">ಸಿಂಕ್ರೊನಸ್ ಬ್ಲಾಕಿಂಗ್ (Synchronous Nature)</h3>
+                    </div>
+                    <p class="text-sm">ಈ ಎರಡೂ ಸ್ಟೋರೇಜ್‌ಗಳು Synchronous ಆಗಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ಅಂದರೆ, ನೀವು ಇದರಲ್ಲಿ ಅತಿ ದೊಡ್ಡ ಡೇಟಾವನ್ನು ಸೇವ್ ಮಾಡುತ್ತಿದ್ದರೆ, ಅದು ಮುಗಿಯುವವರೆಗೆ ವೆಬ್‌ಸೈಟ್‌ನ ಇತರ ಕೆಲಸಗಳು (UI) ಫ್ರೀಜ್ (Freeze/Block)ಆಗುತ್ತವೆ.</p>
+                </div>
+
+                <!-- Events -->
+                <div class="rounded-xl bg-cardBg p-6 border border-slate-700 shadow-md">
+                    <div class="flex items-center mb-4 text-accent">
+                        <i class="fa-solid fa-bolt text-2xl mr-3"></i>
+                        <h3 class="text-xl font-semibold text-white">ಸ್ಟೋರೇಜ್ ಈವೆಂಟ್</h3>
+                    </div>
+                    <p class="text-sm mb-3">localStorage ನ ಒಂದು ಅದ್ಭುತ ಫೀಚರ್ ಎಂದರೆ, ನೀವು ಒಂದೇ ವೆಬ್‌ಸೈಟ್‌ನ 3-4 ಟ್ಯಾಬ್‌ಗಳನ್ನು ಓಪನ್ ಮಾಡಿದ್ದರೆ. ಒಂದು ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಡೇಟಾ ಬದಲಾದರೆ, ಉಳಿದ ಟ್ಯಾಬ್‌ಗಳಿಗೆ ಕೂಡಲೇ ಮಾಹಿತಿ ಕಳುಹಿಸಬಹುದು.</p>
+                </div>
+            </div>
+
+            <!-- Code for Events -->
+            <div class="relative rounded-xl bg-slate-900 shadow-2xl border border-slate-700 overflow-hidden mt-6">
+                 <div class="flex items-center px-4 py-2 bg-slate-800 border-b border-slate-700">
+                    <span class="text-xs font-mono text-slate-400">Cross-tab communication</span>
+                </div>
+                <pre class="p-4 overflow-x-auto text-sm font-mono leading-relaxed"><code class="code-block">
+window.addEventListener('storage', function(e) {
+  console.log("ಬೇರೆ ಟ್ಯಾಬ್ ನಲ್ಲಿ ಡೇಟಾ ಬದಲಾಗಿದೆ!");
+  console.log("ಹಳೆಯ ಡೇಟಾ: " + e.oldValue + ", ಹೊಸ ಡೇಟಾ: " + e.newValue);
+});
+                </code></pre>
+            </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="border-t border-slate-800 my-16"></div>
+
+        <!-- Section 4: Array & Object Handling -->
+        <section class="fade-in-up">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">Array ಮತ್ತು Object ಗಳನ್ನು ನಿರ್ವಹಿಸುವುದು</h2>
+            
+            <div class="bg-indigo-900/20 border border-indigo-500/30 rounded-xl p-6 mb-10">
+                <h4 class="text-indigo-400 font-bold mb-2">ಮೊದಲನೇ ಪ್ರಮುಖ ನಿಯಮ (Beginner Concept):</h4>
+                <p>ಈ ಎರಡೂ ಸ್ಟೋರೇಜ್‌ಗಳು ಕೇವಲ 'ಪಠ್ಯ' (Text/String) ಗಳನ್ನು ಮಾತ್ರ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತವೆ. ಆದರೆ ನಾವು ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ಬಳಸುವ Array (ಪಟ್ಟಿ) ಮತ್ತು Object (ವಿವರಗಳ ಗುಚ್ಛ) ಗಳು ಪಠ್ಯವಲ್ಲ. ಆದ್ದರಿಂದ, ಇವುಗಳನ್ನು ಸ್ಟೋರೇಜ್‌ಗೆ ಹಾಕುವ ಮುನ್ನ ಪಠ್ಯವಾಗಿ ಬದಲಾಯಿಸಬೇಕು <code class="text-accent bg-slate-800 px-1 rounded">(JSON.stringify())</code>, ಮತ್ತು ವಾಪಸ್ ಪಡೆಯುವಾಗ ಮೂಲ ರೂಪಕ್ಕೆ ತರಬೇಕು <code class="text-accent bg-slate-800 px-1 rounded">(JSON.parse())</code>.</p>
+            </div>
+
+            <div class="space-y-12">
+                <!-- Arrays -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fa-solid fa-list text-accent mr-3"></i> 1. Array (ಪಟ್ಟಿ) ಗಳಲ್ಲಿ ಡೇಟಾ ಸೇರಿಸುವುದು
+                    </h3>
+                    <p class="mb-4 text-sm text-slate-400">Array ಎಂದರೆ ಒಂದು ಶಾಪಿಂಗ್ ಲಿಸ್ಟ್ ಇದ್ದ ಹಾಗೆ.</p>
+                    
+                    <div class="rounded-xl bg-slate-900 shadow-xl border border-slate-700 overflow-hidden">
+                        <pre class="p-4 overflow-x-auto text-sm font-mono leading-relaxed"><code class="code-block">
+// ಹಂತ 1: ಹೊಸ Array ಸೇವ್ ಮಾಡುವುದು
+let fruits = ["Apple", "Banana"];
+localStorage.setItem("myFruits", JSON.stringify(fruits));
+
+// ಹಂತ 2: Array ಗೆ ಹೊಸ Value ಹಾಕುವುದು (Add)
+let storedFruits = JSON.parse(localStorage.getItem("myFruits"));
+storedFruits.push("Mango"); 
+localStorage.setItem("myFruits", JSON.stringify(storedFruits));
+
+// ಹಂತ 3: Array ನಿಂದ Value ತೆಗೆಯುವುದು (Remove)
+let currentFruits = JSON.parse(localStorage.getItem("myFruits"));
+currentFruits = currentFruits.filter(fruit => fruit !== "Banana");
+localStorage.setItem("myFruits", JSON.stringify(currentFruits));
+                        </code></pre>
+                    </div>
+                </div>
+
+                <!-- Objects -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fa-solid fa-id-card text-emerald-400 mr-3"></i> 2. Object ಗಳಲ್ಲಿ ಡೇಟಾ ಸೇರಿಸುವುದು
+                    </h3>
+                    <p class="mb-4 text-sm text-slate-400">Object ಎಂದರೆ ಒಂದು ಐಡಿ ಕಾರ್ಡ್ (ID Card) ಇದ್ದ ಹಾಗೆ.</p>
+                    
+                    <div class="rounded-xl bg-slate-900 shadow-xl border border-slate-700 overflow-hidden">
+                        <pre class="p-4 overflow-x-auto text-sm font-mono leading-relaxed"><code class="code-block">
+// ಹಂತ 1: ಹೊಸ Object ಸೇವ್ ಮಾಡುವುದು
+let user = { name: "Ravi", age: 25 };
+sessionStorage.setItem("userData", JSON.stringify(user));
+
+// ಹಂತ 2: Object ಗೆ ಹೊಸ Value ಹಾಕುವುದು (Add)
+let storedUser = JSON.parse(sessionStorage.getItem("userData"));
+storedUser.city = "Bengaluru";
+sessionStorage.setItem("userData", JSON.stringify(storedUser));
+
+// ಹಂತ 3: Object ನಿಂದ Value ತೆಗೆಯುವುದು (Remove)
+let currentUser = JSON.parse(sessionStorage.getItem("userData"));
+delete currentUser.age;
+sessionStorage.setItem("userData", JSON.stringify(currentUser));
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 rounded-lg border border-emerald-500/30 bg-emerald-900/20 p-5 text-center">
+                <p><strong class="text-emerald-400">ಸಾರಾಂಶ (Pro Tip):</strong> ನೀವು Array ಅಥವಾ Object ಅನ್ನು ಸ್ಟೋರೇಜ್‌ನಲ್ಲಿ ಅಪ್ಡೇಟ್ ಮಾಡಬೇಕಾದರೆ: <br>
+                <span class="inline-block mt-2 font-mono text-white bg-slate-800 px-3 py-1 rounded">ಹೊರಗೆ ತೆಗೆಯಿರಿ (parse) &rarr; ಬದಲಾಯಿಸಿ (push/delete) &rarr; ಮತ್ತೆ ಒಳಗೆ ಇಡಿ (stringify)</span>. <br>
+                ಇದುವೇ ಇದರ ಸರಳ ಸೂತ್ರ!</p>
+            </div>
+        </section>
+
+        <!-- Section 5: JSON Translators -->
+        <section class="fade-in-up">
+            <div class="flex flex-col items-center mb-10 text-center">
+                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-pink-500/20 text-pink-400 mb-4">
+                    <i class="fa-solid fa-cubes text-3xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white">JSON.stringify() ಮತ್ತು JSON.parse() (Translators)</h2>
+                <p class="mt-4 max-w-2xl text-slate-400">ಊಹಿಸಿಕೊಳ್ಳಿ, ನಿಮ್ಮ ಬಳಿ ಜೋಡಿಸಿದ ಒಂದು ಸುಂದರವಾದ ಲೀಗೊ (LEGO) ಬೊಂಬೆ ಇದೆ. ಇದನ್ನು ಕೊರಿಯರ್ ಮೂಲಕ ಕಳುಹಿಸಲು ಕೇವಲ ಒಂದು ಕಾಗದವನ್ನು ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು.</p>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Stringify -->
+                <div class="rounded-2xl bg-cardBg p-6 shadow-lg border border-slate-700">
+                    <h3 class="text-xl font-bold text-white mb-3 text-pink-400">1. JSON.stringify() - (ಪ್ಯಾಕ್ ಮಾಡುವುದು)</h3>
+                    <p class="mb-4 text-sm">ಲೀಗೊ ಬೊಂಬೆಯನ್ನು ಬಿಚ್ಚಿ, ಅದನ್ನು ಹೇಗೆ ಜೋಡಿಸಬೇಕು ಎಂಬ ವಿವರಗಳನ್ನು ಒಂದು ಕಾಗದದ ಮೇಲೆ ಬರೆಯುತ್ತೀರಿ.</p>
+                    <div class="rounded-xl bg-slate-900 overflow-hidden">
+                        <pre class="p-4 text-sm font-mono"><code class="code-block">
+let myCar = { brand: "Tata", color: "Red" }; // ಅಸಲಿ Object (ಲೀಗೊ ಬೊಂಬೆ)
+let stringData = JSON.stringify(myCar); 
+// ಈಗ stringData ಕೇವಲ ಒಂದು ಪಠ್ಯ: 
+// '{"brand":"Tata","color":"Red"}'
+                        </code></pre>
+                    </div>
+                </div>
+
+                <!-- Parse -->
+                <div class="rounded-2xl bg-cardBg p-6 shadow-lg border border-slate-700">
+                    <h3 class="text-xl font-bold text-white mb-3 text-accent">2. JSON.parse() - (ಅನ್-ಪ್ಯಾಕ್ ಮಾಡುವುದು)</h3>
+                    <p class="mb-4 text-sm">ನಿಮ್ಮ ಸ್ನೇಹಿತನಿಗೆ ಆ ಕಾಗದ ತಲುಪುತ್ತದೆ. ಆತ ಆ ಕಾಗದದಲ್ಲಿರುವ ಮಾಹಿತಿಯನ್ನು ಓದಿ, ಮತ್ತೆ ಅದೇ ಲೀಗೊ ಬೊಂಬೆಯನ್ನು ಹಿಂದಿದ್ದಂತೆಯೇ ಜೋಡಿಸುತ್ತಾನೆ.</p>
+                    <div class="rounded-xl bg-slate-900 overflow-hidden">
+                        <pre class="p-4 text-sm font-mono"><code class="code-block">
+let receivedText = '{"brand":"Tata","color":"Red"}';
+let originalCar = JSON.parse(receivedText);
+// originalCar.color = "Blue" ಎಂದು ಬದಲಾಯಿಸಬಹುದು!
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 rounded-xl bg-slate-800 p-6 border border-slate-700 text-center">
+                <h4 class="text-lg font-bold text-white mb-3">ಸಾರಾಂಶ:</h4>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-10">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-box-archive text-pink-400 mr-2"></i>
+                        <span><strong class="text-white">stringify:</strong> Object/Array ಅನ್ನು ಪಠ್ಯವಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-box-open text-accent mr-2"></i>
+                        <span><strong class="text-white">parse:</strong> ಪಠ್ಯವನ್ನು ಮತ್ತೆ ಅಸಲಿ Object/Array ಆಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-20 border-t border-slate-800 bg-slate-900 py-10 text-center text-sm text-slate-500">
+        <p>&copy; 2026 Web Storage Tutorial - Developed with ❤️</p>
+    </footer>
+
+    <!-- Scripts for Logic & Animations -->
+    <script>
+        // Simple Syntax Highlighter for standardizing code appearance dynamically
+        document.addEventListener("DOMContentLoaded", () => {
+            const codeBlocks = document.querySelectorAll('.code-block');
+            
+            codeBlocks.forEach(block => {
+                let text = block.innerHTML;
+                
+                // Colorize Comments
+                text = text.replace(/(\/\/.*)/g, '<span class="text-slate-500 italic">$1</span>');
+                // Colorize Strings
+                text = text.replace(/(["'].*?["'])/g, '<span class="text-yellow-300">$1</span>');
+                // Colorize Keywords
+                text = text.replace(/\b(let|const|var|function|window|console|localStorage|sessionStorage|delete)\b/g, '<span class="text-purple-400">$1</span>');
+                // Colorize Methods/Objects
+                text = text.replace(/\b(setItem|getItem|removeItem|clear|stringify|parse|push|filter|addEventListener)\b/g, '<span class="text-blue-400">$1</span>');
+                text = text.replace(/\b(JSON)\b/g, '<span class="text-emerald-400">$1</span>');
+                
+                block.innerHTML = text;
+            });
+
+            // Intersection Observer for Scroll Animations (Fade-in UP)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Animate only once
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="kn" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Date Functions | Master Class</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Variables (Light & Dark Theme) --- */
+        :root[data-theme="dark"] {
+            --bg-main: #0f172a; --bg-surface: #1e293b; --bg-surface-hover: #334155;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border: #334155; --primary: #f43f5e; --primary-hover: #e11d48; 
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #0ea5e9;
+            --code-bg: #020617;
+        }
+        :root[data-theme="light"] {
+            --bg-main: #f8fafc; --bg-surface: #ffffff; --bg-surface-hover: #f1f5f9;
+            --text-main: #0f172a; --text-muted: #475569;
+            --border: #e2e8f0; --primary: #e11d48; --primary-hover: #be123c;
+            --success: #059669; --warning: #d97706; --danger: #dc2626; --info: #0284c7;
+            --code-bg: #f1f5f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans Kannada', sans-serif; background: var(--bg-main); color: var(--text-main); line-height: 1.8; transition: background 0.3s, color 0.3s; scroll-behavior: smooth; }
+
+        /* --- Layout --- */
+        .app-container { display: flex; max-width: 1400px; margin: 0 auto; }
+        
+        /* --- Sidebar Navigation --- */
+        .sidebar { width: 300px; height: 100vh; position: sticky; top: 0; background: var(--bg-surface); padding: 20px; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; z-index: 100;}
+        .progress-container { width: 100%; background: var(--bg-main); border-radius: 10px; margin-bottom: 20px; height: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+        .nav-links { list-style: none; margin-top: 20px; }
+        .nav-links li { margin-bottom: 10px; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); display: block; padding: 10px; border-radius: 8px; transition: 0.3s; font-size: 0.95rem;}
+        .nav-links a:hover, .nav-links a.active { background: var(--bg-surface-hover); color: var(--primary); font-weight: bold; border-left: 4px solid var(--primary); }
+
+        /* --- Topbar & Theme Toggle --- */
+        .topbar { display: flex; justify-content: flex-end; padding: 15px 40px; }
+        .theme-toggle { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .theme-toggle:hover { background: var(--primary); color: white; }
+
+        /* --- Main Content --- */
+        .main-content { flex: 1; padding: 20px 60px 80px 60px; max-width: 1000px; }
+        h1 { font-size: 2.8rem; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-size: 1.8rem; margin-top: 50px; border-bottom: 2px solid var(--border); padding-bottom: 10px; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        h3 { font-size: 1.3rem; margin-top: 25px; color: var(--info); }
+        p, li { color: var(--text-muted); margin-bottom: 15px; }
+        strong { color: var(--text-main); }
+
+        /* --- Alert Cards --- */
+        .card { background: var(--bg-surface); border-radius: 10px; padding: 20px; border: 1px solid var(--border); margin: 20px 0; border-left: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card.info { border-left-color: var(--info); }
+        .card.success { border-left-color: var(--success); }
+        .card.warning { border-left-color: var(--warning); background: rgba(245, 158, 11, 0.05); }
+        .card.danger { border-left-color: var(--danger); background: rgba(239, 68, 68, 0.05); }
+
+        /* --- Animations & Visuals (Live Clock) --- */
+        .clock-container { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 15px; padding: 30px; text-align: center; margin: 30px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .live-clock { font-family: 'Fira Code', monospace; font-size: 3.5rem; color: var(--primary); font-weight: bold; text-shadow: 0 0 20px rgba(244, 63, 94, 0.4); margin: 20px 0;}
+        .live-date { font-size: 1.2rem; color: var(--text-muted); }
+
+        /* --- Code Editor --- */
+        .code-block { background: var(--code-bg); border-radius: 10px; border: 1px solid var(--border); margin: 25px 0; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .code-header { background: var(--bg-surface); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-muted); }
+        pre { padding: 20px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.95rem; color: #a6accd; margin: 0; line-height: 1.5; }
+        code .keyword { color: #c792ea; } code .string { color: #c3e88d; } code .function { color: #82aaff; } code .comment { color: #697098; } code .number { color: #f78c6c; } code .variable { color: #ffcb6b; } code .operator { color: #89ddff; }
+        
+        .copy-btn { background: var(--bg-main); border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .copy-btn:hover { background: var(--primary); color: white; border-color: var(--primary);}
+
+        /* --- Interactive Playground --- */
+        .playground { border: 2px solid var(--info); border-radius: 10px; overflow: hidden; margin: 30px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .play-header { background: var(--info); color: white; padding: 10px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .play-body { display: flex; flex-direction: column; }
+        textarea.code-input { width: 100%; height: 250px; background: var(--code-bg); color: #a6accd; font-family: 'Fira Code', monospace; font-size: 1rem; padding: 15px; border: none; resize: vertical; outline: none; }
+        .play-controls { background: var(--bg-surface); padding: 10px 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .btn-run { background: var(--success); color: white; border: none; padding: 8px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-run:hover { background: #059669; transform: translateY(-2px); }
+        .output-panel { background: var(--bg-main); padding: 20px; min-height: 120px; font-family: 'Fira Code', monospace; color: var(--text-main); white-space: pre-wrap; font-size: 1rem; }
+
+        /* --- Quiz Section --- */
+        .quiz-container { background: var(--bg-surface); padding: 30px; border-radius: 10px; border: 1px solid var(--border); margin: 30px 0; }
+        .quiz-option { display: block; width: 100%; text-align: left; padding: 15px; margin: 10px 0; background: var(--bg-main); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; color: var(--text-main); transition: 0.3s; font-size: 1rem; font-family: inherit;}
+        .quiz-option:hover:not([disabled]) { border-color: var(--primary); transform: translateX(5px); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); font-weight: bold;}
+        .quiz-option.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); font-weight: bold;}
+        .quiz-feedback { margin-top: 15px; font-weight: bold; display: none; padding: 15px; border-radius: 8px; line-height: 1.5;}
+        
+        .btn-anim { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: 0.3s; font-weight: bold; margin-top: 15px;}
+        .btn-anim:hover { background: var(--primary-hover); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); padding: 15px; }
+            .main-content { padding: 20px; }
+            .live-clock { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 10px;">JS Masterclass</h2>
+            <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">ಓದುವಿಕೆಯ ಪ್ರಗತಿ</p>
+            <ul class="nav-links">
+                <li><a href="#intro" class="active">1. ಪೀಠಿಕೆ (Date ಎಂದರೇನು?)</a></li>
+                <li><a href="#live-example">2. ಲೈವ್ ಉದಾಹರಣೆ (Live Clock)</a></li>
+                <li><a href="#creation">3. Date ಸೃಷ್ಟಿಸುವ 4 ವಿಧಾನಗಳು</a></li>
+                <li><a href="#warning">4. 🚨 ಶೂನ್ಯ ತಿಂಗಳ ಎಚ್ಚರಿಕೆ (0-Index)</a></li>
+                <li><a href="#getters">5. Getters (ಸಮಯ ಪಡೆಯುವುದು)</a></li>
+                <li><a href="#setters">6. Setters (ಸಮಯ ಬದಲಾಯಿಸುವುದು)</a></li>
+                <li><a href="#formatting">7. Formatting (ಸುಂದರ ವಿನ್ಯಾಸ)</a></li>
+                <li><a href="#playground">8. Interactive Playground</a></li>
+                <li><a href="#quiz">9. ಪರೀಕ್ಷೆ (Quiz)</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="topbar">
+                <button class="theme-toggle" onclick="toggleTheme()">☀️ Light / Dark</button>
+            </div>
+
+            <section id="intro">
+                <h1>JavaScript Date Object (ದಿನಾಂಕ)</h1>
+                <p><strong>ಶೂನ್ಯದಿಂದ ವೃತ್ತಿಪರ ಹಂತದವರೆಗೆ (Beginner to Pro) ಸಂಪೂರ್ಣ ಕೈಪಿಡಿ.</strong></p>
+                
+                <div class="card info">
+                    <strong style="color: var(--info); font-size: 1.2rem;">Concept ಎಂದರೇನು? (Definition)</strong>
+                    <p style="margin-top: 10px;">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>Date Object</strong> ಎಂದರೆ ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನ <strong>"ಡಿಜಿಟಲ್ ಗಡಿಯಾರ ಮತ್ತು ಕ್ಯಾಲೆಂಡರ್"</strong> ಇದ್ದಂತೆ. ವರ್ಷ, ತಿಂಗಳು, ದಿನ, ಗಂಟೆ, ನಿಮಿಷ ಮತ್ತು ಸೆಕೆಂಡ್‌ಗಳನ್ನು ಪಡೆಯಲು, ಲೆಕ್ಕಾಚಾರ ಮಾಡಲು (ಉದಾ: ವಯಸ್ಸು ಕಂಡುಹಿಡಿಯಲು) ಮತ್ತು ಬದಲಾಯಿಸಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                    
+                    <strong style="color: var(--text-main);">ಏಕೆ ಬೇಕು? (Why do we need it?)</strong>
+                    <p style="margin-bottom:0;">ಬಳಕೆದಾರರು ಯಾವಾಗ ಪೋಸ್ಟ್ ಮಾಡಿದರು? ಆಫರ್ ಎಷ್ಟು ಗಂಟೆಗೆ ಮುಗಿಯುತ್ತದೆ? ಇಂದು ಯಾವ ವಾರ? ಇಂತಹ ಎಲ್ಲಾ ಸಮಯ-ಆಧಾರಿತ ಲೆಕ್ಕಾಚಾರಗಳನ್ನು ಮಾಡಲು Date ಆಬ್ಜೆಕ್ಟ್ ಅನಿವಾರ್ಯ.</p>
+                </div>
+            </section>
+
+            <section id="live-example">
+                <h2>ನೈಜ ಜೀವನದ ಉದಾಹರಣೆ (Live Example)</h2>
+                <p>Date ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಬಳಸಿ ಮಾಡಲಾದ ಲೈವ್ ಡಿಜಿಟಲ್ ಗಡಿಯಾರವನ್ನು ಇಲ್ಲಿ ನೋಡಿ. ಇದು ನಿಮ್ಮ ಕಂಪ್ಯೂಟರ್/ಮೊಬೈಲ್‌ನ ಪ್ರಸ್ತುತ ಸಮಯವನ್ನು ಓದುತ್ತಿದೆ.</p>
+
+                <div class="clock-container">
+                    <h3 style="margin-top:0; color: var(--text-main);">ಈಗಿನ ಸಮಯ (Live Clock)</h3>
+                    <div class="live-clock" id="liveClock">00:00:00</div>
+                    <div class="live-date" id="liveDate">ದಿನಾಂಕ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</div>
+                    <p style="font-size:0.85rem; color:var(--success); margin-top: 15px;"><code>new Date()</code> ಬಳಸಿ ಈ ಗಡಿಯಾರವನ್ನು ಮಾಡಲಾಗಿದೆ.</p>
+                </div>
+            </section>
+
+            <section id="creation">
+                <h2>Date ಸೃಷ್ಟಿಸುವ 4 ವಿಧಾನಗಳು (4 Ways to Create)</h2>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ದಿನಾಂಕವನ್ನು ಸೃಷ್ಟಿಸಲು ನಾವು <code>new Date()</code> ಕೀವರ್ಡ್ ಬಳಸುತ್ತೇವೆ. ಇದನ್ನು 4 ವಿಭಿನ್ನ ರೀತಿಯಲ್ಲಿ ಬಳಸಬಹುದು.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Creating Dates</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// 1. ಪ್ರಸ್ತುತ ಸಮಯ (Current Time) - ಆವರಣ ಖಾಲಿ ಬಿಟ್ಟರೆ ಈಗಿನ ಸಮಯ ಬರುತ್ತದೆ</span>
+<span class="keyword">let</span> <span class="variable">now</span> = <span class="keyword">new</span> <span class="function">Date</span>(); 
+<span class="function">console.log</span>(<span class="variable">now</span>);
+
+<span class="comment">// 2. ನಿರ್ದಿಷ್ಟ ಸಂಖ್ಯೆಗಳು (Year, Month, Day, Hours, Min, Sec, ms)</span>
+<span class="comment">// ಗಮನಿಸಿ: ಇಲ್ಲಿ 11 ಎಂದರೆ ಡಿಸೆಂಬರ್! (ತಿಂಗಳು 0 ಯಿಂದ ಶುರು)</span>
+<span class="keyword">let</span> <span class="variable">customDate</span> = <span class="keyword">new</span> <span class="function">Date</span>(<span class="number">2026</span>, <span class="number">11</span>, <span class="number">25</span>, <span class="number">10</span>, <span class="number">30</span>, <span class="number">0</span>);
+
+<span class="comment">// 3. Date String (ಟೆಕ್ಸ್ಟ್ ಮೂಲಕ) - ಇದು ಓದಲು ಸುಲಭ</span>
+<span class="keyword">let</span> <span class="variable">stringDate</span> = <span class="keyword">new</span> <span class="function">Date</span>(<span class="string">"October 17, 2026 10:30:00"</span>);
+
+<span class="comment">// 4. Milliseconds (ಮಿಲಿಸೆಕೆಂಡ್‌ಗಳು - 1970 ಜನವರಿ 1 ರಿಂದ)</span>
+<span class="keyword">let</span> <span class="variable">epochDate</span> = <span class="keyword">new</span> <span class="function">Date</span>(<span class="number">100000000000</span>);</code></pre>
+                </div>
+            </section>
+
+            <section id="warning">
+                <div class="card danger">
+                    <h2>🚨 ಅತಿ ದೊಡ್ಡ ಎಚ್ಚರಿಕೆ (The 0-Index Trap)</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 5px;">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>ತಿಂಗಳುಗಳು (Months) 0 ಯಿಂದ ಶುರುವಾಗುತ್ತವೆ!</strong></p>
+                    <ul style="margin-bottom: 0;">
+                        <li><strong>0</strong> = ಜನವರಿ (January)</li>
+                        <li><strong>1</strong> = ಫೆಬ್ರವರಿ (February)</li>
+                        <li>...</li>
+                        <li><strong>11</strong> = ಡಿಸೆಂಬರ್ (December)</li>
+                    </ul>
+                    <p style="margin-top: 10px;">ನೀವು <code>new Date(2026, 3, 10)</code> ಎಂದು ಬರೆದರೆ, ಅದು ಮಾರ್ಚ್ ಅಲ್ಲ, <strong>ಏಪ್ರಿಲ್ 10</strong> ಆಗಿರುತ್ತದೆ! ಬಹುತೇಕ ಎಲ್ಲಾ Beginners ಮಾಡುವ ಅತಿ ದೊಡ್ಡ ತಪ್ಪು ಇದು.</p>
+                </div>
+            </section>
+
+            <section id="getters">
+                <h2>ಸಮಯ ಪಡೆಯುವುದು (Getters Methods)</h2>
+                <p>ಸೃಷ್ಟಿಸಿದ Date ಇಂದ ಕೇವಲ ವರ್ಷ ಅಥವಾ ಕೇವಲ ದಿನವನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಪಡೆಯಲು <code>get</code> ವಿಧಾನಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Getter Methods</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> <span class="variable">d</span> = <span class="keyword">new</span> <span class="function">Date</span>(<span class="string">"2026-10-17"</span>);
+
+<span class="keyword">let</span> <span class="variable">year</span> = <span class="variable">d</span>.<span class="function">getFullYear</span>(); <span class="comment">// 2026 (ಯಾವಾಗಲೂ getFullYear ಬಳಸಿ, getYear ಅಲ್ಲ!)</span>
+<span class="keyword">let</span> <span class="variable">month</span> = <span class="variable">d</span>.<span class="function">getMonth</span>();   <span class="comment">// 9 (ಅಂದರೆ 10ನೇ ತಿಂಗಳು ಅಕ್ಟೋಬರ್)</span>
+<span class="keyword">let</span> <span class="variable">date</span> = <span class="variable">d</span>.<span class="function">getDate</span>();     <span class="comment">// 17 (ತಾರೀಖು)</span>
+<span class="keyword">let</span> <span class="variable">day</span> = <span class="variable">d</span>.<span class="function">getDay</span>();       <span class="comment">// 6 (ವಾರದ ದಿನ: ಭಾನುವಾರ = 0, ಸೋಮವಾರ = 1... ಶನಿವಾರ = 6)</span>
+
+<span class="function">console.log</span>(<span class="string">"ವರ್ಷ: "</span> + <span class="variable">year</span>); <span class="comment">// 2026</span></code></pre>
+                </div>
+            </section>
+
+            <section id="setters">
+                <h2>ಸಮಯ ಬದಲಾಯಿಸುವುದು (Setters Methods)</h2>
+                <p>ಇರುವ ದಿನಾಂಕವನ್ನು ಬದಲಾಯಿಸಲು <code>set</code> ವಿಧಾನಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Setter Methods</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> <span class="variable">myDate</span> = <span class="keyword">new</span> <span class="function">Date</span>();
+<span class="function">console.log</span>(<span class="string">"ಹಳೆಯ ವರ್ಷ: "</span> + <span class="variable">myDate</span>.<span class="function">getFullYear</span>());
+
+<span class="comment">// ವರ್ಷವನ್ನು 2030 ಕ್ಕೆ ಬದಲಾಯಿಸೋಣ</span>
+<span class="variable">myDate</span>.<span class="function">setFullYear</span>(<span class="number">2030</span>);
+
+<span class="comment">// ತಿಂಗಳನ್ನು ಮಾರ್ಚ್ (2) ಕ್ಕೆ ಬದಲಾಯಿಸೋಣ</span>
+<span class="variable">myDate</span>.<span class="function">setMonth</span>(<span class="number">2</span>); 
+
+<span class="function">console.log</span>(<span class="string">"ಹೊಸ ವರ್ಷ: "</span> + <span class="variable">myDate</span>.<span class="function">getFullYear</span>()); <span class="comment">// 2030</span></code></pre>
+                </div>
+            </section>
+
+            <section id="formatting">
+                <h2>ಸುಂದರ ವಿನ್ಯಾಸ (Formatting Methods - Pro Level)</h2>
+                <p>ಗ್ರಾಹಕರಿಗೆ ದಿನಾಂಕವನ್ನು ಸುಂದರವಾಗಿ ತೋರಿಸಲು <code>toLocaleDateString()</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇದನ್ನು ನಾವು ಕನ್ನಡದಲ್ಲಿಯೂ ತೋರಿಸಬಹುದು!</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>JavaScript - Formatting</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">let</span> <span class="variable">today</span> = <span class="keyword">new</span> <span class="function">Date</span>();
+
+<span class="comment">// 1. ಸಾಮಾನ್ಯ ಓದುವಿಕೆ (Standard local format)</span>
+<span class="function">console.log</span>(<span class="variable">today</span>.<span class="function">toLocaleDateString</span>()); <span class="comment">// ಉದಾ: 17/10/2026</span>
+
+<span class="comment">// 2. ವೃತ್ತಿಪರ ಕಸ್ಟಮ್ ವಿನ್ಯಾಸ (Pro Custom format)</span>
+<span class="keyword">let</span> <span class="variable">options</span> = { <span class="variable">weekday</span>: <span class="string">'long'</span>, <span class="variable">year</span>: <span class="string">'numeric'</span>, <span class="variable">month</span>: <span class="string">'long'</span>, <span class="variable">day</span>: <span class="string">'numeric'</span> };
+<span class="function">console.log</span>(<span class="variable">today</span>.<span class="function">toLocaleDateString</span>(<span class="string">'kn-IN'</span>, <span class="variable">options</span>)); 
+<span class="comment">// ಔಟ್‌ಪುಟ್: ಶನಿವಾರ, 17 ಅಕ್ಟೋಬರ್, 2026</span>
+
+<span class="comment">// 3. ಡೇಟಾಬೇಸ್ ವಿನ್ಯಾಸ (ISO format for Servers)</span>
+<span class="function">console.log</span>(<span class="variable">today</span>.<span class="function">toISOString</span>()); <span class="comment">// 2026-10-17T08:09:00.000Z</span></code></pre>
+                </div>
+            </section>
+
+            <section id="playground">
+                <h2>Interactive Code Playground (ಲೈವ್ ಕೋಡ್)</h2>
+                <p>ಕೆಳಗಿನ ಕೋಡ್ ಅನ್ನು ಎಡಿಟ್ ಮಾಡಿ ಮತ್ತು "▶ Run Code" ಒತ್ತಿ. ನಿಮ್ಮ ಹುಟ್ಟಿದ ದಿನಾಂಕವನ್ನು ಹಾಕಿ <code>getDay()</code> ಮೂಲಕ ನೀವು ಹುಟ್ಟಿದ ವಾರ ಯಾವುದು ಎಂದು ಪರೀಕ್ಷಿಸಿ!</p>
+                
+                <div class="playground">
+                    <div class="play-header">JS Sandbox <span style="font-size:0.8rem; font-weight:normal;">(Editable)</span></div>
+                    <div class="play-body">
+                        <textarea class="code-input" id="userCode" spellcheck="false">
+// ನಿಮ್ಮ ಹುಟ್ಟಿದ ದಿನಾಂಕವನ್ನು ಇಲ್ಲಿ ಹಾಕಿ (YYYY-MM-DD)
+let dob = new Date("2000-01-26"); 
+
+let days = ["ಭಾನುವಾರ", "ಸೋಮವಾರ", "ಮಂಗಳವಾರ", "ಬುಧವಾರ", "ಗುರುವಾರ", "ಶುಕ್ರವಾರ", "ಶನಿವಾರ"];
+
+// getDay() ನಮಗೆ 0 ಇಂದ 6 ವರೆಗಿನ ನಂಬರ್ ಕೊಡುತ್ತದೆ
+let dayIndex = dob.getDay(); 
+
+console.log("ನೀವು ಹುಟ್ಟಿದ ವಾರ: " + days[dayIndex]);
+                        </textarea>
+                        <div class="play-controls">
+                            <button class="btn-run" onclick="runPlayground()">▶ Run Code</button>
+                            <span style="color: var(--text-muted); font-size: 0.9rem; align-self: center;">ಕೋಡ್ ಬದಲಾಯಿಸಿ ಪರೀಕ್ಷಿಸಿ.</span>
+                        </div>
+                        <div class="output-panel" id="playOutput">ಔಟ್‌ಪುಟ್ ಇಲ್ಲಿ ಬರುತ್ತದೆ...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quiz">
+                <h2>ಪರೀಕ್ಷೆ ಮತ್ತು ಅಭ್ಯಾಸ (Interactive Quiz)</h2>
+                <p>Date Concept ನಿಮಗೆ ಎಷ್ಟು ಅರ್ಥವಾಗಿದೆ ಎಂದು ಪರೀಕ್ಷಿಸಲು ಈ ಕೆಳಗಿನ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ:</p>
+
+                <div class="quiz-container" id="quizBlock">
+                    <h3 style="margin-top:0; color:var(--primary)" id="qText">ಪ್ರಶ್ನೆ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</h3>
+                    <div id="optionsBlock">
+                        <!-- Options will be injected here by JS -->
+                    </div>
+                    <div id="qFeedback" class="quiz-feedback"></div>
+                    <button id="nextQBtn" class="btn-anim" style="display:none;" onclick="nextQuestion()">ಮುಂದಿನ ಪ್ರಶ್ನೆ ➔</button>
+                    
+                    <div id="quizResult" style="display: none; text-align: center; padding: 20px;">
+                        <h2 style="color: var(--success); justify-content: center;">ರಸಪ್ರಶ್ನೆ ಮುಕ್ತಾಯ! 🎉</h2>
+                        <p style="font-size: 1.2rem;">ನಿಮ್ಮ ಸ್ಕೋರ್: <strong id="scoreText">0/0</strong></p>
+                        <button class="btn-anim" onclick="resetQuiz()">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ (Retry)</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // 1. Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+        }
+
+        // 2. Live Clock Logic
+        function updateClock() {
+            const now = new Date();
+            
+            // Format time: HH:MM:SS
+            let hours = now.getHours().toString().padStart(2, '0');
+            let mins = now.getMinutes().toString().padStart(2, '0');
+            let secs = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('liveClock').innerText = `${hours}:${mins}:${secs}`;
+            
+            // Format Date (Kannada)
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('kn-IN', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+
+        // 3. Scroll Progress Bar & Active Link Update
+        window.addEventListener('scroll', () => {
+            const scrollPx = document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (scrollPx / winHeightPx) * 100;
+            if (scrolled > 100) scrolled = 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Active link highlight
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+        // 4. Copy Code Functionality
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const codeText = pre.innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.innerText = 'Copied! ✓';
+                button.style.color = 'var(--success)';
+                button.style.borderColor = 'var(--success)';
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.style.color = 'var(--text-muted)';
+                    button.style.borderColor = 'var(--border)';
+                }, 2000);
+            });
+        }
+
+        // 5. Safe Interactive Playground (Sandboxed execution)
+        function runPlayground() {
+            const code = document.getElementById('userCode').value;
+            const outputPanel = document.getElementById('playOutput');
+            outputPanel.innerText = "Running...";
+            outputPanel.style.color = "var(--text-main)";
+
+            // Capture console.log securely
+            let outputStore = [];
+            const originalLog = console.log;
+            console.log = (...args) => {
+                outputStore.push(args.join(' '));
+            };
+
+            try {
+                // Strict mode eval alternative
+                const runCode = new Function(`"use strict";\n${code}`);
+                runCode();
+                
+                if(outputStore.length === 0) outputPanel.innerText = "ಯಾವುದೇ ಔಟ್‌ಪುಟ್ ಬಂದಿಲ್ಲ. (console.log ಬಳಸಿದ್ದೀರಾ?)";
+                else outputPanel.innerText = outputStore.join('\n');
+                
+            } catch (err) {
+                outputPanel.innerText = "Error (ತಪ್ಪು): \n❌ " + err.message;
+                outputPanel.style.color = "var(--danger)";
+            } finally {
+                console.log = originalLog; // Restore original console
+            }
+        }
+
+        // 6. Quiz Logic
+        const quizData = [
+            {
+                q: "Q1. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಡಿಸೆಂಬರ್ (December) ತಿಂಗಳನ್ನು ನಂಬರ್ ಮೂಲಕ ಬರೆಯಬೇಕಾದರೆ ಯಾವ ಸಂಖ್ಯೆ ಬಳಸಬೇಕು?",
+                options: ["1. 12", "2. 0", "3. 11", "4. 1"],
+                ans: 2, // index 2 (11)
+                exp: ["ತಪ್ಪು. JS ನಲ್ಲಿ ತಿಂಗಳು 1 ರಿಂದ ಶುರುವಾಗುವುದಿಲ್ಲ.", "ತಪ್ಪು. 0 ಎಂದರೆ ಜನವರಿ.", "ಸರಿಯಾದ ಉತ್ತರ! ತಿಂಗಳುಗಳು 0 ಯಿಂದ (ಜನವರಿ) ಶುರುವಾಗಿ 11 ಕ್ಕೆ (ಡಿಸೆಂಬರ್) ಅಂತ್ಯಗೊಳ್ಳುತ್ತವೆ.", "ತಪ್ಪು"]
+            },
+            {
+                q: "Q2. ಭಾನುವಾರ (Sunday) ಆಗಿದ್ದರೆ, getDay() ಫಂಕ್ಷನ್ ಯಾವ ಸಂಖ್ಯೆಯನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತದೆ (return ಮಾಡುತ್ತದೆ)?",
+                options: ["1. 1", "2. 0", "3. 7", "4. -1"],
+                ans: 1, // index 1 (0)
+                exp: ["ತಪ್ಪು. 1 ಎಂದರೆ ಸೋಮವಾರ.", "ಸರಿಯಾದ ಉತ್ತರ! ವಾರದ ದಿನಗಳು ಭಾನುವಾರದಿಂದ (0) ಶುರುವಾಗಿ ಶನಿವಾರಕ್ಕೆ (6) ಅಂತ್ಯಗೊಳ್ಳುತ್ತವೆ.", "ತಪ್ಪು. JS ನಲ್ಲಿ ವಾರದ ದಿನ 7 ಇರುವುದಿಲ್ಲ.", "ತಪ್ಪು"]
+            },
+            {
+                q: "Q3. ಪ್ರಸ್ತುತ (ಈಗಿನ) ಸಮಯ ಮತ್ತು ದಿನಾಂಕವನ್ನು ಪಡೆಯಲು ಸರಿಯಾದ ಕೋಡ್ ಯಾವುದು?",
+                options: ["1. new Date()", "2. Date.now", "3. getDate()", "4. new Time()"],
+                ans: 0, // index 0
+                exp: ["ಸರಿಯಾದ ಉತ್ತರ! new Date() ಬ್ರಾಕೆಟ್ ಒಳಗೆ ಏನೂ ಹಾಕದಿದ್ದರೆ ಅದು ಈಗಿನ ಸಮಯವನ್ನು ತರುತ್ತದೆ.", "ತಪ್ಪು", "ತಪ್ಪು. ಇದು ಕೇವಲ ತಾರೀಖು ಕೊಡುತ್ತದೆ, ಸಂಪೂರ್ಣ ಆಬ್ಜೆಕ್ಟ್ ಅಲ್ಲ.", "ತಪ್ಪು. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Time ಆಬ್ಜೆಕ್ಟ್ ಇಲ್ಲ."]
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+
+        function renderQuestion() {
+            if (currentQuestion >= quizData.length) {
+                showQuizResult();
+                return;
+            }
+
+            const q = quizData[currentQuestion];
+            document.getElementById('qText').innerText = q.q;
+            const optionsBlock = document.getElementById('optionsBlock');
+            optionsBlock.innerHTML = ''; // clear old options
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-option";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, index === q.ans, q.exp[index]);
+                optionsBlock.appendChild(btn);
+            });
+            
+            document.getElementById('qFeedback').style.display = "none";
+            document.getElementById('nextQBtn').style.display = "none";
+        }
+
+        function checkAnswer(button, isCorrect, explanation) {
+            // Disable all buttons
+            document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
+            
+            const feedback = document.getElementById('qFeedback');
+            feedback.style.display = "block";
+            feedback.innerText = explanation;
+
+            if(isCorrect) {
+                button.classList.add('correct');
+                feedback.style.background = "rgba(16, 185, 129, 0.1)";
+                feedback.style.border = "1px solid var(--success)";
+                feedback.style.color = "var(--success)";
+                score++;
+            } else {
+                button.classList.add('wrong');
+                feedback.style.background = "rgba(239, 68, 68, 0.1)";
+                feedback.style.border = "1px solid var(--danger)";
+                feedback.style.color = "var(--danger)";
+                
+                // Highlight correct answer
+                const allBtns = document.querySelectorAll('.quiz-option');
+                allBtns[quizData[currentQuestion].ans].classList.add('correct');
+            }
+
+            document.getElementById('nextQBtn').style.display = "inline-block";
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            renderQuestion();
+        }
+
+        function showQuizResult() {
+            document.getElementById('qText').style.display = "none";
+            document.getElementById('optionsBlock').style.display = "none";
+            document.getElementById('qFeedback').style.display = "none";
+            document.getElementById('nextQBtn').style.display = "none";
+            
+            const resultBlock = document.getElementById('quizResult');
+            resultBlock.style.display = "block";
+            document.getElementById('scoreText').innerText = `${score} / ${quizData.length}`;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('quizResult').style.display = "none";
+            document.getElementById('qText').style.display = "block";
+            document.getElementById('optionsBlock').style.display = "block";
+            renderQuestion();
+        }
+
+        // Initialize quiz
+        renderQuestion();
+    </script>
+</body>
+</html>

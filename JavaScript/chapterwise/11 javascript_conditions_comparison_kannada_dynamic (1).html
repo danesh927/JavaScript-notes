@@ -1,0 +1,3742 @@
+<!doctype html>
+<html lang="kn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e766e">
+<meta name="description" content="JavaScript Conditions ಮತ್ತು Comparison Operators — ಕನ್ನಡದಲ್ಲಿ ಮೂಲಭೂತದಿಂದ Professional Level ವರೆಗೆ ಇಂಟರಾಕ್ಟಿವ್ ಅಧ್ಯಯನ ನೋಟ್ಸ್.">
+<title>JavaScript Conditions ಮತ್ತು Comparison Operators — Basic to Professional Level | JS Kannada Lab</title>
+<style>
+:root{color-scheme:light;--bg:#f4f7fb;--surface:#fff;--surface-2:#edf3f6;--ink:#14232d;--muted:#60717c;--line:#dce5e9;--accent:#087f73;--accent-2:#20b7a3;--accent-soft:#dcf7f0;--code:#10212b;--code-ink:#e0f2f1;--shadow:0 12px 34px rgba(21,48,63,.08);--sidebar:300px;--radius:18px;}
+[data-theme="dark"]{color-scheme:dark;--bg:#0a1218;--surface:#101d25;--surface-2:#192b34;--ink:#e7f1f4;--muted:#a1b6bf;--line:#2b414b;--accent:#56d7c2;--accent-2:#8ce9d8;--accent-soft:#153b39;--code:#061016;--code-ink:#ddf7f2;--shadow:0 14px 40px rgba(0,0,0,.23)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Kannada","Nirmala UI",sans-serif;line-height:1.78;font-size:16px;transition:background .25s,color .25s}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.top-progress{position:fixed;inset:0 auto auto 0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),#5eead4);z-index:2000;box-shadow:0 0 14px #20b7a366}.topbar{position:sticky;top:0;z-index:1000;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}.topbar-inner{max-width:1600px;margin:auto;display:flex;align-items:center;gap:16px;padding:12px 22px}.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.3px;white-space:nowrap}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;color:white;background:linear-gradient(135deg,#0c9888,#075e64);box-shadow:0 7px 16px #0c988833;font-weight:900}.brand small{display:block;color:var(--muted);font-weight:600;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;line-height:1.1}.search-wrap{position:relative;flex:1;max-width:550px;margin-left:20px}.search-wrap input{width:100%;padding:10px 42px 10px 40px;background:var(--surface-2);color:var(--ink);border:1px solid var(--line);border-radius:12px;outline:none}.search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}.search-count{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted)}.toolbar{margin-left:auto;display:flex;align-items:center;gap:7px}.icon-btn,.tool-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:11px;padding:8px 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px}.icon-btn:hover,.tool-btn:hover{border-color:var(--accent);background:var(--accent-soft)}.menu-toggle{display:none}.layout{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);gap:26px;padding:24px}.sidebar{position:sticky;top:88px;align-self:start;height:calc(100vh - 112px);overflow:auto;padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.sidebar-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:1px 4px 12px;font-weight:850;font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.progress-card{padding:13px;background:var(--surface-2);border-radius:14px;margin-bottom:15px}.progress-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}.progress-track{height:7px;background:var(--line);border-radius:99px;overflow:hidden}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:width .25s}.toc{display:flex;flex-direction:column;gap:4px}.toc-link{display:flex;align-items:flex-start;gap:10px;color:var(--muted);font-size:13px;line-height:1.45;padding:9px 8px;border-radius:10px;transition:background .15s,color .15s}.toc-link:hover,.toc-link.active{color:var(--accent);background:var(--accent-soft);text-decoration:none}.toc-link .toc-number{flex:0 0 27px;font-size:11px;font-weight:850;padding-top:2px;color:var(--accent)}.sidebar-footer{border-top:1px solid var(--line);margin-top:16px;padding-top:12px;color:var(--muted);font-size:12px}.main{min-width:0}.hero{position:relative;overflow:hidden;border-radius:25px;padding:clamp(26px,5vw,54px);color:white;background:radial-gradient(circle at 82% 13%,#64e7d055 0,transparent 29%),linear-gradient(128deg,#082f3a 0%,#075d64 47%,#0a927f 100%);box-shadow:0 20px 48px #074f5430}.hero:before,.hero:after{content:"";position:absolute;border:1px solid #ffffff20;border-radius:50%;pointer-events:none}.hero:before{width:330px;height:330px;right:-80px;top:-120px;animation:float 9s ease-in-out infinite}.hero:after{width:210px;height:210px;right:25px;top:-35px;animation:float 7s ease-in-out infinite reverse}.hero-grid{position:absolute;inset:0;opacity:.13;background-image:linear-gradient(#ffffff22 1px,transparent 1px),linear-gradient(90deg,#ffffff22 1px,transparent 1px);background-size:32px 32px;mask-image:linear-gradient(90deg,transparent,#000)}.hero-content{position:relative;z-index:1;max-width:850px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #ffffff42;background:#ffffff12;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:750;letter-spacing:.3px}.eyebrow-dot{height:7px;width:7px;background:#74f0c7;border-radius:50%;box-shadow:0 0 0 5px #74f0c71c}.hero h1{font-size:clamp(31px,4.5vw,54px);line-height:1.25;letter-spacing:-1.3px;margin:20px 0 14px;max-width:850px}.hero p{font-size:17px;color:#d4f4ee;max-width:760px;margin:0}.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}.hero-chip{font-size:12px;padding:8px 12px;border-radius:10px;border:1px solid #ffffff30;background:#ffffff0f}.hero-visual{position:absolute;right:8%;bottom:22px;width:180px;height:145px;opacity:.9}.hero-visual svg{width:100%;height:100%}.intro-card{margin:20px 0;padding:24px 26px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.intro-card h2{margin-top:0}.lesson-section{margin-top:24px;padding:clamp(18px,3vw,32px);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);scroll-margin-top:90px;transition:border-color .2s,transform .2s}.lesson-section:target{border-color:var(--accent)}.chapter-header{display:flex;align-items:flex-start;gap:16px;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:22px}.chapter-title{position:relative;margin:0!important;color:var(--ink);font-size:clamp(23px,3vw,32px);line-height:1.4;letter-spacing:-.5px;max-width:900px}.chapter-title:before{content:"";display:block;width:42px;height:4px;border-radius:99px;background:var(--accent);margin-bottom:13px}.collapse-btn{flex:0 0 auto;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:10px;padding:7px 10px;font-size:12px;white-space:nowrap}.collapse-btn:hover{color:var(--accent);border-color:var(--accent)}.chapter-content h3{font-size:22px;line-height:1.45;margin:30px 0 10px;letter-spacing:-.25px}.chapter-content h4{font-size:18px;margin:25px 0 8px}.chapter-content h5{font-size:16px;margin:20px 0 7px}.chapter-content p{margin:10px 0 16px}.chapter-content li,.preamble li{padding-left:3px;margin:5px 0}.chapter-content ul,.chapter-content ol,.preamble ul,.preamble ol{padding-left:26px}.chapter-content strong,.preamble strong{color:var(--accent)}.chapter-content code,.preamble code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.88em;background:var(--surface-2);border:1px solid var(--line);padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}.chapter-content pre,.preamble pre{position:relative;overflow:auto;background:var(--code);color:var(--code-ink);border:1px solid #28404b;border-radius:13px;padding:19px 17px;margin:14px 0 20px;line-height:1.62;box-shadow:inset 0 1px #ffffff08}.chapter-content pre code,.preamble pre code{background:transparent;border:0;border-radius:0;padding:0;color:inherit;font-size:13px;white-space:pre}.code-actions{position:relative;float:none;z-index:2;display:flex;justify-content:flex-end;gap:5px;margin:12px 4px -9px 0}.code-actions button{font-size:11px;border:1px solid #45616d;color:#d8f4ee;background:#18333f;border-radius:7px;padding:5px 8px}.code-actions button:hover{background:#27505a}.run-result{clear:both;margin:8px 0 5px;background:#08151c;border:1px solid #2f4b56;border-radius:10px;padding:11px 13px;color:#d6eee9;font:12px/1.55 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word;min-height:36px}.chapter-content table,.preamble table{width:100%;border-collapse:separate;border-spacing:0;margin:18px 0 23px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}.chapter-content th,.preamble th{background:var(--surface-2);text-align:left;font-weight:800;color:var(--ink)}.chapter-content td,.chapter-content th,.preamble td,.preamble th{padding:11px 13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top}.chapter-content tr:last-child td,.preamble tr:last-child td{border-bottom:0}.chapter-content td:last-child,.chapter-content th:last-child,.preamble td:last-child,.preamble th:last-child{border-right:0}.chapter-content blockquote,.preamble blockquote{margin:18px 0;padding:13px 18px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0}.chapter-content hr{border:0;border-top:1px solid var(--line);margin:26px 0}.chapter-content img{max-width:100%}.callout{padding:17px 20px;border:1px solid color-mix(in srgb,var(--accent) 32%,var(--line));background:var(--accent-soft);border-radius:14px;margin:18px 0}.callout-title{font-weight:850;color:var(--accent);margin-bottom:4px}.preamble{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px;margin:20px 0;box-shadow:var(--shadow)}.preamble h2{font-size:22px;margin-top:0}.preamble h3{font-size:17px;margin:17px 0 5px}.preamble>p:first-of-type{font-size:17px;color:var(--muted)}.preamble h3:has(+p){letter-spacing:.2px}.extra-section{margin-top:24px;padding:clamp(18px,3vw,30px);border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}.extra-section h2{margin:0 0 10px;font-size:26px}.extra-section .subtext{color:var(--muted);margin-top:0}.lab-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:16px;margin-top:20px}.lab-editor{width:100%;min-height:250px;resize:vertical;padding:16px;border-radius:12px;border:1px solid #334d5a;background:var(--code);color:var(--code-ink);font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;outline:none}.lab-editor:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}.lab-output{min-height:250px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:15px;overflow:auto}.output-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:850;color:var(--muted);margin-bottom:11px}.output-text{font:13px/1.7 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.primary-btn{border:0;background:linear-gradient(135deg,var(--accent),#0a9b87);color:white;padding:10px 15px;border-radius:11px;font-weight:800;box-shadow:0 6px 14px #087f7328}.primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.secondary-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 13px;border-radius:11px;font-weight:700}.actions-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.quiz-list{display:grid;gap:15px;margin-top:18px}.quiz-question{border:1px solid var(--line);border-radius:14px;padding:17px;background:var(--surface)}.quiz-question h3{font-size:16px;margin:0 0 11px}.quiz-options{display:grid;gap:7px}.quiz-option{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:9px;border:1px solid var(--line);cursor:pointer}.quiz-option:hover{background:var(--surface-2)}.quiz-option input{accent-color:var(--accent);margin-top:6px}.quiz-explanation{margin-top:10px;padding:11px;border-radius:9px;background:var(--surface-2);font-size:13px}.quiz-question.correct{border-color:#16a34a}.quiz-question.incorrect{border-color:#dc5555}.quiz-footer{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}.score{font-weight:850;color:var(--accent)}.footer{color:var(--muted);text-align:center;font-size:12px;padding:28px 0 10px}.back-top{position:fixed;right:22px;bottom:20px;z-index:900;border:0;background:var(--accent);color:white;border-radius:14px;width:45px;height:45px;font-size:20px;box-shadow:0 8px 25px #0002;opacity:0;pointer-events:none;transform:translateY(8px);transition:.2s}.back-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}mark.search-hit{background:#fce883;color:#302a10;border-radius:3px;padding:0 1px}.no-results{display:none;padding:18px;background:var(--surface);border:1px dashed var(--line);border-radius:13px;color:var(--muted);margin-top:14px}.hidden-by-search{display:none!important}.badge{display:inline-flex;border-radius:99px;padding:4px 9px;font-size:11px;background:var(--accent-soft);color:var(--accent);font-weight:800}.subtle{font-size:13px;color:var(--muted)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(12px)}}@media(max-width:1120px){:root{--sidebar:250px}.layout{gap:18px;padding:18px}.hero-visual{right:3%;opacity:.45}.search-wrap{margin-left:5px}}@media(max-width:850px){.layout{display:block;padding:14px}.sidebar{position:fixed;top:67px;bottom:0;left:0;z-index:1200;width:min(330px,88vw);height:auto;border-radius:0 18px 18px 0;transform:translateX(-105%);transition:transform .25s;box-shadow:20px 0 60px #0002}.sidebar.open{transform:translateX(0)}.menu-toggle{display:inline-flex}.topbar-inner{padding:10px 13px;gap:9px}.brand small{display:none}.brand{font-size:14px}.search-wrap{max-width:none}.toolbar .tool-label{display:none}.hero{padding:28px 24px}.hero-visual{display:none}.lab-grid{grid-template-columns:1fr}.lab-editor{min-height:200px}.lab-output{min-height:150px}.chapter-header{gap:8px}.collapse-btn{padding:6px 8px}}@media(max-width:520px){body{font-size:15px}.topbar-inner{flex-wrap:wrap}.brand{flex:1}.search-wrap{order:3;flex-basis:100%;margin:0;max-width:none}.toolbar{margin-left:0}.hero h1{font-size:32px}.hero p{font-size:15px}.hero-meta{gap:6px}.hero-chip{font-size:11px}.layout{padding:10px}.lesson-section,.preamble,.extra-section{padding:17px;border-radius:15px}.chapter-title{font-size:23px}.chapter-content h3{font-size:19px}.chapter-content table,.preamble table{font-size:12px;display:block;overflow-x:auto}.chapter-content td,.chapter-content th,.preamble td,.preamble th{padding:8px}.collapse-btn{font-size:0}.collapse-btn:after{content:"−";font-size:14px}.collapse-btn[aria-expanded="false"]:after{content:"+"}.toolbar{gap:4px}.icon-btn{min-width:38px;padding:7px}.brand-mark{width:34px;height:34px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}@media print{.topbar,.sidebar,.top-progress,.toolbar,.search-wrap,.collapse-btn,.code-actions,.back-top,.extra-section.interactive-only{display:none!important}.layout{display:block;padding:0;max-width:none}.hero{background:#075d64!important;print-color-adjust:exact}.lesson-section,.preamble{box-shadow:none;break-inside:avoid;border-color:#bbb;margin:10px 0}.chapter-content{display:block!important}body{background:white;color:black;font-size:11pt}.chapter-content pre{white-space:pre-wrap;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="top-progress" id="topProgress"></div>
+<header class="topbar"><div class="topbar-inner">
+<button class="icon-btn menu-toggle" id="menuToggle" aria-label="ಪಾಠಗಳ ಮೆನು ತೆರೆಯಿರಿ" title="ಪಾಠಗಳ ಮೆನು">☰</button>
+<a class="brand" href="#top" aria-label="ಮೇಲಕ್ಕೆ ಹೋಗಿ"><span class="brand-mark">JS</span><span>Kannada Lab<small>LEARN · TEST · PRACTICE</small></span></a>
+<div class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="ನೋಟ್ಸ್‌ನಲ್ಲಿ ಹುಡುಕಿ… (ಉದಾ: ===, Truthy)" autocomplete="off" aria-label="ನೋಟ್ಸ್‌ನಲ್ಲಿ ಹುಡುಕಿ"><span class="search-count" id="searchCount"></span></div>
+<div class="toolbar">
+<button class="icon-btn" id="fontDown" title="ಅಕ್ಷರ ಚಿಕ್ಕದಾಗಿಸಿ" aria-label="ಅಕ್ಷರ ಚಿಕ್ಕದಾಗಿಸಿ">A−</button>
+<button class="icon-btn" id="fontUp" title="ಅಕ್ಷರ ದೊಡ್ಡದಾಗಿಸಿ" aria-label="ಅಕ್ಷರ ದೊಡ್ಡದಾಗಿಸಿ">A+</button>
+<button class="icon-btn" id="themeToggle" title="ಡಾರ್ಕ್ ಮೋಡ್ ಬದಲಿಸಿ" aria-label="ಡಾರ್ಕ್ ಮೋಡ್ ಬದಲಿಸಿ">◐</button>
+<button class="icon-btn" id="printBtn" title="Print / PDF" aria-label="ಮುದ್ರಿಸಿ ಅಥವಾ PDF ಉಳಿಸಿ">⎙</button>
+</div></div></header>
+<div class="layout" id="top">
+<aside class="sidebar" id="sidebar" aria-label="ಅಧ್ಯಾಯಗಳ ನ್ಯಾವಿಗೇಷನ್">
+<div class="sidebar-title"><span>ಪಾಠಗಳ ಪಟ್ಟಿ</span><span class="badge" id="chapterCount">21 chapters</span></div>
+<div class="progress-card"><div class="progress-meta"><span>ನಿಮ್ಮ ಓದುವ ಪ್ರಗತಿ</span><strong id="progressPercent">0%</strong></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="progress-meta" style="margin:8px 0 0"><span id="readCount">0 / 21 ಅಧ್ಯಾಯಗಳು</span><span>ಆಟೋ ಟ್ರ್ಯಾಕ್</span></div></div>
+<nav class="toc" id="toc"><a class="toc-link" href="#ಭಗ-1-conditions-ಎದರನ" data-target="ಭಗ-1-conditions-ಎದರನ"><span class="toc-number">01</span><span>ಭಾಗ 1: Conditions ಎಂದರೇನು?</span></a><a class="toc-link" href="#ಭಗ-2-comparison-operators-ಸಪರಣ-ವವರಣ" data-target="ಭಗ-2-comparison-operators-ಸಪರಣ-ವವರಣ"><span class="toc-number">02</span><span>ಭಾಗ 2: Comparison Operators ಸಂಪೂರ್ಣ ವಿವರಣೆ</span></a><a class="toc-link" href="#ಭಗ-3-equality-operators-ಮತತ" data-target="ಭಗ-3-equality-operators-ಮತತ"><span class="toc-number">03</span><span>ಭಾಗ 3: Equality Operators — == ಮತ್ತು ===</span></a><a class="toc-link" href="#ಭಗ-4-javascript-ನಲಲ-if-ಮತತ-conditional-statements" data-target="ಭಗ-4-javascript-ನಲಲ-if-ಮತತ-conditional-statements"><span class="toc-number">04</span><span>ಭಾಗ 4: JavaScript ನಲ್ಲಿ if ಮತ್ತು Conditional Statements</span></a><a class="toc-link" href="#ಭಗ-5-logical-operators" data-target="ಭಗ-5-logical-operators"><span class="toc-number">05</span><span>ಭಾಗ 5: Logical Operators — &amp;&amp; , || , !</span></a><a class="toc-link" href="#ಭಗ-6-truthy-ಮತತ-falsy-values" data-target="ಭಗ-6-truthy-ಮತತ-falsy-values"><span class="toc-number">06</span><span>ಭಾಗ 6: Truthy ಮತ್ತು Falsy Values</span></a><a class="toc-link" href="#ಭಗ-7-type-coercion-ಮತತ-type-conversion" data-target="ಭಗ-7-type-coercion-ಮತತ-type-conversion"><span class="toc-number">07</span><span>ಭಾಗ 7: Type Coercion ಮತ್ತು Type Conversion</span></a><a class="toc-link" href="#ಭಗ-8-nan-null-undefined-ಮತತ-edge-cases" data-target="ಭಗ-8-nan-null-undefined-ಮತತ-edge-cases"><span class="toc-number">08</span><span>ಭಾಗ 8: NaN , null , undefined ಮತ್ತು Edge Cases</span></a><a class="toc-link" href="#ಭಗ-9-switch-statement-ಸಪರಣ-ವವರಣ" data-target="ಭಗ-9-switch-statement-ಸಪರಣ-ವವರಣ"><span class="toc-number">09</span><span>ಭಾಗ 9: switch Statement ಸಂಪೂರ್ಣ ವಿವರಣೆ</span></a><a class="toc-link" href="#ಭಗ-10-ternary-operator" data-target="ಭಗ-10-ternary-operator"><span class="toc-number">10</span><span>ಭಾಗ 10: Ternary Operator ( ? : )</span></a><a class="toc-link" href="#ಭಗ-11-short-circuit-evaluation-professional-concept" data-target="ಭಗ-11-short-circuit-evaluation-professional-concept"><span class="toc-number">11</span><span>ಭಾಗ 11: Short-Circuit Evaluation — Professional Concept</span></a><a class="toc-link" href="#ಭಗ-12-modern-javascript-nullish-coalescing" data-target="ಭಗ-12-modern-javascript-nullish-coalescing"><span class="toc-number">12</span><span>ಭಾಗ 12: Modern JavaScript — Nullish Coalescing ( ?? )</span></a><a class="toc-link" href="#ಭಗ-13-optional-chaining-.-ಮತತ-conditions" data-target="ಭಗ-13-optional-chaining-.-ಮತತ-conditions"><span class="toc-number">13</span><span>ಭಾಗ 13: Optional Chaining ( ?. ) ಮತ್ತು Conditions</span></a><a class="toc-link" href="#ಭಗ-14-in-ಮತತ-instanceof-operators" data-target="ಭಗ-14-in-ಮತತ-instanceof-operators"><span class="toc-number">14</span><span>ಭಾಗ 14: in ಮತ್ತು instanceof Operators</span></a><a class="toc-link" href="#ಭಗ-15-operator-precedence-ಮತತ-parentheses" data-target="ಭಗ-15-operator-precedence-ಮತತ-parentheses"><span class="toc-number">15</span><span>ಭಾಗ 15: Operator Precedence ಮತ್ತು Parentheses</span></a><a class="toc-link" href="#ಭಗ-16-professional-coding-ನಲಲ-ತಪಪಸಬಕದ-ಪರಮಖ-ತಪಪಗಳ" data-target="ಭಗ-16-professional-coding-ನಲಲ-ತಪಪಸಬಕದ-ಪರಮಖ-ತಪಪಗಳ"><span class="toc-number">16</span><span>ಭಾಗ 16: Professional Coding ನಲ್ಲಿ ತಪ್ಪಿಸಬೇಕಾದ ಪ್ರಮುಖ ತಪ್ಪುಗಳು</span></a><a class="toc-link" href="#ಭಗ-17-real-world-project-example-login-validation" data-target="ಭಗ-17-real-world-project-example-login-validation"><span class="toc-number">17</span><span>ಭಾಗ 17: Real-World Project Example — Login Validation</span></a><a class="toc-link" href="#ಭಗ-18-comparison-ಮತತ-conditions-ಕರತ-ಇನನಷಟ-ಉದಹರಣಗಳ" data-target="ಭಗ-18-comparison-ಮತತ-conditions-ಕರತ-ಇನನಷಟ-ಉದಹರಣಗಳ"><span class="toc-number">18</span><span>ಭಾಗ 18: Comparison ಮತ್ತು Conditions ಕುರಿತ ಇನ್ನಷ್ಟು ಉದಾಹರಣೆಗಳು</span></a><a class="toc-link" href="#ಭಗ-19-professional-best-practices" data-target="ಭಗ-19-professional-best-practices"><span class="toc-number">19</span><span>ಭಾಗ 19: Professional Best Practices</span></a><a class="toc-link" href="#ಭಗ-20-ಸವಯ-ಅಭಯಸ-ಉತತರಗಳದಗ" data-target="ಭಗ-20-ಸವಯ-ಅಭಯಸ-ಉತತರಗಳದಗ"><span class="toc-number">20</span><span>ಭಾಗ 20: ಸ್ವಯಂ ಅಭ್ಯಾಸ — ಉತ್ತರಗಳೊಂದಿಗೆ</span></a><a class="toc-link" href="#ಅತಮ-revision-ಈ-ಅಧಯಯದ-ಮಖಯ-ಅಶಗಳ" data-target="ಅತಮ-revision-ಈ-ಅಧಯಯದ-ಮಖಯ-ಅಶಗಳ"><span class="toc-number">21</span><span>ಅಂತಿಮ Revision — ಈ ಅಧ್ಯಾಯದ ಮುಖ್ಯ ಅಂಶಗಳು</span></a></nav>
+<div class="sidebar-footer">💡 ಸೂಚನೆ: ಕೋಡ್ ಬ್ಲಾಕ್‌ನಲ್ಲಿ <b>Run ▶</b> ಒತ್ತಿ ಔಟ್‌ಪುಟ್ ನೋಡಿ. ನಿಮ್ಮ ಪ್ರಗತಿ ಈ ಪುಟದಲ್ಲೇ ಟ್ರ್ಯಾಕ್ ಆಗುತ್ತದೆ.</div>
+</aside>
+<main class="main" id="mainContent">
+<section class="hero" aria-labelledby="heroTitle"><div class="hero-grid"></div><div class="hero-content"><span class="eyebrow"><span class="eyebrow-dot"></span> BEGINNER → PROFESSIONAL</span><h1 id="heroTitle">JavaScript Conditions ಮತ್ತು Comparison Operators — Basic to Professional Level</h1><p>JavaScript ಷರತ್ತುಗಳು, ಹೋಲಿಕೆ Operators ಮತ್ತು Professional Logic ಅನ್ನು ಹಂತ ಹಂತವಾಗಿ ಕಲಿಯಿರಿ. ಓದಿ, ಪ್ರಯೋಗಿಸಿ, ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ.</p><div class="hero-meta"><span class="hero-chip">📘 ಸಂಪೂರ್ಣ ಕನ್ನಡ ನೋಟ್ಸ್</span><span class="hero-chip">⚡ Live Code Runner</span><span class="hero-chip">🧠 Interactive Quiz</span><span class="hero-chip">🌙 Dark Mode</span></div></div><div class="hero-visual" aria-hidden="true"><svg viewBox="0 0 220 160" fill="none"><rect x="16" y="15" width="188" height="130" rx="18" stroke="#C7FFF2" stroke-opacity=".4"/><path d="M36 42h58M36 53h39M36 64h76" stroke="#B9F6EA" stroke-width="4" stroke-linecap="round"/><path d="M126 39l29 17-29 17-29-17 29-17Z" fill="#75F4D5" fill-opacity=".22" stroke="#B9F6EA" stroke-width="2"/><path d="M126 73v17M126 90H81v12M126 90h45v12" stroke="#B9F6EA" stroke-width="2" stroke-linecap="round"/><rect x="49" y="103" width="63" height="22" rx="7" fill="#B9F6EA" fill-opacity=".25" stroke="#B9F6EA"/><rect x="143" y="103" width="44" height="22" rx="7" fill="#FDE68A" fill-opacity=".2" stroke="#FDE68A"/><text x="80" y="118" font-size="10" fill="#E1FFF8" text-anchor="middle">TRUE</text><text x="165" y="118" font-size="10" fill="#FFF1B5" text-anchor="middle">FALSE</text></svg></div></section>
+<div id="articleContent"><div class="preamble">
+<p>ಸಂಪೂರ್ಣ ಕನ್ನಡ ಅಧ್ಯಯನ ನೋಟ್ಸ್ · Beginner → Intermediate → Advanced · Modern JavaScript</p>
+<p>JavaScript ಅನ್ನು ಈಗಷ್ಟೇ ಕಲಿಯಲು ಪ್ರಾರಂಭಿಸಿರುವ ವಿದ್ಯಾರ್ಥಿಯೂ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವಂತೆ, ಕಂಪ್ಯೂಟರ್‌ನ ನಿರ್ಧಾರ ತೆಗೆದುಕೊಳ್ಳುವ ವಿಧಾನದಿಂದ ಪ್ರಾರಂಭಿಸಿ Professional Coding ವರೆಗೆ ಈ ವಿಷಯಗಳನ್ನು ಅಧ್ಯಯನ ಮಾಡೋಣ.</p>
+<p>ಈ ಅಧ್ಯಾಯದ ಉದ್ದೇಶ ಕೇವಲ Operators ಗಳ ಹೆಸರನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದಲ್ಲ. ಯಾವ Operator ಏನು ಮಾಡುತ್ತದೆ, ಏಕೆ ಬಳಸಬೇಕು, ಯಾವಾಗ ಬಳಸಬೇಕು, ಫಲಿತಾಂಶ ಹೇಗೆ ಬರುತ್ತದೆ ಮತ್ತು ಯಾವ ತಪ್ಪುಗಳನ್ನು ತಪ್ಪಿಸಬೇಕು ಎಂಬುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದಾಗಿದೆ.</p>
+<h2 id="ಅಧಯಯದ-ಕಲಕ-ಕರಮ">ಅಧ್ಯಾಯದ ಕಲಿಕಾ ಕ್ರಮ</h2>
+<h3 id="section">01</h3>
+<p>Conditions ಪರಿಚಯ</p>
+<p>Condition, true, false ಮತ್ತು Boolean</p>
+<h3 id="section-1">02</h3>
+<p>Comparison Operators</p>
+<p>&gt;, &lt;, &gt;=, &lt;=, ==, ===, !=, !==</p>
+<h3 id="section-2">03</h3>
+<p>Conditional Statements</p>
+<p>if, else, else if, Nested if</p>
+<h3 id="section-3">04</h3>
+<p>Logical Operators</p>
+<p>&amp;&amp;, ||, ! ಮತ್ತು Short-Circuit Evaluation</p>
+<h3 id="section-4">05</h3>
+<p>Type Conversion</p>
+<p>Truthy, Falsy, Type Coercion ಮತ್ತು NaN</p>
+<h3 id="section-5">06</h3>
+<p>Advanced JavaScript</p>
+<p>switch, Ternary, in, instanceof, ?? ಮತ್ತು ?.</p>
+<h3 id="section-6">07</h3>
+<p>Professional Practices</p>
+<p>Operator Precedence, Edge Cases ಮತ್ತು Debugging</p>
+<h3 id="section-7">08</h3>
+<p>ಪ್ರಾಯೋಗಿಕ ಅಭ್ಯಾಸ</p>
+<p>Coding Examples ಮತ್ತು MCQ</p>
+</div>
+<section class="lesson-section" data-title="ಭಾಗ 1: Conditions ಎಂದರೇನು?" id="ಭಗ-1-conditions-ಎದರನ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-1-conditions-ಎದರನ">ಭಾಗ 1: Conditions ಎಂದರೇನು?</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ನಜ-ಜವನದಲಲ-condition">1.1 ನೈಜ ಜೀವನದಲ್ಲಿ Condition</h3>
+<p>ನೀವು ಒಂದು ಪರೀಕ್ಷೆ ಬರೆದಿದ್ದೀರಿ ಎಂದುಕೊಳ್ಳಿ. ಪರೀಕ್ಷೆಯಲ್ಲಿ ಪಾಸ್ ಆಗಲು ಕನಿಷ್ಠ 35 ಅಂಕಗಳು ಬೇಕು.</p>
+<ul>
+<li>ಅಂಕಗಳು 35 ಅಥವಾ ಅದಕ್ಕಿಂತ ಹೆಚ್ಚು ಇದ್ದರೆ — Pass.</li>
+<li>ಅಂಕಗಳು 35 ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದ್ದರೆ — Fail.</li>
+</ul>
+<p>ನೀವು ತೆಗೆದುಕೊಳ್ಳುವ ನಿರ್ಧಾರವು ಒಂದು ಷರತ್ತಿನ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿದೆ. ಆ ಷರತ್ತೇ Condition.</p>
+<p>ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಕೂಡ ಇದೇ ತರ್ಕವನ್ನು ಬಳಸಬಹುದು.</p>
+<pre><code>let marks = 80;
+
+if (marks &gt;= 35) {
+  console.log("Pass");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Pass</code></pre>
+<p>ಈ ಉದಾಹರಣೆಯನ್ನು ಹಂತ ಹಂತವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ.</p>
+<ol type="1">
+<li><code>let marks = 80;</code> — <code>marks</code> ಎಂಬ Variable ನಲ್ಲಿ <code>80</code> ಅನ್ನು ಸಂಗ್ರಹಿಸಲಾಗಿದೆ.</li>
+<li><code>if</code> — ಮುಂದಿನ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸಲು JavaScript ಗೆ ಸೂಚಿಸುತ್ತದೆ.</li>
+<li><code>marks &gt;= 35</code> — ಅಂಕಗಳು 35 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಥವಾ ಅದಕ್ಕೆ ಸಮಾನವೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ.</li>
+<li><code>80 &gt;= 35</code> ಫಲಿತಾಂಶ <code>true</code>.</li>
+<li>ಆದ್ದರಿಂದ <code>{ }</code> ಒಳಗಿನ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</li>
+<li><code>console.log("Pass")</code> ಎಂಬುದು <code>Pass</code> ಅನ್ನು Output ನಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.</li>
+</ol>
+<h3 id="condition-ಎದರನ">1.2 Condition ಎಂದರೇನು?</h3>
+<p>Condition ಎಂದರೆ ಒಂದು ನಿರ್ದಿಷ್ಟ ಷರತ್ತು ಸತ್ಯವೇ ಅಥವಾ ಅಸತ್ಯವೇ ಎಂಬುದನ್ನು ಪರಿಶೀಲಿಸಿ, ಅದರ ಆಧಾರದ ಮೇಲೆ ಪ್ರೋಗ್ರಾಂನ ಮುಂದಿನ ಕಾರ್ಯವನ್ನು ನಿರ್ಧರಿಸಲು ಬಳಸುವ Expression.</p>
+<p>ಸಾಮಾನ್ಯವಾಗಿ Condition ನಿಂದ <code>true</code> ಅಥವಾ <code>false</code> ಎಂಬ Boolean ಫಲಿತಾಂಶ ಸಿಗುತ್ತದೆ. ಆದರೆ JavaScript ನ <code>if</code> Statement ನಲ್ಲಿ Number, String, Object ಮುಂತಾದ ಮೌಲ್ಯಗಳನ್ನೂ ನೇರವಾಗಿ ಬಳಸಬಹುದು. ಇವುಗಳನ್ನು ನಂತರ Truthy ಮತ್ತು Falsy ಭಾಗದಲ್ಲಿ ಕಲಿಯೋಣ.</p>
+<h4 id="condition-ಎಲಲ-ಉಪಯಗವಗತತದ">Condition ಎಲ್ಲಿ ಉಪಯೋಗವಾಗುತ್ತದೆ?</h4>
+<table>
+<thead>
+<tr class="header">
+<th>ಬಳಕೆ               </th>
+<th>ಷರತ್ತಿನ ಉದಾಹರಣೆ       </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ಪಾಸ್ ಅಥವಾ ಫೇಲ್     </td>
+<td><code>marks &gt;= 35</code>         </td>
+</tr>
+<tr class="even">
+<td>ವಯಸ್ಸು ಪರಿಶೀಲನೆ     </td>
+<td><code>age &gt;= 18</code>           </td>
+</tr>
+<tr class="odd">
+<td>Login ಪರಿಶೀಲನೆ     </td>
+<td><code>isLoggedIn === true</code> </td>
+</tr>
+<tr class="even">
+<td>Password ಪರಿಶೀಲನೆ   </td>
+<td><code>password.length &gt;= 8</code></td>
+</tr>
+<tr class="odd">
+<td>Stock ಲಭ್ಯತೆ       </td>
+<td><code>quantity &gt; 0</code>         </td>
+</tr>
+<tr class="even">
+<td>Internet connection</td>
+<td><code>isOnline === true</code>   </td>
+</tr>
+<tr class="odd">
+<td>ಪ್ರವೇಶ ಅನುಮತಿ       </td>
+<td><code>isAdmin === true</code>     </td>
+</tr>
+</tbody>
+</table>
+<p>ನೈಜ ವೆಬ್‌ಸೈಟ್‌ಗಳಲ್ಲಿ Form Validation, Login Flow, Shopping Cart, Payment Status, User Permissions ಮುಂತಾದ ಅನೇಕ ಕಾರ್ಯಗಳಲ್ಲಿ Conditions ಬಳಸಲಾಗುತ್ತದೆ.</p>
+<h3 id="boolean-ಎದರನ">1.3 Boolean ಎಂದರೇನು?</h3>
+<p>JavaScript ನಲ್ಲಿ <code>Boolean</code> ಎಂಬುದು ಕೇವಲ ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೊಂದಿರುವ Data Type.</p>
+<pre><code>let isAvailable = true;
+let isCompleted = false;
+
+console.log(isAvailable); // true
+console.log(isCompleted); // false</code></pre>
+<ul>
+<li><code>true</code> ಎಂದರೆ ಷರತ್ತು ಸತ್ಯ.</li>
+<li><code>false</code> ಎಂದರೆ ಷರತ್ತು ಅಸತ್ಯ.</li>
+</ul>
+<p>JavaScript ನಲ್ಲಿ ಇವುಗಳನ್ನು ಸಣ್ಣ ಅಕ್ಷರಗಳಲ್ಲಿ ಬರೆಯಬೇಕು. <code>True</code> ಮತ್ತು <code>False</code> JavaScript ನ Boolean Literals ಅಲ್ಲ.</p>
+<pre><code>console.log(typeof true);  // "boolean"
+console.log(typeof false); // "boolean"</code></pre>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 2: Comparison Operators ಸಂಪೂರ್ಣ ವಿವರಣೆ" id="ಭಗ-2-comparison-operators-ಸಪರಣ-ವವರಣ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-2-comparison-operators-ಸಪರಣ-ವವರಣ">ಭಾಗ 2: Comparison Operators ಸಂಪೂರ್ಣ ವಿವರಣೆ</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="comparison-operator-ಎದರನ">2.1 Comparison Operator ಎಂದರೇನು?</h3>
+<p>ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸಲು ಬಳಸುವ Operator ಅನ್ನು Comparison Operator ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಉದಾಹರಣೆಗೆ:</p>
+<pre><code>console.log(10 &gt; 5);</code></pre>
+<p>Output:</p>
+<pre><code>true</code></pre>
+<p>ಇಲ್ಲಿ <code>10</code> ಮತ್ತು <code>5</code> ಎಂಬ ಮೌಲ್ಯಗಳನ್ನು <code>&gt;</code> Operator ಮೂಲಕ ಹೋಲಿಸಲಾಗಿದೆ. ಫಲಿತಾಂಶ <code>true</code>.</p>
+<h3 id="ಎಲಲ-ಎಟ-ಮಖಯ-comparison-operators">2.2 ಎಲ್ಲಾ ಎಂಟು ಮುಖ್ಯ Comparison Operators</h3>
+<table>
+<colgroup>
+<col style="width: 9%"/>
+<col style="width: 27%"/>
+<col style="width: 41%"/>
+<col style="width: 12%"/>
+<col style="width: 8%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operator</th>
+<th>English ಹೆಸರು           </th>
+<th>ಕನ್ನಡದ ಅರ್ಥ                         </th>
+<th>ಉದಾಹರಣೆ     </th>
+<th>Result </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&gt;</code>     </td>
+<td>Greater than             </td>
+<td>ಗಿಂತ ದೊಡ್ಡದು                         </td>
+<td><code>10 &gt; 5</code>   </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>&lt;</code>     </td>
+<td>Less than               </td>
+<td>ಗಿಂತ ಚಿಕ್ಕದು                         </td>
+<td><code>3 &lt; 8</code>     </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="odd">
+<td><code>&gt;=</code>     </td>
+<td>Greater than or equal to</td>
+<td>ದೊಡ್ಡದು ಅಥವಾ ಸಮಾನ                   </td>
+<td><code>5 &gt;= 5</code>   </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>&lt;=</code>     </td>
+<td>Less than or equal to   </td>
+<td>ಚಿಕ್ಕದು ಅಥವಾ ಸಮಾನ                   </td>
+<td><code>4 &lt;= 5</code>   </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="odd">
+<td><code>==</code>     </td>
+<td>Loose equality           </td>
+<td>Type Conversion ನಿಯಮಗಳೊಂದಿಗೆ ಸಮಾನತೆ </td>
+<td><code>5 == "5"</code> </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>===</code>   </td>
+<td>Strict equality         </td>
+<td>Type ಮತ್ತು Value ಎರಡರ ಸಮಾನತೆ         </td>
+<td><code>5 === "5"</code></td>
+<td><code>false</code></td>
+</tr>
+<tr class="odd">
+<td><code>!=</code>     </td>
+<td>Loose inequality         </td>
+<td>Type Conversion ನಿಯಮಗಳೊಂದಿಗೆ ಅಸಮಾನತೆ</td>
+<td><code>5 != "6"</code> </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>!==</code>   </td>
+<td>Strict inequality       </td>
+<td>Strict ನಿಯಮಗಳ ಪ್ರಕಾರ ಅಸಮಾನತೆ         </td>
+<td><code>5 !== "5"</code></td>
+<td><code>true</code> </td>
+</tr>
+</tbody>
+</table>
+<p>ಈಗ ಪ್ರತಿಯೊಂದನ್ನು ವಿವರವಾಗಿ ಕಲಿಯೋಣ.</p>
+<h3 id="greater-than">2.3 Greater Than (<code>&gt;</code>)</h3>
+<p>ಎಡಭಾಗದ ಮೌಲ್ಯವು ಬಲಭಾಗದ ಮೌಲ್ಯಕ್ಕಿಂತ ದೊಡ್ಡದಾಗಿದ್ದರೆ <code>true</code> ಬರುತ್ತದೆ.</p>
+<pre><code>console.log(20 &gt; 10); // true
+console.log(5 &gt; 10);  // false
+console.log(10 &gt; 10); // false</code></pre>
+<p>ವಿವರಣೆ:</p>
+<ul>
+<li><code>20 &gt; 10</code> — 20 ದೊಡ್ಡದು; <code>true</code>.</li>
+<li><code>5 &gt; 10</code> — 5 ದೊಡ್ಡದಲ್ಲ; <code>false</code>.</li>
+<li><code>10 &gt; 10</code> — ಎರಡೂ ಸಮಾನ; <code>false</code>.</li>
+</ul>
+<p>ಮುಖ್ಯ ನಿಯಮ: <code>&gt;</code> ಎಂದರೆ ದೊಡ್ಡದು ಮಾತ್ರ. ಸಮಾನವಾಗಿದ್ದರೆ ಸಾಕಾಗುವುದಿಲ್ಲ.</p>
+<h3 id="less-than">2.4 Less Than (<code>&lt;</code>)</h3>
+<p>ಎಡಭಾಗದ ಮೌಲ್ಯವು ಬಲಭಾಗದ ಮೌಲ್ಯಕ್ಕಿಂತ ಚಿಕ್ಕದಾಗಿದ್ದರೆ <code>true</code> ಬರುತ್ತದೆ.</p>
+<pre><code>console.log(5 &lt; 10);  // true
+console.log(15 &lt; 10); // false
+console.log(10 &lt; 10); // false</code></pre>
+<p><code>&lt;</code> Operator ಸಮಾನತೆಯನ್ನು ಸ್ವೀಕರಿಸುವುದಿಲ್ಲ.</p>
+<h3 id="greater-than-or-equal-to">2.5 Greater Than or Equal To (<code>&gt;=</code>)</h3>
+<p>ಎಡಭಾಗದ ಮೌಲ್ಯವು ದೊಡ್ಡದಾಗಿದ್ದರೂ ಅಥವಾ ಎರಡೂ ಮೌಲ್ಯಗಳು ಸಮಾನವಾಗಿದ್ದರೂ <code>true</code> ಬರುತ್ತದೆ.</p>
+<pre><code>console.log(40 &gt;= 35); // true
+console.log(35 &gt;= 35); // true
+console.log(20 &gt;= 35); // false</code></pre>
+<p>ಪರೀಕ್ಷೆಯ ಪಾಸ್ ಮಾರ್ಕ್ ಅಥವಾ ಕನಿಷ್ಠ ವಯಸ್ಸನ್ನು ಪರೀಕ್ಷಿಸಲು ಇದು ಉಪಯುಕ್ತ.</p>
+<h3 id="less-than-or-equal-to">2.6 Less Than or Equal To (<code>&lt;=</code>)</h3>
+<p>ಎಡಭಾಗದ ಮೌಲ್ಯವು ಚಿಕ್ಕದಾಗಿದ್ದರೂ ಅಥವಾ ಸಮಾನವಾಗಿದ್ದರೂ <code>true</code> ಬರುತ್ತದೆ.</p>
+<pre><code>console.log(10 &lt;= 20); // true
+console.log(20 &lt;= 20); // true
+console.log(25 &lt;= 20); // false</code></pre>
+<p>ಉದಾಹರಣೆಗೆ, ಒಂದು ಉತ್ಪನ್ನದ ಬೆಲೆ ನಿಮ್ಮ ಬಜೆಟ್ ಒಳಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಲು ಇದನ್ನು ಬಳಸಬಹುದು.</p>
+<pre><code>let price = 800;
+let budget = 1000;
+
+console.log(price &lt;= budget); // true</code></pre>
+<h3 id="ಈ-ನಲಕ-operators-ನಡವನ-ವಯತಯಸ">2.7 ಈ ನಾಲ್ಕು Operators ನಡುವಿನ ವ್ಯತ್ಯಾಸ</h3>
+<pre><code>let a = 10;
+let b = 10;
+
+console.log(a &gt; b);  // false
+console.log(a &lt; b);  // false
+console.log(a &gt;= b); // true
+console.log(a &lt;= b); // true</code></pre>
+<p>ಎರಡೂ ಮೌಲ್ಯಗಳು ಸಮಾನವಾದಾಗ <code>&gt;</code> ಮತ್ತು <code>&lt;</code> ಎರಡೂ <code>false</code> ನೀಡುತ್ತವೆ. ಆದರೆ <code>&gt;=</code> ಮತ್ತು <code>&lt;=</code> ಎರಡೂ <code>true</code> ನೀಡುತ್ತವೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 3: Equality Operators — == ಮತ್ತು ===" id="ಭಗ-3-equality-operators-ಮತತ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-3-equality-operators-ಮತತ">ಭಾಗ 3: Equality Operators — <code>==</code> ಮತ್ತು <code>===</code></h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಇದು JavaScript ನಲ್ಲಿ ಅತ್ಯಂತ ಮುಖ್ಯವಾದ ವಿಷಯ. Beginner ಗಳು ಮಾತ್ರವಲ್ಲದೆ ಅನುಭವಿಗಳೂ ಇದನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಂಡಿರಬೇಕು.</p>
+<h3 id="ಎದರನ">3.1 <code>==</code> ಎಂದರೇನು?</h3>
+<p><code>==</code> ಅನ್ನು Loose Equality Operator ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುವಾಗ JavaScript ನ ನಿಯಮಗಳ ಪ್ರಕಾರ ಅಗತ್ಯವಿದ್ದರೆ Type Conversion ಮಾಡುತ್ತದೆ.</p>
+<pre><code>console.log(5 == 5);   // true
+console.log(5 == "5"); // true</code></pre>
+<p>ಎರಡನೆಯ ಉದಾಹರಣೆಯಲ್ಲಿ:</p>
+<ul>
+<li><code>5</code> — Number Type.</li>
+<li><code>"5"</code> — String Type.</li>
+<li><code>==</code> ಬಳಸಿದಾಗ JavaScript Type Conversion ನಿಯಮಗಳನ್ನು ಅನ್ವಯಿಸಿ ಅವುಗಳನ್ನು ಹೋಲಿಸುತ್ತದೆ.</li>
+<li>ಈ ನಿರ್ದಿಷ್ಟ ಉದಾಹರಣೆಯಲ್ಲಿ ಫಲಿತಾಂಶ <code>true</code>.</li>
+</ul>
+<h3 id="ಎದರನ-1">3.2 <code>===</code> ಎಂದರೇನು?</h3>
+<p><code>===</code> ಅನ್ನು Strict Equality Operator ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಇದು Type Conversion ಮೂಲಕ ವಿಭಿನ್ನ Types ಗಳನ್ನು ಸಮಾನಗೊಳಿಸುವುದಿಲ್ಲ. Primitive ಮೌಲ್ಯಗಳಿಗೆ Type ಮತ್ತು Value ಎರಡೂ ಹೊಂದಾಣಿಕೆಯಾಗಬೇಕು.</p>
+<pre><code>console.log(5 === 5);   // true
+console.log(5 === "5"); // false</code></pre>
+<p>ಇಲ್ಲಿ ಎರಡನೆಯ ಉದಾಹರಣೆ <code>false</code>, ಏಕೆಂದರೆ <code>5</code> Number; <code>"5"</code> String.</p>
+<h3 id="ಮತತ-ಹಲಕ">3.3 <code>==</code> ಮತ್ತು <code>===</code> ಹೋಲಿಕೆ</h3>
+<h4 id="loose-equality">Loose Equality — <code>==</code></h4>
+<pre><code>console.log(10 == "10"); // true
+console.log(0 == false); // true</code></pre>
+<p>ಕೆಲವು ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳು Type Conversion ನಂತರ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡಬಹುದು.</p>
+<h4 id="strict-equality">Strict Equality — <code>===</code></h4>
+<pre><code>console.log(10 === "10"); // false
+console.log(0 === false); // false</code></pre>
+<p>Type ಮತ್ತು Value ಹೊಂದಾಣಿಕೆಯಿರಬೇಕು. ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳನ್ನು ಕೇವಲ ಪರಿವರ್ತಿಸಿ ಸಮಾನಗೊಳಿಸುವುದಿಲ್ಲ.</p>
+<h4 id="ಇನನ-ಕಲವ-ಮಖಯ-ಉದಹರಣಗಳ">ಇನ್ನೂ ಕೆಲವು ಮುಖ್ಯ ಉದಾಹರಣೆಗಳು</h4>
+<pre><code>console.log(1 == true);      // true
+console.log(1 === true);     // false
+
+console.log("" == false);    // true
+console.log("" === false);   // false
+
+console.log(null == undefined);  // true
+console.log(null === undefined); // false</code></pre>
+<p>ಈ ಫಲಿತಾಂಶಗಳು JavaScript ನ ನಿರ್ದಿಷ್ಟ Equality Algorithm ಗಳಿಂದ ಬರುತ್ತವೆ. ಆದ್ದರಿಂದ <code>==</code> ಬಳಸಿದಾಗ ಫಲಿತಾಂಶ ಊಹಿಸುವ ಬದಲು ಅದರ Conversion ನಿಯಮಗಳನ್ನು ತಿಳಿದುಕೊಳ್ಳಬೇಕು.</p>
+<h4 id="professional-coding-ನಲಲ-ಯವದನನ-ಬಳಸಬಕ">Professional Coding ನಲ್ಲಿ ಯಾವುದನ್ನು ಬಳಸಬೇಕು?</h4>
+<p>ಸಾಮಾನ್ಯವಾಗಿ <code>===</code> ಮತ್ತು <code>!==</code> ಬಳಸುವುದು ಉತ್ತಮ.</p>
+<pre><code>let enteredAge = "18";
+
+if (enteredAge === 18) {
+  console.log("Eligible");
+} else {
+  console.log("Types do not match");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Types do not match</code></pre>
+<p>ಕಾರಣ: <code>enteredAge</code> ಒಂದು String. ಬಳಕೆದಾರರು Text Input ಮೂಲಕ ಸಂಖ್ಯೆಯನ್ನು ನೀಡಿದಾಗ ಅದನ್ನು ಅಗತ್ಯಕ್ಕೆ ತಕ್ಕಂತೆ Validate ಮಾಡಿ, Number ಆಗಿ ಪರಿವರ್ತಿಸಿ ನಂತರ ಹೋಲಿಸಬೇಕು.</p>
+<pre><code>let enteredAge = "18";
+let age = Number(enteredAge);
+
+if (Number.isFinite(age) &amp;&amp; age &gt;= 18) {
+  console.log("Eligible");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Eligible</code></pre>
+<p>ಗಮನಿಸಿ: ನೈಜ Form ಗಳಲ್ಲಿ ಖಾಲಿ String ಅನ್ನು ನೇರವಾಗಿ <code>Number()</code> ಮಾಡಿದರೆ <code>0</code> ಸಿಗುತ್ತದೆ. ಆದ್ದರಿಂದ Input ಖಾಲಿಯಿದೆಯೇ ಮತ್ತು ಅದರ Format ಸರಿಯಿದೆಯೇ ಎಂಬುದನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಪರಿಶೀಲಿಸುವುದು ಅಗತ್ಯ.</p>
+<h3 id="ಮತತ">3.4 <code>!=</code> ಮತ್ತು <code>!==</code></h3>
+<p>ಇವು Equality Operators ಗಳ ವಿರುದ್ಧದ ಅರ್ಥವನ್ನು ನೀಡುತ್ತವೆ.</p>
+<ul>
+<li><code>!=</code> — Loose Inequality.</li>
+<li><code>!==</code> — Strict Inequality.</li>
+</ul>
+<pre><code>console.log(5 != "5");   // false
+console.log(5 !== "5");  // true
+
+console.log(5 != 8);     // true
+console.log(5 !== 8);    // true</code></pre>
+<p><code>5 != "5"</code> ನಲ್ಲಿ Loose Equality ಪ್ರಕಾರ ಎರಡೂ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತವೆ. ಆದ್ದರಿಂದ <code>!=</code> ಫಲಿತಾಂಶ <code>false</code>.</p>
+<p><code>5 !== "5"</code> ನಲ್ಲಿ Type ಬೇರೆ ಇರುವುದರಿಂದ ಅವು Strict Equality ಪ್ರಕಾರ ಸಮಾನವಲ್ಲ. ಆದ್ದರಿಂದ <code>!==</code> ಫಲಿತಾಂಶ <code>true</code>.</p>
+<p>ಈ ನಿಯಮವನ್ನು ನೆನಪಿಡಿ:</p>
+<ul>
+<li><code>==</code> / <code>===</code> — ಸಮಾನತೆ ಪರಿಶೀಲಿಸುತ್ತವೆ.</li>
+<li><code>!=</code> / <code>!==</code> — ಅಸಮಾನತೆ ಪರಿಶೀಲಿಸುತ್ತವೆ.</li>
+</ul>
+<p>ಇವುಗಳಲ್ಲಿ <code>==</code> ಮತ್ತು <code>!=</code> Type Conversion ಮಾಡಬಹುದಾದರೆ, <code>===</code> ಮತ್ತು <code>!==</code> Strict ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸುತ್ತವೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 4: JavaScript ನಲ್ಲಿ if ಮತ್ತು Conditional Statements" id="ಭಗ-4-javascript-ನಲಲ-if-ಮತತ-conditional-statements"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-4-javascript-ನಲಲ-if-ಮತತ-conditional-statements">ಭಾಗ 4: JavaScript ನಲ್ಲಿ <code>if</code> ಮತ್ತು Conditional Statements</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>Comparison Operators ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸುತ್ತವೆ. Conditional Statements ಆ ಷರತ್ತಿನ ಫಲಿತಾಂಶಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಯಾವ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕು ಎಂಬುದನ್ನು ನಿರ್ಧರಿಸುತ್ತವೆ.</p>
+<h3 id="if-statement">4.1 <code>if</code> Statement</h3>
+<p>ಒಂದು Condition ಸತ್ಯವಾದಾಗ ಮಾತ್ರ ನಿರ್ದಿಷ್ಟ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕಾದರೆ <code>if</code> ಬಳಸುತ್ತೇವೆ.</p>
+<p>Syntax:</p>
+<pre><code>if (condition) {
+  // condition ಸತ್ಯವಾದಾಗ ನಡೆಯುವ ಕೋಡ್
+}</code></pre>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let temperature = 35;
+
+if (temperature &gt; 30) {
+  console.log("It is hot");
+}</code></pre>
+<p>Output:</p>
+<pre><code>It is hot</code></pre>
+<p><code>temperature &gt; 30</code> ಸತ್ಯವಾದ್ದರಿಂದ <code>if</code> Block ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+<p>Condition <code>false</code> ಆಗಿದ್ದರೆ ಒಳಗಿನ ಕೋಡ್ ನಡೆಯುವುದಿಲ್ಲ.</p>
+<pre><code>let temperature = 20;
+
+if (temperature &gt; 30) {
+  console.log("It is hot");
+}
+
+console.log("Program finished");</code></pre>
+<p>Output:</p>
+<pre><code>Program finished</code></pre>
+<h4 id="curly-braces-ಏಕ-ಬಳಸಬಕ">Curly Braces <code>{}</code> ಏಕೆ ಬಳಸಬೇಕು?</h4>
+<p><code>{}</code> ಒಂದು Block ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ.</p>
+<pre><code>if (true) {
+  console.log("First line");
+  console.log("Second line");
+}</code></pre>
+<p>ಎರಡೂ Statements <code>if</code> Block ನ ಭಾಗವಾಗಿವೆ.</p>
+<p>ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ JavaScript ಒಂದೇ Statement ಗೆ <code>{}</code> ಇಲ್ಲದೆಯೂ ಅವಕಾಶ ನೀಡುತ್ತದೆ. ಆದರೆ Professional Coding ನಲ್ಲಿ ಷರತ್ತುಗಳಿಗೆ <code>{}</code> ಬಳಸುವ ಅಭ್ಯಾಸ ಉತ್ತಮ. ಇದು ತಪ್ಪುಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ ಕೋಡ್ ಓದಲು ಸುಲಭಗೊಳಿಸುತ್ತದೆ.</p>
+<h3 id="if...else">4.2 <code>if...else</code></h3>
+<p>Condition ಸತ್ಯವಾದಾಗ ಒಂದು ಕಾರ್ಯ, ಅಸತ್ಯವಾದಾಗ ಬೇರೆ ಕಾರ್ಯ ಮಾಡಬೇಕಾದರೆ <code>if...else</code> ಬಳಸುತ್ತೇವೆ.</p>
+<p>Syntax:</p>
+<pre><code>if (condition) {
+  // true ಆಗಿದ್ದರೆ
+} else {
+  // false ಆಗಿದ್ದರೆ
+}</code></pre>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let marks = 28;
+
+if (marks &gt;= 35) {
+  console.log("Pass");
+} else {
+  console.log("Fail");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Fail</code></pre>
+<p><code>if</code> ಮತ್ತು <code>else</code> ಗಳಲ್ಲಿ ಒಂದು ಮಾರ್ಗ ಮಾತ್ರ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+<h3 id="if...else-if...else">4.3 <code>if...else if...else</code></h3>
+<p>ಹಲವು ಷರತ್ತುಗಳಲ್ಲಿ ಯಾವುದು ಮೊದಲು ಸತ್ಯವಾಗುತ್ತದೆಯೋ ಆ ಮಾರ್ಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸುತ್ತೇವೆ.</p>
+<pre><code>let marks = 76;
+
+if (marks &gt;= 90) {
+  console.log("Grade A+");
+} else if (marks &gt;= 80) {
+  console.log("Grade A");
+} else if (marks &gt;= 70) {
+  console.log("Grade B");
+} else if (marks &gt;= 35) {
+  console.log("Pass");
+} else {
+  console.log("Fail");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Grade B</code></pre>
+<p>ಇದು ಹೀಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ:</p>
+<ol type="1">
+<li><code>76 &gt;= 90</code> → <code>false</code>.</li>
+<li><code>76 &gt;= 80</code> → <code>false</code>.</li>
+<li><code>76 &gt;= 70</code> → <code>true</code>.</li>
+<li><code>Grade B</code> ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.</li>
+<li>ನಂತರದ <code>else if</code> ಷರತ್ತುಗಳನ್ನು ಈ ಸರಣಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸುವುದಿಲ್ಲ.</li>
+</ol>
+<p>Professional ನಿಯಮ: ಷರತ್ತುಗಳ ಕ್ರಮವನ್ನು ಸರಿಯಾಗಿ ಯೋಜಿಸಬೇಕು. ಅತಿ ವ್ಯಾಪಕವಾದ ಷರತ್ತನ್ನು ಮೊದಲಿಗೆ ಬರೆಯುವುದರಿಂದ ನಿರ್ದಿಷ್ಟ ಫಲಿತಾಂಶಗಳ Block ಗಳು ಕಾರ್ಯನಿರ್ವಹಿಸದೇ ಹೋಗಬಹುದು.</p>
+<h3 id="nested-if">4.4 Nested <code>if</code></h3>
+<p>ಒಂದು <code>if</code> Block ಒಳಗೆ ಮತ್ತೊಂದು <code>if</code> ಬರೆಯುವುದನ್ನು Nested <code>if</code> ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಉದಾಹರಣೆ: ವಯಸ್ಸು ಮತ್ತು ಪರೀಕ್ಷಾ ಅಂಕಗಳನ್ನು ಎರಡನ್ನೂ ಪರಿಶೀಲಿಸೋಣ.</p>
+<pre><code>let age = 20;
+let marks = 80;
+
+if (age &gt;= 18) {
+  if (marks &gt;= 35) {
+    console.log("Eligible and Pass");
+  } else {
+    console.log("Eligible but Fail");
+  }
+} else {
+  console.log("Not eligible by age");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Eligible and Pass</code></pre>
+<p>ಮೊದಲು ವಯಸ್ಸು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ. ವಯಸ್ಸಿನ ಷರತ್ತು ಸತ್ಯವಾದರೆ ಮಾತ್ರ ಅಂಕಗಳ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ.</p>
+<p>ಇದೇ ತರ್ಕವನ್ನು ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ <code>&amp;&amp;</code> ಮೂಲಕವೂ ಬರೆಯಬಹುದು:</p>
+<pre><code>if (age &gt;= 18 &amp;&amp; marks &gt;= 35) {
+  console.log("Eligible and Pass");
+}</code></pre>
+<p>ಆದರೆ ಎರಡೂ ರೂಪಗಳು ಪ್ರತಿಯೊಂದು ಸನ್ನಿವೇಶದಲ್ಲಿಯೂ ಸಮಾನವಾಗಿರುವುದಿಲ್ಲ. ಎರಡನೇ ಷರತ್ತನ್ನು ಮೊದಲ ಷರತ್ತು ಸತ್ಯವಾದಾಗ ಮಾತ್ರ ಪರಿಶೀಲಿಸಬೇಕಾದರೆ Nested <code>if</code> ಉಪಯುಕ್ತವಾಗುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 5: Logical Operators — &amp;&amp; , || , !" id="ಭಗ-5-logical-operators"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-5-logical-operators">ಭಾಗ 5: Logical Operators — <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>Comparison Operators ಸಾಮಾನ್ಯವಾಗಿ ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುತ್ತವೆ. Logical Operators ಅನೇಕ ಷರತ್ತುಗಳನ್ನು ಜೋಡಿಸಲು ಅಥವಾ Boolean ಮೌಲ್ಯವನ್ನು ಬದಲಾಯಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತವೆ.</p>
+<h3 id="logical-and">5.1 Logical AND (<code>&amp;&amp;</code>)</h3>
+<p><code>&amp;&amp;</code> ಅನ್ನು AND ಎಂದು ಓದಬೇಕು.</p>
+<p>ಎರಡೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿದ್ದರೆ ಮಾತ್ರ Boolean Context ನಲ್ಲಿ ಒಟ್ಟಾರೆ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗುತ್ತದೆ.</p>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let age = 20;
+let hasID = true;
+
+if (age &gt;= 18 &amp;&amp; hasID === true) {
+  console.log("Access granted");
+} else {
+  console.log("Access denied");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Access granted</code></pre>
+<p>ಇಲ್ಲಿ:</p>
+<ul>
+<li><code>age &gt;= 18</code> → <code>true</code>.</li>
+<li><code>hasID === true</code> → <code>true</code>.</li>
+<li><code>true &amp;&amp; true</code> → <code>true</code>.</li>
+</ul>
+<h4 id="and-truth-table">AND Truth Table</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Condition 1</th>
+<th>Condition 2</th>
+<th>ಫಲಿತಾಂಶ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>true</code>     </td>
+<td><code>true</code>     </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>true</code>     </td>
+<td><code>false</code>     </td>
+<td><code>false</code></td>
+</tr>
+<tr class="odd">
+<td><code>false</code>     </td>
+<td><code>true</code>     </td>
+<td><code>false</code></td>
+</tr>
+<tr class="even">
+<td><code>false</code>     </td>
+<td><code>false</code>     </td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>ಎಲ್ಲಿ ಬಳಸುತ್ತೇವೆ? ಕನಿಷ್ಠ ವಯಸ್ಸು ಪೂರೈಸಬೇಕು ಮತ್ತು ಗುರುತಿನ ಚೀಟಿ ಇರಬೇಕು; Password ಸರಿಯಾಗಿರಬೇಕು ಮತ್ತು Account ಸಕ್ರಿಯವಾಗಿರಬೇಕು — ಇಂತಹ ಸಂದರ್ಭಗಳಲ್ಲಿ.</p>
+<h3 id="logical-or">5.2 Logical OR (<code>||</code>)</h3>
+<p><code>||</code> ಅನ್ನು OR ಎಂದು ಓದಬೇಕು.</p>
+<p>ಎರಡು ಷರತ್ತುಗಳಲ್ಲಿ ಕನಿಷ್ಠ ಒಂದು ಸತ್ಯವಾಗಿದ್ದರೂ Boolean Context ನಲ್ಲಿ ಒಟ್ಟಾರೆ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗುತ್ತದೆ.</p>
+<pre><code>let hasEmail = false;
+let hasPhone = true;
+
+if (hasEmail || hasPhone) {
+  console.log("Contact detail available");
+} else {
+  console.log("No contact detail");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Contact detail available</code></pre>
+<p>ಇಲ್ಲಿ <code>hasEmail</code> <code>false</code> ಆಗಿದೆ. ಆದರೆ <code>hasPhone</code> <code>true</code>. ಆದ್ದರಿಂದ OR ಫಲಿತಾಂಶ <code>true</code>.</p>
+<h4 id="or-truth-table">OR Truth Table</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Condition 1</th>
+<th>Condition 2</th>
+<th>ಫಲಿತಾಂಶ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>true</code>     </td>
+<td><code>true</code>     </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>true</code>     </td>
+<td><code>false</code>     </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="odd">
+<td><code>false</code>     </td>
+<td><code>true</code>     </td>
+<td><code>true</code> </td>
+</tr>
+<tr class="even">
+<td><code>false</code>     </td>
+<td><code>false</code>     </td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p>AND ಮತ್ತು OR ವ್ಯತ್ಯಾಸ ನೆನಪಿಡಿ:</p>
+<ul>
+<li><code>&amp;&amp;</code> — ಎರಡೂ ಸತ್ಯವಾಗಿರಬೇಕು.</li>
+<li><code>||</code> — ಕನಿಷ್ಠ ಒಂದು ಸತ್ಯವಾಗಿರಬೇಕು.</li>
+</ul>
+<h3 id="logical-not">5.3 Logical NOT (<code>!</code>)</h3>
+<p><code>!</code> ಒಂದು Boolean Context ನಲ್ಲಿ ಸತ್ಯವನ್ನು ಅಸತ್ಯವಾಗಿಯೂ, ಅಸತ್ಯವನ್ನು ಸತ್ಯವಾಗಿಯೂ ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+<pre><code>console.log(!true);  // false
+console.log(!false); // true</code></pre>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let isLoggedIn = false;
+
+if (!isLoggedIn) {
+  console.log("Please log in");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Please log in</code></pre>
+<p><code>isLoggedIn</code> <code>false</code>. ಅದರ ಮುಂದೆ <code>!</code> ಇರುವುದರಿಂದ <code>!isLoggedIn</code> ಸತ್ಯವಾಗುತ್ತದೆ. ಆದ್ದರಿಂದ ಸಂದೇಶ ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.</p>
+<h4 id="ಮತತ-ಒದ-ಅಲಲ"><code>!</code> ಮತ್ತು <code>!==</code> ಒಂದೇ ಅಲ್ಲ</h4>
+<pre><code>console.log(!true);      // false
+console.log(5 !== "5");  // true</code></pre>
+<p><code>!</code> Boolean Context ನಲ್ಲಿ ಮೌಲ್ಯವನ್ನು ವಿರುದ್ಧಗೊಳಿಸುತ್ತದೆ. <code>!==</code> ಎರಡು ಮೌಲ್ಯಗಳನ್ನು Strict Inequality ನಿಯಮದಂತೆ ಹೋಲಿಸುತ್ತದೆ.</p>
+<h3 id="ಮರ-logical-operators-ಒಟಟಗ">5.4 ಮೂರು Logical Operators ಒಟ್ಟಿಗೆ</h3>
+<pre><code>let age = 22;
+let isStudent = true;
+let hasPermission = false;
+
+if (age &gt;= 18 &amp;&amp; (isStudent || hasPermission)) {
+  console.log("Condition satisfied");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Condition satisfied</code></pre>
+<p>ತರ್ಕ:</p>
+<ul>
+<li><code>age &gt;= 18</code> → <code>true</code>.</li>
+<li><code>isStudent || hasPermission</code> → <code>true || false</code> → <code>true</code>.</li>
+<li><code>true &amp;&amp; true</code> → <code>true</code>.</li>
+</ul>
+<p>ಇಂತಹ Expression ಗಳಲ್ಲಿ Parentheses <code>()</code> ಬಳಸುವುದರಿಂದ ಷರತ್ತಿನ ಅರ್ಥ ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 6: Truthy ಮತ್ತು Falsy Values" id="ಭಗ-6-truthy-ಮತತ-falsy-values"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-6-truthy-ಮತತ-falsy-values">ಭಾಗ 6: Truthy ಮತ್ತು Falsy Values</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>JavaScript ನಲ್ಲಿ <code>if</code> Statement ಗೆ Boolean ಮೌಲ್ಯಗಳನ್ನಷ್ಟೇ ನೀಡಬೇಕೆಂಬ ನಿಯಮವಿಲ್ಲ.</p>
+<pre><code>if (100) {
+  console.log("Runs");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Runs</code></pre>
+<p>ಇಲ್ಲಿ <code>100</code> Boolean <code>true</code> ಅಲ್ಲ. ಆದರೂ <code>if</code> ಒಳಗೆ ಅದು Truthy ಎಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ.</p>
+<p>ಇದಕ್ಕೆ ಕಾರಣ JavaScript ನ ToBoolean ನಿಯಮ.</p>
+<h3 id="falsy-values-ಸಪರಣ-ಪಟಟ">6.1 Falsy Values — ಸಂಪೂರ್ಣ ಪಟ್ಟಿ</h3>
+<p>ಸಾಮಾನ್ಯ JavaScript ಪರಿಸರದಲ್ಲಿ Falsy ಆಗಿರುವ ಮುಖ್ಯ ಮೌಲ್ಯಗಳು ಹೀಗಿವೆ:</p>
+<table>
+<thead>
+<tr class="header">
+<th>ಮೌಲ್ಯ       </th>
+<th>ಅರ್ಥ                       </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>false</code>     </td>
+<td>Boolean false               </td>
+</tr>
+<tr class="even">
+<td><code>0</code>         </td>
+<td>Number zero                 </td>
+</tr>
+<tr class="odd">
+<td><code>-0</code>       </td>
+<td>Negative zero               </td>
+</tr>
+<tr class="even">
+<td><code>0n</code>       </td>
+<td>BigInt zero                 </td>
+</tr>
+<tr class="odd">
+<td><code>""</code>       </td>
+<td>Empty String               </td>
+</tr>
+<tr class="even">
+<td><code>null</code>     </td>
+<td>ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಮೌಲ್ಯ ಇಲ್ಲ</td>
+</tr>
+<tr class="odd">
+<td><code>undefined</code></td>
+<td>ಮೌಲ್ಯ ನಿಗದಿಪಡಿಸಿಲ್ಲ         </td>
+</tr>
+<tr class="even">
+<td><code>NaN</code>       </td>
+<td>Not-a-Number               </td>
+</tr>
+</tbody>
+</table>
+<p>ಹಳೆಯ Browser ಗಳಲ್ಲಿನ ವಿಶೇಷ <code>document.all</code> ವರ್ತನೆ ಒಂದು ಅಪವಾದವಾಗಿದೆ; ಅದು ಸಾಮಾನ್ಯ JavaScript Coding ನಲ್ಲಿ ಅಪರೂಪಕ್ಕೆ ಮಾತ್ರ ಸಂಬಂಧಿಸಿದೆ.</p>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>if (0) {
+  console.log("A");
+} else {
+  console.log("B");
+}</code></pre>
+<p>Output:</p>
+<pre><code>B</code></pre>
+<p><code>0</code> Falsy ಆಗಿರುವುದರಿಂದ <code>else</code> ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+<h3 id="truthy-values">6.2 Truthy Values</h3>
+<p>ಮೇಲಿನ Falsy Values ಗಳನ್ನು ಹೊರತುಪಡಿಸಿ ಹೆಚ್ಚಿನ ಮೌಲ್ಯಗಳು Truthy ಆಗಿರುತ್ತವೆ.</p>
+<pre><code>console.log(Boolean("Hello")); // true
+console.log(Boolean("0"));     // true
+console.log(Boolean("false")); // true
+console.log(Boolean(-1));      // true
+console.log(Boolean([]));      // true
+console.log(Boolean({}));      // true
+console.log(Boolean(" "));     // true</code></pre>
+<p>ಇಲ್ಲಿ ಸಾಮಾನ್ಯವಾಗಿ ಹೆಚ್ಚು ತಪ್ಪಾಗುವ ಅಂಶಗಳನ್ನು ಗಮನಿಸಿ:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Value     </th>
+<th>Truthy / Falsy</th>
+<th>ಕಾರಣ             </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>0</code>       </td>
+<td>Falsy         </td>
+<td>Number zero     </td>
+</tr>
+<tr class="even">
+<td><code>"0"</code>     </td>
+<td>Truthy         </td>
+<td>ಖಾಲಿಯಲ್ಲದ String</td>
+</tr>
+<tr class="odd">
+<td><code>false</code>   </td>
+<td>Falsy         </td>
+<td>Boolean false   </td>
+</tr>
+<tr class="even">
+<td><code>"false"</code></td>
+<td>Truthy         </td>
+<td>String           </td>
+</tr>
+<tr class="odd">
+<td><code>""</code>     </td>
+<td>Falsy         </td>
+<td>ಖಾಲಿ String     </td>
+</tr>
+<tr class="even">
+<td><code>" "</code>     </td>
+<td>Truthy         </td>
+<td>ಒಂದು Space ಇದೆ   </td>
+</tr>
+<tr class="odd">
+<td><code>[]</code>     </td>
+<td>Truthy         </td>
+<td>Array Object     </td>
+</tr>
+<tr class="even">
+<td><code>{}</code>     </td>
+<td>Truthy         </td>
+<td>Object           </td>
+</tr>
+</tbody>
+</table>
+<p>ಮುಖ್ಯ ನಿಯಮ: ಖಾಲಿ Array <code>[]</code> ಮತ್ತು ಖಾಲಿ Object <code>{}</code> ಗಳು <code>false</code> ಆಗಿರುವುದಿಲ್ಲ. ಅವು Truthy.</p>
+<h3 id="boolean-function">6.3 <code>Boolean()</code> Function</h3>
+<p>ಒಂದು Value Boolean Context ನಲ್ಲಿ ಯಾವ ಮೌಲ್ಯವಾಗಿ ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ ಎಂಬುದನ್ನು ಪರೀಕ್ಷಿಸಲು <code>Boolean()</code> ಬಳಸಬಹುದು.</p>
+<pre><code>console.log(Boolean(0));        // false
+console.log(Boolean(1));        // true
+console.log(Boolean(""));       // false
+console.log(Boolean("Hello"));  // true</code></pre>
+<p>ಇದು ಕೋಡ್ ಕಲಿಯಲು ಮತ್ತು Debugging ಮಾಡಲು ಉಪಯುಕ್ತ. ಆದರೆ ಪ್ರತಿಯೊಂದು Condition ಗೂ <code>Boolean()</code> ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ.</p>
+<h3 id="falsy-values-ಅನನ-ಮಲಕ-ಪರಶಲಸವದ">6.4 Falsy Values ಅನ್ನು <code>!</code> ಮೂಲಕ ಪರಿಶೀಲಿಸುವುದು</h3>
+<pre><code>let username = "";
+
+if (!username) {
+  console.log("Username is empty or missing");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Username is empty or missing</code></pre>
+<p>ಆದರೆ <code>!username</code> ಖಾಲಿ String ಮಾತ್ರವಲ್ಲದೆ ಇತರ Falsy ಮೌಲ್ಯಗಳನ್ನೂ ಒಪ್ಪಿಕೊಳ್ಳುತ್ತದೆ. ನಿಮಗೆ ಖಾಲಿ String ಮಾತ್ರವೇ ಪರಿಶೀಲಿಸಬೇಕಿದ್ದರೆ ಹೀಗೆ ಬರೆಯಿರಿ:</p>
+<pre><code>if (username === "") {
+  console.log("Username is empty");
+}</code></pre>
+<p>ಯಾವ ರೀತಿಯ Condition ಬರೆಯಬೇಕು ಎಂಬುದು ನಿಮ್ಮ ಉದ್ದೇಶದ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿರುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 7: Type Coercion ಮತ್ತು Type Conversion" id="ಭಗ-7-type-coercion-ಮತತ-type-conversion"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-7-type-coercion-ಮತತ-type-conversion">ಭಾಗ 7: Type Coercion ಮತ್ತು Type Conversion</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ಈ-ಎರಡರ-ಅರಥವನ">7.1 ಈ ಎರಡರ ಅರ್ಥವೇನು?</h3>
+<p>JavaScript ನಲ್ಲಿ ಒಂದು Type ನ ಮೌಲ್ಯವನ್ನು ಮತ್ತೊಂದು Type ಆಗಿ ಬದಲಿಸುವ ಪ್ರಕ್ರಿಯೆ ಇದೆ.</p>
+<p>Type Conversion ಎಂದರೆ Type ಅನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಪರಿವರ್ತಿಸುವುದು.</p>
+<pre><code>let age = Number("25");
+
+console.log(age);        // 25
+console.log(typeof age); // "number"</code></pre>
+<p>Type Coercion ಎಂದರೆ ಒಂದು Operation ನಡೆಯುವಾಗ JavaScript ಸ್ವಯಂಚಾಲಿತವಾಗಿ Type ಪರಿವರ್ತಿಸುವುದು.</p>
+<pre><code>console.log("5" - 2); // 3</code></pre>
+<p>ಇಲ್ಲಿ String <code>"5"</code> ಅನ್ನು ಸಂಖ್ಯೆಗೆ ಪರಿವರ್ತಿಸಿ ಗಣಿತ ಕಾರ್ಯಾಚರಣೆ ಮಾಡಲಾಗಿದೆ.</p>
+<p>ಆದರೆ <code>+</code> Operator ಹಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ Concatenation ಮಾಡುತ್ತದೆ:</p>
+<pre><code>console.log("5" + 2); // "52"</code></pre>
+<p>ಇದು <code>7</code> ಆಗುವುದಿಲ್ಲ. String ಮತ್ತು Number ನಡುವಿನ ಈ ವರ್ತನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ Conversion ನಿಯಮಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಮುಖ್ಯ.</p>
+<h3 id="ನಲಲ-type-coercion">7.2 <code>==</code> ನಲ್ಲಿ Type Coercion</h3>
+<pre><code>console.log("5" == 5); // true
+console.log(false == 0); // true
+console.log("" == 0); // true</code></pre>
+<p>ಈ ಫಲಿತಾಂಶಗಳು Loose Equality ನಿಯಮಗಳಿಗೆ ಅನುಗುಣವಾಗಿವೆ.</p>
+<p>ಆದರೆ ಎಲ್ಲ Falsy Values ಗಳೂ <code>==</code> ನಲ್ಲಿ ಪರಸ್ಪರ ಸಮಾನವಲ್ಲ.</p>
+<pre><code>console.log(null == 0);         // false
+console.log(null == undefined); // true
+console.log(undefined == 0);    // false</code></pre>
+<p>ಇವುಗಳ ವ್ಯತ್ಯಾಸವನ್ನು ನೆನಪಿಡಿ. <code>null</code> ಮತ್ತು <code>undefined</code> ಗಳು <code>==</code> ನಲ್ಲಿ ಪರಸ್ಪರ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತವೆ. ಆದರೆ ಅವು <code>0</code> ಗೆ ಸಮಾನವಲ್ಲ.</p>
+<h3 id="relational-comparison-ನಲಲ-conversion">7.3 Relational Comparison ನಲ್ಲಿ Conversion</h3>
+<p><code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code> ಮತ್ತು <code>&lt;=</code> ಬಳಸಿದಾಗ ಎರಡೂ Operands Strings ಆಗಿದ್ದರೆ String ಕ್ರಮದ ಪ್ರಕಾರ ಹೋಲಿಸಬಹುದು.</p>
+<pre><code>console.log("10" &lt; "2"); // true</code></pre>
+<p>ಏಕೆ? ಎರಡೂ Strings ಆಗಿವೆ. ಅವು ಸಂಖ್ಯೆಗಳಂತೆ ಅಲ್ಲ, String ಕ್ರಮದ ಪ್ರಕಾರ ಹೋಲಿಸಲ್ಪಡುತ್ತವೆ. <code>"1"</code> ಅಕ್ಷರದ ಸ್ಥಾನ <code>"2"</code> ಗಿಂತ ಮೊದಲು ಬರುತ್ತದೆ.</p>
+<p>ಸಂಖ್ಯೆಗಳಂತೆ ಹೋಲಿಸಬೇಕಾದರೆ:</p>
+<pre><code>console.log(Number("10") &lt; Number("2")); // false
+console.log(Number("10") &gt; Number("2")); // true</code></pre>
+<p>ಇಲ್ಲಿ ಎರಡೂ ಮೌಲ್ಯಗಳನ್ನು Numbers ಆಗಿ ಪರಿವರ್ತಿಸಲಾಗಿದೆ.</p>
+<h4 id="null-ಮತತ-undefined-ಜತಗನ-ವಯತಯಸ"><code>null</code> ಮತ್ತು <code>undefined</code> ಜೊತೆಗಿನ ವ್ಯತ್ಯಾಸ</h4>
+<pre><code>console.log(null &gt;= 0);     // true
+console.log(null == 0);     // false
+console.log(undefined &lt; 1); // false</code></pre>
+<p>ಮೊದಲ ಉದಾಹರಣೆಯಲ್ಲಿ Relational Comparison ವೇಳೆ <code>null</code> ಸಂಖ್ಯಾತ್ಮಕ ಮೌಲ್ಯವಾಗಿ <code>0</code> ಆಗಿ ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ. ಆದರೆ <code>null == 0</code> Loose Equality ನಿಯಮವು ಅದೇ ಫಲಿತಾಂಶ ನೀಡುವುದಿಲ್ಲ. <code>undefined</code> ಅನ್ನು ಸಂಖ್ಯಾತ್ಮಕವಾಗಿ ಪರಿವರ್ತಿಸಿದಾಗ <code>NaN</code> ದೊರೆಯುವುದರಿಂದ ಅದರ Relational Comparison ಗಳು ಸಾಮಾನ್ಯವಾಗಿ <code>false</code> ಆಗುತ್ತವೆ.</p>
+<p>Professional ನಿಯಮ: ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುವಾಗ ಸ್ವಯಂಚಾಲಿತ Conversion ಮೇಲೆ ಅವಲಂಬಿಸುವುದಕ್ಕಿಂತ Input ಅನ್ನು Validate ಮಾಡಿ, ಅಗತ್ಯವಿದ್ದರೆ ಸ್ಪಷ್ಟವಾಗಿ Convert ಮಾಡುವುದು ಉತ್ತಮ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 8: NaN , null , undefined ಮತ್ತು Edge Cases" id="ಭಗ-8-nan-null-undefined-ಮತತ-edge-cases"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-8-nan-null-undefined-ಮತತ-edge-cases">ಭಾಗ 8: <code>NaN</code>, <code>null</code>, <code>undefined</code> ಮತ್ತು Edge Cases</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಇವುಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು Professional JavaScript ಗೆ ಬಹಳ ಮುಖ್ಯ.</p>
+<h3 id="nan-ಎದರನ">8.1 <code>NaN</code> ಎಂದರೇನು?</h3>
+<p><code>NaN</code> ಎಂದರೆ Not-a-Number. ಕೆಲವು ಗಣಿತೀಯ ಅಥವಾ ಸಂಖ್ಯಾತ್ಮಕ ಕಾರ್ಯಾಚರಣೆಗಳು ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನೀಡದಾಗ <code>NaN</code> ದೊರೆಯಬಹುದು.</p>
+<pre><code>let result = Number("hello");
+
+console.log(result); // NaN</code></pre>
+<p><code>"hello"</code> ಅನ್ನು Number ಆಗಿ ಪರಿವರ್ತಿಸಲಾಗುವುದಿಲ್ಲ. ಆದ್ದರಿಂದ ಫಲಿತಾಂಶ <code>NaN</code>.</p>
+<h4 id="nan-ಅನನ-ಹಗ-ಪರಶಲಸಬಕ"><code>NaN</code> ಅನ್ನು ಹೇಗೆ ಪರಿಶೀಲಿಸಬೇಕು?</h4>
+<pre><code>let result = Number("hello");
+
+console.log(result === NaN);       // false
+console.log(Number.isNaN(result)); // true</code></pre>
+<p>ಏಕೆಂದರೆ <code>NaN</code> ಅನ್ನು ಅದರಂತೆಯೇ <code>===</code> ಮೂಲಕ ಹೋಲಿಸಿದಾಗಲೂ ಫಲಿತಾಂಶ <code>false</code>.</p>
+<p>ಆದ್ದರಿಂದ:</p>
+<pre><code>Number.isNaN(value)</code></pre>
+<p>ಎಂಬುದು ಮೌಲ್ಯವು ನಿಜವಾಗಿಯೂ <code>NaN</code> ಆಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುವ ಉತ್ತಮ ವಿಧಾನ.</p>
+<p><code>isNaN(value)</code> ಎಂಬ Global Function ಕೂಡ ಇದೆ. ಆದರೆ ಅದು ಮೌಲ್ಯವನ್ನು ಮೊದಲು ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತಿಸಲು ಪ್ರಯತ್ನಿಸುವುದರಿಂದ ಕೆಲವು ವಿಭಿನ್ನ ಫಲಿತಾಂಶಗಳನ್ನು ನೀಡಬಹುದು.</p>
+<pre><code>console.log(isNaN("hello"));        // true
+console.log(Number.isNaN("hello")); // false</code></pre>
+<p>ಮೊದಲ Function <code>"hello"</code> ಅನ್ನು Number ಆಗಿ ಪರಿವರ್ತಿಸಲು ಪ್ರಯತ್ನಿಸಿ <code>NaN</code> ಪಡೆಯುತ್ತದೆ. ಎರಡನೆಯ Function ಮೂಲ ಮೌಲ್ಯವೇ <code>NaN</code> ಆಗಿದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ; String <code>"hello"</code> ಸ್ವತಃ <code>NaN</code> ಅಲ್ಲ.</p>
+<h3 id="null-ಮತತ-undefined">8.2 <code>null</code> ಮತ್ತು <code>undefined</code></h3>
+<p><code>null</code> ಮತ್ತು <code>undefined</code> ಎರಡೂ ಮೌಲ್ಯ ಇಲ್ಲದಿರುವುದಕ್ಕೆ ಸಂಬಂಧಿಸಿದರೂ ಅವು ಒಂದೇ ಅಲ್ಲ.</p>
+<pre><code>let a = null;
+let b;
+
+console.log(a); // null
+console.log(b); // undefined</code></pre>
+<ul>
+<li><code>null</code> — ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಮೌಲ್ಯ ಇಲ್ಲ ಎಂದು ಸೂಚಿಸುವುದು.</li>
+<li><code>undefined</code> — ಮೌಲ್ಯ ನಿಯೋಜಿಸದಿರುವುದು ಅಥವಾ ಮೌಲ್ಯ ಲಭ್ಯವಿಲ್ಲದಿರುವ ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ ದೊರೆಯುವುದು.</li>
+</ul>
+<p>ಹೋಲಿಕೆ:</p>
+<pre><code>console.log(null == undefined);  // true
+console.log(null === undefined); // false</code></pre>
+<p><code>typeof</code> ಬಳಸಿದಾಗಲೂ ಒಂದು ವಿಶೇಷತೆ ಇದೆ:</p>
+<pre><code>console.log(typeof null);      // "object"
+console.log(typeof undefined); // "undefined"</code></pre>
+<p><code>typeof null</code> ಫಲಿತಾಂಶ <code>"object"</code> ಎನ್ನುವುದು JavaScript ನ ಐತಿಹಾಸಿಕ ವರ್ತನೆ. ಅದನ್ನು <code>null</code> ನ ನಿಖರ Type ಪರೀಕ್ಷೆಯೆಂದು ತಪ್ಪಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಾರದು.</p>
+<h3 id="nan-ಜತ-comparison">8.3 <code>NaN</code> ಜೊತೆ Comparison</h3>
+<pre><code>console.log(NaN === NaN); // false
+console.log(NaN &gt; 10);    // false
+console.log(NaN &lt; 10);    // false
+console.log(NaN &gt;= 10);   // false
+console.log(NaN &lt;= 10);   // false
+console.log(NaN !== NaN); // true</code></pre>
+<p><code>NaN</code> ಇದ್ದಾಗ ಸಾಮಾನ್ಯ ಸಂಖ್ಯಾತ್ಮಕ Comparison ಗಳಿಂದ ನೀವು ನಿರೀಕ್ಷಿಸುವ ಫಲಿತಾಂಶ ಸಿಗದೆ ಇರಬಹುದು. ಆದ್ದರಿಂದ User Input, API Response ಅಥವಾ Calculation ನ ಫಲಿತಾಂಶವನ್ನು ಬಳಸುವ ಮೊದಲು ಅದರ ಮಾನ್ಯತೆಯನ್ನು ಪರಿಶೀಲಿಸುವುದು ಉತ್ತಮ.</p>
+<h3 id="object-ಮತತ-array-ಗಳ-comparison">8.4 Object ಮತ್ತು Array ಗಳ Comparison</h3>
+<p>Primitive Values ಗಳನ್ನು ಹೋಲಿಸುವುದು ಮತ್ತು Objects ಗಳನ್ನು ಹೋಲಿಸುವುದು ವಿಭಿನ್ನ.</p>
+<pre><code>console.log(10 === 10); // true
+console.log([1, 2] === [1, 2]); // false</code></pre>
+<p>ಎರಡು Arrays ಗಳಲ್ಲೂ ಒಂದೇ Elements ಇದ್ದರೂ ಅವು ಎರಡು ಪ್ರತ್ಯೇಕ Array Objects ಆಗಿವೆ. <code>===</code> ಅವುಗಳ ಒಳಗಿನ Elements ಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹೋಲಿಸುವುದಿಲ್ಲ.</p>
+<pre><code>let a = [1, 2];
+let b = a;
+
+console.log(a === b); // true</code></pre>
+<p>ಈಗ <code>a</code> ಮತ್ತು <code>b</code> ಒಂದೇ Array Object ಅನ್ನು ಸೂಚಿಸುತ್ತವೆ.</p>
+<p>Objects ಗಳ ಒಳಗಿನ ವಿಷಯಗಳನ್ನು ಹೋಲಿಸುವುದು ಬೇಕಾದರೆ ನಿಮ್ಮ Data ಪ್ರಕಾರ Deep Comparison ಮಾಡಬೇಕು. ಸರಳವಾಗಿ <code>===</code> ಬಳಸುವುದರಿಂದ ಎರಡು ವಿಭಿನ್ನ Objects ಒಂದೇ ವಿಷಯ ಹೊಂದಿವೆಯೇ ಎಂದು ತಿಳಿಯಲು ಸಾಧ್ಯವಿಲ್ಲ.</p>
+<h3 id="object.is-ಇನನಷಟ-ನಖರವದ-ಹಲಕ">8.5 <code>Object.is()</code> — ಇನ್ನಷ್ಟು ನಿಖರವಾದ ಹೋಲಿಕೆ</h3>
+<p>JavaScript ನಲ್ಲಿ <code>Object.is()</code> ಎಂಬ ವಿಧಾನವೂ ಇದೆ.</p>
+<pre><code>console.log(Object.is(NaN, NaN)); // true
+console.log(Object.is(0, -0));    // false
+console.log(0 === -0);            // true</code></pre>
+<p>ಮುಖ್ಯ ವ್ಯತ್ಯಾಸಗಳು:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Comparison   </th>
+<th><code>NaN</code> ಮತ್ತು <code>NaN</code></th>
+<th><code>0</code> ಮತ್ತು <code>-0</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>===</code>         </td>
+<td><code>false</code>           </td>
+<td><code>true</code>         </td>
+</tr>
+<tr class="even">
+<td><code>Object.is()</code></td>
+<td><code>true</code>           </td>
+<td><code>false</code>       </td>
+</tr>
+</tbody>
+</table>
+<p>ಸಾಮಾನ್ಯ Conditions ಗಳಲ್ಲಿ <code>===</code> ಬಳಸುವುದು ಸರಿಯಾದ ಆಯ್ಕೆ. ವಿಶೇಷ ಸಂಖ್ಯಾತ್ಮಕ Edge Cases ಪರಿಶೀಲಿಸುವ ಅಗತ್ಯವಿದ್ದಾಗ <code>Object.is()</code> ಉಪಯುಕ್ತವಾಗಬಹುದು.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 9: switch Statement ಸಂಪೂರ್ಣ ವಿವರಣೆ" id="ಭಗ-9-switch-statement-ಸಪರಣ-ವವರಣ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-9-switch-statement-ಸಪರಣ-ವವರಣ">ಭಾಗ 9: <code>switch</code> Statement ಸಂಪೂರ್ಣ ವಿವರಣೆ</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="switch-ಎದರನ">9.1 <code>switch</code> ಎಂದರೇನು?</h3>
+<p>ಒಂದು Expression ನ ಮೌಲ್ಯವನ್ನು ಹಲವು ನಿಗದಿತ ಮೌಲ್ಯಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ, ಹೊಂದಾಣಿಕೆಯ Block ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಲು <code>switch</code> ಬಳಸಬಹುದು.</p>
+<p>ಉದಾಹರಣೆಗೆ ದಿನದ ಸಂಖ್ಯೆಗೆ ತಕ್ಕಂತೆ ದಿನದ ಹೆಸರನ್ನು ತೋರಿಸೋಣ.</p>
+<pre><code>let day = 2;
+
+switch (day) {
+  case 1:
+    console.log("Monday");
+    break;
+
+  case 2:
+    console.log("Tuesday");
+    break;
+
+  case 3:
+    console.log("Wednesday");
+    break;
+
+  default:
+    console.log("Invalid day");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Tuesday</code></pre>
+<h4 id="ಮಖಯ-keywords">ಮುಖ್ಯ Keywords</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Keyword   </th>
+<th>ಕೆಲಸ                                         </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>switch</code> </td>
+<td>ಪರಿಶೀಲಿಸಬೇಕಾದ Expression ಅನ್ನು ಒದಗಿಸುತ್ತದೆ   </td>
+</tr>
+<tr class="even">
+<td><code>case</code>   </td>
+<td>ಹೊಂದಾಣಿಕೆಗಾಗಿ ಮೌಲ್ಯ ನೀಡುತ್ತದೆ               </td>
+</tr>
+<tr class="odd">
+<td><code>break</code>   </td>
+<td><code>switch</code> ನಿಂದ ಹೊರಬರುತ್ತದೆ                   </td>
+</tr>
+<tr class="even">
+<td><code>default</code></td>
+<td>ಯಾವುದೇ <code>case</code> ಹೊಂದಾಣಿಕೆಯಾಗದಿದ್ದಾಗ ನಡೆಯುತ್ತದೆ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="break-ಏಕ-ಮಖಯ">9.2 <code>break</code> ಏಕೆ ಮುಖ್ಯ?</h3>
+<pre><code>let day = 2;
+
+switch (day) {
+  case 1:
+    console.log("Monday");
+
+  case 2:
+    console.log("Tuesday");
+
+  case 3:
+    console.log("Wednesday");
+
+  default:
+    console.log("Other");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Tuesday
+Wednesday
+Other</code></pre>
+<p>ಇಲ್ಲಿ <code>case 2</code> ಹೊಂದಿಕೆಯಾದ ನಂತರ <code>break</code> ಇಲ್ಲದ ಕಾರಣ JavaScript ಮುಂದಿನ Statements ಗಳನ್ನೂ ಕಾರ್ಯಗತಗೊಳಿಸುತ್ತದೆ. ಇದನ್ನು Fall-through ಎನ್ನುತ್ತಾರೆ.</p>
+<p>Fall-through ಅನ್ನು ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಬಳಸುವ ಸಂದರ್ಭಗಳಿವೆ. ಆದರೆ ಸಾಮಾನ್ಯವಾಗಿ ಅನಗತ್ಯ Fall-through ತಪ್ಪಿಸಲು <code>break</code> ಸೇರಿಸುವುದು ಉತ್ತಮ.</p>
+<h3 id="switch-strict-equality-ಬಳಸತತದ">9.3 <code>switch</code> Strict Equality ಬಳಸುತ್ತದೆ</h3>
+<pre><code>let value = "2";
+
+switch (value) {
+  case 2:
+    console.log("Number");
+    break;
+
+  case "2":
+    console.log("String");
+    break;
+}</code></pre>
+<p>Output:</p>
+<pre><code>String</code></pre>
+<p><code>switch</code> ನ <code>case</code> ಹೊಂದಾಣಿಕೆ <code>===</code> ನಿಯಮಕ್ಕೆ ಅನುಗುಣವಾಗಿರುತ್ತದೆ. ಆದ್ದರಿಂದ Number <code>2</code> ಮತ್ತು String <code>"2"</code> ಬೇರೆ.</p>
+<h3 id="switch-ಯವಗ-ಮತತ-if...else-ಯವಗ">9.4 <code>switch</code> ಯಾವಾಗ ಮತ್ತು <code>if...else</code> ಯಾವಾಗ?</h3>
+<p><code>switch</code> ಅನ್ನು ಕೆಲವು ನಿಗದಿತ ಮೌಲ್ಯಗಳ ಆಧಾರದ ಮೇಲೆ ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸುವುದು ಅನುಕೂಲಕರ.</p>
+<pre><code>switch (status) {
+  case "success":
+    console.log("Completed");
+    break;
+
+  case "pending":
+    console.log("Waiting");
+    break;
+
+  case "failed":
+    console.log("Failed");
+    break;
+
+  default:
+    console.log("Unknown status");
+}</code></pre>
+<p>ಆದರೆ ಮೌಲ್ಯಗಳ ವ್ಯಾಪ್ತಿ ಪರಿಶೀಲಿಸಬೇಕಾದರೆ <code>if...else if</code> ಹೆಚ್ಚು ಸಹಜ.</p>
+<pre><code>if (marks &gt;= 90) {
+  console.log("A+");
+} else if (marks &gt;= 80) {
+  console.log("A");
+} else {
+  console.log("Other grade");
+}</code></pre>
+<p>ಇವುಗಳಲ್ಲಿ ಯಾವುದೂ ಪ್ರತಿಯೊಂದು ಸಂದರ್ಭದಲ್ಲೂ ಉತ್ತಮ ಎಂದು ಹೇಳಲಾಗುವುದಿಲ್ಲ. ಸಮಸ್ಯೆಯ ಸ್ವರೂಪಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಆಯ್ಕೆ ಮಾಡಬೇಕು.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 10: Ternary Operator ( ? : )" id="ಭಗ-10-ternary-operator"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-10-ternary-operator">ಭಾಗ 10: Ternary Operator (<code>? :</code>)</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ternary-ಎದರನ">10.1 Ternary ಎಂದರೇನು?</h3>
+<p>ಒಂದು Condition ನ ಆಧಾರದ ಮೇಲೆ ಎರಡು Expressions ಗಳಲ್ಲಿ ಒಂದನ್ನು ಆಯ್ಕೆ ಮಾಡುವ Conditional Operator ಅನ್ನು Ternary Operator ಎನ್ನುತ್ತಾರೆ.</p>
+<p>Syntax:</p>
+<pre><code>condition ? valueIfTrue : valueIfFalse</code></pre>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let age = 20;
+
+let result = age &gt;= 18 ? "Adult" : "Minor";
+
+console.log(result);</code></pre>
+<p>Output:</p>
+<pre><code>Adult</code></pre>
+<p>ಇದು ಹೀಗೆ ಅರ್ಥ:</p>
+<ul>
+<li><code>age &gt;= 18</code> ಸತ್ಯವಾದರೆ <code>"Adult"</code> ಆಯ್ಕೆ.</li>
+<li>ಇಲ್ಲದಿದ್ದರೆ <code>"Minor"</code> ಆಯ್ಕೆ.</li>
+</ul>
+<h3 id="ಇದ-ಕಲಸವನನ-if...else-ಮಲಕ">10.2 ಇದೇ ಕೆಲಸವನ್ನು <code>if...else</code> ಮೂಲಕ</h3>
+<pre><code>let age = 20;
+let result;
+
+if (age &gt;= 18) {
+  result = "Adult";
+} else {
+  result = "Minor";
+}
+
+console.log(result);</code></pre>
+<p>ಎರಡೂ ವಿಧಾನಗಳು ಒಂದೇ ಫಲಿತಾಂಶ ನೀಡುತ್ತವೆ.</p>
+<h4 id="ಯವಗ-ternary-ಬಳಸಬಕ">ಯಾವಾಗ Ternary ಬಳಸಬೇಕು?</h4>
+<p>ಸರಳವಾದ Conditional Value ಆಯ್ಕೆಮಾಡುವಾಗ:</p>
+<pre><code>let isLoggedIn = true;
+
+let message = isLoggedIn ? "Welcome" : "Please log in";</code></pre>
+<p>ಆದರೆ ಅನೇಕ ಹಂತದ Condition ಗಳನ್ನು ಒಂದೇ ಸಾಲಿನಲ್ಲಿ Nested Ternary ಆಗಿ ಬರೆಯುವುದರಿಂದ ಕೋಡ್ ಓದಲು ಕಷ್ಟವಾಗಬಹುದು. ಅಂತಹ ಸಂದರ್ಭಗಳಲ್ಲಿ <code>if...else if...else</code> ಬಳಸುವುದು ಉತ್ತಮ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 11: Short-Circuit Evaluation — Professional Concept" id="ಭಗ-11-short-circuit-evaluation-professional-concept"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-11-short-circuit-evaluation-professional-concept">ಭಾಗ 11: Short-Circuit Evaluation — Professional Concept</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಇದು JavaScript ಕಲಿಯುವಾಗ ಅತ್ಯಂತ ಉಪಯುಕ್ತವಾದ ವಿಷಯ.</p>
+<p><code>&amp;&amp;</code> ಮತ್ತು <code>||</code> ಕೇವಲ <code>true</code> ಅಥವಾ <code>false</code> ಮಾತ್ರ ಹಿಂತಿರುಗಿಸುವುದಿಲ್ಲ. ಅವುಗಳ ಫಲಿತಾಂಶವನ್ನು ನಿರ್ಧರಿಸಲು ಬಳಸುವ ನಿಜವಾದ Operand Value ಯನ್ನೂ ಹಿಂತಿರುಗಿಸಬಹುದು.</p>
+<h3 id="and-short-circuit">11.1 AND (<code>&amp;&amp;</code>) Short-Circuit</h3>
+<pre><code>console.log(false &amp;&amp; "Hello"); // false
+console.log(true &amp;&amp; "Hello");  // "Hello"</code></pre>
+<p><code>&amp;&amp;</code> ಎಡಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಎಡಭಾಗ Falsy ಆಗಿದ್ದರೆ, ಅದೇ ಮೌಲ್ಯವನ್ನು ಹಿಂತಿರುಗಿಸಿ ಬಲಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುವುದಿಲ್ಲ. ಎಡಭಾಗ Truthy ಆಗಿದ್ದರೆ ಬಲಭಾಗಕ್ಕೆ ಮುಂದುವರಿಯುತ್ತದೆ.</p>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let username = "";
+
+let result = username &amp;&amp; username.toUpperCase();
+
+console.log(result); // ""</code></pre>
+<p><code>username</code> ಖಾಲಿ String ಆಗಿದೆ. ಆದ್ದರಿಂದ <code>username.toUpperCase()</code> ಕಾರ್ಯಗತಗೊಳ್ಳುವುದಿಲ್ಲ.</p>
+<p>ಇದರಿಂದ ಕೆಲವು ಷರತ್ತುಗಳ ಆಧಾರದ ಮೇಲೆ ಮುಂದಿನ Expression ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸುವುದು ಸಾಧ್ಯ.</p>
+<h3 id="or-short-circuit">11.2 OR (<code>||</code>) Short-Circuit</h3>
+<pre><code>console.log("Hello" || "Guest"); // "Hello"
+console.log("" || "Guest");      // "Guest"</code></pre>
+<p><code>||</code> ಎಡಭಾಗ Truthy ಆಗಿದ್ದರೆ ಅದನ್ನೇ ಹಿಂತಿರುಗಿಸುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ ಬಲಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+<p>ಇದನ್ನು Default Value ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸಬಹುದು.</p>
+<pre><code>let username = "";
+
+let displayName = username || "Guest";
+
+console.log(displayName); // "Guest"</code></pre>
+<p>ಆದರೆ <code>||</code> ಶೂನ್ಯ, <code>false</code> ಮತ್ತು ಖಾಲಿ String ಮುಂತಾದ ಎಲ್ಲಾ Falsy Values ಗಳನ್ನೂ ಬದಲಾಯಿಸುತ್ತದೆ. ನಿಮಗೆ ಕೇವಲ <code>null</code> ಅಥವಾ <code>undefined</code> ಇದ್ದಾಗ ಮಾತ್ರ Default Value ಬೇಕಾಗಿದ್ದರೆ <code>??</code> ಉತ್ತಮ ಆಯ್ಕೆಯಾಗಬಹುದು.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 12: Modern JavaScript — Nullish Coalescing ( ?? )" id="ಭಗ-12-modern-javascript-nullish-coalescing"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-12-modern-javascript-nullish-coalescing">ಭಾಗ 12: Modern JavaScript — Nullish Coalescing (<code>??</code>)</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p><code>??</code> ಅನ್ನು Nullish Coalescing Operator ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಎಡಭಾಗದ ಮೌಲ್ಯ <code>null</code> ಅಥವಾ <code>undefined</code> ಆಗಿದ್ದರೆ ಬಲಭಾಗದ Default Value ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ ಎಡಭಾಗದ ಮೌಲ್ಯವನ್ನೇ ಉಳಿಸುತ್ತದೆ.</p>
+<pre><code>let username = null;
+
+let result = username ?? "Guest";
+
+console.log(result); // "Guest"</code></pre>
+<p>ಆದರೆ:</p>
+<pre><code>let count = 0;
+
+console.log(count || 10); // 10
+console.log(count ?? 10); // 0</code></pre>
+<p>ಏಕೆ?</p>
+<ul>
+<li><code>0</code> Falsy ಆಗಿದೆ; ಆದ್ದರಿಂದ <code>||</code> ಬಲಭಾಗದ <code>10</code> ಅನ್ನು ಆಯ್ಕೆಮಾಡುತ್ತದೆ.</li>
+<li><code>0</code> <code>null</code> ಅಥವಾ <code>undefined</code> ಅಲ್ಲ; ಆದ್ದರಿಂದ <code>??</code> <code>0</code> ಅನ್ನು ಉಳಿಸುತ್ತದೆ.</li>
+</ul>
+<p>ಇನ್ನೊಂದು ಉದಾಹರಣೆ:</p>
+<pre><code>let isAvailable = false;
+
+console.log(isAvailable || true); // true
+console.log(isAvailable ?? true); // false</code></pre>
+<p>ಇಲ್ಲಿ <code>false</code> ಒಂದು ನೈಜ Boolean ಮೌಲ್ಯ. ಅದನ್ನು ಉಳಿಸಬೇಕಾದರೆ <code>??</code> ಸಹಾಯ ಮಾಡುತ್ತದೆ.</p>
+<p>Professional ನಿಯಮ: <code>||</code> ಮತ್ತು <code>??</code> ಎರಡೂ Default Value ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲು ಉಪಯುಕ್ತ. ಆದರೆ ಅವುಗಳ ಅರ್ಥ ಬೇರೆ. ನಿಮ್ಮ Data ಯಲ್ಲಿ <code>0</code>, <code>false</code>, <code>""</code> ಇವು ಮಾನ್ಯ ಮೌಲ್ಯಗಳಾಗಿದ್ದರೆ <code>??</code> ಅನಗತ್ಯವಾಗಿ ಅವುಗಳನ್ನು ಬದಲಿಸುವುದಿಲ್ಲ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 13: Optional Chaining ( ?. ) ಮತ್ತು Conditions" id="ಭಗ-13-optional-chaining-.-ಮತತ-conditions"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-13-optional-chaining-.-ಮತತ-conditions">ಭಾಗ 13: Optional Chaining (<code>?.</code>) ಮತ್ತು Conditions</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>Optional Chaining ಆಧುನಿಕ JavaScript ನಲ್ಲಿ Nested Object ಗಳಲ್ಲಿ Property ಲಭ್ಯವಿದೆಯೇ ಎಂಬುದನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಪ್ರವೇಶಿಸಲು ಉಪಯುಕ್ತ.</p>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>let user = {
+  profile: {
+    name: "Ravi"
+  }
+};
+
+console.log(user.profile?.name); // "Ravi"
+console.log(user.address?.city); // undefined</code></pre>
+<p><code>user.address</code> ಇಲ್ಲದಿದ್ದರೂ <code>user.address?.city</code> Expression ದೋಷವಿಲ್ಲದೆ <code>undefined</code> ನೀಡುತ್ತದೆ.</p>
+<p>Optional Chaining ಅನ್ನು Condition ಗಳೊಂದಿಗೆ ಬಳಸಬಹುದು:</p>
+<pre><code>let user = null;
+
+if (user?.profile) {
+  console.log("Profile available");
+} else {
+  console.log("Profile not available");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Profile not available</code></pre>
+<p>ಮುಖ್ಯ ವ್ಯತ್ಯಾಸ: <code>?.</code> ಯಾವುದನ್ನೂ ಸ್ವತಃ <code>true</code> ಎಂದು ಸಾಬೀತುಪಡಿಸುವುದಿಲ್ಲ. ಅದು <code>null</code> ಅಥವಾ <code>undefined</code> ಬಂದಾಗ Property ಪ್ರವೇಶಿಸುವುದರಿಂದ ಉಂಟಾಗುವ ದೋಷವನ್ನು ತಪ್ಪಿಸುತ್ತದೆ. ಅದರ Expression ಫಲಿತಾಂಶವನ್ನು <code>if</code> ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+<p>ಉದಾಹರಣೆಗೆ, <code>user.profile</code> ಇದ್ದರೆ ಮಾತ್ರ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕು ಎಂದಾದರೆ <code>if (user?.profile)</code> ಉಪಯುಕ್ತ. ಆದರೆ <code>profile</code> ಇದ್ದರೂ ಅದರ ಮೌಲ್ಯ <code>0</code> ಅಥವಾ <code>""</code> ಆಗಿರಬಹುದಾದ ಸಂದರ್ಭಗಳಲ್ಲಿ Truthiness ಪರಿಶೀಲಿಸುವುದು ಸಾಕೇ ಎಂಬುದನ್ನು ನಿಮ್ಮ ಅಗತ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ನಿರ್ಧರಿಸಿ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 14: in ಮತ್ತು instanceof Operators" id="ಭಗ-14-in-ಮತತ-instanceof-operators"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-14-in-ಮತತ-instanceof-operators">ಭಾಗ 14: <code>in</code> ಮತ್ತು <code>instanceof</code> Operators</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಈ ಎರಡು Operators ಗಳನ್ನು Basic Comparison ಪಟ್ಟಿಯಲ್ಲಿ ಹೆಚ್ಚಾಗಿ ಸೇರಿಸದಿದ್ದರೂ, Advanced JavaScript ನಲ್ಲಿ ಬಹಳ ಉಪಯುಕ್ತ.</p>
+<h3 id="in-operator">14.1 <code>in</code> Operator</h3>
+<p>ಒಂದು Property Object ನಲ್ಲಿ ಲಭ್ಯವಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇದು Object ನ ಸ್ವಂತ Property ಗಳನ್ನಷ್ಟೇ ಅಲ್ಲದೆ Prototype ನಿಂದ ಬಂದ Property ಗಳನ್ನೂ ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+<pre><code>let student = {
+  name: "Ravi",
+  age: 20
+};
+
+console.log("name" in student);  // true
+console.log("marks" in student); // false</code></pre>
+<p><code>in</code> ನ ಎಡಭಾಗದಲ್ಲಿ ಸಾಮಾನ್ಯವಾಗಿ Property Name String ಅಥವಾ Symbol ಇರಬೇಕು.</p>
+<p>ನಿಮಗೆ Object ನ ಸ್ವಂತ Property ಮಾತ್ರ ಪರಿಶೀಲಿಸಬೇಕಿದ್ದರೆ:</p>
+<pre><code>console.log(Object.hasOwn(student, "name"));  // true
+console.log(Object.hasOwn(student, "marks")); // false</code></pre>
+<p><code>Object.hasOwn()</code> ಮೂಲಕ Prototype Properties ಗಳನ್ನು ಸ್ವಂತ Properties ಎಂದು ತಪ್ಪಾಗಿ ಗುರುತಿಸುವುದನ್ನು ತಪ್ಪಿಸಬಹುದು.</p>
+<h3 id="instanceof-operator">14.2 <code>instanceof</code> Operator</h3>
+<p>ಒಂದು Object ನಿರ್ದಿಷ್ಟ Constructor ನ Prototype Chain ಗೆ ಸಂಬಂಧಿಸಿದೆಯೇ ಎಂಬುದನ್ನು ಪರಿಶೀಲಿಸಲು ಬಳಸುತ್ತಾರೆ.</p>
+<pre><code>let numbers = [10, 20, 30];
+
+console.log(numbers instanceof Array);  // true
+console.log(numbers instanceof Object); // true</code></pre>
+<p>Array ಕೂಡ Object ಆಗಿರುವುದರಿಂದ ಎರಡೂ ಫಲಿತಾಂಶಗಳು <code>true</code>.</p>
+<p>ಇನ್ನೊಂದು ಉದಾಹರಣೆ:</p>
+<pre><code>let message = new Date();
+
+console.log(message instanceof Date); // true
+console.log(message instanceof Array); // false</code></pre>
+<p><code>instanceof</code> ಎಲ್ಲಾ ಸಂದರ್ಭಗಳಲ್ಲೂ ನಿಖರ Type ಪರೀಕ್ಷೆಯಾಗುವುದಿಲ್ಲ; ವಿಶೇಷವಾಗಿ ವಿಭಿನ್ನ JavaScript Realms ಗಳಿಂದ ಬಂದ Objects ಗಳಲ್ಲಿ ಇದರ ಫಲಿತಾಂಶ ನಿರೀಕ್ಷಿತ ರೀತಿಯಲ್ಲಿ ಇರದೇ ಇರಬಹುದು.</p>
+<p>Array ಗುರುತಿಸಲು <code>Array.isArray()</code> ಹೆಚ್ಚು ನೇರವಾದ ವಿಧಾನ:</p>
+<pre><code>console.log(Array.isArray([1, 2])); // true
+console.log(Array.isArray({}));     // false</code></pre>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 15: Operator Precedence ಮತ್ತು Parentheses" id="ಭಗ-15-operator-precedence-ಮತತ-parentheses"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-15-operator-precedence-ಮತತ-parentheses">ಭಾಗ 15: Operator Precedence ಮತ್ತು Parentheses</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಒಂದು Expression ನಲ್ಲಿ ಅನೇಕ Operators ಇದ್ದರೆ ಅವು ಯಾವ ಕ್ರಮದಲ್ಲಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ ಎಂಬುದನ್ನು Operator Precedence ಎನ್ನುತ್ತಾರೆ.</p>
+<p>ಉದಾಹರಣೆ:</p>
+<pre><code>console.log(5 &gt; 3 &amp;&amp; 10 &lt; 20);</code></pre>
+<p>ಈ Expression ನಲ್ಲಿ ಮೊದಲು Comparison ಗಳು ನಡೆಯುತ್ತವೆ:</p>
+<ul>
+<li><code>5 &gt; 3</code> → <code>true</code>.</li>
+<li><code>10 &lt; 20</code> → <code>true</code>.</li>
+<li>ನಂತರ <code>true &amp;&amp; true</code> → <code>true</code>.</li>
+</ul>
+<h3 id="parentheses-ಬಳಸ-ಸಪಷಟಗಳಸವದ">15.1 Parentheses ಬಳಸಿ ಸ್ಪಷ್ಟಗೊಳಿಸುವುದು</h3>
+<pre><code>let age = 20;
+let hasID = true;
+
+if ((age &gt;= 18) &amp;&amp; (hasID === true)) {
+  console.log("Access granted");
+}</code></pre>
+<p>Parentheses ಗಳಿಂದ Expression ಗಳನ್ನು ಓದಲು ಸುಲಭವಾಗುತ್ತದೆ. ಯಾವ ಭಾಗವನ್ನು ಮೊದಲು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕು ಎಂಬುದು ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ.</p>
+<p>ಮತ್ತೊಂದು ಉದಾಹರಣೆ:</p>
+<pre><code>console.log(true || false &amp;&amp; false);</code></pre>
+<p><code>&amp;&amp;</code> ಗೆ <code>||</code> ಗಿಂತ ಹೆಚ್ಚಿನ Precedence ಇದೆ. ಆದ್ದರಿಂದ:</p>
+<pre><code>true || (false &amp;&amp; false)</code></pre>
+<p>ಮೊದಲು <code>false &amp;&amp; false</code> → <code>false</code>; ನಂತರ <code>true || false</code> → <code>true</code>.</p>
+<p>Parentheses ಬಳಸಿದರೆ:</p>
+<pre><code>console.log((true || false) &amp;&amp; false); // false</code></pre>
+<p>ಈಗ ಫಲಿತಾಂಶ ಬದಲಾಗುತ್ತದೆ.</p>
+<h4 id="ಮಶರ-logical-operators-ಗಗ-ನಯಮ">ಮಿಶ್ರ Logical Operators ಗಾಗಿ ನಿಯಮ</h4>
+<p><code>&amp;&amp;</code> ಮತ್ತು <code>||</code> ಅನ್ನು ಒಟ್ಟಿಗೆ ಬಳಸುವಾಗ ನಿಮ್ಮ ಉದ್ದೇಶವನ್ನು ಸ್ಪಷ್ಟಪಡಿಸಲು Parentheses ಬಳಸುವುದು ಉತ್ತಮ ಅಭ್ಯಾಸ.</p>
+<p>ಗಮನಿಸಿ: <code>??</code> ಅನ್ನು <code>&amp;&amp;</code> ಅಥವಾ <code>||</code> ಜೊತೆ ನೇರವಾಗಿ ಮಿಶ್ರಣ ಮಾಡಿದರೆ Parentheses ಅಗತ್ಯವಾಗುವ Syntax ನಿಯಮಗಳಿವೆ.</p>
+<pre><code>let result = (null ?? "Guest") || "Default";
+console.log(result); // "Guest"</code></pre>
+<p>ಇಂತಹ Expression ಗಳಲ್ಲಿ Parentheses ಬಳಸಿ ನಿಮ್ಮ ಉದ್ದೇಶವನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಸೂಚಿಸಿ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 16: Professional Coding ನಲ್ಲಿ ತಪ್ಪಿಸಬೇಕಾದ ಪ್ರಮುಖ ತಪ್ಪುಗಳು" id="ಭಗ-16-professional-coding-ನಲಲ-ತಪಪಸಬಕದ-ಪರಮಖ-ತಪಪಗಳ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-16-professional-coding-ನಲಲ-ತಪಪಸಬಕದ-ಪರಮಖ-ತಪಪಗಳ">ಭಾಗ 16: Professional Coding ನಲ್ಲಿ ತಪ್ಪಿಸಬೇಕಾದ ಪ್ರಮುಖ ತಪ್ಪುಗಳು</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ಮತತ-ನಡವನ-ಗದಲ">16.1 <code>=</code> ಮತ್ತು <code>===</code> ನಡುವಿನ ಗೊಂದಲ</h3>
+<p>ಈ ಎರಡೂ Operators ಒಂದೇ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.</p>
+<pre><code>let age = 18;</code></pre>
+<p>ಇಲ್ಲಿ <code>=</code> ಮೌಲ್ಯವನ್ನು ನಿಯೋಜಿಸುತ್ತದೆ.</p>
+<pre><code>console.log(age === 18);</code></pre>
+<p>ಇಲ್ಲಿ <code>===</code> ಹೋಲಿಸುತ್ತದೆ.</p>
+<p>ಈ ತಪ್ಪನ್ನು ನೋಡಿ:</p>
+<pre><code>let age = 15;
+
+if (age = 18) {
+  console.log("Eligible");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Eligible</code></pre>
+<p>ಇಲ್ಲಿ <code>age = 18</code> ಎಂಬುದು Comparison ಅಲ್ಲ; Assignment. ಇದು <code>age</code> ಗೆ <code>18</code> ನಿಯೋಜಿಸುತ್ತದೆ. <code>18</code> Truthy ಆಗಿರುವುದರಿಂದ <code>if</code> Block ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+<p>ಸರಿಯಾದ ಕೋಡ್:</p>
+<pre><code>let age = 15;
+
+if (age === 18) {
+  console.log("Age is exactly 18");
+}</code></pre>
+<p>ಇದರಲ್ಲಿ <code>age</code> ನ ಮೌಲ್ಯ ಬದಲಾಗುವುದಿಲ್ಲ. ಅದು ನಿಖರವಾಗಿ <code>18</code> ಆಗಿದೆಯೇ ಎಂದು ಮಾತ್ರ ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+<h3 id="javascript-ನಲಲ-chained-comparisons-ತಪಪಗ-ಬರಯವದ">16.2 JavaScript ನಲ್ಲಿ Chained Comparisons ತಪ್ಪಾಗಿ ಬರೆಯುವುದು</h3>
+<p>ಗಣಿತದಲ್ಲಿ ಹೀಗೆ ಬರೆಯಬಹುದು:</p>
+<p>\[ 1 &lt; x &lt; 18 \]</p>
+<p>ಆದರೆ JavaScript ನಲ್ಲಿ ಅದೇ Expression ಅನ್ನು ನೇರವಾಗಿ ಬಳಸಬಾರದು.</p>
+<pre><code>let age = 10;
+
+console.log(1 &lt; age &lt; 18); // true</code></pre>
+<p>ಇಲ್ಲಿ ಫಲಿತಾಂಶ <code>true</code> ಬಂದಿರುವುದರಿಂದ ಕೋಡ್ ಸರಿಯಾಗಿದೆ ಎಂದು ಕಾಣಬಹುದು. ಆದರೆ ಈ Expression ನ ಕಾರ್ಯನಿರ್ವಹಣಾ ಕ್ರಮ ಬೇರೆ.</p>
+<p>JavaScript ಇದನ್ನು ಹೀಗೆ ಮೌಲ್ಯಮಾಪನ ಮಾಡುತ್ತದೆ:</p>
+<pre><code>(1 &lt; age) &lt; 18</code></pre>
+<p>ಮೊದಲ ಹೋಲಿಕೆ <code>true</code> ನೀಡುತ್ತದೆ. ನಂತರ <code>true</code> ಅನ್ನು Number ಆಗಿ ಪರಿಗಣಿಸಿದರೆ <code>1</code> ಸಿಗುತ್ತದೆ. ಹೀಗಾಗಿ <code>1 &lt; 18</code> ಸತ್ಯವಾಗುತ್ತದೆ.</p>
+<p>ಆದರೆ:</p>
+<pre><code>let age = 25;
+
+console.log(1 &lt; age &lt; 18); // true</code></pre>
+<p>ಇದು ಕೂಡ <code>true</code> ನೀಡುತ್ತದೆ! 25 ವಯಸ್ಸು 18 ಕ್ಕಿಂತ ಕಡಿಮೆಯಿಲ್ಲದಿದ್ದರೂ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗಿದೆ.</p>
+<p>ಸರಿಯಾದ ವಿಧಾನ:</p>
+<pre><code>let age = 25;
+
+console.log(age &gt; 1 &amp;&amp; age &lt; 18); // false</code></pre>
+<p>JavaScript ನಲ್ಲಿ ಒಂದು ಸಂಖ್ಯೆಯು ಎರಡು ಮಿತಿಗಳ ನಡುವೆ ಇದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಲು ಎರಡು Comparison ಗಳನ್ನು <code>&amp;&amp;</code> ಮೂಲಕ ಜೋಡಿಸಬೇಕು.</p>
+<h3 id="empty-string-ಮತತ-ಖಲ-ಮಲಯಗಳನನ-ತಪಪಗ-ಪರಶಲಸವದ">16.3 Empty String ಮತ್ತು ಖಾಲಿ ಮೌಲ್ಯಗಳನ್ನು ತಪ್ಪಾಗಿ ಪರಿಶೀಲಿಸುವುದು</h3>
+<pre><code>let username = " ";
+
+if (username) {
+  console.log("Username supplied");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Username supplied</code></pre>
+<p>String ನಲ್ಲಿ ಒಂದು Space ಇರುವುದರಿಂದ ಅದು Truthy. ಆದರೆ ಬಳಕೆದಾರರು ನಿಜವಾದ ಹೆಸರನ್ನು ನಮೂದಿಸಿದ್ದಾರೆ ಎಂದು ಇದರಿಂದ ಸಾಬೀತಾಗುವುದಿಲ್ಲ.</p>
+<p>Form Input ನಲ್ಲಿ ಖಾಲಿ ಜಾಗಗಳನ್ನು ತೆಗೆದುಹಾಕಿ ಪರಿಶೀಲಿಸಬಹುದು:</p>
+<pre><code>let username = "   ";
+
+if (username.trim() === "") {
+  console.log("Enter a username");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Enter a username</code></pre>
+<p><code>trim()</code> ಆರಂಭ ಮತ್ತು ಅಂತ್ಯದಲ್ಲಿರುವ White Space ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ. ನೈಜ Application ನಲ್ಲಿ Input ಅನ್ನು ಯಾವ ಮಟ್ಟಿಗೆ ಪರಿಶೀಲಿಸಬೇಕು ಎಂಬುದು ಅದರ ನಿಯಮಗಳ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿರುತ್ತದೆ.</p>
+<h3 id="number-input-ಅನನ-validate-ಮಡದ-ಬಳಸವದ">16.4 Number Input ಅನ್ನು Validate ಮಾಡದೆ ಬಳಸುವುದು</h3>
+<pre><code>let age = Number("hello");
+
+console.log(age); // NaN</code></pre>
+<p>ಕೇವಲ <code>Number()</code> ಬಳಸುವುದರಿಂದ Input ಮಾನ್ಯ Number ಆಗುತ್ತದೆ ಎಂಬ ಖಾತರಿ ಇಲ್ಲ.</p>
+<pre><code>let age = Number("hello");
+
+if (Number.isFinite(age) &amp;&amp; age &gt;= 18) {
+  console.log("Eligible");
+} else {
+  console.log("Invalid age or not eligible");
+}</code></pre>
+<p>ಇಲ್ಲಿ <code>Number.isFinite(age)</code> ಮಾನ್ಯ Finite Number ಆಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇದರಿಂದ <code>NaN</code>, <code>Infinity</code> ಮತ್ತು <code>-Infinity</code> ಅನ್ನು ತಿರಸ್ಕರಿಸಬಹುದು.</p>
+<p>Input ಖಾಲಿಯಾಗಿರಬಹುದಾದ Form ನಲ್ಲಿ ಖಾಲಿ String ಅನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ Validate ಮಾಡುವುದು ಅಗತ್ಯ.</p>
+<h3 id="ಅತಯಗ-complex-conditions-ಬರಯವದ">16.5 ಅತಿಯಾಗಿ Complex Conditions ಬರೆಯುವುದು</h3>
+<pre><code>if (isLoggedIn &amp;&amp; (isAdmin || hasPermission) &amp;&amp; !isBlocked) {
+  console.log("Access granted");
+}</code></pre>
+<p>ಇಂತಹ ಕೋಡ್ ಸರಿಯಾಗಿದೆ. ಆದರೆ ತುಂಬಾ ದೀರ್ಘವಾದ Conditions ಇದ್ದಾಗ ಅವುಗಳನ್ನು ಸ್ಪಷ್ಟವಾದ Variable ಗಳಾಗಿ ವಿಭಜಿಸಬಹುದು.</p>
+<pre><code>let hasAccessLevel = isAdmin || hasPermission;
+let canAccess = isLoggedIn &amp;&amp; hasAccessLevel &amp;&amp; !isBlocked;
+
+if (canAccess) {
+  console.log("Access granted");
+}</code></pre>
+<p>ಇದರಿಂದ ಕೋಡ್ ಓದಲು, ಪರೀಕ್ಷಿಸಲು ಮತ್ತು Debug ಮಾಡಲು ಸುಲಭವಾಗುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 17: Real-World Project Example — Login Validation" id="ಭಗ-17-real-world-project-example-login-validation"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-17-real-world-project-example-login-validation">ಭಾಗ 17: Real-World Project Example — Login Validation</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಈಗ Conditions ಮತ್ತು Comparison Operators ಅನ್ನು ಒಟ್ಟಿಗೆ ಬಳಸಿ ಸರಳ Login Validation Logic ನೋಡೋಣ.</p>
+<p>ಇದು ಕಲಿಕೆಯ ಉದಾಹರಣೆ ಮಾತ್ರ; ನೈಜ Authentication ಗೆ ಇದು ಬದಲಿಯಾಗುವುದಿಲ್ಲ.</p>
+<pre><code>let username = "ravi";
+let password = "abc12345";
+
+let isUsernameValid = username.trim().length &gt;= 3;
+let isPasswordValid = password.length &gt;= 8;
+
+if (isUsernameValid &amp;&amp; isPasswordValid) {
+  console.log("Input validation successful");
+} else if (!isUsernameValid &amp;&amp; !isPasswordValid) {
+  console.log("Username and password are invalid");
+} else if (!isUsernameValid) {
+  console.log("Username is invalid");
+} else {
+  console.log("Password is invalid");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Input validation successful</code></pre>
+<h4 id="ಕಡನ-ತರಕ">ಕೋಡ್‌ನ ತರ್ಕ</h4>
+<table>
+<colgroup>
+<col style="width: 35%"/>
+<col style="width: 64%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Expression                           </th>
+<th>ಕೆಲಸ                                                               </th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>username.trim().length &gt;= 3</code>       </td>
+<td>Username ನಲ್ಲಿ ಕನಿಷ್ಠ 3 Characters ಇವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ       </td>
+</tr>
+<tr class="even">
+<td><code>password.length &gt;= 8</code>               </td>
+<td>Password ನಲ್ಲಿ ಕನಿಷ್ಠ 8 Characters ಇವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ       </td>
+</tr>
+<tr class="odd">
+<td><code>isUsernameValid &amp;&amp; isPasswordValid</code></td>
+<td>ಎರಡೂ Input Validation ನಿಯಮಗಳು ಪೂರೈಸಲ್ಪಟ್ಟಿವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ</td>
+</tr>
+<tr class="even">
+<td><code>!isUsernameValid</code>                   </td>
+<td>Username Validation ವಿಫಲವಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ               </td>
+</tr>
+</tbody>
+</table>
+<p>ಗಮನಿಸಿ: ಕನಿಷ್ಠ Length ಪರಿಶೀಲಿಸುವುದರಿಂದ Password ಸುರಕ್ಷಿತವಾಗಿದೆ ಎಂದು ಸಾಬೀತಾಗುವುದಿಲ್ಲ. ನೈಜ Website ನಲ್ಲಿ Server-side Validation, ಸುರಕ್ಷಿತ Password Hashing, Authentication ಮತ್ತು Rate Limiting ಮುಂತಾದ ಕ್ರಮಗಳೂ ಅಗತ್ಯ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 18: Comparison ಮತ್ತು Conditions ಕುರಿತ ಇನ್ನಷ್ಟು ಉದಾಹರಣೆಗಳು" id="ಭಗ-18-comparison-ಮತತ-conditions-ಕರತ-ಇನನಷಟ-ಉದಹರಣಗಳ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-18-comparison-ಮತತ-conditions-ಕರತ-ಇನನಷಟ-ಉದಹರಣಗಳ">ಭಾಗ 18: Comparison ಮತ್ತು Conditions ಕುರಿತ ಇನ್ನಷ್ಟು ಉದಾಹರಣೆಗಳು</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ಉದಹರಣ-1-ವಯಸಸನ-ಆಧರದಲಲ-ಫಲತಶ">ಉದಾಹರಣೆ 1: ವಯಸ್ಸಿನ ಆಧಾರದಲ್ಲಿ ಫಲಿತಾಂಶ</h3>
+<pre><code>let age = 16;
+
+if (age &lt; 13) {
+  console.log("Child");
+} else if (age &lt; 18) {
+  console.log("Teenager");
+} else {
+  console.log("Adult");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Teenager</code></pre>
+<p>ಮೊದಲು <code>age &lt; 13</code> ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ. ಅದು <code>false</code>. ನಂತರ <code>age &lt; 18</code> ಸತ್ಯವಾಗುವುದರಿಂದ <code>Teenager</code> ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.</p>
+<h3 id="ಉದಹರಣ-2-number-even-ಅಥವ-odd">ಉದಾಹರಣೆ 2: Number Even ಅಥವಾ Odd</h3>
+<pre><code>let number = 7;
+
+if (number % 2 === 0) {
+  console.log("Even");
+} else {
+  console.log("Odd");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Odd</code></pre>
+<p><code>%</code> Modulo Operator. ಇದು ಭಾಗಿಸಿದಾಗ ಉಳಿಯುವ ಶೇಷವನ್ನು ನೀಡುತ್ತದೆ. ಇಲ್ಲಿ <code>7 % 2</code> ಎಂದರೆ <code>1</code>; ಅದು <code>0</code> ಗೆ ಸಮಾನವಲ್ಲ. ಆದ್ದರಿಂದ <code>else</code> ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.</p>
+<h3 id="ಉದಹರಣ-3-discount-eligibility">ಉದಾಹರಣೆ 3: Discount Eligibility</h3>
+<pre><code>let purchaseAmount = 1500;
+
+if (purchaseAmount &gt;= 2000) {
+  console.log("20% discount");
+} else if (purchaseAmount &gt;= 1000) {
+  console.log("10% discount");
+} else {
+  console.log("No discount");
+}</code></pre>
+<p>Output:</p>
+<pre><code>10% discount</code></pre>
+<p>Purchase Amount 1000 ಅಥವಾ ಹೆಚ್ಚು ಇದೆ, ಆದರೆ 2000 ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದೆ. ಆದ್ದರಿಂದ 10% Discount ಆಯ್ಕೆಯಾಗಿದೆ.</p>
+<h3 id="ಉದಹರಣ-4-multiple-conditions">ಉದಾಹರಣೆ 4: Multiple Conditions</h3>
+<pre><code>let age = 21;
+let hasTicket = true;
+let isBlocked = false;
+
+if (age &gt;= 18 &amp;&amp; hasTicket &amp;&amp; !isBlocked) {
+  console.log("Entry allowed");
+} else {
+  console.log("Entry denied");
+}</code></pre>
+<p>Output:</p>
+<pre><code>Entry allowed</code></pre>
+<p>ಇಲ್ಲಿ ಮೂರು ಷರತ್ತುಗಳಿವೆ:</p>
+<ol type="1">
+<li>ವಯಸ್ಸು 18 ಅಥವಾ ಹೆಚ್ಚು ಇರಬೇಕು.</li>
+<li>Ticket ಇರಬೇಕು.</li>
+<li>Block ಆಗಿರಬಾರದು.</li>
+</ol>
+<p>ಮೂರೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿರುವುದರಿಂದ ಪ್ರವೇಶ ಅನುಮತಿಸಲಾಗಿದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 19: Professional Best Practices" id="ಭಗ-19-professional-best-practices"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-19-professional-best-practices">ಭಾಗ 19: Professional Best Practices</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<table>
+<colgroup>
+<col style="width: 50%"/>
+<col style="width: 50%"/>
+</colgroup>
+<thead>
+<tr class="header">
+<th>ನಿಯಮ</th>
+<th>ಶಿಫಾರಸು</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Equality</td>
+<td>ಸಾಮಾನ್ಯವಾಗಿ <code>===</code> ಮತ್ತು <code>!==</code> ಬಳಸಿ</td>
+</tr>
+<tr class="even">
+<td>Input Validation</td>
+<td>Type ಮತ್ತು Input Range ಅನ್ನು ಪರಿಶೀಲಿಸಿ</td>
+</tr>
+<tr class="odd">
+<td>Multiple Conditions</td>
+<td>ಅಗತ್ಯವಿದ್ದಲ್ಲಿ <code>&amp;&amp;</code> / <code>||</code> ಬಳಸಿ</td>
+</tr>
+<tr class="even">
+<td>Complex Logic</td>
+<td>Parentheses ಮತ್ತು ಅರ್ಥಪೂರ್ಣ Variable Names ಬಳಸಿ</td>
+</tr>
+<tr class="odd">
+<td><code>if</code> Blocks</td>
+<td>ಸ್ಪಷ್ಟತೆಗಾಗಿ <code>{}</code> ಬಳಸಿ</td>
+</tr>
+<tr class="even">
+<td>Default Values</td>
+<td>Falsy Value ಗಳನ್ನೂ ಉಳಿಸಬೇಕಿದ್ದರೆ <code>??</code> ಪರಿಗಣಿಸಿ</td>
+</tr>
+<tr class="odd">
+<td>Number Checking</td>
+<td>ಅಗತ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ <code>Number.isFinite()</code> ಮತ್ತು <code>Number.isNaN()</code> ಬಳಸಿ</td>
+</tr>
+<tr class="even">
+<td>Object Properties</td>
+<td>Property ಇರುವುದನ್ನು ತಿಳಿಯಲು <code>in</code> ಅಥವಾ <code>Object.hasOwn()</code> ಬಳಸಿ</td>
+</tr>
+<tr class="odd">
+<td>Nested Conditions</td>
+<td>ಓದಲು ಕಷ್ಟವಾದರೆ ಸ್ಪಷ್ಟವಾದ Guard Clauses ಅಥವಾ ಬೇರೆ Variables ಬಳಸಿ</td>
+</tr>
+<tr class="even">
+<td>Debugging</td>
+<td>ಪ್ರತಿಯೊಂದು Condition ನ Intermediate Value ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="guard-clause-ಎದರನ">Guard Clause ಎಂದರೇನು?</h3>
+<p>ಒಂದು ಕಾರ್ಯದ ಆರಂಭದಲ್ಲಿಯೇ ತಪ್ಪಾದ ಅಥವಾ ಅನುಮತಿಸದ ಪರಿಸ್ಥಿತಿಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ಅವು ಪೂರೈಸದಿದ್ದರೆ Function ನಿಂದ ಬೇಗನೆ ಹೊರಬರುವ ವಿಧಾನವನ್ನು Guard Clause ಎನ್ನುತ್ತಾರೆ.</p>
+<pre><code>function processPayment(amount) {
+  if (!Number.isFinite(amount)) {
+    return "Invalid amount";
+  }
+
+  if (amount &lt;= 0) {
+    return "Amount must be positive";
+  }
+
+  return "Payment can be processed";
+}
+
+console.log(processPayment(500)); // Payment can be processed
+console.log(processPayment(0));   // Amount must be positive</code></pre>
+<p>ಇದರಿಂದ ಎಲ್ಲ Conditions ಗಳನ್ನೂ ಒಳಹೊಕ್ಕು Nested Block ಗಳಾಗಿ ಬರೆಯುವ ಅಗತ್ಯ ಕಡಿಮೆಯಾಗುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಭಾಗ 20: ಸ್ವಯಂ ಅಭ್ಯಾಸ — ಉತ್ತರಗಳೊಂದಿಗೆ" id="ಭಗ-20-ಸವಯ-ಅಭಯಸ-ಉತತರಗಳದಗ"><div class="chapter-header"><h2 class="chapter-title" id="ಭಗ-20-ಸವಯ-ಅಭಯಸ-ಉತತರಗಳದಗ">ಭಾಗ 20: ಸ್ವಯಂ ಅಭ್ಯಾಸ — ಉತ್ತರಗಳೊಂದಿಗೆ</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<p>ಕೆಳಗಿನ ಪ್ರಶ್ನೆಗಳನ್ನು ಸ್ವತಃ ಯೋಚಿಸಿ ಉತ್ತರಿಸಿ. ನಂತರ ಕೊಟ್ಟಿರುವ ಉತ್ತರಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ.</p>
+<h3 id="ಪರಶನ-1-comparison">ಪ್ರಶ್ನೆ 1: Comparison</h3>
+<pre><code>console.log(15 &gt; 20);</code></pre>
+<p>ಉತ್ತರ: <code>false</code></p>
+<p>ಕಾರಣ: 15, 20 ಕ್ಕಿಂತ ದೊಡ್ಡದಲ್ಲ.</p>
+<h3 id="ಪರಶನ-2-equality">ಪ್ರಶ್ನೆ 2: Equality</h3>
+<pre><code>console.log(10 == "10");
+console.log(10 === "10");</code></pre>
+<p>ಉತ್ತರ:</p>
+<pre><code>true
+false</code></pre>
+<p>ಕಾರಣ: <code>==</code> Type Conversion ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸಬಹುದು. <code>===</code> ನಲ್ಲಿ Type ಮತ್ತು Value ಎರಡೂ ಹೊಂದಾಣಿಕೆಯಾಗಬೇಕು.</p>
+<h3 id="ಪರಶನ-3-logical-and">ಪ್ರಶ್ನೆ 3: Logical AND</h3>
+<pre><code>console.log(5 &gt; 2 &amp;&amp; 10 &lt; 5);</code></pre>
+<p>ಉತ್ತರ: <code>false</code></p>
+<p>ಕಾರಣ: ಮೊದಲ ಷರತ್ತು <code>true</code>, ಎರಡನೆಯದು <code>false</code>. AND ಗೆ ಎರಡೂ ಸತ್ಯವಾಗಿರಬೇಕು.</p>
+<h3 id="ಪರಶನ-4-logical-or">ಪ್ರಶ್ನೆ 4: Logical OR</h3>
+<pre><code>console.log(false || true);</code></pre>
+<p>ಉತ್ತರ: <code>true</code></p>
+<p>ಕಾರಣ: ಕನಿಷ್ಠ ಒಂದು ಷರತ್ತು ಸತ್ಯವಾಗಿದೆ.</p>
+<h3 id="ಪರಶನ-5-truthy-ಮತತ-falsy">ಪ್ರಶ್ನೆ 5: Truthy ಮತ್ತು Falsy</h3>
+<pre><code>console.log(Boolean("0"));
+console.log(Boolean(0));
+console.log(Boolean([]));</code></pre>
+<p>ಉತ್ತರ:</p>
+<pre><code>true
+false
+true</code></pre>
+<h3 id="ಪರಶನ-6-if...else">ಪ್ರಶ್ನೆ 6: <code>if...else</code></h3>
+<pre><code>let number = 12;
+
+if (number % 2 === 0) {
+  console.log("Even");
+} else {
+  console.log("Odd");
+}</code></pre>
+<p>ಉತ್ತರ: <code>Even</code></p>
+<p>ಕಾರಣ: 12 ಅನ್ನು 2 ರಿಂದ ಭಾಗಿಸಿದಾಗ ಶೇಷ <code>0</code>.</p>
+<h3 id="ಪರಶನ-7-nan">ಪ್ರಶ್ನೆ 7: <code>NaN</code></h3>
+<pre><code>console.log(NaN === NaN);
+console.log(Number.isNaN(NaN));</code></pre>
+<p>ಉತ್ತರ:</p>
+<pre><code>false
+true</code></pre>
+<h3 id="ಪರಶನ-8-ಮತತ">ಪ್ರಶ್ನೆ 8: <code>??</code> ಮತ್ತು <code>||</code></h3>
+<pre><code>console.log(0 || 100);
+console.log(0 ?? 100);</code></pre>
+<p>ಉತ್ತರ:</p>
+<pre><code>100
+0</code></pre>
+<p>ಕಾರಣ: <code>||</code> Falsy Value ಗಳನ್ನು Default Value ಯಿಂದ ಬದಲಾಯಿಸಬಹುದು. <code>??</code> ಕೇವಲ <code>null</code> ಮತ್ತು <code>undefined</code> ಗಳಿಗೆ Default Value ಬಳಸುತ್ತದೆ.</p>
+</div></section>
+<section class="lesson-section" data-title="ಅಂತಿಮ Revision — ಈ ಅಧ್ಯಾಯದ ಮುಖ್ಯ ಅಂಶಗಳು" id="ಅತಮ-revision-ಈ-ಅಧಯಯದ-ಮಖಯ-ಅಶಗಳ"><div class="chapter-header"><h2 class="chapter-title" id="ಅತಮ-revision-ಈ-ಅಧಯಯದ-ಮಖಯ-ಅಶಗಳ">ಅಂತಿಮ Revision — ಈ ಅಧ್ಯಾಯದ ಮುಖ್ಯ ಅಂಶಗಳು</h2><button aria-expanded="true" class="collapse-btn" title="ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ" type="button">ಮಡಚಿ −</button></div><div class="chapter-content">
+<h3 id="ನನಪಟಟಕಳಳಬಕದ-10-ನಯಮಗಳ">ನೆನಪಿಟ್ಟುಕೊಳ್ಳಬೇಕಾದ 10 ನಿಯಮಗಳು</h3>
+<h4 id="section-8">1</h4>
+<p>Condition</p>
+<p>ಪ್ರೋಗ್ರಾಂನ ಮುಂದಿನ ಕಾರ್ಯವನ್ನು ಷರತ್ತಿನ ಆಧಾರದ ಮೇಲೆ ನಿರ್ಧರಿಸುತ್ತದೆ.</p>
+<h4 id="section-9">2</h4>
+<p>Comparison</p>
+<p>ಎರಡು ಮೌಲ್ಯಗಳ ನಡುವಿನ ಸಂಬಂಧವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.</p>
+<h4 id="section-10">3</h4>
+<p>Strict Equality</p>
+<p>ಸಾಮಾನ್ಯವಾಗಿ `===` ಮತ್ತು `!==` ಬಳಸಿ.</p>
+<h4 id="section-11">4</h4>
+<p>AND</p>
+<p>`&amp;&amp;` — ಎರಡೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿರಬೇಕು.</p>
+<h4 id="section-12">5</h4>
+<p>OR</p>
+<p>`||` — ಕನಿಷ್ಠ ಒಂದು ಷರತ್ತು ಸತ್ಯವಾಗಿರಬೇಕು.</p>
+<h4 id="section-13">6</h4>
+<p>NOT</p>
+<p>`!` — Boolean Context ನಲ್ಲಿ ವಿರುದ್ಧ ಫಲಿತಾಂಶ ನೀಡುತ್ತದೆ.</p>
+<h4 id="section-14">7</h4>
+<p>Falsy</p>
+<p>`false`, `0`, `-0`, `0n`, `““`, `null`, `undefined`, `NaN`.</p>
+<h4 id="section-15">8</h4>
+<p>Ternary</p>
+<p>ಸರಳವಾದ ಎರಡು ಆಯ್ಕೆಗಳಿಗೆ `condition ? A : B`.</p>
+<h4 id="section-16">9</h4>
+<p>Nullish Coalescing</p>
+<p>`??` — `null` ಅಥವಾ `undefined` ಬಂದಾಗ ಮಾತ್ರ Default Value ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ.</p>
+<h4 id="section-17">10</h4>
+<p>Validation</p>
+<p>User Input ಅನ್ನು ಹೋಲಿಸುವ ಮೊದಲು Type ಮತ್ತು Range ಪರಿಶೀಲಿಸಿ.</p>
+<h3 id="ಮದನ-ಹತದಲಲ-ಏನ-ಕಲಯಬಕ">ಮುಂದಿನ ಹಂತದಲ್ಲಿ ಏನು ಕಲಿಯಬೇಕು?</h3>
+<p>JavaScript ಅನ್ನು Basic ನಿಂದ Professional Level ಗೆ ಕಲಿಯಲು ಈ ವಿಷಯಗಳನ್ನು ಈ ಕ್ರಮದಲ್ಲಿ ಕಲಿಯುವುದು ಸೂಕ್ತ:</p>
+<ol type="1">
+<li>Loops: <code>for</code>, <code>while</code>, <code>do...while</code>, <code>break</code>, <code>continue</code>.</li>
+<li>Functions: Function Declaration, Parameters, Return Values, Arrow Functions.</li>
+<li>Arrays ಮತ್ತು Objects: Properties, Methods, Iteration ಮತ್ತು Destructuring.</li>
+<li>Modern JavaScript: Scope, Hoisting, Closures, Modules ಮತ್ತು Error Handling.</li>
+<li>DOM ಮತ್ತು Events: HTML Elements ಆಯ್ಕೆ ಮಾಡುವುದು, Buttons, Forms ಮತ್ತು Dynamic Web Pages ರಚಿಸುವುದು.</li>
+</ol>
+<p>Conditions ಮತ್ತು Comparison Operators ಗಳನ್ನು ನೀವು ಸ್ಪಷ್ಟವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಂಡರೆ, ಈ ಮುಂದಿನ ವಿಷಯಗಳನ್ನು ಕಲಿಯುವುದು ಸುಲಭವಾಗುತ್ತದೆ. create dynamic HTML Page in modern and any one word not missing in html page</p>
+</div></section></div>
+<section class="extra-section interactive-only" id="live-lab"><span class="badge">PLAYGROUND</span><h2>Live JavaScript Playground</h2><p class="subtext">ಕೆಳಗಿನ ಕೋಡ್ ಬದಲಿಸಿ <b>Run Code</b> ಒತ್ತಿ. ನಿಮ್ಮ ಕೋಡ್ ಪ್ರತ್ಯೇಕ sandbox ಒಳಗೆ ಓಡುತ್ತದೆ; ಫಲಿತಾಂಶ ಕೆಳಗೆ ಕಾಣಿಸುತ್ತದೆ.</p>
+<div class="actions-row"><button class="secondary-btn" id="exampleBasic">ಉದಾಹರಣೆ: if / else</button><button class="secondary-btn" id="exampleComparison">ಉದಾಹರಣೆ: Comparison</button><button class="secondary-btn" id="exampleFalsy">ಉದಾಹರಣೆ: Truthy / Falsy</button><button class="secondary-btn" id="clearEditor">Clear</button></div>
+<div class="lab-grid"><div><label for="playgroundCode" class="subtle">ನಿಮ್ಮ JavaScript ಕೋಡ್</label><textarea id="playgroundCode" class="lab-editor" spellcheck="false">let marks = 80;\n\nif (marks >= 35) {\n  console.log("Pass");\n} else {\n  console.log("Fail");\n}</textarea><div class="actions-row"><button class="primary-btn" id="runPlayground">▶ Run Code</button><button class="secondary-btn" id="resetPlayground">Reset Example</button></div></div><div class="lab-output"><div class="output-title">Console Output</div><div class="output-text" id="playgroundOutput">Run Code ಒತ್ತಿದಾಗ ಫಲಿತಾಂಶ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.</div></div></div><p class="subtext">ಸೂಚನೆ: ಈ Playground ಕಲಿಕೆಯ ಉದ್ದೇಶಕ್ಕಾಗಿ ಮಾತ್ರ. ಅಪರಿಚಿತ ಅಥವಾ ನಂಬಿಕೆಯಾಗದ JavaScript ಕೋಡ್ ಅನ್ನು ಚಲಾಯಿಸಬೇಡಿ.</p></section>
+<section class="extra-section interactive-only" id="interactive-quiz"><span class="badge">SELF TEST</span><h2>Interactive Quiz</h2><p class="subtext">ಉತ್ತರವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ. ನಂತರ ಫಲಿತಾಂಶ ಪರಿಶೀಲಿಸಿ, ತಪ್ಪಿದ ಪ್ರಶ್ನೆಗಳ ವಿವರಣೆಯನ್ನು ಓದಿ.</p><div class="quiz-list" id="quizList"></div><div class="quiz-footer"><button class="primary-btn" id="submitQuiz">ಉತ್ತರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ</button><button class="secondary-btn" id="resetQuiz">ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ</button><span class="score" id="quizScore" aria-live="polite"></span></div></section>
+<div class="footer">JS Kannada Lab · HTML / CSS / JavaScript ಒಂದೇ ಫೈಲ್‌ನಲ್ಲಿ · Offline-ready · ನಿಮ್ಮ ಕಲಿಕೆಗೆ ಶುಭಾಶಯಗಳು ✨</div>
+</main></div>
+<button class="back-top" id="backTop" title="ಮೇಲಕ್ಕೆ ಹೋಗಿ" aria-label="ಮೇಲಕ್ಕೆ ಹೋಗಿ">↑</button>
+<template id="originalMarkdownSource"># JavaScript Conditions ಮತ್ತು Comparison Operators — Basic to Professional Level
+
+ಸಂಪೂರ್ಣ ಕನ್ನಡ ಅಧ್ಯಯನ ನೋಟ್ಸ್ · Beginner → Intermediate → Advanced · Modern JavaScript
+
+JavaScript ಅನ್ನು ಈಗಷ್ಟೇ ಕಲಿಯಲು ಪ್ರಾರಂಭಿಸಿರುವ ವಿದ್ಯಾರ್ಥಿಯೂ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವಂತೆ, ಕಂಪ್ಯೂಟರ್‌ನ ನಿರ್ಧಾರ ತೆಗೆದುಕೊಳ್ಳುವ ವಿಧಾನದಿಂದ ಪ್ರಾರಂಭಿಸಿ Professional Coding ವರೆಗೆ ಈ ವಿಷಯಗಳನ್ನು ಅಧ್ಯಯನ ಮಾಡೋಣ.
+
+ಈ ಅಧ್ಯಾಯದ ಉದ್ದೇಶ ಕೇವಲ Operators ಗಳ ಹೆಸರನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದಲ್ಲ. ಯಾವ Operator ಏನು ಮಾಡುತ್ತದೆ, ಏಕೆ ಬಳಸಬೇಕು, ಯಾವಾಗ ಬಳಸಬೇಕು, ಫಲಿತಾಂಶ ಹೇಗೆ ಬರುತ್ತದೆ ಮತ್ತು ಯಾವ ತಪ್ಪುಗಳನ್ನು ತಪ್ಪಿಸಬೇಕು ಎಂಬುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದಾಗಿದೆ.
+
+## ಅಧ್ಯಾಯದ ಕಲಿಕಾ ಕ್ರಮ
+
+### 01
+
+Conditions ಪರಿಚಯ
+
+Condition, true, false ಮತ್ತು Boolean
+
+### 02
+
+Comparison Operators
+
+\&gt;, &lt;, &gt;=, &lt;=, ==, ===, !=, !==
+
+### 03
+
+Conditional Statements
+
+if, else, else if, Nested if
+
+### 04
+
+Logical Operators
+
+&amp;&amp;, ||, ! ಮತ್ತು Short-Circuit Evaluation
+
+### 05
+
+Type Conversion
+
+Truthy, Falsy, Type Coercion ಮತ್ತು NaN
+
+### 06
+
+Advanced JavaScript
+
+switch, Ternary, in, instanceof, ?? ಮತ್ತು ?.
+
+### 07
+
+Professional Practices
+
+Operator Precedence, Edge Cases ಮತ್ತು Debugging
+
+### 08
+
+ಪ್ರಾಯೋಗಿಕ ಅಭ್ಯಾಸ
+
+Coding Examples ಮತ್ತು MCQ
+
+# ಭಾಗ 1: Conditions ಎಂದರೇನು?
+
+## 1.1 ನೈಜ ಜೀವನದಲ್ಲಿ Condition
+
+ನೀವು ಒಂದು ಪರೀಕ್ಷೆ ಬರೆದಿದ್ದೀರಿ ಎಂದುಕೊಳ್ಳಿ. ಪರೀಕ್ಷೆಯಲ್ಲಿ ಪಾಸ್ ಆಗಲು ಕನಿಷ್ಠ 35 ಅಂಕಗಳು ಬೇಕು.
+
+- ಅಂಕಗಳು 35 ಅಥವಾ ಅದಕ್ಕಿಂತ ಹೆಚ್ಚು ಇದ್ದರೆ — Pass.
+- ಅಂಕಗಳು 35 ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದ್ದರೆ — Fail.
+
+ನೀವು ತೆಗೆದುಕೊಳ್ಳುವ ನಿರ್ಧಾರವು ಒಂದು ಷರತ್ತಿನ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿದೆ. ಆ ಷರತ್ತೇ Condition.
+
+ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ ಕೂಡ ಇದೇ ತರ್ಕವನ್ನು ಬಳಸಬಹುದು.
+
+```
+let marks = 80;
+
+if (marks &gt;= 35) {
+  console.log(&quot;Pass&quot;);
+}
+```
+
+Output:
+
+```
+Pass
+```
+
+ಈ ಉದಾಹರಣೆಯನ್ನು ಹಂತ ಹಂತವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ.
+
+1. `let marks = 80;` — `marks` ಎಂಬ Variable ನಲ್ಲಿ `80` ಅನ್ನು ಸಂಗ್ರಹಿಸಲಾಗಿದೆ.
+2. `if` — ಮುಂದಿನ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸಲು JavaScript ಗೆ ಸೂಚಿಸುತ್ತದೆ.
+3. `marks &gt;= 35` — ಅಂಕಗಳು 35 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಥವಾ ಅದಕ್ಕೆ ಸಮಾನವೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ.
+4. `80 &gt;= 35` ಫಲಿತಾಂಶ `true`.
+5. ಆದ್ದರಿಂದ `{ }` ಒಳಗಿನ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+6. `console.log(&quot;Pass&quot;)` ಎಂಬುದು `Pass` ಅನ್ನು Output ನಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.
+
+## 1.2 Condition ಎಂದರೇನು?
+
+Condition ಎಂದರೆ ಒಂದು ನಿರ್ದಿಷ್ಟ ಷರತ್ತು ಸತ್ಯವೇ ಅಥವಾ ಅಸತ್ಯವೇ ಎಂಬುದನ್ನು ಪರಿಶೀಲಿಸಿ, ಅದರ ಆಧಾರದ ಮೇಲೆ ಪ್ರೋಗ್ರಾಂನ ಮುಂದಿನ ಕಾರ್ಯವನ್ನು ನಿರ್ಧರಿಸಲು ಬಳಸುವ Expression.
+
+ಸಾಮಾನ್ಯವಾಗಿ Condition ನಿಂದ `true` ಅಥವಾ `false` ಎಂಬ Boolean ಫಲಿತಾಂಶ ಸಿಗುತ್ತದೆ. ಆದರೆ JavaScript ನ `if` Statement ನಲ್ಲಿ Number, String, Object ಮುಂತಾದ ಮೌಲ್ಯಗಳನ್ನೂ ನೇರವಾಗಿ ಬಳಸಬಹುದು. ಇವುಗಳನ್ನು ನಂತರ Truthy ಮತ್ತು Falsy ಭಾಗದಲ್ಲಿ ಕಲಿಯೋಣ.
+
+### Condition ಎಲ್ಲಿ ಉಪಯೋಗವಾಗುತ್ತದೆ?
+
+| ಬಳಕೆ                | ಷರತ್ತಿನ ಉದಾಹರಣೆ        |
+| ------------------- | ---------------------- |
+| ಪಾಸ್ ಅಥವಾ ಫೇಲ್      | `marks &gt;= 35`          |
+| ವಯಸ್ಸು ಪರಿಶೀಲನೆ     | `age &gt;= 18`            |
+| Login ಪರಿಶೀಲನೆ      | `isLoggedIn === true`  |
+| Password ಪರಿಶೀಲನೆ   | `password.length &gt;= 8` |
+| Stock ಲಭ್ಯತೆ        | `quantity &gt; 0`         |
+| Internet connection | `isOnline === true`    |
+| ಪ್ರವೇಶ ಅನುಮತಿ       | `isAdmin === true`     |
+
+ನೈಜ ವೆಬ್‌ಸೈಟ್‌ಗಳಲ್ಲಿ Form Validation, Login Flow, Shopping Cart, Payment Status, User Permissions ಮುಂತಾದ ಅನೇಕ ಕಾರ್ಯಗಳಲ್ಲಿ Conditions ಬಳಸಲಾಗುತ್ತದೆ.
+
+## 1.3 Boolean ಎಂದರೇನು?
+
+JavaScript ನಲ್ಲಿ `Boolean` ಎಂಬುದು ಕೇವಲ ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೊಂದಿರುವ Data Type.
+
+```
+let isAvailable = true;
+let isCompleted = false;
+
+console.log(isAvailable); // true
+console.log(isCompleted); // false
+```
+
+- `true` ಎಂದರೆ ಷರತ್ತು ಸತ್ಯ.
+- `false` ಎಂದರೆ ಷರತ್ತು ಅಸತ್ಯ.
+
+JavaScript ನಲ್ಲಿ ಇವುಗಳನ್ನು ಸಣ್ಣ ಅಕ್ಷರಗಳಲ್ಲಿ ಬರೆಯಬೇಕು. `True` ಮತ್ತು `False` JavaScript ನ Boolean Literals ಅಲ್ಲ.
+
+```
+console.log(typeof true);  // &quot;boolean&quot;
+console.log(typeof false); // &quot;boolean&quot;
+```
+
+# ಭಾಗ 2: Comparison Operators ಸಂಪೂರ್ಣ ವಿವರಣೆ
+
+## 2.1 Comparison Operator ಎಂದರೇನು?
+
+ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸಲು ಬಳಸುವ Operator ಅನ್ನು Comparison Operator ಎನ್ನುತ್ತಾರೆ.
+
+ಉದಾಹರಣೆಗೆ:
+
+```
+console.log(10 &gt; 5);
+```
+
+Output:
+
+```
+true
+```
+
+ಇಲ್ಲಿ `10` ಮತ್ತು `5` ಎಂಬ ಮೌಲ್ಯಗಳನ್ನು `&gt;` Operator ಮೂಲಕ ಹೋಲಿಸಲಾಗಿದೆ. ಫಲಿತಾಂಶ `true`.
+
+## 2.2 ಎಲ್ಲಾ ಎಂಟು ಮುಖ್ಯ Comparison Operators
+
+| Operator | English ಹೆಸರು            | ಕನ್ನಡದ ಅರ್ಥ                          | ಉದಾಹರಣೆ     | Result  |
+| -------- | ------------------------ | ------------------------------------ | ----------- | ------- |
+| `&gt;`      | Greater than             | ಗಿಂತ ದೊಡ್ಡದು                         | `10 &gt; 5`    | `true`  |
+| `&lt;`      | Less than                | ಗಿಂತ ಚಿಕ್ಕದು                         | `3 &lt; 8`     | `true`  |
+| `&gt;=`     | Greater than or equal to | ದೊಡ್ಡದು ಅಥವಾ ಸಮಾನ                    | `5 &gt;= 5`    | `true`  |
+| `&lt;=`     | Less than or equal to    | ಚಿಕ್ಕದು ಅಥವಾ ಸಮಾನ                    | `4 &lt;= 5`    | `true`  |
+| `==`     | Loose equality           | Type Conversion ನಿಯಮಗಳೊಂದಿಗೆ ಸಮಾನತೆ  | `5 == &quot;5&quot;`  | `true`  |
+| `===`    | Strict equality          | Type ಮತ್ತು Value ಎರಡರ ಸಮಾನತೆ         | `5 === &quot;5&quot;` | `false` |
+| `!=`     | Loose inequality         | Type Conversion ನಿಯಮಗಳೊಂದಿಗೆ ಅಸಮಾನತೆ | `5 != &quot;6&quot;`  | `true`  |
+| `!==`    | Strict inequality        | Strict ನಿಯಮಗಳ ಪ್ರಕಾರ ಅಸಮಾನತೆ         | `5 !== &quot;5&quot;` | `true`  |
+
+ಈಗ ಪ್ರತಿಯೊಂದನ್ನು ವಿವರವಾಗಿ ಕಲಿಯೋಣ.
+
+## 2.3 Greater Than (`&gt;`)
+
+ಎಡಭಾಗದ ಮೌಲ್ಯವು ಬಲಭಾಗದ ಮೌಲ್ಯಕ್ಕಿಂತ ದೊಡ್ಡದಾಗಿದ್ದರೆ `true` ಬರುತ್ತದೆ.
+
+```
+console.log(20 &gt; 10); // true
+console.log(5 &gt; 10);  // false
+console.log(10 &gt; 10); // false
+```
+
+ವಿವರಣೆ:
+
+- `20 &gt; 10` — 20 ದೊಡ್ಡದು; `true`.
+- `5 &gt; 10` — 5 ದೊಡ್ಡದಲ್ಲ; `false`.
+- `10 &gt; 10` — ಎರಡೂ ಸಮಾನ; `false`.
+
+ಮುಖ್ಯ ನಿಯಮ: `&gt;` ಎಂದರೆ ದೊಡ್ಡದು ಮಾತ್ರ. ಸಮಾನವಾಗಿದ್ದರೆ ಸಾಕಾಗುವುದಿಲ್ಲ.
+
+## 2.4 Less Than (`&lt;`)
+
+ಎಡಭಾಗದ ಮೌಲ್ಯವು ಬಲಭಾಗದ ಮೌಲ್ಯಕ್ಕಿಂತ ಚಿಕ್ಕದಾಗಿದ್ದರೆ `true` ಬರುತ್ತದೆ.
+
+```
+console.log(5 &lt; 10);  // true
+console.log(15 &lt; 10); // false
+console.log(10 &lt; 10); // false
+```
+
+`&lt;` Operator ಸಮಾನತೆಯನ್ನು ಸ್ವೀಕರಿಸುವುದಿಲ್ಲ.
+
+## 2.5 Greater Than or Equal To (`&gt;=`)
+
+ಎಡಭಾಗದ ಮೌಲ್ಯವು ದೊಡ್ಡದಾಗಿದ್ದರೂ ಅಥವಾ ಎರಡೂ ಮೌಲ್ಯಗಳು ಸಮಾನವಾಗಿದ್ದರೂ `true` ಬರುತ್ತದೆ.
+
+```
+console.log(40 &gt;= 35); // true
+console.log(35 &gt;= 35); // true
+console.log(20 &gt;= 35); // false
+```
+
+ಪರೀಕ್ಷೆಯ ಪಾಸ್ ಮಾರ್ಕ್ ಅಥವಾ ಕನಿಷ್ಠ ವಯಸ್ಸನ್ನು ಪರೀಕ್ಷಿಸಲು ಇದು ಉಪಯುಕ್ತ.
+
+## 2.6 Less Than or Equal To (`&lt;=`)
+
+ಎಡಭಾಗದ ಮೌಲ್ಯವು ಚಿಕ್ಕದಾಗಿದ್ದರೂ ಅಥವಾ ಸಮಾನವಾಗಿದ್ದರೂ `true` ಬರುತ್ತದೆ.
+
+```
+console.log(10 &lt;= 20); // true
+console.log(20 &lt;= 20); // true
+console.log(25 &lt;= 20); // false
+```
+
+ಉದಾಹರಣೆಗೆ, ಒಂದು ಉತ್ಪನ್ನದ ಬೆಲೆ ನಿಮ್ಮ ಬಜೆಟ್ ಒಳಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಲು ಇದನ್ನು ಬಳಸಬಹುದು.
+
+```
+let price = 800;
+let budget = 1000;
+
+console.log(price &lt;= budget); // true
+```
+
+## 2.7 ಈ ನಾಲ್ಕು Operators ನಡುವಿನ ವ್ಯತ್ಯಾಸ
+
+```
+let a = 10;
+let b = 10;
+
+console.log(a &gt; b);  // false
+console.log(a &lt; b);  // false
+console.log(a &gt;= b); // true
+console.log(a &lt;= b); // true
+```
+
+ಎರಡೂ ಮೌಲ್ಯಗಳು ಸಮಾನವಾದಾಗ `&gt;` ಮತ್ತು `&lt;` ಎರಡೂ `false` ನೀಡುತ್ತವೆ. ಆದರೆ `&gt;=` ಮತ್ತು `&lt;=` ಎರಡೂ `true` ನೀಡುತ್ತವೆ.
+
+# ಭಾಗ 3: Equality Operators — `==` ಮತ್ತು `===`
+
+ಇದು JavaScript ನಲ್ಲಿ ಅತ್ಯಂತ ಮುಖ್ಯವಾದ ವಿಷಯ. Beginner ಗಳು ಮಾತ್ರವಲ್ಲದೆ ಅನುಭವಿಗಳೂ ಇದನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಂಡಿರಬೇಕು.
+
+## 3.1 `==` ಎಂದರೇನು?
+
+`==` ಅನ್ನು Loose Equality Operator ಎನ್ನುತ್ತಾರೆ.
+
+ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುವಾಗ JavaScript ನ ನಿಯಮಗಳ ಪ್ರಕಾರ ಅಗತ್ಯವಿದ್ದರೆ Type Conversion ಮಾಡುತ್ತದೆ.
+
+```
+console.log(5 == 5);   // true
+console.log(5 == &quot;5&quot;); // true
+```
+
+ಎರಡನೆಯ ಉದಾಹರಣೆಯಲ್ಲಿ:
+
+- `5` — Number Type.
+- `&quot;5&quot;` — String Type.
+- `==` ಬಳಸಿದಾಗ JavaScript Type Conversion ನಿಯಮಗಳನ್ನು ಅನ್ವಯಿಸಿ ಅವುಗಳನ್ನು ಹೋಲಿಸುತ್ತದೆ.
+- ಈ ನಿರ್ದಿಷ್ಟ ಉದಾಹರಣೆಯಲ್ಲಿ ಫಲಿತಾಂಶ `true`.
+
+## 3.2 `===` ಎಂದರೇನು?
+
+`===` ಅನ್ನು Strict Equality Operator ಎನ್ನುತ್ತಾರೆ.
+
+ಇದು Type Conversion ಮೂಲಕ ವಿಭಿನ್ನ Types ಗಳನ್ನು ಸಮಾನಗೊಳಿಸುವುದಿಲ್ಲ. Primitive ಮೌಲ್ಯಗಳಿಗೆ Type ಮತ್ತು Value ಎರಡೂ ಹೊಂದಾಣಿಕೆಯಾಗಬೇಕು.
+
+```
+console.log(5 === 5);   // true
+console.log(5 === &quot;5&quot;); // false
+```
+
+ಇಲ್ಲಿ ಎರಡನೆಯ ಉದಾಹರಣೆ `false`, ಏಕೆಂದರೆ `5` Number; `&quot;5&quot;` String.
+
+## 3.3 `==` ಮತ್ತು `===` ಹೋಲಿಕೆ
+
+### Loose Equality — `==`
+
+```
+console.log(10 == &quot;10&quot;); // true
+console.log(0 == false); // true
+```
+
+ಕೆಲವು ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳು Type Conversion ನಂತರ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡಬಹುದು.
+
+### Strict Equality — `===`
+
+```
+console.log(10 === &quot;10&quot;); // false
+console.log(0 === false); // false
+```
+
+Type ಮತ್ತು Value ಹೊಂದಾಣಿಕೆಯಿರಬೇಕು. ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳನ್ನು ಕೇವಲ ಪರಿವರ್ತಿಸಿ ಸಮಾನಗೊಳಿಸುವುದಿಲ್ಲ.
+
+### ಇನ್ನೂ ಕೆಲವು ಮುಖ್ಯ ಉದಾಹರಣೆಗಳು
+
+```
+console.log(1 == true);      // true
+console.log(1 === true);     // false
+
+console.log(&quot;&quot; == false);    // true
+console.log(&quot;&quot; === false);   // false
+
+console.log(null == undefined);  // true
+console.log(null === undefined); // false
+```
+
+ಈ ಫಲಿತಾಂಶಗಳು JavaScript ನ ನಿರ್ದಿಷ್ಟ Equality Algorithm ಗಳಿಂದ ಬರುತ್ತವೆ. ಆದ್ದರಿಂದ `==` ಬಳಸಿದಾಗ ಫಲಿತಾಂಶ ಊಹಿಸುವ ಬದಲು ಅದರ Conversion ನಿಯಮಗಳನ್ನು ತಿಳಿದುಕೊಳ್ಳಬೇಕು.
+
+### Professional Coding ನಲ್ಲಿ ಯಾವುದನ್ನು ಬಳಸಬೇಕು?
+
+ಸಾಮಾನ್ಯವಾಗಿ `===` ಮತ್ತು `!==` ಬಳಸುವುದು ಉತ್ತಮ.
+
+```
+let enteredAge = &quot;18&quot;;
+
+if (enteredAge === 18) {
+  console.log(&quot;Eligible&quot;);
+} else {
+  console.log(&quot;Types do not match&quot;);
+}
+```
+
+Output:
+
+```
+Types do not match
+```
+
+ಕಾರಣ: `enteredAge` ಒಂದು String. ಬಳಕೆದಾರರು Text Input ಮೂಲಕ ಸಂಖ್ಯೆಯನ್ನು ನೀಡಿದಾಗ ಅದನ್ನು ಅಗತ್ಯಕ್ಕೆ ತಕ್ಕಂತೆ Validate ಮಾಡಿ, Number ಆಗಿ ಪರಿವರ್ತಿಸಿ ನಂತರ ಹೋಲಿಸಬೇಕು.
+
+```
+let enteredAge = &quot;18&quot;;
+let age = Number(enteredAge);
+
+if (Number.isFinite(age) &amp;&amp; age &gt;= 18) {
+  console.log(&quot;Eligible&quot;);
+}
+```
+
+Output:
+
+```
+Eligible
+```
+
+ಗಮನಿಸಿ: ನೈಜ Form ಗಳಲ್ಲಿ ಖಾಲಿ String ಅನ್ನು ನೇರವಾಗಿ `Number()` ಮಾಡಿದರೆ `0` ಸಿಗುತ್ತದೆ. ಆದ್ದರಿಂದ Input ಖಾಲಿಯಿದೆಯೇ ಮತ್ತು ಅದರ Format ಸರಿಯಿದೆಯೇ ಎಂಬುದನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ ಪರಿಶೀಲಿಸುವುದು ಅಗತ್ಯ.
+
+## 3.4 `!=` ಮತ್ತು `!==`
+
+ಇವು Equality Operators ಗಳ ವಿರುದ್ಧದ ಅರ್ಥವನ್ನು ನೀಡುತ್ತವೆ.
+
+- `!=` — Loose Inequality.
+- `!==` — Strict Inequality.
+
+```
+console.log(5 != &quot;5&quot;);   // false
+console.log(5 !== &quot;5&quot;);  // true
+
+console.log(5 != 8);     // true
+console.log(5 !== 8);    // true
+```
+
+`5 != &quot;5&quot;` ನಲ್ಲಿ Loose Equality ಪ್ರಕಾರ ಎರಡೂ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತವೆ. ಆದ್ದರಿಂದ `!=` ಫಲಿತಾಂಶ `false`.
+
+`5 !== &quot;5&quot;` ನಲ್ಲಿ Type ಬೇರೆ ಇರುವುದರಿಂದ ಅವು Strict Equality ಪ್ರಕಾರ ಸಮಾನವಲ್ಲ. ಆದ್ದರಿಂದ `!==` ಫಲಿತಾಂಶ `true`.
+
+ಈ ನಿಯಮವನ್ನು ನೆನಪಿಡಿ:
+
+- `==` / `===` — ಸಮಾನತೆ ಪರಿಶೀಲಿಸುತ್ತವೆ.
+- `!=` / `!==` — ಅಸಮಾನತೆ ಪರಿಶೀಲಿಸುತ್ತವೆ.
+
+ಇವುಗಳಲ್ಲಿ `==` ಮತ್ತು `!=` Type Conversion ಮಾಡಬಹುದಾದರೆ, `===` ಮತ್ತು `!==` Strict ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸುತ್ತವೆ.
+
+# ಭಾಗ 4: JavaScript ನಲ್ಲಿ `if` ಮತ್ತು Conditional Statements
+
+Comparison Operators ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸುತ್ತವೆ. Conditional Statements ಆ ಷರತ್ತಿನ ಫಲಿತಾಂಶಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಯಾವ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕು ಎಂಬುದನ್ನು ನಿರ್ಧರಿಸುತ್ತವೆ.
+
+## 4.1 `if` Statement
+
+ಒಂದು Condition ಸತ್ಯವಾದಾಗ ಮಾತ್ರ ನಿರ್ದಿಷ್ಟ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕಾದರೆ `if` ಬಳಸುತ್ತೇವೆ.
+
+Syntax:
+
+```
+if (condition) {
+  // condition ಸತ್ಯವಾದಾಗ ನಡೆಯುವ ಕೋಡ್
+}
+```
+
+ಉದಾಹರಣೆ:
+
+```
+let temperature = 35;
+
+if (temperature &gt; 30) {
+  console.log(&quot;It is hot&quot;);
+}
+```
+
+Output:
+
+```
+It is hot
+```
+
+`temperature &gt; 30` ಸತ್ಯವಾದ್ದರಿಂದ `if` Block ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+
+Condition `false` ಆಗಿದ್ದರೆ ಒಳಗಿನ ಕೋಡ್ ನಡೆಯುವುದಿಲ್ಲ.
+
+```
+let temperature = 20;
+
+if (temperature &gt; 30) {
+  console.log(&quot;It is hot&quot;);
+}
+
+console.log(&quot;Program finished&quot;);
+```
+
+Output:
+
+```
+Program finished
+```
+
+### Curly Braces `{}` ಏಕೆ ಬಳಸಬೇಕು?
+
+`{}` ಒಂದು Block ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ.
+
+```
+if (true) {
+  console.log(&quot;First line&quot;);
+  console.log(&quot;Second line&quot;);
+}
+```
+
+ಎರಡೂ Statements `if` Block ನ ಭಾಗವಾಗಿವೆ.
+
+ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ JavaScript ಒಂದೇ Statement ಗೆ `{}` ಇಲ್ಲದೆಯೂ ಅವಕಾಶ ನೀಡುತ್ತದೆ. ಆದರೆ Professional Coding ನಲ್ಲಿ ಷರತ್ತುಗಳಿಗೆ `{}` ಬಳಸುವ ಅಭ್ಯಾಸ ಉತ್ತಮ. ಇದು ತಪ್ಪುಗಳನ್ನು ಕಡಿಮೆ ಮಾಡಿ ಕೋಡ್ ಓದಲು ಸುಲಭಗೊಳಿಸುತ್ತದೆ.
+
+## 4.2 `if...else`
+
+Condition ಸತ್ಯವಾದಾಗ ಒಂದು ಕಾರ್ಯ, ಅಸತ್ಯವಾದಾಗ ಬೇರೆ ಕಾರ್ಯ ಮಾಡಬೇಕಾದರೆ `if...else` ಬಳಸುತ್ತೇವೆ.
+
+Syntax:
+
+```
+if (condition) {
+  // true ಆಗಿದ್ದರೆ
+} else {
+  // false ಆಗಿದ್ದರೆ
+}
+```
+
+ಉದಾಹರಣೆ:
+
+```
+let marks = 28;
+
+if (marks &gt;= 35) {
+  console.log(&quot;Pass&quot;);
+} else {
+  console.log(&quot;Fail&quot;);
+}
+```
+
+Output:
+
+```
+Fail
+```
+
+`if` ಮತ್ತು `else` ಗಳಲ್ಲಿ ಒಂದು ಮಾರ್ಗ ಮಾತ್ರ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+
+## 4.3 `if...else if...else`
+
+ಹಲವು ಷರತ್ತುಗಳಲ್ಲಿ ಯಾವುದು ಮೊದಲು ಸತ್ಯವಾಗುತ್ತದೆಯೋ ಆ ಮಾರ್ಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸುತ್ತೇವೆ.
+
+```
+let marks = 76;
+
+if (marks &gt;= 90) {
+  console.log(&quot;Grade A+&quot;);
+} else if (marks &gt;= 80) {
+  console.log(&quot;Grade A&quot;);
+} else if (marks &gt;= 70) {
+  console.log(&quot;Grade B&quot;);
+} else if (marks &gt;= 35) {
+  console.log(&quot;Pass&quot;);
+} else {
+  console.log(&quot;Fail&quot;);
+}
+```
+
+Output:
+
+```
+Grade B
+```
+
+ಇದು ಹೀಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ:
+
+1. `76 &gt;= 90` → `false`.
+2. `76 &gt;= 80` → `false`.
+3. `76 &gt;= 70` → `true`.
+4. `Grade B` ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.
+5. ನಂತರದ `else if` ಷರತ್ತುಗಳನ್ನು ಈ ಸರಣಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸುವುದಿಲ್ಲ.
+
+Professional ನಿಯಮ: ಷರತ್ತುಗಳ ಕ್ರಮವನ್ನು ಸರಿಯಾಗಿ ಯೋಜಿಸಬೇಕು. ಅತಿ ವ್ಯಾಪಕವಾದ ಷರತ್ತನ್ನು ಮೊದಲಿಗೆ ಬರೆಯುವುದರಿಂದ ನಿರ್ದಿಷ್ಟ ಫಲಿತಾಂಶಗಳ Block ಗಳು ಕಾರ್ಯನಿರ್ವಹಿಸದೇ ಹೋಗಬಹುದು.
+
+## 4.4 Nested `if`
+
+ಒಂದು `if` Block ಒಳಗೆ ಮತ್ತೊಂದು `if` ಬರೆಯುವುದನ್ನು Nested `if` ಎನ್ನುತ್ತಾರೆ.
+
+ಉದಾಹರಣೆ: ವಯಸ್ಸು ಮತ್ತು ಪರೀಕ್ಷಾ ಅಂಕಗಳನ್ನು ಎರಡನ್ನೂ ಪರಿಶೀಲಿಸೋಣ.
+
+```
+let age = 20;
+let marks = 80;
+
+if (age &gt;= 18) {
+  if (marks &gt;= 35) {
+    console.log(&quot;Eligible and Pass&quot;);
+  } else {
+    console.log(&quot;Eligible but Fail&quot;);
+  }
+} else {
+  console.log(&quot;Not eligible by age&quot;);
+}
+```
+
+Output:
+
+```
+Eligible and Pass
+```
+
+ಮೊದಲು ವಯಸ್ಸು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ. ವಯಸ್ಸಿನ ಷರತ್ತು ಸತ್ಯವಾದರೆ ಮಾತ್ರ ಅಂಕಗಳ ಷರತ್ತನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ.
+
+ಇದೇ ತರ್ಕವನ್ನು ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ `&amp;&amp;` ಮೂಲಕವೂ ಬರೆಯಬಹುದು:
+
+```
+if (age &gt;= 18 &amp;&amp; marks &gt;= 35) {
+  console.log(&quot;Eligible and Pass&quot;);
+}
+```
+
+ಆದರೆ ಎರಡೂ ರೂಪಗಳು ಪ್ರತಿಯೊಂದು ಸನ್ನಿವೇಶದಲ್ಲಿಯೂ ಸಮಾನವಾಗಿರುವುದಿಲ್ಲ. ಎರಡನೇ ಷರತ್ತನ್ನು ಮೊದಲ ಷರತ್ತು ಸತ್ಯವಾದಾಗ ಮಾತ್ರ ಪರಿಶೀಲಿಸಬೇಕಾದರೆ Nested `if` ಉಪಯುಕ್ತವಾಗುತ್ತದೆ.
+
+# ಭಾಗ 5: Logical Operators — `&amp;&amp;`, `||`, `!`
+
+Comparison Operators ಸಾಮಾನ್ಯವಾಗಿ ಎರಡು ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುತ್ತವೆ. Logical Operators ಅನೇಕ ಷರತ್ತುಗಳನ್ನು ಜೋಡಿಸಲು ಅಥವಾ Boolean ಮೌಲ್ಯವನ್ನು ಬದಲಾಯಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತವೆ.
+
+## 5.1 Logical AND (`&amp;&amp;`)
+
+`&amp;&amp;` ಅನ್ನು AND ಎಂದು ಓದಬೇಕು.
+
+ಎರಡೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿದ್ದರೆ ಮಾತ್ರ Boolean Context ನಲ್ಲಿ ಒಟ್ಟಾರೆ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗುತ್ತದೆ.
+
+ಉದಾಹರಣೆ:
+
+```
+let age = 20;
+let hasID = true;
+
+if (age &gt;= 18 &amp;&amp; hasID === true) {
+  console.log(&quot;Access granted&quot;);
+} else {
+  console.log(&quot;Access denied&quot;);
+}
+```
+
+Output:
+
+```
+Access granted
+```
+
+ಇಲ್ಲಿ:
+
+- `age &gt;= 18` → `true`.
+- `hasID === true` → `true`.
+- `true &amp;&amp; true` → `true`.
+
+### AND Truth Table
+
+| Condition 1 | Condition 2 | ಫಲಿತಾಂಶ |
+| ----------- | ----------- | ------- |
+| `true`      | `true`      | `true`  |
+| `true`      | `false`     | `false` |
+| `false`     | `true`      | `false` |
+| `false`     | `false`     | `false` |
+
+ಎಲ್ಲಿ ಬಳಸುತ್ತೇವೆ? ಕನಿಷ್ಠ ವಯಸ್ಸು ಪೂರೈಸಬೇಕು ಮತ್ತು ಗುರುತಿನ ಚೀಟಿ ಇರಬೇಕು; Password ಸರಿಯಾಗಿರಬೇಕು ಮತ್ತು Account ಸಕ್ರಿಯವಾಗಿರಬೇಕು — ಇಂತಹ ಸಂದರ್ಭಗಳಲ್ಲಿ.
+
+## 5.2 Logical OR (`||`)
+
+`||` ಅನ್ನು OR ಎಂದು ಓದಬೇಕು.
+
+ಎರಡು ಷರತ್ತುಗಳಲ್ಲಿ ಕನಿಷ್ಠ ಒಂದು ಸತ್ಯವಾಗಿದ್ದರೂ Boolean Context ನಲ್ಲಿ ಒಟ್ಟಾರೆ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗುತ್ತದೆ.
+
+```
+let hasEmail = false;
+let hasPhone = true;
+
+if (hasEmail || hasPhone) {
+  console.log(&quot;Contact detail available&quot;);
+} else {
+  console.log(&quot;No contact detail&quot;);
+}
+```
+
+Output:
+
+```
+Contact detail available
+```
+
+ಇಲ್ಲಿ `hasEmail` `false` ಆಗಿದೆ. ಆದರೆ `hasPhone` `true`. ಆದ್ದರಿಂದ OR ಫಲಿತಾಂಶ `true`.
+
+### OR Truth Table
+
+| Condition 1 | Condition 2 | ಫಲಿತಾಂಶ |
+| ----------- | ----------- | ------- |
+| `true`      | `true`      | `true`  |
+| `true`      | `false`     | `true`  |
+| `false`     | `true`      | `true`  |
+| `false`     | `false`     | `false` |
+
+AND ಮತ್ತು OR ವ್ಯತ್ಯಾಸ ನೆನಪಿಡಿ:
+
+- `&amp;&amp;` — ಎರಡೂ ಸತ್ಯವಾಗಿರಬೇಕು.
+- `||` — ಕನಿಷ್ಠ ಒಂದು ಸತ್ಯವಾಗಿರಬೇಕು.
+
+## 5.3 Logical NOT (`!`)
+
+`!` ಒಂದು Boolean Context ನಲ್ಲಿ ಸತ್ಯವನ್ನು ಅಸತ್ಯವಾಗಿಯೂ, ಅಸತ್ಯವನ್ನು ಸತ್ಯವಾಗಿಯೂ ಪರಿವರ್ತಿಸುತ್ತದೆ.
+
+```
+console.log(!true);  // false
+console.log(!false); // true
+```
+
+ಉದಾಹರಣೆ:
+
+```
+let isLoggedIn = false;
+
+if (!isLoggedIn) {
+  console.log(&quot;Please log in&quot;);
+}
+```
+
+Output:
+
+```
+Please log in
+```
+
+`isLoggedIn` `false`. ಅದರ ಮುಂದೆ `!` ಇರುವುದರಿಂದ `!isLoggedIn` ಸತ್ಯವಾಗುತ್ತದೆ. ಆದ್ದರಿಂದ ಸಂದೇಶ ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.
+
+### `!` ಮತ್ತು `!==` ಒಂದೇ ಅಲ್ಲ
+
+```
+console.log(!true);      // false
+console.log(5 !== &quot;5&quot;);  // true
+```
+
+`!` Boolean Context ನಲ್ಲಿ ಮೌಲ್ಯವನ್ನು ವಿರುದ್ಧಗೊಳಿಸುತ್ತದೆ. `!==` ಎರಡು ಮೌಲ್ಯಗಳನ್ನು Strict Inequality ನಿಯಮದಂತೆ ಹೋಲಿಸುತ್ತದೆ.
+
+## 5.4 ಮೂರು Logical Operators ಒಟ್ಟಿಗೆ
+
+```
+let age = 22;
+let isStudent = true;
+let hasPermission = false;
+
+if (age &gt;= 18 &amp;&amp; (isStudent || hasPermission)) {
+  console.log(&quot;Condition satisfied&quot;);
+}
+```
+
+Output:
+
+```
+Condition satisfied
+```
+
+ತರ್ಕ:
+
+- `age &gt;= 18` → `true`.
+- `isStudent || hasPermission` → `true || false` → `true`.
+- `true &amp;&amp; true` → `true`.
+
+ಇಂತಹ Expression ಗಳಲ್ಲಿ Parentheses `()` ಬಳಸುವುದರಿಂದ ಷರತ್ತಿನ ಅರ್ಥ ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ.
+
+# ಭಾಗ 6: Truthy ಮತ್ತು Falsy Values
+
+JavaScript ನಲ್ಲಿ `if` Statement ಗೆ Boolean ಮೌಲ್ಯಗಳನ್ನಷ್ಟೇ ನೀಡಬೇಕೆಂಬ ನಿಯಮವಿಲ್ಲ.
+
+```
+if (100) {
+  console.log(&quot;Runs&quot;);
+}
+```
+
+Output:
+
+```
+Runs
+```
+
+ಇಲ್ಲಿ `100` Boolean `true` ಅಲ್ಲ. ಆದರೂ `if` ಒಳಗೆ ಅದು Truthy ಎಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ.
+
+ಇದಕ್ಕೆ ಕಾರಣ JavaScript ನ ToBoolean ನಿಯಮ.
+
+## 6.1 Falsy Values — ಸಂಪೂರ್ಣ ಪಟ್ಟಿ
+
+ಸಾಮಾನ್ಯ JavaScript ಪರಿಸರದಲ್ಲಿ Falsy ಆಗಿರುವ ಮುಖ್ಯ ಮೌಲ್ಯಗಳು ಹೀಗಿವೆ:
+
+| ಮೌಲ್ಯ       | ಅರ್ಥ                        |
+| ----------- | --------------------------- |
+| `false`     | Boolean false               |
+| `0`         | Number zero                 |
+| `-0`        | Negative zero               |
+| `0n`        | BigInt zero                 |
+| `&quot;&quot;`        | Empty String                |
+| `null`      | ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಮೌಲ್ಯ ಇಲ್ಲ |
+| `undefined` | ಮೌಲ್ಯ ನಿಗದಿಪಡಿಸಿಲ್ಲ         |
+| `NaN`       | Not-a-Number                |
+
+ಹಳೆಯ Browser ಗಳಲ್ಲಿನ ವಿಶೇಷ `document.all` ವರ್ತನೆ ಒಂದು ಅಪವಾದವಾಗಿದೆ; ಅದು ಸಾಮಾನ್ಯ JavaScript Coding ನಲ್ಲಿ ಅಪರೂಪಕ್ಕೆ ಮಾತ್ರ ಸಂಬಂಧಿಸಿದೆ.
+
+ಉದಾಹರಣೆ:
+
+```
+if (0) {
+  console.log(&quot;A&quot;);
+} else {
+  console.log(&quot;B&quot;);
+}
+```
+
+Output:
+
+```
+B
+```
+
+`0` Falsy ಆಗಿರುವುದರಿಂದ `else` ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+
+## 6.2 Truthy Values
+
+ಮೇಲಿನ Falsy Values ಗಳನ್ನು ಹೊರತುಪಡಿಸಿ ಹೆಚ್ಚಿನ ಮೌಲ್ಯಗಳು Truthy ಆಗಿರುತ್ತವೆ.
+
+```
+console.log(Boolean(&quot;Hello&quot;)); // true
+console.log(Boolean(&quot;0&quot;));     // true
+console.log(Boolean(&quot;false&quot;)); // true
+console.log(Boolean(-1));      // true
+console.log(Boolean([]));      // true
+console.log(Boolean({}));      // true
+console.log(Boolean(&quot; &quot;));     // true
+```
+
+ಇಲ್ಲಿ ಸಾಮಾನ್ಯವಾಗಿ ಹೆಚ್ಚು ತಪ್ಪಾಗುವ ಅಂಶಗಳನ್ನು ಗಮನಿಸಿ:
+
+| Value     | Truthy / Falsy | ಕಾರಣ             |
+| --------- | -------------- | ---------------- |
+| `0`       | Falsy          | Number zero      |
+| `&quot;0&quot;`     | Truthy         | ಖಾಲಿಯಲ್ಲದ String |
+| `false`   | Falsy          | Boolean false    |
+| `&quot;false&quot;` | Truthy         | String           |
+| `&quot;&quot;`      | Falsy          | ಖಾಲಿ String      |
+| `&quot; &quot;`     | Truthy         | ಒಂದು Space ಇದೆ   |
+| `[]`      | Truthy         | Array Object     |
+| `{}`      | Truthy         | Object           |
+
+ಮುಖ್ಯ ನಿಯಮ: ಖಾಲಿ Array `[]` ಮತ್ತು ಖಾಲಿ Object `{}` ಗಳು `false` ಆಗಿರುವುದಿಲ್ಲ. ಅವು Truthy.
+
+## 6.3 `Boolean()` Function
+
+ಒಂದು Value Boolean Context ನಲ್ಲಿ ಯಾವ ಮೌಲ್ಯವಾಗಿ ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ ಎಂಬುದನ್ನು ಪರೀಕ್ಷಿಸಲು `Boolean()` ಬಳಸಬಹುದು.
+
+```
+console.log(Boolean(0));        // false
+console.log(Boolean(1));        // true
+console.log(Boolean(&quot;&quot;));       // false
+console.log(Boolean(&quot;Hello&quot;));  // true
+```
+
+ಇದು ಕೋಡ್ ಕಲಿಯಲು ಮತ್ತು Debugging ಮಾಡಲು ಉಪಯುಕ್ತ. ಆದರೆ ಪ್ರತಿಯೊಂದು Condition ಗೂ `Boolean()` ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ.
+
+## 6.4 Falsy Values ಅನ್ನು `!` ಮೂಲಕ ಪರಿಶೀಲಿಸುವುದು
+
+```
+let username = &quot;&quot;;
+
+if (!username) {
+  console.log(&quot;Username is empty or missing&quot;);
+}
+```
+
+Output:
+
+```
+Username is empty or missing
+```
+
+ಆದರೆ `!username` ಖಾಲಿ String ಮಾತ್ರವಲ್ಲದೆ ಇತರ Falsy ಮೌಲ್ಯಗಳನ್ನೂ ಒಪ್ಪಿಕೊಳ್ಳುತ್ತದೆ. ನಿಮಗೆ ಖಾಲಿ String ಮಾತ್ರವೇ ಪರಿಶೀಲಿಸಬೇಕಿದ್ದರೆ ಹೀಗೆ ಬರೆಯಿರಿ:
+
+```
+if (username === &quot;&quot;) {
+  console.log(&quot;Username is empty&quot;);
+}
+```
+
+ಯಾವ ರೀತಿಯ Condition ಬರೆಯಬೇಕು ಎಂಬುದು ನಿಮ್ಮ ಉದ್ದೇಶದ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿರುತ್ತದೆ.
+
+# ಭಾಗ 7: Type Coercion ಮತ್ತು Type Conversion
+
+## 7.1 ಈ ಎರಡರ ಅರ್ಥವೇನು?
+
+JavaScript ನಲ್ಲಿ ಒಂದು Type ನ ಮೌಲ್ಯವನ್ನು ಮತ್ತೊಂದು Type ಆಗಿ ಬದಲಿಸುವ ಪ್ರಕ್ರಿಯೆ ಇದೆ.
+
+Type Conversion ಎಂದರೆ Type ಅನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಪರಿವರ್ತಿಸುವುದು.
+
+```
+let age = Number(&quot;25&quot;);
+
+console.log(age);        // 25
+console.log(typeof age); // &quot;number&quot;
+```
+
+Type Coercion ಎಂದರೆ ಒಂದು Operation ನಡೆಯುವಾಗ JavaScript ಸ್ವಯಂಚಾಲಿತವಾಗಿ Type ಪರಿವರ್ತಿಸುವುದು.
+
+```
+console.log(&quot;5&quot; - 2); // 3
+```
+
+ಇಲ್ಲಿ String `&quot;5&quot;` ಅನ್ನು ಸಂಖ್ಯೆಗೆ ಪರಿವರ್ತಿಸಿ ಗಣಿತ ಕಾರ್ಯಾಚರಣೆ ಮಾಡಲಾಗಿದೆ.
+
+ಆದರೆ `+` Operator ಹಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ Concatenation ಮಾಡುತ್ತದೆ:
+
+```
+console.log(&quot;5&quot; + 2); // &quot;52&quot;
+```
+
+ಇದು `7` ಆಗುವುದಿಲ್ಲ. String ಮತ್ತು Number ನಡುವಿನ ಈ ವರ್ತನೆಗೆ ಸಂಬಂಧಿಸಿದಂತೆ Conversion ನಿಯಮಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಮುಖ್ಯ.
+
+## 7.2 `==` ನಲ್ಲಿ Type Coercion
+
+```
+console.log(&quot;5&quot; == 5); // true
+console.log(false == 0); // true
+console.log(&quot;&quot; == 0); // true
+```
+
+ಈ ಫಲಿತಾಂಶಗಳು Loose Equality ನಿಯಮಗಳಿಗೆ ಅನುಗುಣವಾಗಿವೆ.
+
+ಆದರೆ ಎಲ್ಲ Falsy Values ಗಳೂ `==` ನಲ್ಲಿ ಪರಸ್ಪರ ಸಮಾನವಲ್ಲ.
+
+```
+console.log(null == 0);         // false
+console.log(null == undefined); // true
+console.log(undefined == 0);    // false
+```
+
+ಇವುಗಳ ವ್ಯತ್ಯಾಸವನ್ನು ನೆನಪಿಡಿ. `null` ಮತ್ತು `undefined` ಗಳು `==` ನಲ್ಲಿ ಪರಸ್ಪರ ಸಮಾನವೆಂದು ಪರಿಗಣಿಸಲ್ಪಡುತ್ತವೆ. ಆದರೆ ಅವು `0` ಗೆ ಸಮಾನವಲ್ಲ.
+
+## 7.3 Relational Comparison ನಲ್ಲಿ Conversion
+
+`&gt;`, `&lt;`, `&gt;=` ಮತ್ತು `&lt;=` ಬಳಸಿದಾಗ ಎರಡೂ Operands Strings ಆಗಿದ್ದರೆ String ಕ್ರಮದ ಪ್ರಕಾರ ಹೋಲಿಸಬಹುದು.
+
+```
+console.log(&quot;10&quot; &lt; &quot;2&quot;); // true
+```
+
+ಏಕೆ? ಎರಡೂ Strings ಆಗಿವೆ. ಅವು ಸಂಖ್ಯೆಗಳಂತೆ ಅಲ್ಲ, String ಕ್ರಮದ ಪ್ರಕಾರ ಹೋಲಿಸಲ್ಪಡುತ್ತವೆ. `&quot;1&quot;` ಅಕ್ಷರದ ಸ್ಥಾನ `&quot;2&quot;` ಗಿಂತ ಮೊದಲು ಬರುತ್ತದೆ.
+
+ಸಂಖ್ಯೆಗಳಂತೆ ಹೋಲಿಸಬೇಕಾದರೆ:
+
+```
+console.log(Number(&quot;10&quot;) &lt; Number(&quot;2&quot;)); // false
+console.log(Number(&quot;10&quot;) &gt; Number(&quot;2&quot;)); // true
+```
+
+ಇಲ್ಲಿ ಎರಡೂ ಮೌಲ್ಯಗಳನ್ನು Numbers ಆಗಿ ಪರಿವರ್ತಿಸಲಾಗಿದೆ.
+
+### `null` ಮತ್ತು `undefined` ಜೊತೆಗಿನ ವ್ಯತ್ಯಾಸ
+
+```
+console.log(null &gt;= 0);     // true
+console.log(null == 0);     // false
+console.log(undefined &lt; 1); // false
+```
+
+ಮೊದಲ ಉದಾಹರಣೆಯಲ್ಲಿ Relational Comparison ವೇಳೆ `null` ಸಂಖ್ಯಾತ್ಮಕ ಮೌಲ್ಯವಾಗಿ `0` ಆಗಿ ಪರಿಗಣಿಸಲ್ಪಡುತ್ತದೆ. ಆದರೆ `null == 0` Loose Equality ನಿಯಮವು ಅದೇ ಫಲಿತಾಂಶ ನೀಡುವುದಿಲ್ಲ. `undefined` ಅನ್ನು ಸಂಖ್ಯಾತ್ಮಕವಾಗಿ ಪರಿವರ್ತಿಸಿದಾಗ `NaN` ದೊರೆಯುವುದರಿಂದ ಅದರ Relational Comparison ಗಳು ಸಾಮಾನ್ಯವಾಗಿ `false` ಆಗುತ್ತವೆ.
+
+Professional ನಿಯಮ: ವಿಭಿನ್ನ Types ಗಳ ಮೌಲ್ಯಗಳನ್ನು ಹೋಲಿಸುವಾಗ ಸ್ವಯಂಚಾಲಿತ Conversion ಮೇಲೆ ಅವಲಂಬಿಸುವುದಕ್ಕಿಂತ Input ಅನ್ನು Validate ಮಾಡಿ, ಅಗತ್ಯವಿದ್ದರೆ ಸ್ಪಷ್ಟವಾಗಿ Convert ಮಾಡುವುದು ಉತ್ತಮ.
+
+# ಭಾಗ 8: `NaN`, `null`, `undefined` ಮತ್ತು Edge Cases
+
+ಇವುಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು Professional JavaScript ಗೆ ಬಹಳ ಮುಖ್ಯ.
+
+## 8.1 `NaN` ಎಂದರೇನು?
+
+`NaN` ಎಂದರೆ Not-a-Number. ಕೆಲವು ಗಣಿತೀಯ ಅಥವಾ ಸಂಖ್ಯಾತ್ಮಕ ಕಾರ್ಯಾಚರಣೆಗಳು ಮಾನ್ಯ ಸಂಖ್ಯೆಯನ್ನು ನೀಡದಾಗ `NaN` ದೊರೆಯಬಹುದು.
+
+```
+let result = Number(&quot;hello&quot;);
+
+console.log(result); // NaN
+```
+
+`&quot;hello&quot;` ಅನ್ನು Number ಆಗಿ ಪರಿವರ್ತಿಸಲಾಗುವುದಿಲ್ಲ. ಆದ್ದರಿಂದ ಫಲಿತಾಂಶ `NaN`.
+
+### `NaN` ಅನ್ನು ಹೇಗೆ ಪರಿಶೀಲಿಸಬೇಕು?
+
+```
+let result = Number(&quot;hello&quot;);
+
+console.log(result === NaN);       // false
+console.log(Number.isNaN(result)); // true
+```
+
+ಏಕೆಂದರೆ `NaN` ಅನ್ನು ಅದರಂತೆಯೇ `===` ಮೂಲಕ ಹೋಲಿಸಿದಾಗಲೂ ಫಲಿತಾಂಶ `false`.
+
+ಆದ್ದರಿಂದ:
+
+```
+Number.isNaN(value)
+```
+
+ಎಂಬುದು ಮೌಲ್ಯವು ನಿಜವಾಗಿಯೂ `NaN` ಆಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುವ ಉತ್ತಮ ವಿಧಾನ.
+
+`isNaN(value)` ಎಂಬ Global Function ಕೂಡ ಇದೆ. ಆದರೆ ಅದು ಮೌಲ್ಯವನ್ನು ಮೊದಲು ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತಿಸಲು ಪ್ರಯತ್ನಿಸುವುದರಿಂದ ಕೆಲವು ವಿಭಿನ್ನ ಫಲಿತಾಂಶಗಳನ್ನು ನೀಡಬಹುದು.
+
+```
+console.log(isNaN(&quot;hello&quot;));        // true
+console.log(Number.isNaN(&quot;hello&quot;)); // false
+```
+
+ಮೊದಲ Function `&quot;hello&quot;` ಅನ್ನು Number ಆಗಿ ಪರಿವರ್ತಿಸಲು ಪ್ರಯತ್ನಿಸಿ `NaN` ಪಡೆಯುತ್ತದೆ. ಎರಡನೆಯ Function ಮೂಲ ಮೌಲ್ಯವೇ `NaN` ಆಗಿದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ; String `&quot;hello&quot;` ಸ್ವತಃ `NaN` ಅಲ್ಲ.
+
+## 8.2 `null` ಮತ್ತು `undefined`
+
+`null` ಮತ್ತು `undefined` ಎರಡೂ ಮೌಲ್ಯ ಇಲ್ಲದಿರುವುದಕ್ಕೆ ಸಂಬಂಧಿಸಿದರೂ ಅವು ಒಂದೇ ಅಲ್ಲ.
+
+```
+let a = null;
+let b;
+
+console.log(a); // null
+console.log(b); // undefined
+```
+
+- `null` — ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಮೌಲ್ಯ ಇಲ್ಲ ಎಂದು ಸೂಚಿಸುವುದು.
+- `undefined` — ಮೌಲ್ಯ ನಿಯೋಜಿಸದಿರುವುದು ಅಥವಾ ಮೌಲ್ಯ ಲಭ್ಯವಿಲ್ಲದಿರುವ ಕೆಲವು ಸಂದರ್ಭಗಳಲ್ಲಿ ದೊರೆಯುವುದು.
+
+ಹೋಲಿಕೆ:
+
+```
+console.log(null == undefined);  // true
+console.log(null === undefined); // false
+```
+
+`typeof` ಬಳಸಿದಾಗಲೂ ಒಂದು ವಿಶೇಷತೆ ಇದೆ:
+
+```
+console.log(typeof null);      // &quot;object&quot;
+console.log(typeof undefined); // &quot;undefined&quot;
+```
+
+`typeof null` ಫಲಿತಾಂಶ `&quot;object&quot;` ಎನ್ನುವುದು JavaScript ನ ಐತಿಹಾಸಿಕ ವರ್ತನೆ. ಅದನ್ನು `null` ನ ನಿಖರ Type ಪರೀಕ್ಷೆಯೆಂದು ತಪ್ಪಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಾರದು.
+
+## 8.3 `NaN` ಜೊತೆ Comparison
+
+```
+console.log(NaN === NaN); // false
+console.log(NaN &gt; 10);    // false
+console.log(NaN &lt; 10);    // false
+console.log(NaN &gt;= 10);   // false
+console.log(NaN &lt;= 10);   // false
+console.log(NaN !== NaN); // true
+```
+
+`NaN` ಇದ್ದಾಗ ಸಾಮಾನ್ಯ ಸಂಖ್ಯಾತ್ಮಕ Comparison ಗಳಿಂದ ನೀವು ನಿರೀಕ್ಷಿಸುವ ಫಲಿತಾಂಶ ಸಿಗದೆ ಇರಬಹುದು. ಆದ್ದರಿಂದ User Input, API Response ಅಥವಾ Calculation ನ ಫಲಿತಾಂಶವನ್ನು ಬಳಸುವ ಮೊದಲು ಅದರ ಮಾನ್ಯತೆಯನ್ನು ಪರಿಶೀಲಿಸುವುದು ಉತ್ತಮ.
+
+## 8.4 Object ಮತ್ತು Array ಗಳ Comparison
+
+Primitive Values ಗಳನ್ನು ಹೋಲಿಸುವುದು ಮತ್ತು Objects ಗಳನ್ನು ಹೋಲಿಸುವುದು ವಿಭಿನ್ನ.
+
+```
+console.log(10 === 10); // true
+console.log([1, 2] === [1, 2]); // false
+```
+
+ಎರಡು Arrays ಗಳಲ್ಲೂ ಒಂದೇ Elements ಇದ್ದರೂ ಅವು ಎರಡು ಪ್ರತ್ಯೇಕ Array Objects ಆಗಿವೆ. `===` ಅವುಗಳ ಒಳಗಿನ Elements ಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಹೋಲಿಸುವುದಿಲ್ಲ.
+
+```
+let a = [1, 2];
+let b = a;
+
+console.log(a === b); // true
+```
+
+ಈಗ `a` ಮತ್ತು `b` ಒಂದೇ Array Object ಅನ್ನು ಸೂಚಿಸುತ್ತವೆ.
+
+Objects ಗಳ ಒಳಗಿನ ವಿಷಯಗಳನ್ನು ಹೋಲಿಸುವುದು ಬೇಕಾದರೆ ನಿಮ್ಮ Data ಪ್ರಕಾರ Deep Comparison ಮಾಡಬೇಕು. ಸರಳವಾಗಿ `===` ಬಳಸುವುದರಿಂದ ಎರಡು ವಿಭಿನ್ನ Objects ಒಂದೇ ವಿಷಯ ಹೊಂದಿವೆಯೇ ಎಂದು ತಿಳಿಯಲು ಸಾಧ್ಯವಿಲ್ಲ.
+
+## 8.5 `Object.is()` — ಇನ್ನಷ್ಟು ನಿಖರವಾದ ಹೋಲಿಕೆ
+
+JavaScript ನಲ್ಲಿ `Object.is()` ಎಂಬ ವಿಧಾನವೂ ಇದೆ.
+
+```
+console.log(Object.is(NaN, NaN)); // true
+console.log(Object.is(0, -0));    // false
+console.log(0 === -0);            // true
+```
+
+ಮುಖ್ಯ ವ್ಯತ್ಯಾಸಗಳು:
+
+| Comparison    | `NaN` ಮತ್ತು `NaN` | `0` ಮತ್ತು `-0` |
+| ------------- | ----------------- | -------------- |
+| `===`         | `false`           | `true`         |
+| `Object.is()` | `true`            | `false`        |
+
+ಸಾಮಾನ್ಯ Conditions ಗಳಲ್ಲಿ `===` ಬಳಸುವುದು ಸರಿಯಾದ ಆಯ್ಕೆ. ವಿಶೇಷ ಸಂಖ್ಯಾತ್ಮಕ Edge Cases ಪರಿಶೀಲಿಸುವ ಅಗತ್ಯವಿದ್ದಾಗ `Object.is()` ಉಪಯುಕ್ತವಾಗಬಹುದು.
+
+# ಭಾಗ 9: `switch` Statement ಸಂಪೂರ್ಣ ವಿವರಣೆ
+
+## 9.1 `switch` ಎಂದರೇನು?
+
+ಒಂದು Expression ನ ಮೌಲ್ಯವನ್ನು ಹಲವು ನಿಗದಿತ ಮೌಲ್ಯಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ, ಹೊಂದಾಣಿಕೆಯ Block ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಲು `switch` ಬಳಸಬಹುದು.
+
+ಉದಾಹರಣೆಗೆ ದಿನದ ಸಂಖ್ಯೆಗೆ ತಕ್ಕಂತೆ ದಿನದ ಹೆಸರನ್ನು ತೋರಿಸೋಣ.
+
+```
+let day = 2;
+
+switch (day) {
+  case 1:
+    console.log(&quot;Monday&quot;);
+    break;
+
+  case 2:
+    console.log(&quot;Tuesday&quot;);
+    break;
+
+  case 3:
+    console.log(&quot;Wednesday&quot;);
+    break;
+
+  default:
+    console.log(&quot;Invalid day&quot;);
+}
+```
+
+Output:
+
+```
+Tuesday
+```
+
+### ಮುಖ್ಯ Keywords
+
+| Keyword   | ಕೆಲಸ                                         |
+| --------- | -------------------------------------------- |
+| `switch`  | ಪರಿಶೀಲಿಸಬೇಕಾದ Expression ಅನ್ನು ಒದಗಿಸುತ್ತದೆ   |
+| `case`    | ಹೊಂದಾಣಿಕೆಗಾಗಿ ಮೌಲ್ಯ ನೀಡುತ್ತದೆ                |
+| `break`   | `switch` ನಿಂದ ಹೊರಬರುತ್ತದೆ                    |
+| `default` | ಯಾವುದೇ `case` ಹೊಂದಾಣಿಕೆಯಾಗದಿದ್ದಾಗ ನಡೆಯುತ್ತದೆ |
+
+## 9.2 `break` ಏಕೆ ಮುಖ್ಯ?
+
+```
+let day = 2;
+
+switch (day) {
+  case 1:
+    console.log(&quot;Monday&quot;);
+
+  case 2:
+    console.log(&quot;Tuesday&quot;);
+
+  case 3:
+    console.log(&quot;Wednesday&quot;);
+
+  default:
+    console.log(&quot;Other&quot;);
+}
+```
+
+Output:
+
+```
+Tuesday
+Wednesday
+Other
+```
+
+ಇಲ್ಲಿ `case 2` ಹೊಂದಿಕೆಯಾದ ನಂತರ `break` ಇಲ್ಲದ ಕಾರಣ JavaScript ಮುಂದಿನ Statements ಗಳನ್ನೂ ಕಾರ್ಯಗತಗೊಳಿಸುತ್ತದೆ. ಇದನ್ನು Fall-through ಎನ್ನುತ್ತಾರೆ.
+
+Fall-through ಅನ್ನು ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಬಳಸುವ ಸಂದರ್ಭಗಳಿವೆ. ಆದರೆ ಸಾಮಾನ್ಯವಾಗಿ ಅನಗತ್ಯ Fall-through ತಪ್ಪಿಸಲು `break` ಸೇರಿಸುವುದು ಉತ್ತಮ.
+
+## 9.3 `switch` Strict Equality ಬಳಸುತ್ತದೆ
+
+```
+let value = &quot;2&quot;;
+
+switch (value) {
+  case 2:
+    console.log(&quot;Number&quot;);
+    break;
+
+  case &quot;2&quot;:
+    console.log(&quot;String&quot;);
+    break;
+}
+```
+
+Output:
+
+```
+String
+```
+
+`switch` ನ `case` ಹೊಂದಾಣಿಕೆ `===` ನಿಯಮಕ್ಕೆ ಅನುಗುಣವಾಗಿರುತ್ತದೆ. ಆದ್ದರಿಂದ Number `2` ಮತ್ತು String `&quot;2&quot;` ಬೇರೆ.
+
+## 9.4 `switch` ಯಾವಾಗ ಮತ್ತು `if...else` ಯಾವಾಗ?
+
+`switch` ಅನ್ನು ಕೆಲವು ನಿಗದಿತ ಮೌಲ್ಯಗಳ ಆಧಾರದ ಮೇಲೆ ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸುವುದು ಅನುಕೂಲಕರ.
+
+```
+switch (status) {
+  case &quot;success&quot;:
+    console.log(&quot;Completed&quot;);
+    break;
+
+  case &quot;pending&quot;:
+    console.log(&quot;Waiting&quot;);
+    break;
+
+  case &quot;failed&quot;:
+    console.log(&quot;Failed&quot;);
+    break;
+
+  default:
+    console.log(&quot;Unknown status&quot;);
+}
+```
+
+ಆದರೆ ಮೌಲ್ಯಗಳ ವ್ಯಾಪ್ತಿ ಪರಿಶೀಲಿಸಬೇಕಾದರೆ `if...else if` ಹೆಚ್ಚು ಸಹಜ.
+
+```
+if (marks &gt;= 90) {
+  console.log(&quot;A+&quot;);
+} else if (marks &gt;= 80) {
+  console.log(&quot;A&quot;);
+} else {
+  console.log(&quot;Other grade&quot;);
+}
+```
+
+ಇವುಗಳಲ್ಲಿ ಯಾವುದೂ ಪ್ರತಿಯೊಂದು ಸಂದರ್ಭದಲ್ಲೂ ಉತ್ತಮ ಎಂದು ಹೇಳಲಾಗುವುದಿಲ್ಲ. ಸಮಸ್ಯೆಯ ಸ್ವರೂಪಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಆಯ್ಕೆ ಮಾಡಬೇಕು.
+
+# ಭಾಗ 10: Ternary Operator (`? :`)
+
+## 10.1 Ternary ಎಂದರೇನು?
+
+ಒಂದು Condition ನ ಆಧಾರದ ಮೇಲೆ ಎರಡು Expressions ಗಳಲ್ಲಿ ಒಂದನ್ನು ಆಯ್ಕೆ ಮಾಡುವ Conditional Operator ಅನ್ನು Ternary Operator ಎನ್ನುತ್ತಾರೆ.
+
+Syntax:
+
+```
+condition ? valueIfTrue : valueIfFalse
+```
+
+ಉದಾಹರಣೆ:
+
+```
+let age = 20;
+
+let result = age &gt;= 18 ? &quot;Adult&quot; : &quot;Minor&quot;;
+
+console.log(result);
+```
+
+Output:
+
+```
+Adult
+```
+
+ಇದು ಹೀಗೆ ಅರ್ಥ:
+
+- `age &gt;= 18` ಸತ್ಯವಾದರೆ `&quot;Adult&quot;` ಆಯ್ಕೆ.
+- ಇಲ್ಲದಿದ್ದರೆ `&quot;Minor&quot;` ಆಯ್ಕೆ.
+
+## 10.2 ಇದೇ ಕೆಲಸವನ್ನು `if...else` ಮೂಲಕ
+
+```
+let age = 20;
+let result;
+
+if (age &gt;= 18) {
+  result = &quot;Adult&quot;;
+} else {
+  result = &quot;Minor&quot;;
+}
+
+console.log(result);
+```
+
+ಎರಡೂ ವಿಧಾನಗಳು ಒಂದೇ ಫಲಿತಾಂಶ ನೀಡುತ್ತವೆ.
+
+### ಯಾವಾಗ Ternary ಬಳಸಬೇಕು?
+
+ಸರಳವಾದ Conditional Value ಆಯ್ಕೆಮಾಡುವಾಗ:
+
+```
+let isLoggedIn = true;
+
+let message = isLoggedIn ? &quot;Welcome&quot; : &quot;Please log in&quot;;
+```
+
+ಆದರೆ ಅನೇಕ ಹಂತದ Condition ಗಳನ್ನು ಒಂದೇ ಸಾಲಿನಲ್ಲಿ Nested Ternary ಆಗಿ ಬರೆಯುವುದರಿಂದ ಕೋಡ್ ಓದಲು ಕಷ್ಟವಾಗಬಹುದು. ಅಂತಹ ಸಂದರ್ಭಗಳಲ್ಲಿ `if...else if...else` ಬಳಸುವುದು ಉತ್ತಮ.
+
+# ಭಾಗ 11: Short-Circuit Evaluation — Professional Concept
+
+ಇದು JavaScript ಕಲಿಯುವಾಗ ಅತ್ಯಂತ ಉಪಯುಕ್ತವಾದ ವಿಷಯ.
+
+`&amp;&amp;` ಮತ್ತು `||` ಕೇವಲ `true` ಅಥವಾ `false` ಮಾತ್ರ ಹಿಂತಿರುಗಿಸುವುದಿಲ್ಲ. ಅವುಗಳ ಫಲಿತಾಂಶವನ್ನು ನಿರ್ಧರಿಸಲು ಬಳಸುವ ನಿಜವಾದ Operand Value ಯನ್ನೂ ಹಿಂತಿರುಗಿಸಬಹುದು.
+
+## 11.1 AND (`&amp;&amp;`) Short-Circuit
+
+```
+console.log(false &amp;&amp; &quot;Hello&quot;); // false
+console.log(true &amp;&amp; &quot;Hello&quot;);  // &quot;Hello&quot;
+```
+
+`&amp;&amp;` ಎಡಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಎಡಭಾಗ Falsy ಆಗಿದ್ದರೆ, ಅದೇ ಮೌಲ್ಯವನ್ನು ಹಿಂತಿರುಗಿಸಿ ಬಲಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುವುದಿಲ್ಲ. ಎಡಭಾಗ Truthy ಆಗಿದ್ದರೆ ಬಲಭಾಗಕ್ಕೆ ಮುಂದುವರಿಯುತ್ತದೆ.
+
+ಉದಾಹರಣೆ:
+
+```
+let username = &quot;&quot;;
+
+let result = username &amp;&amp; username.toUpperCase();
+
+console.log(result); // &quot;&quot;
+```
+
+`username` ಖಾಲಿ String ಆಗಿದೆ. ಆದ್ದರಿಂದ `username.toUpperCase()` ಕಾರ್ಯಗತಗೊಳ್ಳುವುದಿಲ್ಲ.
+
+ಇದರಿಂದ ಕೆಲವು ಷರತ್ತುಗಳ ಆಧಾರದ ಮೇಲೆ ಮುಂದಿನ Expression ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸುವುದು ಸಾಧ್ಯ.
+
+## 11.2 OR (`||`) Short-Circuit
+
+```
+console.log(&quot;Hello&quot; || &quot;Guest&quot;); // &quot;Hello&quot;
+console.log(&quot;&quot; || &quot;Guest&quot;);      // &quot;Guest&quot;
+```
+
+`||` ಎಡಭಾಗ Truthy ಆಗಿದ್ದರೆ ಅದನ್ನೇ ಹಿಂತಿರುಗಿಸುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ ಬಲಭಾಗವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.
+
+ಇದನ್ನು Default Value ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸಬಹುದು.
+
+```
+let username = &quot;&quot;;
+
+let displayName = username || &quot;Guest&quot;;
+
+console.log(displayName); // &quot;Guest&quot;
+```
+
+ಆದರೆ `||` ಶೂನ್ಯ, `false` ಮತ್ತು ಖಾಲಿ String ಮುಂತಾದ ಎಲ್ಲಾ Falsy Values ಗಳನ್ನೂ ಬದಲಾಯಿಸುತ್ತದೆ. ನಿಮಗೆ ಕೇವಲ `null` ಅಥವಾ `undefined` ಇದ್ದಾಗ ಮಾತ್ರ Default Value ಬೇಕಾಗಿದ್ದರೆ `??` ಉತ್ತಮ ಆಯ್ಕೆಯಾಗಬಹುದು.
+
+# ಭಾಗ 12: Modern JavaScript — Nullish Coalescing (`??`)
+
+`??` ಅನ್ನು Nullish Coalescing Operator ಎನ್ನುತ್ತಾರೆ.
+
+ಎಡಭಾಗದ ಮೌಲ್ಯ `null` ಅಥವಾ `undefined` ಆಗಿದ್ದರೆ ಬಲಭಾಗದ Default Value ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ ಎಡಭಾಗದ ಮೌಲ್ಯವನ್ನೇ ಉಳಿಸುತ್ತದೆ.
+
+```
+let username = null;
+
+let result = username ?? &quot;Guest&quot;;
+
+console.log(result); // &quot;Guest&quot;
+```
+
+ಆದರೆ:
+
+```
+let count = 0;
+
+console.log(count || 10); // 10
+console.log(count ?? 10); // 0
+```
+
+ಏಕೆ?
+
+- `0` Falsy ಆಗಿದೆ; ಆದ್ದರಿಂದ `||` ಬಲಭಾಗದ `10` ಅನ್ನು ಆಯ್ಕೆಮಾಡುತ್ತದೆ.
+- `0` `null` ಅಥವಾ `undefined` ಅಲ್ಲ; ಆದ್ದರಿಂದ `??` `0` ಅನ್ನು ಉಳಿಸುತ್ತದೆ.
+
+ಇನ್ನೊಂದು ಉದಾಹರಣೆ:
+
+```
+let isAvailable = false;
+
+console.log(isAvailable || true); // true
+console.log(isAvailable ?? true); // false
+```
+
+ಇಲ್ಲಿ `false` ಒಂದು ನೈಜ Boolean ಮೌಲ್ಯ. ಅದನ್ನು ಉಳಿಸಬೇಕಾದರೆ `??` ಸಹಾಯ ಮಾಡುತ್ತದೆ.
+
+Professional ನಿಯಮ: `||` ಮತ್ತು `??` ಎರಡೂ Default Value ಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡಲು ಉಪಯುಕ್ತ. ಆದರೆ ಅವುಗಳ ಅರ್ಥ ಬೇರೆ. ನಿಮ್ಮ Data ಯಲ್ಲಿ `0`, `false`, `&quot;&quot;` ಇವು ಮಾನ್ಯ ಮೌಲ್ಯಗಳಾಗಿದ್ದರೆ `??` ಅನಗತ್ಯವಾಗಿ ಅವುಗಳನ್ನು ಬದಲಿಸುವುದಿಲ್ಲ.
+
+# ಭಾಗ 13: Optional Chaining (`?.`) ಮತ್ತು Conditions
+
+Optional Chaining ಆಧುನಿಕ JavaScript ನಲ್ಲಿ Nested Object ಗಳಲ್ಲಿ Property ಲಭ್ಯವಿದೆಯೇ ಎಂಬುದನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಪ್ರವೇಶಿಸಲು ಉಪಯುಕ್ತ.
+
+ಉದಾಹರಣೆ:
+
+```
+let user = {
+  profile: {
+    name: &quot;Ravi&quot;
+  }
+};
+
+console.log(user.profile?.name); // &quot;Ravi&quot;
+console.log(user.address?.city); // undefined
+```
+
+`user.address` ಇಲ್ಲದಿದ್ದರೂ `user.address?.city` Expression ದೋಷವಿಲ್ಲದೆ `undefined` ನೀಡುತ್ತದೆ.
+
+Optional Chaining ಅನ್ನು Condition ಗಳೊಂದಿಗೆ ಬಳಸಬಹುದು:
+
+```
+let user = null;
+
+if (user?.profile) {
+  console.log(&quot;Profile available&quot;);
+} else {
+  console.log(&quot;Profile not available&quot;);
+}
+```
+
+Output:
+
+```
+Profile not available
+```
+
+ಮುಖ್ಯ ವ್ಯತ್ಯಾಸ: `?.` ಯಾವುದನ್ನೂ ಸ್ವತಃ `true` ಎಂದು ಸಾಬೀತುಪಡಿಸುವುದಿಲ್ಲ. ಅದು `null` ಅಥವಾ `undefined` ಬಂದಾಗ Property ಪ್ರವೇಶಿಸುವುದರಿಂದ ಉಂಟಾಗುವ ದೋಷವನ್ನು ತಪ್ಪಿಸುತ್ತದೆ. ಅದರ Expression ಫಲಿತಾಂಶವನ್ನು `if` ಪರಿಶೀಲಿಸುತ್ತದೆ.
+
+ಉದಾಹರಣೆಗೆ, `user.profile` ಇದ್ದರೆ ಮಾತ್ರ ಕೋಡ್ ಕಾರ್ಯನಿರ್ವಹಿಸಬೇಕು ಎಂದಾದರೆ `if (user?.profile)` ಉಪಯುಕ್ತ. ಆದರೆ `profile` ಇದ್ದರೂ ಅದರ ಮೌಲ್ಯ `0` ಅಥವಾ `&quot;&quot;` ಆಗಿರಬಹುದಾದ ಸಂದರ್ಭಗಳಲ್ಲಿ Truthiness ಪರಿಶೀಲಿಸುವುದು ಸಾಕೇ ಎಂಬುದನ್ನು ನಿಮ್ಮ ಅಗತ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ನಿರ್ಧರಿಸಿ.
+
+# ಭಾಗ 14: `in` ಮತ್ತು `instanceof` Operators
+
+ಈ ಎರಡು Operators ಗಳನ್ನು Basic Comparison ಪಟ್ಟಿಯಲ್ಲಿ ಹೆಚ್ಚಾಗಿ ಸೇರಿಸದಿದ್ದರೂ, Advanced JavaScript ನಲ್ಲಿ ಬಹಳ ಉಪಯುಕ್ತ.
+
+## 14.1 `in` Operator
+
+ಒಂದು Property Object ನಲ್ಲಿ ಲಭ್ಯವಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇದು Object ನ ಸ್ವಂತ Property ಗಳನ್ನಷ್ಟೇ ಅಲ್ಲದೆ Prototype ನಿಂದ ಬಂದ Property ಗಳನ್ನೂ ಪರಿಶೀಲಿಸುತ್ತದೆ.
+
+```
+let student = {
+  name: &quot;Ravi&quot;,
+  age: 20
+};
+
+console.log(&quot;name&quot; in student);  // true
+console.log(&quot;marks&quot; in student); // false
+```
+
+`in` ನ ಎಡಭಾಗದಲ್ಲಿ ಸಾಮಾನ್ಯವಾಗಿ Property Name String ಅಥವಾ Symbol ಇರಬೇಕು.
+
+ನಿಮಗೆ Object ನ ಸ್ವಂತ Property ಮಾತ್ರ ಪರಿಶೀಲಿಸಬೇಕಿದ್ದರೆ:
+
+```
+console.log(Object.hasOwn(student, &quot;name&quot;));  // true
+console.log(Object.hasOwn(student, &quot;marks&quot;)); // false
+```
+
+`Object.hasOwn()` ಮೂಲಕ Prototype Properties ಗಳನ್ನು ಸ್ವಂತ Properties ಎಂದು ತಪ್ಪಾಗಿ ಗುರುತಿಸುವುದನ್ನು ತಪ್ಪಿಸಬಹುದು.
+
+## 14.2 `instanceof` Operator
+
+ಒಂದು Object ನಿರ್ದಿಷ್ಟ Constructor ನ Prototype Chain ಗೆ ಸಂಬಂಧಿಸಿದೆಯೇ ಎಂಬುದನ್ನು ಪರಿಶೀಲಿಸಲು ಬಳಸುತ್ತಾರೆ.
+
+```
+let numbers = [10, 20, 30];
+
+console.log(numbers instanceof Array);  // true
+console.log(numbers instanceof Object); // true
+```
+
+Array ಕೂಡ Object ಆಗಿರುವುದರಿಂದ ಎರಡೂ ಫಲಿತಾಂಶಗಳು `true`.
+
+ಇನ್ನೊಂದು ಉದಾಹರಣೆ:
+
+```
+let message = new Date();
+
+console.log(message instanceof Date); // true
+console.log(message instanceof Array); // false
+```
+
+`instanceof` ಎಲ್ಲಾ ಸಂದರ್ಭಗಳಲ್ಲೂ ನಿಖರ Type ಪರೀಕ್ಷೆಯಾಗುವುದಿಲ್ಲ; ವಿಶೇಷವಾಗಿ ವಿಭಿನ್ನ JavaScript Realms ಗಳಿಂದ ಬಂದ Objects ಗಳಲ್ಲಿ ಇದರ ಫಲಿತಾಂಶ ನಿರೀಕ್ಷಿತ ರೀತಿಯಲ್ಲಿ ಇರದೇ ಇರಬಹುದು.
+
+Array ಗುರುತಿಸಲು `Array.isArray()` ಹೆಚ್ಚು ನೇರವಾದ ವಿಧಾನ:
+
+```
+console.log(Array.isArray([1, 2])); // true
+console.log(Array.isArray({}));     // false
+```
+
+# ಭಾಗ 15: Operator Precedence ಮತ್ತು Parentheses
+
+ಒಂದು Expression ನಲ್ಲಿ ಅನೇಕ Operators ಇದ್ದರೆ ಅವು ಯಾವ ಕ್ರಮದಲ್ಲಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತವೆ ಎಂಬುದನ್ನು Operator Precedence ಎನ್ನುತ್ತಾರೆ.
+
+ಉದಾಹರಣೆ:
+
+```
+console.log(5 &gt; 3 &amp;&amp; 10 &lt; 20);
+```
+
+ಈ Expression ನಲ್ಲಿ ಮೊದಲು Comparison ಗಳು ನಡೆಯುತ್ತವೆ:
+
+- `5 &gt; 3` → `true`.
+- `10 &lt; 20` → `true`.
+- ನಂತರ `true &amp;&amp; true` → `true`.
+
+## 15.1 Parentheses ಬಳಸಿ ಸ್ಪಷ್ಟಗೊಳಿಸುವುದು
+
+```
+let age = 20;
+let hasID = true;
+
+if ((age &gt;= 18) &amp;&amp; (hasID === true)) {
+  console.log(&quot;Access granted&quot;);
+}
+```
+
+Parentheses ಗಳಿಂದ Expression ಗಳನ್ನು ಓದಲು ಸುಲಭವಾಗುತ್ತದೆ. ಯಾವ ಭಾಗವನ್ನು ಮೊದಲು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕು ಎಂಬುದು ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ.
+
+ಮತ್ತೊಂದು ಉದಾಹರಣೆ:
+
+```
+console.log(true || false &amp;&amp; false);
+```
+
+`&amp;&amp;` ಗೆ `||` ಗಿಂತ ಹೆಚ್ಚಿನ Precedence ಇದೆ. ಆದ್ದರಿಂದ:
+
+```
+true || (false &amp;&amp; false)
+```
+
+ಮೊದಲು `false &amp;&amp; false` → `false`; ನಂತರ `true || false` → `true`.
+
+Parentheses ಬಳಸಿದರೆ:
+
+```
+console.log((true || false) &amp;&amp; false); // false
+```
+
+ಈಗ ಫಲಿತಾಂಶ ಬದಲಾಗುತ್ತದೆ.
+
+### ಮಿಶ್ರ Logical Operators ಗಾಗಿ ನಿಯಮ
+
+`&amp;&amp;` ಮತ್ತು `||` ಅನ್ನು ಒಟ್ಟಿಗೆ ಬಳಸುವಾಗ ನಿಮ್ಮ ಉದ್ದೇಶವನ್ನು ಸ್ಪಷ್ಟಪಡಿಸಲು Parentheses ಬಳಸುವುದು ಉತ್ತಮ ಅಭ್ಯಾಸ.
+
+ಗಮನಿಸಿ: `??` ಅನ್ನು `&amp;&amp;` ಅಥವಾ `||` ಜೊತೆ ನೇರವಾಗಿ ಮಿಶ್ರಣ ಮಾಡಿದರೆ Parentheses ಅಗತ್ಯವಾಗುವ Syntax ನಿಯಮಗಳಿವೆ.
+
+```
+let result = (null ?? &quot;Guest&quot;) || &quot;Default&quot;;
+console.log(result); // &quot;Guest&quot;
+```
+
+ಇಂತಹ Expression ಗಳಲ್ಲಿ Parentheses ಬಳಸಿ ನಿಮ್ಮ ಉದ್ದೇಶವನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಸೂಚಿಸಿ.
+
+# ಭಾಗ 16: Professional Coding ನಲ್ಲಿ ತಪ್ಪಿಸಬೇಕಾದ ಪ್ರಮುಖ ತಪ್ಪುಗಳು
+
+## 16.1 `=` ಮತ್ತು `===` ನಡುವಿನ ಗೊಂದಲ
+
+ಈ ಎರಡೂ Operators ಒಂದೇ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.
+
+```
+let age = 18;
+```
+
+ಇಲ್ಲಿ `=` ಮೌಲ್ಯವನ್ನು ನಿಯೋಜಿಸುತ್ತದೆ.
+
+```
+console.log(age === 18);
+```
+
+ಇಲ್ಲಿ `===` ಹೋಲಿಸುತ್ತದೆ.
+
+ಈ ತಪ್ಪನ್ನು ನೋಡಿ:
+
+```
+let age = 15;
+
+if (age = 18) {
+  console.log(&quot;Eligible&quot;);
+}
+```
+
+Output:
+
+```
+Eligible
+```
+
+ಇಲ್ಲಿ `age = 18` ಎಂಬುದು Comparison ಅಲ್ಲ; Assignment. ಇದು `age` ಗೆ `18` ನಿಯೋಜಿಸುತ್ತದೆ. `18` Truthy ಆಗಿರುವುದರಿಂದ `if` Block ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+
+ಸರಿಯಾದ ಕೋಡ್:
+
+```
+let age = 15;
+
+if (age === 18) {
+  console.log(&quot;Age is exactly 18&quot;);
+}
+```
+
+ಇದರಲ್ಲಿ `age` ನ ಮೌಲ್ಯ ಬದಲಾಗುವುದಿಲ್ಲ. ಅದು ನಿಖರವಾಗಿ `18` ಆಗಿದೆಯೇ ಎಂದು ಮಾತ್ರ ಪರಿಶೀಲಿಸುತ್ತದೆ.
+
+## 16.2 JavaScript ನಲ್ಲಿ Chained Comparisons ತಪ್ಪಾಗಿ ಬರೆಯುವುದು
+
+ಗಣಿತದಲ್ಲಿ ಹೀಗೆ ಬರೆಯಬಹುದು:
+
+\\[ 1 &lt; x &lt; 18 \\]
+
+ಆದರೆ JavaScript ನಲ್ಲಿ ಅದೇ Expression ಅನ್ನು ನೇರವಾಗಿ ಬಳಸಬಾರದು.
+
+```
+let age = 10;
+
+console.log(1 &lt; age &lt; 18); // true
+```
+
+ಇಲ್ಲಿ ಫಲಿತಾಂಶ `true` ಬಂದಿರುವುದರಿಂದ ಕೋಡ್ ಸರಿಯಾಗಿದೆ ಎಂದು ಕಾಣಬಹುದು. ಆದರೆ ಈ Expression ನ ಕಾರ್ಯನಿರ್ವಹಣಾ ಕ್ರಮ ಬೇರೆ.
+
+JavaScript ಇದನ್ನು ಹೀಗೆ ಮೌಲ್ಯಮಾಪನ ಮಾಡುತ್ತದೆ:
+
+```
+(1 &lt; age) &lt; 18
+```
+
+ಮೊದಲ ಹೋಲಿಕೆ `true` ನೀಡುತ್ತದೆ. ನಂತರ `true` ಅನ್ನು Number ಆಗಿ ಪರಿಗಣಿಸಿದರೆ `1` ಸಿಗುತ್ತದೆ. ಹೀಗಾಗಿ `1 &lt; 18` ಸತ್ಯವಾಗುತ್ತದೆ.
+
+ಆದರೆ:
+
+```
+let age = 25;
+
+console.log(1 &lt; age &lt; 18); // true
+```
+
+ಇದು ಕೂಡ `true` ನೀಡುತ್ತದೆ! 25 ವಯಸ್ಸು 18 ಕ್ಕಿಂತ ಕಡಿಮೆಯಿಲ್ಲದಿದ್ದರೂ ಫಲಿತಾಂಶ ಸತ್ಯವಾಗಿದೆ.
+
+ಸರಿಯಾದ ವಿಧಾನ:
+
+```
+let age = 25;
+
+console.log(age &gt; 1 &amp;&amp; age &lt; 18); // false
+```
+
+JavaScript ನಲ್ಲಿ ಒಂದು ಸಂಖ್ಯೆಯು ಎರಡು ಮಿತಿಗಳ ನಡುವೆ ಇದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸಲು ಎರಡು Comparison ಗಳನ್ನು `&amp;&amp;` ಮೂಲಕ ಜೋಡಿಸಬೇಕು.
+
+## 16.3 Empty String ಮತ್ತು ಖಾಲಿ ಮೌಲ್ಯಗಳನ್ನು ತಪ್ಪಾಗಿ ಪರಿಶೀಲಿಸುವುದು
+
+```
+let username = &quot; &quot;;
+
+if (username) {
+  console.log(&quot;Username supplied&quot;);
+}
+```
+
+Output:
+
+```
+Username supplied
+```
+
+String ನಲ್ಲಿ ಒಂದು Space ಇರುವುದರಿಂದ ಅದು Truthy. ಆದರೆ ಬಳಕೆದಾರರು ನಿಜವಾದ ಹೆಸರನ್ನು ನಮೂದಿಸಿದ್ದಾರೆ ಎಂದು ಇದರಿಂದ ಸಾಬೀತಾಗುವುದಿಲ್ಲ.
+
+Form Input ನಲ್ಲಿ ಖಾಲಿ ಜಾಗಗಳನ್ನು ತೆಗೆದುಹಾಕಿ ಪರಿಶೀಲಿಸಬಹುದು:
+
+```
+let username = &quot;   &quot;;
+
+if (username.trim() === &quot;&quot;) {
+  console.log(&quot;Enter a username&quot;);
+}
+```
+
+Output:
+
+```
+Enter a username
+```
+
+`trim()` ಆರಂಭ ಮತ್ತು ಅಂತ್ಯದಲ್ಲಿರುವ White Space ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ. ನೈಜ Application ನಲ್ಲಿ Input ಅನ್ನು ಯಾವ ಮಟ್ಟಿಗೆ ಪರಿಶೀಲಿಸಬೇಕು ಎಂಬುದು ಅದರ ನಿಯಮಗಳ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿರುತ್ತದೆ.
+
+## 16.4 Number Input ಅನ್ನು Validate ಮಾಡದೆ ಬಳಸುವುದು
+
+```
+let age = Number(&quot;hello&quot;);
+
+console.log(age); // NaN
+```
+
+ಕೇವಲ `Number()` ಬಳಸುವುದರಿಂದ Input ಮಾನ್ಯ Number ಆಗುತ್ತದೆ ಎಂಬ ಖಾತರಿ ಇಲ್ಲ.
+
+```
+let age = Number(&quot;hello&quot;);
+
+if (Number.isFinite(age) &amp;&amp; age &gt;= 18) {
+  console.log(&quot;Eligible&quot;);
+} else {
+  console.log(&quot;Invalid age or not eligible&quot;);
+}
+```
+
+ಇಲ್ಲಿ `Number.isFinite(age)` ಮಾನ್ಯ Finite Number ಆಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ. ಇದರಿಂದ `NaN`, `Infinity` ಮತ್ತು `-Infinity` ಅನ್ನು ತಿರಸ್ಕರಿಸಬಹುದು.
+
+Input ಖಾಲಿಯಾಗಿರಬಹುದಾದ Form ನಲ್ಲಿ ಖಾಲಿ String ಅನ್ನು ಪ್ರತ್ಯೇಕವಾಗಿ Validate ಮಾಡುವುದು ಅಗತ್ಯ.
+
+## 16.5 ಅತಿಯಾಗಿ Complex Conditions ಬರೆಯುವುದು
+
+```
+if (isLoggedIn &amp;&amp; (isAdmin || hasPermission) &amp;&amp; !isBlocked) {
+  console.log(&quot;Access granted&quot;);
+}
+```
+
+ಇಂತಹ ಕೋಡ್ ಸರಿಯಾಗಿದೆ. ಆದರೆ ತುಂಬಾ ದೀರ್ಘವಾದ Conditions ಇದ್ದಾಗ ಅವುಗಳನ್ನು ಸ್ಪಷ್ಟವಾದ Variable ಗಳಾಗಿ ವಿಭಜಿಸಬಹುದು.
+
+```
+let hasAccessLevel = isAdmin || hasPermission;
+let canAccess = isLoggedIn &amp;&amp; hasAccessLevel &amp;&amp; !isBlocked;
+
+if (canAccess) {
+  console.log(&quot;Access granted&quot;);
+}
+```
+
+ಇದರಿಂದ ಕೋಡ್ ಓದಲು, ಪರೀಕ್ಷಿಸಲು ಮತ್ತು Debug ಮಾಡಲು ಸುಲಭವಾಗುತ್ತದೆ.
+
+# ಭಾಗ 17: Real-World Project Example — Login Validation
+
+ಈಗ Conditions ಮತ್ತು Comparison Operators ಅನ್ನು ಒಟ್ಟಿಗೆ ಬಳಸಿ ಸರಳ Login Validation Logic ನೋಡೋಣ.
+
+ಇದು ಕಲಿಕೆಯ ಉದಾಹರಣೆ ಮಾತ್ರ; ನೈಜ Authentication ಗೆ ಇದು ಬದಲಿಯಾಗುವುದಿಲ್ಲ.
+
+```
+let username = &quot;ravi&quot;;
+let password = &quot;abc12345&quot;;
+
+let isUsernameValid = username.trim().length &gt;= 3;
+let isPasswordValid = password.length &gt;= 8;
+
+if (isUsernameValid &amp;&amp; isPasswordValid) {
+  console.log(&quot;Input validation successful&quot;);
+} else if (!isUsernameValid &amp;&amp; !isPasswordValid) {
+  console.log(&quot;Username and password are invalid&quot;);
+} else if (!isUsernameValid) {
+  console.log(&quot;Username is invalid&quot;);
+} else {
+  console.log(&quot;Password is invalid&quot;);
+}
+```
+
+Output:
+
+```
+Input validation successful
+```
+
+### ಕೋಡ್‌ನ ತರ್ಕ
+
+| Expression                           | ಕೆಲಸ                                                               |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| `username.trim().length &gt;= 3`        | Username ನಲ್ಲಿ ಕನಿಷ್ಠ 3 Characters ಇವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ       |
+| `password.length &gt;= 8`               | Password ನಲ್ಲಿ ಕನಿಷ್ಠ 8 Characters ಇವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ       |
+| `isUsernameValid &amp;&amp; isPasswordValid` | ಎರಡೂ Input Validation ನಿಯಮಗಳು ಪೂರೈಸಲ್ಪಟ್ಟಿವೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ |
+| `!isUsernameValid`                   | Username Validation ವಿಫಲವಾಗಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುತ್ತದೆ               |
+
+ಗಮನಿಸಿ: ಕನಿಷ್ಠ Length ಪರಿಶೀಲಿಸುವುದರಿಂದ Password ಸುರಕ್ಷಿತವಾಗಿದೆ ಎಂದು ಸಾಬೀತಾಗುವುದಿಲ್ಲ. ನೈಜ Website ನಲ್ಲಿ Server-side Validation, ಸುರಕ್ಷಿತ Password Hashing, Authentication ಮತ್ತು Rate Limiting ಮುಂತಾದ ಕ್ರಮಗಳೂ ಅಗತ್ಯ.
+
+# ಭಾಗ 18: Comparison ಮತ್ತು Conditions ಕುರಿತ ಇನ್ನಷ್ಟು ಉದಾಹರಣೆಗಳು
+
+## ಉದಾಹರಣೆ 1: ವಯಸ್ಸಿನ ಆಧಾರದಲ್ಲಿ ಫಲಿತಾಂಶ
+
+```
+let age = 16;
+
+if (age &lt; 13) {
+  console.log(&quot;Child&quot;);
+} else if (age &lt; 18) {
+  console.log(&quot;Teenager&quot;);
+} else {
+  console.log(&quot;Adult&quot;);
+}
+```
+
+Output:
+
+```
+Teenager
+```
+
+ಮೊದಲು `age &lt; 13` ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ. ಅದು `false`. ನಂತರ `age &lt; 18` ಸತ್ಯವಾಗುವುದರಿಂದ `Teenager` ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.
+
+## ಉದಾಹರಣೆ 2: Number Even ಅಥವಾ Odd
+
+```
+let number = 7;
+
+if (number % 2 === 0) {
+  console.log(&quot;Even&quot;);
+} else {
+  console.log(&quot;Odd&quot;);
+}
+```
+
+Output:
+
+```
+Odd
+```
+
+`%` Modulo Operator. ಇದು ಭಾಗಿಸಿದಾಗ ಉಳಿಯುವ ಶೇಷವನ್ನು ನೀಡುತ್ತದೆ. ಇಲ್ಲಿ `7 % 2` ಎಂದರೆ `1`; ಅದು `0` ಗೆ ಸಮಾನವಲ್ಲ. ಆದ್ದರಿಂದ `else` ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ.
+
+## ಉದಾಹರಣೆ 3: Discount Eligibility
+
+```
+let purchaseAmount = 1500;
+
+if (purchaseAmount &gt;= 2000) {
+  console.log(&quot;20% discount&quot;);
+} else if (purchaseAmount &gt;= 1000) {
+  console.log(&quot;10% discount&quot;);
+} else {
+  console.log(&quot;No discount&quot;);
+}
+```
+
+Output:
+
+```
+10% discount
+```
+
+Purchase Amount 1000 ಅಥವಾ ಹೆಚ್ಚು ಇದೆ, ಆದರೆ 2000 ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದೆ. ಆದ್ದರಿಂದ 10% Discount ಆಯ್ಕೆಯಾಗಿದೆ.
+
+## ಉದಾಹರಣೆ 4: Multiple Conditions
+
+```
+let age = 21;
+let hasTicket = true;
+let isBlocked = false;
+
+if (age &gt;= 18 &amp;&amp; hasTicket &amp;&amp; !isBlocked) {
+  console.log(&quot;Entry allowed&quot;);
+} else {
+  console.log(&quot;Entry denied&quot;);
+}
+```
+
+Output:
+
+```
+Entry allowed
+```
+
+ಇಲ್ಲಿ ಮೂರು ಷರತ್ತುಗಳಿವೆ:
+
+1. ವಯಸ್ಸು 18 ಅಥವಾ ಹೆಚ್ಚು ಇರಬೇಕು.
+2. Ticket ಇರಬೇಕು.
+3. Block ಆಗಿರಬಾರದು.
+
+ಮೂರೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿರುವುದರಿಂದ ಪ್ರವೇಶ ಅನುಮತಿಸಲಾಗಿದೆ.
+
+# ಭಾಗ 19: Professional Best Practices
+
+| ನಿಯಮ | ಶಿಫಾರಸು |
+|---|---|
+| Equality | ಸಾಮಾನ್ಯವಾಗಿ `===` ಮತ್ತು `!==` ಬಳಸಿ |
+| Input Validation | Type ಮತ್ತು Input Range ಅನ್ನು ಪರಿಶೀಲಿಸಿ |
+| Multiple Conditions | ಅಗತ್ಯವಿದ್ದಲ್ಲಿ `&amp;&amp;` / `||` ಬಳಸಿ |
+| Complex Logic | Parentheses ಮತ್ತು ಅರ್ಥಪೂರ್ಣ Variable Names ಬಳಸಿ |
+| `if` Blocks | ಸ್ಪಷ್ಟತೆಗಾಗಿ `{}` ಬಳಸಿ |
+| Default Values | Falsy Value ಗಳನ್ನೂ ಉಳಿಸಬೇಕಿದ್ದರೆ `??` ಪರಿಗಣಿಸಿ |
+| Number Checking | ಅಗತ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ `Number.isFinite()` ಮತ್ತು `Number.isNaN()` ಬಳಸಿ |
+| Object Properties | Property ಇರುವುದನ್ನು ತಿಳಿಯಲು `in` ಅಥವಾ `Object.hasOwn()` ಬಳಸಿ |
+| Nested Conditions | ಓದಲು ಕಷ್ಟವಾದರೆ ಸ್ಪಷ್ಟವಾದ Guard Clauses ಅಥವಾ ಬೇರೆ Variables ಬಳಸಿ |
+| Debugging | ಪ್ರತಿಯೊಂದು Condition ನ Intermediate Value ಗಳನ್ನು ಪರಿಶೀಲಿಸಿ |
+
+## Guard Clause ಎಂದರೇನು?
+
+ಒಂದು ಕಾರ್ಯದ ಆರಂಭದಲ್ಲಿಯೇ ತಪ್ಪಾದ ಅಥವಾ ಅನುಮತಿಸದ ಪರಿಸ್ಥಿತಿಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ಅವು ಪೂರೈಸದಿದ್ದರೆ Function ನಿಂದ ಬೇಗನೆ ಹೊರಬರುವ ವಿಧಾನವನ್ನು Guard Clause ಎನ್ನುತ್ತಾರೆ.
+
+```
+function processPayment(amount) {
+  if (!Number.isFinite(amount)) {
+    return &quot;Invalid amount&quot;;
+  }
+
+  if (amount &lt;= 0) {
+    return &quot;Amount must be positive&quot;;
+  }
+
+  return &quot;Payment can be processed&quot;;
+}
+
+console.log(processPayment(500)); // Payment can be processed
+console.log(processPayment(0));   // Amount must be positive
+```
+
+ಇದರಿಂದ ಎಲ್ಲ Conditions ಗಳನ್ನೂ ಒಳಹೊಕ್ಕು Nested Block ಗಳಾಗಿ ಬರೆಯುವ ಅಗತ್ಯ ಕಡಿಮೆಯಾಗುತ್ತದೆ.
+
+# ಭಾಗ 20: ಸ್ವಯಂ ಅಭ್ಯಾಸ — ಉತ್ತರಗಳೊಂದಿಗೆ
+
+ಕೆಳಗಿನ ಪ್ರಶ್ನೆಗಳನ್ನು ಸ್ವತಃ ಯೋಚಿಸಿ ಉತ್ತರಿಸಿ. ನಂತರ ಕೊಟ್ಟಿರುವ ಉತ್ತರಗಳೊಂದಿಗೆ ಹೋಲಿಸಿ.
+
+## ಪ್ರಶ್ನೆ 1: Comparison
+
+```
+console.log(15 &gt; 20);
+```
+
+ಉತ್ತರ: `false`
+
+ಕಾರಣ: 15, 20 ಕ್ಕಿಂತ ದೊಡ್ಡದಲ್ಲ.
+
+## ಪ್ರಶ್ನೆ 2: Equality
+
+```
+console.log(10 == &quot;10&quot;);
+console.log(10 === &quot;10&quot;);
+```
+
+ಉತ್ತರ:
+
+```
+true
+false
+```
+
+ಕಾರಣ: `==` Type Conversion ನಿಯಮಗಳನ್ನು ಅನುಸರಿಸಬಹುದು. `===` ನಲ್ಲಿ Type ಮತ್ತು Value ಎರಡೂ ಹೊಂದಾಣಿಕೆಯಾಗಬೇಕು.
+
+## ಪ್ರಶ್ನೆ 3: Logical AND
+
+```
+console.log(5 &gt; 2 &amp;&amp; 10 &lt; 5);
+```
+
+ಉತ್ತರ: `false`
+
+ಕಾರಣ: ಮೊದಲ ಷರತ್ತು `true`, ಎರಡನೆಯದು `false`. AND ಗೆ ಎರಡೂ ಸತ್ಯವಾಗಿರಬೇಕು.
+
+## ಪ್ರಶ್ನೆ 4: Logical OR
+
+```
+console.log(false || true);
+```
+
+ಉತ್ತರ: `true`
+
+ಕಾರಣ: ಕನಿಷ್ಠ ಒಂದು ಷರತ್ತು ಸತ್ಯವಾಗಿದೆ.
+
+## ಪ್ರಶ್ನೆ 5: Truthy ಮತ್ತು Falsy
+
+```
+console.log(Boolean(&quot;0&quot;));
+console.log(Boolean(0));
+console.log(Boolean([]));
+```
+
+ಉತ್ತರ:
+
+```
+true
+false
+true
+```
+
+## ಪ್ರಶ್ನೆ 6: `if...else`
+
+```
+let number = 12;
+
+if (number % 2 === 0) {
+  console.log(&quot;Even&quot;);
+} else {
+  console.log(&quot;Odd&quot;);
+}
+```
+
+ಉತ್ತರ: `Even`
+
+ಕಾರಣ: 12 ಅನ್ನು 2 ರಿಂದ ಭಾಗಿಸಿದಾಗ ಶೇಷ `0`.
+
+## ಪ್ರಶ್ನೆ 7: `NaN`
+
+```
+console.log(NaN === NaN);
+console.log(Number.isNaN(NaN));
+```
+
+ಉತ್ತರ:
+
+```
+false
+true
+```
+
+## ಪ್ರಶ್ನೆ 8: `??` ಮತ್ತು `||`
+
+```
+console.log(0 || 100);
+console.log(0 ?? 100);
+```
+
+ಉತ್ತರ:
+
+```
+100
+0
+```
+
+ಕಾರಣ: `||` Falsy Value ಗಳನ್ನು Default Value ಯಿಂದ ಬದಲಾಯಿಸಬಹುದು. `??` ಕೇವಲ `null` ಮತ್ತು `undefined` ಗಳಿಗೆ Default Value ಬಳಸುತ್ತದೆ.
+
+# ಅಂತಿಮ Revision — ಈ ಅಧ್ಯಾಯದ ಮುಖ್ಯ ಅಂಶಗಳು
+
+## ನೆನಪಿಟ್ಟುಕೊಳ್ಳಬೇಕಾದ 10 ನಿಯಮಗಳು
+
+### 1
+
+Condition
+
+ಪ್ರೋಗ್ರಾಂನ ಮುಂದಿನ ಕಾರ್ಯವನ್ನು ಷರತ್ತಿನ ಆಧಾರದ ಮೇಲೆ ನಿರ್ಧರಿಸುತ್ತದೆ.
+
+### 2
+
+Comparison
+
+ಎರಡು ಮೌಲ್ಯಗಳ ನಡುವಿನ ಸಂಬಂಧವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.
+
+### 3
+
+Strict Equality
+
+ಸಾಮಾನ್ಯವಾಗಿ \`===\` ಮತ್ತು \`!==\` ಬಳಸಿ.
+
+### 4
+
+AND
+
+\`&amp;&amp;\` — ಎರಡೂ ಷರತ್ತುಗಳು ಸತ್ಯವಾಗಿರಬೇಕು.
+
+### 5
+
+OR
+
+\`||\` — ಕನಿಷ್ಠ ಒಂದು ಷರತ್ತು ಸತ್ಯವಾಗಿರಬೇಕು.
+
+### 6
+
+NOT
+
+\`!\` — Boolean Context ನಲ್ಲಿ ವಿರುದ್ಧ ಫಲಿತಾಂಶ ನೀಡುತ್ತದೆ.
+
+### 7
+
+Falsy
+
+\`false\`, \`0\`, \`-0\`, \`0n\`, \`&quot;&quot;\`, \`null\`, \`undefined\`, \`NaN\`.
+
+### 8
+
+Ternary
+
+ಸರಳವಾದ ಎರಡು ಆಯ್ಕೆಗಳಿಗೆ \`condition ? A : B\`.
+
+### 9
+
+Nullish Coalescing
+
+\`??\` — \`null\` ಅಥವಾ \`undefined\` ಬಂದಾಗ ಮಾತ್ರ Default Value ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ.
+
+### 10
+
+Validation
+
+User Input ಅನ್ನು ಹೋಲಿಸುವ ಮೊದಲು Type ಮತ್ತು Range ಪರಿಶೀಲಿಸಿ.
+
+## ಮುಂದಿನ ಹಂತದಲ್ಲಿ ಏನು ಕಲಿಯಬೇಕು?
+
+JavaScript ಅನ್ನು Basic ನಿಂದ Professional Level ಗೆ ಕಲಿಯಲು ಈ ವಿಷಯಗಳನ್ನು ಈ ಕ್ರಮದಲ್ಲಿ ಕಲಿಯುವುದು ಸೂಕ್ತ:
+
+1. Loops: `for`, `while`, `do...while`, `break`, `continue`.
+2. Functions: Function Declaration, Parameters, Return Values, Arrow Functions.
+3. Arrays ಮತ್ತು Objects: Properties, Methods, Iteration ಮತ್ತು Destructuring.
+4. Modern JavaScript: Scope, Hoisting, Closures, Modules ಮತ್ತು Error Handling.
+5. DOM ಮತ್ತು Events: HTML Elements ಆಯ್ಕೆ ಮಾಡುವುದು, Buttons, Forms ಮತ್ತು Dynamic Web Pages ರಚಿಸುವುದು.
+
+Conditions ಮತ್ತು Comparison Operators ಗಳನ್ನು ನೀವು ಸ್ಪಷ್ಟವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಂಡರೆ, ಈ ಮುಂದಿನ ವಿಷಯಗಳನ್ನು ಕಲಿಯುವುದು ಸುಲಭವಾಗುತ್ತದೆ. create dynamic HTML Page in modern and any one word not missing in html page </template>
+<script>
+(() => {
+  'use strict';
+  const $ = (selector, root=document) => root.querySelector(selector);
+  const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+  const sidebar = $('#sidebar'), menuToggle = $('#menuToggle'), searchInput = $('#searchInput');
+  const sections = $$('.lesson-section');
+  const tocLinks = $$('.toc-link');
+  const articleTextNodes = () => {
+    const walker = document.createTreeWalker($('#articleContent'), NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        const p = node.parentElement;
+        if (!p || p.closest('code,pre,script,style,textarea,button,.code-actions,mark.search-hit')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes=[]; let n; while ((n=walker.nextNode())) nodes.push(n); return nodes;
+  };
+  let savedMarks=[];
+  function clearHighlights(){
+    $$('.search-hit').forEach(mark => { mark.replaceWith(document.createTextNode(mark.textContent)); mark.parentNode?.normalize(); });
+  }
+  function highlightTerm(term){
+    clearHighlights(); if(!term || term.length<2) return;
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re = new RegExp(escaped,'gi');
+    articleTextNodes().forEach(node => {
+      const text = node.nodeValue; if(!re.test(text)){ re.lastIndex=0; return; } re.lastIndex=0;
+      const frag=document.createDocumentFragment(); let last=0, match;
+      while((match=re.exec(text))!==null){
+        if(match.index>last) frag.append(document.createTextNode(text.slice(last,match.index)));
+        const mark=document.createElement('mark'); mark.className='search-hit'; mark.textContent=match[0]; frag.append(mark); last=match.index+match[0].length;
+        if(match[0].length===0) re.lastIndex++;
+      }
+      if(last<text.length) frag.append(document.createTextNode(text.slice(last)));
+      node.replaceWith(frag);
+    });
+  }
+  function applySearch(){
+    const q=searchInput.value.trim().toLocaleLowerCase(); let found=0;
+    clearHighlights();
+    sections.forEach(sec => {
+      const match=!q || sec.textContent.toLocaleLowerCase().includes(q);
+      sec.classList.toggle('hidden-by-search',!match); if(match) found++;
+    });
+    const preamble=$('.preamble');
+    const preMatch=!q || preamble.textContent.toLocaleLowerCase().includes(q);
+    preamble.classList.toggle('hidden-by-search',!preMatch);
+    $('#searchCount').textContent = q ? `${found} ಅಧ್ಯಾಯ` : '';
+    $('#noSearchResults')?.remove();
+    if(q){
+      const matches=sections.filter(sec=>!sec.classList.contains('hidden-by-search'));
+      if(matches.length && q.length>=2) { highlightTerm(q); }
+      if(!found && !preMatch){ const el=document.createElement('div');el.id='noSearchResults';el.className='no-results';el.style.display='block';el.textContent='ಹುಡುಕಿದ ಪದ ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಪದ ಅಥವಾ Operator ಪ್ರಯತ್ನಿಸಿ.';$('#articleContent').prepend(el); }
+    }
+    tocLinks.forEach(link=>{const sec=document.getElementById(link.dataset.target);link.classList.toggle('hidden-by-search',!!q && (!sec || sec.classList.contains('hidden-by-search')));});
+  }
+  searchInput.addEventListener('input',applySearch);
+  searchInput.addEventListener('keydown',e=>{ if(e.key==='Escape'){searchInput.value='';applySearch();searchInput.blur();} if(e.key==='Enter'){const first=sections.find(s=>!s.classList.contains('hidden-by-search'));first?.scrollIntoView({behavior:'smooth',block:'start'});} });
+
+  // Chapter collapse controls.
+  $$('.collapse-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    const sec=btn.closest('.lesson-section'), body=$('.chapter-content',sec), expanded=btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded',String(!expanded)); body.hidden=expanded;
+    btn.textContent=expanded?'ತೆರೆಯಿರಿ +':'ಮಡಚಿ −'; btn.title=expanded?'ಈ ಅಧ್ಯಾಯವನ್ನು ತೆರೆಯಿರಿ':'ಈ ಅಧ್ಯಾಯವನ್ನು ಮಡಚಿ';
+  }));
+
+  // Progress by chapter visibility / scroll position.
+  const readIds=new Set();
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){readIds.add(e.target.id);tocLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===e.target.id));}});
+    $('#readCount').textContent=`${readIds.size} / ${sections.length} ಅಧ್ಯಾಯಗಳು`;
+    $('#progressPercent').textContent=Math.round(readIds.size/Math.max(1,sections.length)*100)+'%';
+    $('#progressFill').style.width=(readIds.size/Math.max(1,sections.length)*100)+'%';
+  },{rootMargin:'-15% 0px -70% 0px',threshold:0});
+  sections.forEach(s=>io.observe(s));
+  tocLinks.forEach(a=>a.addEventListener('click',()=>{sidebar.classList.remove('open');}));
+
+  // Reading progress and scroll-to-top.
+  const updateScrollUI=()=>{
+    const root=document.documentElement, max=root.scrollHeight-root.clientHeight;
+    $('#topProgress').style.width=(max>0 ? root.scrollTop/max*100 : 0)+'%';
+    $('#backTop').classList.toggle('show',root.scrollTop>500);
+  };
+  window.addEventListener('scroll',updateScrollUI,{passive:true}); updateScrollUI();
+  $('#backTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  menuToggle?.addEventListener('click',()=>sidebar.classList.toggle('open'));
+  document.addEventListener('click',e=>{if(window.innerWidth<=850 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) sidebar.classList.remove('open');});
+
+  // Theme toggle with local preference.
+  const themeToggle=$('#themeToggle');
+  const applyTheme=theme=>{document.documentElement.dataset.theme=theme; themeToggle.textContent=theme==='dark'?'☀':'◐';themeToggle.title=theme==='dark'?'ಲೈಟ್ ಮೋಡ್':'ಡಾರ್ಕ್ ಮೋಡ್';try{localStorage.setItem('js-kn-theme',theme)}catch(_){};};
+  let initialTheme='light';try{initialTheme=localStorage.getItem('js-kn-theme')|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(_){};applyTheme(initialTheme);
+  themeToggle.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+  let fontSize=16;
+  $('#fontUp').addEventListener('click',()=>{fontSize=Math.min(21,fontSize+1);document.body.style.fontSize=fontSize+'px'});
+  $('#fontDown').addEventListener('click',()=>{fontSize=Math.max(13,fontSize-1);document.body.style.fontSize=fontSize+'px'});
+  $('#printBtn').addEventListener('click',()=>window.print());
+
+  // Copy buttons + safely sandboxed code runner for JavaScript examples.
+  function formatValue(v){ if(typeof v==='string') return v; if(typeof v==='undefined') return 'undefined'; if(typeof v==='bigint') return String(v)+'n'; try{return JSON.stringify(v) ?? String(v)}catch(_){return String(v)} }
+  function makeSandbox(code, onOutput){
+    const iframe=document.createElement('iframe'); iframe.setAttribute('sandbox','allow-scripts'); iframe.title='ಪ್ರತ್ಯೇಕ JavaScript execution sandbox'; iframe.style.cssText='display:none;width:0;height:0;border:0';
+    const safeCode=JSON.stringify(code).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
+    const src=`<!doctype html><meta charset="utf-8"><body><script>
+      const source=${safeCode}; let out='';
+      const show=(...args)=>{out += args.map(v=>{if(typeof v==='string')return v;if(typeof v==='undefined')return 'undefined';try{return JSON.stringify(v) ?? String(v)}catch(e){return String(v)}}).join(' ')+'\\n'};
+      console.log=(...a)=>show(...a); console.info=(...a)=>show(...a); console.warn=(...a)=>show('⚠',...a); console.error=(...a)=>show('ERROR:',...a); console.table=(v)=>show(v);
+      try { (new Function(source))(); } catch(err) { show(err.name+': '+err.message); }
+      parent.postMessage({type:'js-kn-output', output:out || '(ಯಾವುದೇ console output ಇಲ್ಲ)'}, '*');
+    <\/script></body>`;
+    iframe.srcdoc=src; document.body.appendChild(iframe);
+    let done=false, timer;
+    const finish=output=>{if(done)return;done=true;clearTimeout(timer);window.removeEventListener('message',handler);iframe.remove();onOutput(output);};
+    const handler=e=>{ if(e.source!==iframe.contentWindow || e.data?.type!=='js-kn-output') return; finish(e.data.output); };
+    window.addEventListener('message',handler);timer=setTimeout(()=>finish('ಸಮಯ ಮೀರಿದೆ ಅಥವಾ ಕೋಡ್ ದೀರ್ಘಕಾಲ ನಡೆಯುತ್ತಿದೆ.'),3000);
+  }
+  function addCodeActions(){
+    $$('.lesson-section pre, .preamble pre').forEach((pre,idx)=>{
+      const codeEl=$('code',pre); if(!codeEl)return;
+      const code=codeEl.textContent;
+      const actions=document.createElement('div');actions.className='code-actions';
+      const copy=document.createElement('button');copy.type='button';copy.textContent='Copy';copy.title='ಕೋಡ್ ನಕಲಿಸಿ';
+      copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code);copy.textContent='Copied ✓'}catch(_){const ta=document.createElement('textarea');ta.value=code;document.body.append(ta);ta.select();document.execCommand('copy');ta.remove();copy.textContent='Copied ✓'}setTimeout(()=>copy.textContent='Copy',1300)});
+      actions.append(copy);
+      const looksLikeJS=/(console\.|\blet\s|\bconst\s|\bvar\s|\bif\s*\(|\bswitch\s*\(|\bfunction\s|\breturn\s|\bNumber\.|\bObject\.|\bBoolean\(|\bArray\.|\btypeof\s|\bnew\s+Date|\bnew\s+Function)/.test(code);
+      if(looksLikeJS){const run=document.createElement('button');run.type='button';run.textContent='Run ▶';run.title='ಈ JavaScript snippet ಅನ್ನು sandbox ನಲ್ಲಿ ಓಡಿಸಿ';actions.append(run);const result=document.createElement('div');result.className='run-result';result.hidden=true;run.addEventListener('click',()=>{result.hidden=false;result.textContent='ಚಲಾಯಿಸಲಾಗುತ್ತಿದೆ…';makeSandbox(code,out=>result.textContent=out);});pre.insertAdjacentElement('afterend',result);}
+      pre.insertAdjacentElement('beforebegin',actions);
+    });
+  }
+  addCodeActions();
+
+  // Main playground presets and sandboxed execution.
+  const editor=$('#playgroundCode'), playgroundOutput=$('#playgroundOutput');
+  const baseCode='let marks = 80;\n\nif (marks >= 35) {\n  console.log("Pass");\n} else {\n  console.log("Fail");\n}';
+  const presets={basic:baseCode,comparison:'console.log(10 > 5);\nconsole.log(5 === "5");\nconsole.log(5 == "5");',falsy:'console.log(Boolean("0"));\nconsole.log(Boolean(0));\nconsole.log(Boolean([]));\nconsole.log(0 || 100);\nconsole.log(0 ?? 100);'};
+  $('#exampleBasic').addEventListener('click',()=>editor.value=presets.basic);
+  $('#exampleComparison').addEventListener('click',()=>editor.value=presets.comparison);
+  $('#exampleFalsy').addEventListener('click',()=>editor.value=presets.falsy);
+  $('#clearEditor').addEventListener('click',()=>{editor.value='';playgroundOutput.textContent='ಕೋಡ್ ತೆರವುಗೊಳಿಸಲಾಗಿದೆ.'});
+  $('#resetPlayground').addEventListener('click',()=>{editor.value=baseCode;playgroundOutput.textContent='ಉದಾಹರಣೆ ಮರುಹೊಂದಿಸಲಾಗಿದೆ.'});
+  $('#runPlayground').addEventListener('click',()=>{playgroundOutput.textContent='ಚಲಾಯಿಸಲಾಗುತ್ತಿದೆ…';makeSandbox(editor.value,out=>playgroundOutput.textContent=out)});
+
+  // Interactive quiz based on this lesson; does not replace the original source notes.
+  const questions=[
+    {q:'1. `10 === "10"` ಫಲಿತಾಂಶ ಏನು?',options:['true','false','10','Error'],answer:1,why:'Number ಮತ್ತು String ವಿಭಿನ್ನ Types; Strict Equality ನಲ್ಲಿ ಅವು ಸಮಾನವಲ್ಲ.'},
+    {q:'2. ಕೆಳಗಿನವುಗಳಲ್ಲಿ Falsy Value ಯಾವುದು?',options:['"0"','[]','0','{}'],answer:2,why:'Number 0 Falsy. String "0", ಖಾಲಿ Array ಮತ್ತು ಖಾಲಿ Object Truthy.'},
+    {q:'3. `true && false` ಫಲಿತಾಂಶ?',options:['true','false','null','undefined'],answer:1,why:'AND ಗೆ ಎರಡೂ ಷರತ್ತುಗಳು true ಆಗಿರಬೇಕು.'},
+    {q:'4. `5 == "5"` ಫಲಿತಾಂಶ?',options:['true','false','Error','undefined'],answer:0,why:'Loose Equality Type Conversion ನಿಯಮಗಳನ್ನು ಅನ್ವಯಿಸಬಹುದು.'},
+    {q:'5. ನಿರ್ದಿಷ್ಟ ಮೌಲ್ಯಗಳ ಆಧಾರದ ಮೇಲೆ ಆಯ್ಕೆ ಮಾಡಲು ಯಾವ Statement ಉಪಯುಕ್ತ?',options:['switch','typeof','delete','void'],answer:0,why:'switch ಮತ್ತು case ಗಳ ಮೂಲಕ ಮೌಲ್ಯಗಳ ನಡುವೆ ಆಯ್ಕೆ ಮಾಡಬಹುದು.'},
+    {q:'6. `!false` ಫಲಿತಾಂಶ?',options:['false','true','0','NaN'],answer:1,why:'Logical NOT Boolean ಮೌಲ್ಯವನ್ನು ವಿರುದ್ಧಗೊಳಿಸುತ್ತದೆ.'},
+    {q:'7. NaN ಪರಿಶೀಲಿಸಲು ಯಾವುದು ಉತ್ತಮ?',options:['value === NaN','Number.isNaN(value)','value == null','typeof value === "NaN"'],answer:1,why:'NaN ಅನ್ನು === ಮೂಲಕ ಸ್ವತಃ ಹೋಲಿಸಿದರೂ false; Number.isNaN() ಬಳಸಿ.'},
+    {q:'8. `"10" > "2"` ಫಲಿತಾಂಶ?',options:['true','false','10','Error'],answer:1,why:'ಎರಡೂ Strings ಆದ್ದರಿಂದ String ಕ್ರಮದ ಪ್ರಕಾರ ಹೋಲಿಕೆ ನಡೆಯುತ್ತದೆ.'},
+    {q:'9. `0 ?? 100` ಫಲಿತಾಂಶ?',options:['100','0','null','false'],answer:1,why:'?? ಕೇವಲ null ಅಥವಾ undefined ಆದಾಗ ಮಾತ್ರ ಬಲಭಾಗದ Default ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ.'},
+    {q:'10. ವಯಸ್ಸು 1 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಮತ್ತು 18 ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದೆಯೇ ಎಂದು ಸರಿಯಾಗಿ ಹೇಗೆ ಪರಿಶೀಲಿಸುತ್ತೀರಿ?',options:['1 < age < 18','age > 1 && age < 18','age > 1 || age < 18','age === 1 < 18'],answer:1,why:'JavaScript ನಲ್ಲಿ chained numeric comparisons ಮಾಡಬೇಡಿ; ಎರಡು comparisons ಅನ್ನು && ಮೂಲಕ ಜೋಡಿಸಿ.'}
+  ];
+  const quizList=$('#quizList');
+  function renderQuiz(){quizList.innerHTML='';questions.forEach((q,i)=>{const card=document.createElement('div');card.className='quiz-question';card.dataset.index=i;const h=document.createElement('h3');h.textContent=q.q;card.append(h);const options=document.createElement('div');options.className='quiz-options';q.options.forEach((label,j)=>{const lab=document.createElement('label');lab.className='quiz-option';const inp=document.createElement('input');inp.type='radio';inp.name='quiz-'+i;inp.value=String(j);const text=document.createElement('span');text.textContent=label;lab.append(inp,text);options.append(lab)});card.append(options);const explain=document.createElement('div');explain.className='quiz-explanation';explain.hidden=true;card.append(explain);quizList.append(card)});$('#quizScore').textContent='';}
+  function checkQuiz(){let score=0;questions.forEach((q,i)=>{const card=$(`.quiz-question[data-index="${i}"]`);const selected=$(`input[name="quiz-${i}"]:checked`,card);const exp=$('.quiz-explanation',card);const correct=selected && Number(selected.value)===q.answer;card.classList.toggle('correct',!!correct);card.classList.toggle('incorrect',!correct);exp.hidden=false;exp.textContent=(correct?'ಸರಿಯಾದ ಉತ್ತರ ✓ ':'ಸರಿಯಾದ ಉತ್ತರ: '+q.options[q.answer]+' · ')+q.why;if(correct)score++;});$('#quizScore').textContent=`ನಿಮ್ಮ ಅಂಕ: ${score} / ${questions.length}`;}
+  $('#submitQuiz').addEventListener('click',checkQuiz);$('#resetQuiz').addEventListener('click',renderQuiz);renderQuiz();
+
+  // Keyboard shortcut: Ctrl/Cmd+K focuses search.
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();searchInput.focus();searchInput.select();}});
+})();
+</script>
+</body></html>

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM (Document Object Model) - ಸಮಗ್ರ ನೋಟ್ಸ್</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Fira+Code:wght@400;500&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js for Code Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #cbd5e1;
+            --primary: #38bdf8;
+            --secondary: #818cf8;
+            --card-bg: #1e293b;
+            --code-bg: #000000;
+            --highlight: #facc15;
+            --success: #4ade80;
+            --danger: #f87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header Animation */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9));
+            border-bottom: 2px solid var(--primary);
+            border-radius: 0 0 30px 30px;
+            animation: fadeDown 1s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: #fff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        /* Introduction Box */
+        .intro-box {
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.1rem;
+            animation: fadeUp 1s ease-out 0.3s backwards;
+        }
+
+        /* Sections */
+        section {
+            margin: 50px 0;
+            animation: fadeUp 1s ease-out;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        li strong, p strong {
+            color: var(--highlight);
+        }
+
+        /* General Info Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Property Cards (New Modern Layout for Clean Code) */
+        .prop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .prop-card {
+            background-color: #162032;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .prop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+
+        .prop-card h4 {
+            color: var(--highlight);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #334155;
+            padding-bottom: 10px;
+        }
+
+        .prop-card .desc {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        /* Mini Code & Output Blocks */
+        .mini-code {
+            background-color: #000;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+            border: 1px solid #334155;
+        }
+
+        .mini-output {
+            background: rgba(74, 222, 128, 0.08);
+            color: var(--success);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'Fira Code', monospace;
+            border-left: 3px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* SVG Animation */
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        
+        .dom-tree svg {
+            width: 100%;
+            max-width: 500px;
+            filter: drop-shadow(0 0 10px rgba(56,189,248,0.3));
+        }
+
+        .node {
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Standard Code Blocks */
+        .code-container {
+            background-color: var(--code-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid #334155;
+            position: relative;
+        }
+
+        .code-header {
+            background-color: #1e293b;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background-color: #ff5f56; }
+        .dot.yellow { background-color: #ffbd2e; }
+        .dot.green { background-color: #27c93f; }
+
+        pre {
+            margin: 0 !important;
+            padding: 20px !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace !important;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Highlight specific concepts */
+        .highlight-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--highlight);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .pro-tip {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .error-box {
+            background: rgba(248, 113, 113, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .card-grid { grid-template-columns: 1fr; }
+            .prop-grid { grid-template-columns: 1fr; }
+            code { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-brands fa-js"></i> <span>DOM</span> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನೋಟ್ಸ್</h1>
+        <p>Document Object Model & DOM Properties - ಸಮಗ್ರ ವಿವರಣೆ (Clean Code Version)</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="intro-box">
+            <i class="fa-solid fa-quote-left" style="color: var(--primary); margin-right: 10px;"></i>
+            ಖಂಡಿತ, ನೀವು ನೀಡಿದ ಅದ್ಭುತವಾದ ಮತ್ತು ವಿವರವಾದ ನೋಟ್ಸ್‌ನಿಂದ ಒಂದೇ ಒಂದು ಅಕ್ಷರವನ್ನೂ ಬಿಡದೆ, ಜೊತೆಗೆ ಇನ್ನುಳಿದ ಪ್ರಮುಖ DOM ಪ್ರಾಪರ್ಟಿಗಳನ್ನು (Properties) ಸೇರಿಸಿ, ಪ್ರತಿಯೊಂದು ಕೋಡ್‌ಅನ್ನೂ ಸಂಪೂರ್ಣವಾಗಿ ವಿವರಿಸಿದ ಸಮಗ್ರ ನೋಟ್ಸ್ ಇಲ್ಲಿದೆ:
+        </div>
+
+        <section>
+            <h2><i class="fa-solid fa-sitemap"></i> DOM ಎಂದರೇನು?</h2>
+            <p><strong>DOM (Document Object Model)</strong> ಎಂದರೆ, ಒಂದು ವೆಬ್‌ಸೈಟ್‌ನ ಒಳಗಿರುವ ಎಲ್ಲಾ ಅಂಶಗಳನ್ನು (ಪಠ್ಯ, ಚಿತ್ರಗಳು, ಬಟನ್‌ಗಳು) ಬ್ರೌಸರ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಮತ್ತು ನಿರ್ವಹಿಸಲು ರಚಿಸಿಕೊಳ್ಳುವ ಒಂದು 'ನೀಲನಕ್ಷೆ' (Blueprint) ಅಥವಾ 'ಮರದ ವಿನ್ಯಾಸ' (Tree structure).</p>
+            
+            <div class="card">
+                <i class="fa-solid fa-house-chimney-window"></i>
+                <h3>ಒಂದು ಸರಳ ಉದಾಹರಣೆ (ಮನೆಯ ನೀಲನಕ್ಷೆ):</h3>
+                <p>ನೀವು ಒಂದು ಮನೆಯನ್ನು ಕಟ್ಟಿದ್ದೀರಿ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ಮನೆ ಕಟ್ಟಿದ ಮೇಲೆ, "ಅಡುಗೆಮನೆಯ ಕಿಟಕಿಯ ಬಣ್ಣವನ್ನು ಕೆಂಪು ಮಾಡಬೇಕು" ಎಂದು ನೀವು ಪೇಂಟರ್‌ಗೆ ಹೇಳಿದರೆ, ಆತ ಮೊದಲು ಮನೆಯ ನೀಲನಕ್ಷೆಯಲ್ಲಿ (Blueprint) ಅಡುಗೆಮನೆ ಎಲ್ಲಿದೆ ಮತ್ತು ಕಿಟಕಿ ಎಲ್ಲಿದೆ ಎಂದು ಹುಡುಕುತ್ತಾನೆ.</p>
+                <p>ಇದೇ ರೀತಿ, ನಿಮ್ಮ ಬ್ರೌಸರ್ (Chrome, Firefox) ಒಂದು ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ತೆರೆದಾಗ, ಆ ವೆಬ್‌ಸೈಟ್‌ನ ಒಂದು 'ನೀಲನಕ್ಷೆ'ಯನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ. ಈ ನೀಲನಕ್ಷೆಯನ್ನೇ DOM ಎಂದು ಕರೆಯುತ್ತೇವೆ.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-spell-check"></i> DOM ನ ವಿಸ್ತೃತ ರೂಪ ಮತ್ತು ಅರ್ಥ</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <i class="fa-regular fa-file-code"></i>
+                    <h3>Document (ಡಾಕ್ಯುಮೆಂಟ್)</h3>
+                    <p>ನಿಮ್ಮ ಕಣ್ಣಮುಂದೆ ಕಾಣುವ ವೆಬ್‌ಸೈಟ್‌ನ ಇಡೀ ಪುಟ (Web page).</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-cube"></i>
+                    <h3>Object (ಆಬ್ಜೆಕ್ಟ್)</h3>
+                    <p>ಆ ಪುಟದಲ್ಲಿರುವ ಪ್ರತಿಯೊಂದು ಬಿಡಿ ಭಾಗ (ಉದಾಹರಣೆಗೆ: ಒಂದು ಪ್ಯಾರಾಗ್ರಾಫ್, ಒಂದು ಚಿತ್ರ, ಒಂದು ಬಟನ್).</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <h3>Model (ಮಾಡೆಲ್)</h3>
+                    <p>ಇವೆಲ್ಲವನ್ನೂ ಒಂದಕ್ಕೊಂದು ಸಂಬಂಧ ಕಲ್ಪಿಸಿ, ಒಂದು ಮರದ ಆಕಾರದಲ್ಲಿ (Tree structure) ವ್ಯವಸ್ಥಿತವಾಗಿ ಜೋಡಿಸಿರುವ ವಿನ್ಯಾಸ.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-gears"></i> DOM ಯಾವ ರೀತಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h2>
+            <p>ಬ್ರೌಸರ್ ಒಂದು ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ಲೋಡ್ ಮಾಡುವಾಗ ನಡೆಯುವ ಪ್ರಕ್ರಿಯೆ ಹೀಗಿರುತ್ತದೆ:</p>
+            
+            <ol>
+                <li><strong>HTML ಕೋಡ್ ಸ್ವೀಕಾರ:</strong> ನೀವು ವೆಬ್‌ಸೈಟ್ ವಿಳಾಸ ಟೈಪ್ ಮಾಡಿದಾಗ, ಸರ್ವರ್‌ನಿಂದ ಬ್ರೌಸರ್‌ಗೆ ಕೇವಲ HTML ಕೋಡ್ (ಟೆಕ್ಸ್ಟ್ ರೂಪದಲ್ಲಿ) ಬರುತ್ತದೆ.</li>
+                <li><strong>ಮರದ ರಚನೆ (Tree Construction):</strong> ಆ ಕೋಡ್ ಅನ್ನು ಓದಿ, ಬ್ರೌಸರ್ ತಕ್ಷಣವೇ ಒಂದು DOM ಮರವನ್ನು ಕಟ್ಟುತ್ತದೆ.
+                    <ul>
+                        <li>ಇದರಲ್ಲಿ Document ಎಂಬುದು ಬೇರು (Root).</li>
+                        <li><code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code> ಟ್ಯಾಗ್‌ಗಳು ಕೊಂಬೆಗಳು (Branches).</li>
+                        <li>ಪಠ್ಯ (Text), ಚಿತ್ರಗಳು, ಮತ್ತು ಲಿಂಕ್‌ಗಳು ಆ ಕೊಂಬೆಗಳ ಕೊನೆಯಲ್ಲಿರುವ ಎಲೆಗಳು (Leaves).</li>
+                    </ul>
+                </li>
+                <li><strong>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸಂಪರ್ಕ (JavaScript Connection):</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ಎಂಬ ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಭಾಷೆ ಈ DOM ಮರವನ್ನು ಬಳಸಿಕೊಂಡು, ವೆಬ್‌ಸೈಟ್‌ನ ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ಭಾಗವನ್ನು (ಉದಾಹರಣೆಗೆ: ಒಂದು ಬಟನ್ ಅನ್ನು) ಸುಲಭವಾಗಿ ಹುಡುಕುತ್ತದೆ ಮತ್ತು ಅದಕ್ಕೆ ಬೇಕಾದ ಬದಲಾವಣೆಗಳನ್ನು ಮಾಡುತ್ತದೆ.</li>
+            </ol>
+
+            <!-- Inline SVG Diagram for DOM Tree -->
+            <div class="svg-container dom-tree">
+                <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M200,30 L200,80" stroke="#818cf8" stroke-width="2" fill="none"/>
+                    <path d="M200,80 L100,140" stroke="#818cf8" stroke-width="2" fill="none"/>
+                    <path d="M200,80 L300,140" stroke="#818cf8" stroke-width="2" fill="none"/>
+                    <path d="M300,140 L250,200" stroke="#818cf8" stroke-width="2" fill="none"/>
+                    <path d="M300,140 L350,200" stroke="#818cf8" stroke-width="2" fill="none"/>
+                    
+                    <rect x="150" y="10" width="100" height="40" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2" class="node"/>
+                    <text x="200" y="35" fill="#fff" text-anchor="middle" font-family="monospace" font-size="14">Document</text>
+
+                    <rect x="150" y="80" width="100" height="40" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2" class="node" style="animation-delay: 0.2s"/>
+                    <text x="200" y="105" fill="#fff" text-anchor="middle" font-family="monospace" font-size="14">&lt;html&gt;</text>
+
+                    <rect x="50" y="140" width="100" height="40" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2" class="node" style="animation-delay: 0.4s"/>
+                    <text x="100" y="165" fill="#fff" text-anchor="middle" font-family="monospace" font-size="14">&lt;head&gt;</text>
+
+                    <rect x="250" y="140" width="100" height="40" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2" class="node" style="animation-delay: 0.6s"/>
+                    <text x="300" y="165" fill="#fff" text-anchor="middle" font-family="monospace" font-size="14">&lt;body&gt;</text>
+
+                    <circle cx="250" cy="200" r="20" fill="#facc15" class="node" style="animation-delay: 0.8s"/>
+                    <text x="250" y="205" fill="#000" text-anchor="middle" font-family="monospace" font-size="12">&lt;h1&gt;</text>
+
+                    <circle cx="350" cy="200" r="20" fill="#facc15" class="node" style="animation-delay: 1s"/>
+                    <text x="350" y="205" fill="#000" text-anchor="middle" font-family="monospace" font-size="12">&lt;p&gt;</text>
+                </svg>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-bolt"></i> DOM ನ ಉಪಯೋಗವೇನು?</h2>
+            <p>DOM ಇಲ್ಲದಿದ್ದರೆ, ವೆಬ್‌ಸೈಟ್‌ಗಳು ಕೇವಲ ಪತ್ರಿಕೆಯ ಪುಟಗಳಂತೆ ನಿಶ್ಚಲವಾಗಿರುತ್ತಿದ್ದವು (Static). DOM ಇರುವುದರಿಂದಲೇ ವೆಬ್‌ಸೈಟ್‌ಗಳು 'ಜೀವಂತ'ವಾಗಿವೆ (Dynamic).</p>
+            <ul>
+                <li><strong>ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗದೆ ಬದಲಾವಣೆ:</strong> ಫೇಸ್‌ಬುಕ್‌ನಲ್ಲಿ ಅಥವಾ ಇನ್ಸ್‌ಟಾಗ್ರಾಮ್‌ನಲ್ಲಿ ನೀವು 'ಲೈಕ್' (Like) ಒತ್ತಿದಾಗ, ಇಡೀ ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗುವುದಿಲ್ಲ. ಕೇವಲ ಆ ಬಟನ್‌ನ ಬಣ್ಣ ಮಾತ್ರ ಕೆಂಪು ಅಥವಾ ನೀಲಿಯಾಗುತ್ತದೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ DOM ಮೂಲಕ ಆ ನಿರ್ದಿಷ್ಟ ಬಟನ್‌ನ 'ಆಬ್ಜೆಕ್ಟ್' ಅನ್ನು ಮಾತ್ರ ಹುಡುಕಿ ಬಣ್ಣ ಬದಲಾಯಿಸುವುದರಿಂದ ಇದು ಸಾಧ್ಯವಾಗುತ್ತದೆ.</li>
+                <li><strong>ಹೊಸ ಅಂಶಗಳನ್ನು ಸೇರಿಸುವುದು:</strong> ವಾಟ್ಸಾಪ್ ವೆಬ್‌ನಲ್ಲಿ (WhatsApp Web) ಹೊಸ ಮೆಸೇಜ್ ಬಂದಾಗ, ನೀವು ಪೇಜ್ ರಿಲೋಡ್ ಮಾಡದಿದ್ದರೂ ಅದು ಪರದೆಯ ಮೇಲೆ ಬಂದು ಕೂರುತ್ತದೆ. ಇಲ್ಲಿ ಬ್ರೌಸರ್ DOM ಮರಕ್ಕೆ ಹೊಸ ಮೆಸೇಜ್‌ನ 'ಕೊಂಬೆ'ಯನ್ನು ಸೇರಿಸುತ್ತದೆ.</li>
+                <li><strong>ವಿನ್ಯಾಸ (Style) ಬದಲಾವಣೆ:</strong> ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ 'ಡಾರ್ಕ್ ಮೋಡ್' (Dark Mode) ಬಟನ್ ಒತ್ತಿದ ತಕ್ಷಣ ಇಡೀ ಹಿನ್ನೆಲೆ ಕಪ್ಪಾಗುತ್ತದೆ.</li>
+                <li><strong>ಬಳಕೆದಾರರ ಕ್ರಿಯೆಗಳಿಗೆ ಸ್ಪಂದನೆ (Events):</strong> ನೀವು ಮೌಸ್ ಮೂವ್ ಮಾಡಿದಾಗ, ಫಾರ್ಮ್‌ನಲ್ಲಿ ಟೈಪ್ ಮಾಡಿದಾಗ, ಅಥವಾ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಬ್ರೌಸರ್ ಆ ಕ್ರಿಯೆಗಳನ್ನು DOM ಮೂಲಕವೇ ಅರಿತುಕೊಳ್ಳುತ್ತದೆ.</li>
+            </ul>
+
+            <div class="highlight-box">
+                <i class="fa-solid fa-lightbulb" style="color: var(--highlight);"></i> 
+                ಸರಳವಾಗಿ ಹೇಳಬೇಕೆಂದರೆ, HTML ಎಂಬುದು ಮನುಷ್ಯನ <strong>'ಅಸ್ಥಿಪಂಜರ'ವಿದ್ದಂತೆ</strong>. DOM ಎಂಬುದು ಬ್ರೌಸರ್ ಆ ಅಸ್ಥಿಪಂಜರವನ್ನು ಅರ್ಥಮಾಡಿಕೊಂಡು, ಅದಕ್ಕೆ ಜೀವತುಂಬಿ ಕೆಲಸ ಮಾಡಲು ಮಾಡಿಕೊಂಡಿರುವ <strong>'ನರಮಂಡಲ ವ್ಯವಸ್ಥೆ' (Nervous system)</strong>.
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-sliders"></i> DOM Property ಎಂದರೇನು?</h2>
+            <p><strong>DOM (Document Object Model)</strong> ಎಂದರೆ ಒಂದು ವೆಬ್‌ಪುಟದ (HTML ಡಾಕ್ಯುಮೆಂಟ್) ಪ್ರತಿಯೊಂದು ಟ್ಯಾಗ್ ಅನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವಂತಹ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಆಗಿ ಪರಿವರ್ತಿಸುವ ವ್ಯವಸ್ಥೆ.</p>
+            <p><strong>DOM Property (ಪ್ರಾಪರ್ಟಿ):</strong> ಪ್ರಾಪರ್ಟಿ ಎಂದರೆ ಆ ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣ ಅಥವಾ ಮೌಲ್ಯ (Value). ವೆಬ್‌ಪುಟದಲ್ಲಿರುವ ಒಂದು ಎಲಿಮೆಂಟ್‌ನ (ಉದಾಹರಣೆಗೆ <code>&lt;p&gt;</code>, <code>&lt;div&gt;</code>, <code>&lt;a&gt;</code>) ಮಾಹಿತಿ, ಟೆಕ್ಸ್ಟ್, ಬಣ್ಣ, ಅಥವಾ ಅದರ ಒಳಗೆ ಏನಿದೆ ಎಂಬುದನ್ನು ಓದಲು (Read) ಮತ್ತು ಬದಲಾಯಿಸಲು (Write/Update) ಬಳಸುವ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು DOM Properties ಎನ್ನುತ್ತಾರೆ. ಉದಾಹರಣೆಗೆ: ಒಂದು ಬಟನ್‌ನ ಬಣ್ಣ, ಲಿಂಕ್‌ನ ವಿಳಾಸ (href), ಅಥವಾ ಇನ್‌ಪುಟ್ ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಅಕ್ಷರಗಳನ್ನು ತಿಳಿಯುವುದು DOM ಪ್ರಾಪರ್ಟಿಗಳ ಮೂಲಕವೇ ನಡೆಯುತ್ತದೆ.</p>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-laptop-code"></i> 1. DOM ಪ್ರಾಪರ್ಟಿಗಳ ಪರೀಕ್ಷೆ (DOM Examination)</h2>
+            <p>ಒಂದು ಸಾಮಾನ್ಯ ವೆಬ್‌ಪುಟದಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ರನ್ ಮಾಡಿದಾಗ ಈ ಕೆಳಗಿನ ಪ್ರಾಪರ್ಟಿಗಳು ಏನನ್ನು ಕೊಡುತ್ತವೆ ಎಂದು ನೋಡೋಣ:</p>
+
+            <div class="prop-grid">
+                <!-- Prop 1 -->
+                <div class="prop-card">
+                    <h4>1. document</h4>
+                    <p class="desc">ಇಡೀ HTML ಡಾಕ್ಯುಮೆಂಟ್ ಅನ್ನು ತೋರಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> #document (ಇಡೀ HTML ಕೋಡ್)</div>
+                </div>
+                <!-- Prop 2 -->
+                <div class="prop-card">
+                    <h4>2. document.all</h4>
+                    <p class="desc">ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ HTML ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಂದು HTMLCollection ರೂಪದಲ್ಲಿ ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.all);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection(50) [html, head, meta...]</div>
+                </div>
+                <!-- Prop 3 -->
+                <div class="prop-card">
+                    <h4>3. document.all[0]</h4>
+                    <p class="desc">ಮೇಲಿನ ಲಿಸ್ಟ್‌ನಲ್ಲಿರುವ ಮೊದಲನೇ ಎಲಿಮೆಂಟ್ ಅನ್ನು ತೋರಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.all[0]);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;html lang="en"&gt;...&lt;/html&gt;</div>
+                </div>
+                <!-- Prop 4 -->
+                <div class="prop-card">
+                    <h4>4. document.all.length</h4>
+                    <p class="desc">ಆ ವೆಬ್‌ಪುಟದಲ್ಲಿ ಒಟ್ಟು ಎಷ್ಟು HTML ಎಲಿಮೆಂಟ್‌ಗಳಿವೆ (ಟ್ಯಾಗ್‌ಗಳು) ಎಂಬ ಸಂಖ್ಯೆಯನ್ನು ಹೇಳುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.all.length);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> 50 (ಎಲಿಮೆಂಟ್‌ಗಳ ಸಂಖ್ಯೆ)</div>
+                </div>
+                <!-- Prop 5 -->
+                <div class="prop-card">
+                    <h4>5. document.head</h4>
+                    <p class="desc">ಪುಟದ &lt;head&gt; ಭಾಗವನ್ನು ಮಾತ್ರ ತೋರಿಸುತ್ತದೆ (ಇದರಲ್ಲಿ ಟೈಟಲ್, ಲಿಂಕ್‌ಗಳು ಇರುತ್ತವೆ).</p>
+                    <div class="mini-code">console.log(document.head);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;head&gt;...&lt;/head&gt;</div>
+                </div>
+                <!-- Prop 6 -->
+                <div class="prop-card">
+                    <h4>6. document.body</h4>
+                    <p class="desc">ಪುಟದ &lt;body&gt; ಭಾಗವನ್ನು (ಪರದೆಯ ಮೇಲೆ ಕಾಣುವ ಮುಖ್ಯ ಭಾಗ) ತೋರಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.body);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;body&gt;...&lt;/body&gt;</div>
+                </div>
+                <!-- Prop 7 -->
+                <div class="prop-card">
+                    <h4>7. document.doctype</h4>
+                    <p class="desc">ಡಾಕ್ಯುಮೆಂಟ್‌ನ ಪ್ರಕಾರವನ್ನು ತಿಳಿಸುತ್ತದೆ. (ಗಮನಿಸಿ: ಕ್ಯಾಪಿಟಲ್ D ಅಲ್ಲ, ಸ್ಮಾಲ್ d)</p>
+                    <div class="mini-code">console.log(document.doctype);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;!DOCTYPE html&gt;</div>
+                </div>
+                <!-- Prop 8 -->
+                <div class="prop-card">
+                    <h4>8. document.URL</h4>
+                    <p class="desc">ನೀವು ಪ್ರಸ್ತುತ ಇರುವ ವೆಬ್‌ಸೈಟ್‌ನ ಪೂರ್ಣ ವಿಳಾಸ (Link) ಕೊಡುತ್ತದೆ. (ಗಮನಿಸಿ: ಕ್ಯಾಪಿಟಲ್ URL)</p>
+                    <div class="mini-code">console.log(document.URL);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "https://www.google.com/"</div>
+                </div>
+                <!-- Prop 9 -->
+                <div class="prop-card">
+                    <h4>9. document.characterSet</h4>
+                    <p class="desc">ವೆಬ್‌ಪುಟವು ಯಾವ ಕ್ಯಾರೆಕ್ಟರ್ ಎನ್‌ಕೋಡಿಂಗ್ ಬಳಸುತ್ತಿದೆ ಎಂದು ಹೇಳುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.characterSet);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "UTF-8"</div>
+                </div>
+                <!-- Prop 10 -->
+                <div class="prop-card">
+                    <h4>10. document.contentType</h4>
+                    <p class="desc">ಕಂಟೆಂಟ್ ಪ್ರಕಾರ ಯಾವುದು ಎಂದು ತಿಳಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.contentType);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "text/html"</div>
+                </div>
+                <!-- Prop 11 -->
+                <div class="prop-card">
+                    <h4>11. document.forms</h4>
+                    <p class="desc">ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಫಾರ್ಮ್‌ಗಳ (&lt;form&gt; ಟ್ಯಾಗ್) ಪಟ್ಟಿಯನ್ನು ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.forms);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection [form#login...]</div>
+                </div>
+                <!-- Prop 12 -->
+                <div class="prop-card">
+                    <h4>12. document.forms[0]</h4>
+                    <p class="desc">ಪೇಜ್‌ನ ಮೊದಲನೇ ಫಾರ್ಮ್ ಅನ್ನು ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.forms[0]);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;form id="login"&gt;...&lt;/form&gt;</div>
+                </div>
+                <!-- Prop 13 -->
+                <div class="prop-card">
+                    <h4>13. document.forms[0].id</h4>
+                    <p class="desc">ಮೊದಲನೇ ಫಾರ್ಮ್‌ಗೆ ನೀವು ಕೊಟ್ಟಿರುವ 'id' ಹೆಸರನ್ನು ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.forms[0].id);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "loginForm"</div>
+                </div>
+                <!-- Prop 14 -->
+                <div class="prop-card">
+                    <h4>14. document.links</h4>
+                    <p class="desc">ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಲಿಂಕ್‌ಗಳ (&lt;a&gt; ಟ್ಯಾಗ್‌ಗಳು - href ಇದ್ದರೆ ಮಾತ್ರ) ಪಟ್ಟಿ.</p>
+                    <div class="mini-code">console.log(document.links);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection(10) [a, a.btn...]</div>
+                </div>
+                <!-- Prop 15 -->
+                <div class="prop-card">
+                    <h4>15. document.links[0].className</h4>
+                    <p class="desc">ಮೊದಲನೇ ಲಿಂಕ್‌ಗೆ ಯಾವೆಲ್ಲಾ CSS ಕ್ಲಾಸ್‌ಗಳಿವೆ ಎಂದು ನೋಡಲು (classList ಕೂಡ ಬಳಸಬಹುದು).</p>
+                    <div class="mini-code">
+                        console.log(document.links[0].className);<br>
+                        console.log(document.links[0].classList);
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "btn btn-primary"</div>
+                </div>
+                <!-- Prop 16 -->
+                <div class="prop-card">
+                    <h4>16. document.title</h4>
+                    <p class="desc">ವೆಬ್‌ಪುಟದ ಶೀರ್ಷಿಕೆಯನ್ನು ತೋರಿಸುತ್ತದೆ. ಇದನ್ನು ಬಳಸಿ ಶೀರ್ಷಿಕೆಯನ್ನು ಬದಲಾಯಿಸಲೂಬಹುದು.</p>
+                    <div class="mini-code">
+                        console.log(document.title);<br>
+                        document.title = "New Title";
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "My JavaScript Notes"</div>
+                </div>
+                <!-- Prop 17 -->
+                <div class="prop-card">
+                    <h4>17. document.images</h4>
+                    <p class="desc">ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಚಿತ್ರಗಳ (&lt;img&gt; ಟ್ಯಾಗ್‌ಗಳು) ಪಟ್ಟಿಯನ್ನು HTMLCollection ರೂಪದಲ್ಲಿ ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.images);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection [img.logo...]</div>
+                </div>
+                <!-- Prop 18 -->
+                <div class="prop-card">
+                    <h4>18. document.scripts</h4>
+                    <p class="desc">ಪೇಜ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಫೈಲ್‌ಗಳು ಹಾಗೂ &lt;script&gt; ಟ್ಯಾಗ್‌ಗಳ ಪಟ್ಟಿಯನ್ನು ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.scripts);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection [script, script...]</div>
+                </div>
+                <!-- Prop 19 -->
+                <div class="prop-card">
+                    <h4>19. document.cookie</h4>
+                    <p class="desc">ವೆಬ್‌ಸೈಟ್‌ಗೆ ಸಂಬಂಧಿಸಿದ ಎಲ್ಲಾ ಕುಕೀಗಳನ್ನು (Cookies) ಸ್ಟ್ರಿಂಗ್ ರೂಪದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.cookie);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "username=John Doe; theme=dark"</div>
+                </div>
+                <!-- Prop 20 -->
+                <div class="prop-card">
+                    <h4>20. document.activeElement</h4>
+                    <p class="desc">ಪ್ರಸ್ತುತ ಪೇಜ್‌ನಲ್ಲಿ ಯಾವ ಎಲಿಮೆಂಟ್ ಮೇಲೆ ಫೋಕಸ್ ಆಗಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.activeElement);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;input type="text" id="username"&gt;</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-code"></i> 2. ಇನ್ನುಳಿದ ಪ್ರಮುಖ DOM ಪ್ರಾಪರ್ಟಿಗಳು (Pro Properties)</h2>
+            <p>ನಿಮ್ಮ ಪಟ್ಟಿಗೆ ಪೂರಕವಾಗಿ, ನೈಜ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ ಪ್ರತಿದಿನ ಬಳಸಲಾಗುವ ಪ್ರಮುಖ ಎಲಿಮೆಂಟ್ ಮತ್ತು ಡಾಕ್ಯುಮೆಂಟ್ ಪ್ರಾಪರ್ಟಿಗಳು ಇಲ್ಲಿವೆ:</p>
+
+            <div class="prop-grid">
+                <!-- Prop 21 -->
+                <div class="prop-card">
+                    <h4>21. document.readyState</h4>
+                    <p class="desc">ವೆಬ್‌ಪುಟವು ಸಂಪೂರ್ಣವಾಗಿ ಲೋಡ್ ಆಗಿದೆಯೇ ಅಥವಾ ಪ್ರಕ್ರಿಯೆಯಲ್ಲಿದೆಯೇ ಎಂದು ತಿಳಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(document.readyState);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "loading" ಅಥವಾ "complete"</div>
+                </div>
+                <!-- Prop 22 -->
+                <div class="prop-card">
+                    <h4>22. element.innerHTML</h4>
+                    <p class="desc">ಒಂದು HTML ಟ್ಯಾಗ್‌ನ ಒಳಗಿರುವ ಕಂಟೆಂಟ್ ಅನ್ನು (HTML ಸಮೇತ) ಓದಲು ಅಥವಾ ಬದಲಾಯಿಸಲು.</p>
+                    <div class="mini-code">
+                        let myDiv = document.querySelector('div');<br>
+                        console.log(myDiv.innerHTML);<br>
+                        myDiv.innerHTML = "&lt;h1&gt;ಹೊಸ ಕಂಟೆಂಟ್&lt;/h1&gt;";
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "&lt;p&gt;Hello &lt;b&gt;World&lt;/b&gt;&lt;/p&gt;"</div>
+                </div>
+                <!-- Prop 23 -->
+                <div class="prop-card">
+                    <h4>23. element.innerText</h4>
+                    <p class="desc">ಟ್ಯಾಗ್‌ನ ಒಳಗಿರುವ ಕೇವಲ ಪಠ್ಯವನ್ನು ಮಾತ್ರ ಕೊಡುತ್ತದೆ, ಗುಪ್ತ ಪಠ್ಯವನ್ನು ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(myDiv.innerText);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "Hello World"</div>
+                </div>
+                <!-- Prop 24 -->
+                <div class="prop-card">
+                    <h4>24. element.textContent</h4>
+                    <p class="desc">ಇದು ಕೂಡ ಪಠ್ಯವನ್ನು ಕೊಡುತ್ತದೆ, ಆದರೆ ಗುಪ್ತ ಪಠ್ಯವನ್ನೂ (display: none) ಸೇರಿಸಿ ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">console.log(myDiv.textContent);</div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "Hello World"</div>
+                </div>
+                <!-- Prop 25 -->
+                <div class="prop-card">
+                    <h4>25. element.style</h4>
+                    <p class="desc">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ನೇರವಾಗಿ CSS ಸ್ಟೈಲ್ ಅನ್ನು ಸೇರಿಸಲು ಅಥವಾ ಬದಲಾಯಿಸಲು.</p>
+                    <div class="mini-code">
+                        let myBtn = document.querySelector('button');<br>
+                        myBtn.style.backgroundColor = "blue";<br>
+                        myBtn.style.fontSize = "20px";
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> ಬಣ್ಣ ಮತ್ತು ಗಾತ್ರ ಬದಲಾಗುತ್ತದೆ</div>
+                </div>
+                <!-- Prop 26 -->
+                <div class="prop-card">
+                    <h4>26. element.parentElement</h4>
+                    <p class="desc">ಒಂದು ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್‌ನ ತಂದೆ (Parent) ಟ್ಯಾಗ್ ಯಾವುದು ಎಂದು ಹುಡುಕಲು.</p>
+                    <div class="mini-code">
+                        let myLink = document.querySelector('a');<br>
+                        console.log(myLink.parentElement);
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> &lt;div&gt;...&lt;/div&gt;</div>
+                </div>
+                <!-- Prop 27 -->
+                <div class="prop-card">
+                    <h4>27. element.children</h4>
+                    <p class="desc">ಒಂದು ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಎಲ್ಲಾ ಮಕ್ಕಳ (Child elements) ಪಟ್ಟಿಯನ್ನು ಕೊಡುತ್ತದೆ.</p>
+                    <div class="mini-code">
+                        let myUList = document.querySelector('ul');<br>
+                        console.log(myUList.children);
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> HTMLCollection [li, li, li]</div>
+                </div>
+                <!-- Prop 28 -->
+                <div class="prop-card">
+                    <h4>28. element.id ಹಾಗೂ className</h4>
+                    <p class="desc">ಒಂದು ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್‌ನ ID ಅಥವಾ Class ಹೆಸರನ್ನು ತಿಳಿಯಲು ಅಥವಾ ಬದಲಾಯಿಸಲು.</p>
+                    <div class="mini-code">
+                        let box = document.querySelector('.box');<br>
+                        console.log(box.id);<br>
+                        box.className = "new-box-class";
+                    </div>
+                    <div class="mini-output"><i class="fa-solid fa-check"></i> "box1" / ಕ್ಲಾಸ್ ಬದಲಾಗುತ್ತದೆ</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-list"></i> 3. HTML Collection ಎಂದರೇನು? (Beginner Concept)</h2>
+            <p>ಮೇಲೆ ನಾವು <code>document.all</code>, <code>document.forms</code> ಇತ್ಯಾದಿ ಬಳಸಿದಾಗ ನಮಗೆ ಬರುವ ರಿಸಲ್ಟ್ <strong>HTMLCollection</strong>.</p>
+            <ul>
+                <li><strong>HTMLCollection ಎಂದರೆ:</strong> ಇದು ಒಂದು ಅರೇ (Array) ತರಹವೇ ಕಾಣುವ, ಆದರೆ ನಿಜವಾದ ಅರೇ ಅಲ್ಲದ ಒಂದು ಪಟ್ಟಿ (Array-like object).</li>
+            </ul>
+
+            <div class="error-box">
+                <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger); margin-right: 10px;"></i>
+                <strong>ಸಮಸ್ಯೆ ಏನು?:</strong> ನಿಜವಾದ ಅರೇಗಳಲ್ಲಿ ನಾವು <code>forEach()</code> ನಂತಹ ಲೂಪ್‌ಗಳನ್ನು ಬಳಸಬಹುದು. ಆದರೆ HTMLCollection ಮೇಲೆ ನೇರವಾಗಿ forEach ಬಳಸಿದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ <strong>ಎರರ್ (Error)</strong> ಕೊಡುತ್ತದೆ.
+            </div>
+
+            <div class="code-container" style="border-color: var(--danger);">
+                <div class="code-header" style="background-color: #3f1a1a;">
+                    <div class="mac-dots">
+                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    </div>
+                    <span style="color: #fca5a5;">html_collection_error.js</span>
+                </div>
+<pre><code class="language-javascript">let myLinks = document.links;
+
+myLinks.forEach(function(link) {
+    console.log(link);
+});</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-shuffle"></i> 4. HTML Collection ಅನ್ನು Array ಗೆ ಬದಲಾಯಿಸುವುದು (Pro Concept)</h2>
+            <p>ಈ ಸಮಸ್ಯೆಯನ್ನು ಬಗೆಹರಿಸಲು ನಾವು HTMLCollectionಅನ್ನು ನಿಜವಾದ Array ಆಗಿ ಪರಿವರ್ತಿಸಬೇಕು. ಇದಕ್ಕೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <code>Array.from()</code> ಎಂಬ ಫಂಕ್ಷನ್ ಇದೆ.</p>
+            
+            <ol>
+                <li>ಮೊದಲು ಲಿಂಕ್‌ಗಳನ್ನು ಪಡೆಯಿರಿ (ಇದು HTMLCollection ಆಗಿರುತ್ತದೆ).</li>
+                <li>ಅದನ್ನು <code>Array.from()</code> ಬಳಸಿ Array ಆಗಿ ಕನ್ವರ್ಟ್ ಮಾಡಿ.</li>
+                <li>ಈಗ <code>forEach</code> ಬಳಸಿ ಪ್ರತಿಯೊಂದು ಲಿಂಕ್ ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡಿ (ಬೇಕಿದ್ದರೆ ಬಣ್ಣವನ್ನೂ ಬದಲಾಯಿಸಬಹುದು).</li>
+            </ol>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="mac-dots">
+                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    </div>
+                    <span>convert_to_array.js</span>
+                </div>
+<pre><code class="language-javascript">let allLinks = document.links;
+let linksArray = Array.from(allLinks);
+
+linksArray.forEach(function(link) {
+    console.log(link);
+    link.style.color = "red"; 
+});</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-fire-flame-curved"></i> 5. Pro Tip (ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್)</h2>
+            <div class="pro-tip">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--success); margin-right: 10px;"></i>
+                ನೈಜ ಪ್ರಪಂಚದ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ, ಡೆವಲಪರ್‌ಗಳು ಈಗ <code>document.all</code> ಅನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸುವುದಿಲ್ಲ. ಅದರ ಬದಲು ನಿರ್ದಿಷ್ಟ ಅಂಶಗಳನ್ನು ಹುಡುಕಲು ಆಧುನಿಕ ವಿಧಾನಗಳನ್ನು ಬಳಸುತ್ತಾರೆ.
+            </div>
+            <ul>
+                <li><code>document.querySelector('a')</code>: ಇದು ಪೇಜ್‌ನ ಮೊದಲನೇ ಲಿಂಕ್ ಅನ್ನು ಮಾತ್ರ ಕೊಡುತ್ತದೆ.</li>
+                <li><code>document.querySelectorAll('a')</code>: ಇದು ಪೇಜ್‌ನ ಎಲ್ಲಾ ಲಿಂಕ್‌ಗಳನ್ನು ಕೊಡುತ್ತದೆ. ಇದರ ವಿಶೇಷತೆ ಎಂದರೆ ಇದು ಕೊಡುವುದು HTMLCollection ಅಲ್ಲ, ಬದಲಾಗಿ <strong>NodeList</strong> ಎಂಬ ಪಟ್ಟಿಯನ್ನು ಕೊಡುತ್ತದೆ. </li>
+            </ul>
+            <p>NodeList ನ ಮೇಲೆ ನೀವು ಯಾವುದೇ ಕನ್ವರ್ಶನ್ ಮಾಡದೆ ನೇರವಾಗಿ forEach ಲೂಪ್ ಅನ್ನು ಬಳಸಬಹುದು! ಕೆಳಗಿನ ಕೋಡ್ ಗಮನಿಸಿ:</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <div class="mac-dots">
+                        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                    </div>
+                    <span>modern_js_nodelist.js</span>
+                </div>
+<pre><code class="language-javascript">let allLinksNodeList = document.querySelectorAll('a');
+
+allLinksNodeList.forEach(function(link) {
+    console.log(link.href);
+});</code></pre>
+            </div>
+        </section>
+
+    </div>
+
+    <footer style="text-align: center; padding: 30px; margin-top: 50px; background-color: #0b1120; border-top: 1px solid #334155;">
+        <p style="color: #64748b; font-size: 0.9rem;">
+            &copy; 2026 Crafted with ❤️ for Web Developers | DOM Notes
+        </p>
+    </footer>
+
+    <!-- Prism.js script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

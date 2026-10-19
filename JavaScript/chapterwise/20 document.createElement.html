@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Create & Append Elements - Pro Notes</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Syntax Highlighter -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0f172a',
+                        card: 'rgba(30, 41, 59, 0.7)',
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'pulse-glow': 'pulseGlow 2.5s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(56, 189, 248, 0.4)' },
+                            '50%': { boxShadow: '0 0 30px rgba(56, 189, 248, 0.8)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0b1121; color: #f8fafc; }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #38bdf8, #818cf8, #e879f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0.5rem;
+            background: #1e293b !important;
+            border: 1px solid #334155;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden py-16 lg:py-20 border-b border-slate-800">
+        <!-- SVG Background Pattern -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="dotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1.5" fill="#38bdf8"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dotGrid)"/>
+            </svg>
+        </div>
+        <!-- Gradient Orbs -->
+        <div class="absolute top-0 left-1/4 w-64 h-64 bg-sky-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-float"></div>
+        <div class="absolute top-0 right-1/4 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-float" style="animation-delay: 1.5s;"></div>
+
+        <div class="max-w-5xl mx-auto px-6 relative z-10 text-center animate-slide-up">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sky-400 text-sm font-bold mb-6 animate-pulse-glow">
+                <i class="fa-solid fa-code"></i> Web Development Masterclass
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                DOM ನಲ್ಲಿ <span class="text-gradient">ಹೊಸ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು</span> <br/> ಸೃಷ್ಟಿಸುವುದು ಮತ್ತು ಸೇರಿಸುವುದು
+            </h1>
+            <p class="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed glass-panel p-4 rounded-xl border-l-4 border-sky-500 text-left">
+                DOM (Document Object Model) ನಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ಬಳಸಿ ಹೊಸ HTML ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು (Creating) ಮತ್ತು ಅದನ್ನು ವೆಬ್‌ಪುಟದಲ್ಲಿ ಸೇರಿಸುವುದು (Appending) ವೆಬ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನ ಅತ್ಯಂತ ಪ್ರಮುಖ ಕೌಶಲ್ಯವಾಗಿದೆ. <br/><br/>
+                ಯಾವುದೇ ಮಾಹಿತಿಯನ್ನು ಬಿಡದೆ, Beginner (ಆರಂಭಿಕ) ಹಂತದಿಂದ Pro (ವೃತ್ತಿಪರ) ಹಂತದವರೆಗೆ ಪ್ರತಿಯೊಂದನ್ನೂ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ಇಲ್ಲಿ ವಿವರಿಸಲಾಗಿದೆ.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- 1. Beginner Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-2xl border border-emerald-500/30">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <span class="text-emerald-400 font-mono text-sm font-bold tracking-widest uppercase">Level 1</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Beginner: ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸುವುದು ಮತ್ತು ಕಂಟೆಂಟ್ ಸೇರಿಸುವುದು</h2>
+                </div>
+            </div>
+            
+            <div class="glass-panel rounded-2xl p-6 md:p-8 space-y-6">
+                <p class="text-slate-300 leading-relaxed">
+                    ಹೊಸ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಲು <code class="bg-slate-800 text-emerald-300 px-2 py-1 rounded">document.createElement(tagName)</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.
+                </p>
+                <div class="bg-yellow-900/20 border border-yellow-500/30 p-4 rounded-xl flex items-start gap-4">
+                    <i class="fa-solid fa-lightbulb text-yellow-500 text-xl mt-1"></i>
+                    <p class="text-yellow-200/80 text-sm leading-relaxed">
+                        <strong class="text-yellow-400">ಗಮನಿಸಿ:</strong> ನೀವು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಿದಾಗ ಅದು ಕೇವಲ ಬ್ರೌಸರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ (Memory) ಇರುತ್ತದೆ. ಅದನ್ನು ನಾವು ಮ್ಯಾನುಯಲ್ ಆಗಿ ವೆಬ್‌ಪುಟಕ್ಕೆ (DOM ಗೆ) ಸೇರಿಸುವವರೆಗೂ ಅದು ಸ್ಕ್ರೀನ್ ಮೇಲೆ ಕಾಣಿಸುವುದಿಲ್ಲ.
+                    </p>
+                </div>
+
+                <!-- A -->
+                <h3 class="text-xl font-semibold text-emerald-300 mt-8 mb-4 border-b border-slate-700 pb-2">A. ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿ ಮತ್ತು ಟೆಕ್ಸ್ಟ್ ಸೇರಿಸುವಿಕೆ</h3>
+                <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">// 1. ಹೊಸ &lt;div&gt; ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸುವುದು
+const newDiv = document.createElement("div");
+
+// 2. ಅದಕ್ಕೆ ಟೆಕ್ಸ್ಟ್ (Content) ಸೇರಿಸುವುದು
+newDiv.innerText = "ನಮಸ್ಕಾರ, ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಿಂದ ಬಂದಿದೆ!";
+// ಅಥವಾ newDiv.textContent ಅನ್ನು ಕೂಡ ಬಳಸಬಹುದು.
+
+// 3. ಮೆಮೊರಿಯಲ್ಲಿರುವ ಈ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಬಾಡಿ(body) ಗೆ ಸೇರಿಸುವುದು
+document.body.appendChild(newDiv);</code></pre>
+                </div>
+
+                <!-- B -->
+                <h3 class="text-xl font-semibold text-emerald-300 mt-8 mb-4 border-b border-slate-700 pb-2">B. innerText, textContent ಮತ್ತು innerHTML ನಡುವಿನ ವ್ಯತ್ಯಾಸ</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                        <h4 class="text-sky-400 font-mono font-bold mb-2">innerText</h4>
+                        <p class="text-sm text-slate-400">ಇದು ಕೇವಲ ಬಳಕೆದಾರರಿಗೆ ಕಾಣುವ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಮಾತ್ರ ಪರಿಗಣಿಸುತ್ತದೆ (CSS ಮೂಲಕ hide ಆಗಿರುವ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಬಿಡುತ್ತದೆ).</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                        <h4 class="text-sky-400 font-mono font-bold mb-2">textContent</h4>
+                        <p class="text-sm text-slate-400">ಇದು ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಎಲ್ಲಾ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು (hide ಆಗಿದ್ದರೂ) ತರುತ್ತದೆ. ಇದು <code class="text-xs">innerText</code> ಗಿಂತ ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 relative overflow-hidden group">
+                        <h4 class="text-sky-400 font-mono font-bold mb-2">innerHTML</h4>
+                        <p class="text-sm text-slate-400">ಟೆಕ್ಸ್ಟ್ ಜೊತೆಗೆ HTML ಟ್ಯಾಗ್‌ಗಳನ್ನು ಸೇರಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+                    </div>
+                </div>
+                <!-- Pro Tip XSS -->
+                <div class="bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-xl mt-4">
+                    <p class="text-sm text-red-200">
+                        <strong class="text-red-400"><i class="fa-solid fa-shield-halved mr-2"></i>Pro Tip:</strong> ಬಳಕೆದಾರರು ನೀಡುವ ಡೇಟಾವನ್ನು <code class="bg-red-950 px-1 rounded">innerHTML</code> ಮೂಲಕ ಸೇರಿಸಬೇಡಿ, ಇದು <strong>XSS (Cross-Site Scripting)</strong> ಹ್ಯಾಕಿಂಗ್‌ಗೆ ಕಾರಣವಾಗಬಹುದು.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Intermediate Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-2xl border border-blue-500/30">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <span class="text-blue-400 font-mono text-sm font-bold tracking-widest uppercase">Level 2</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Intermediate: ಆಟ್ರಿಬ್ಯೂಟ್ಸ್ ಮತ್ತು ಕ್ಲಾಸ್‌ಗಳನ್ನು ಸೇರಿಸುವುದು</h2>
+                </div>
+            </div>
+            
+            <div class="glass-panel rounded-2xl p-6 md:p-8">
+                <p class="text-slate-300 mb-6">ಬರೀ ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸಿದರೆ ಸಾಲದು, ಅದಕ್ಕೆ ಸ್ಟೈಲ್ (CSS Classes), ID, ಮತ್ತು Attributes ಸೇರಿಸಬೇಕು.</p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- A -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-300 mb-4 border-b border-slate-700 pb-2"><i class="fa-brands fa-css3-alt mr-2"></i>A. Class ಮತ್ತು ID ಸೇರಿಸುವುದು</h3>
+                        <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const myButton = document.createElement("button");
+myButton.textContent = "Click Me";
+
+// 1. ID ಸೇರಿಸುವುದು
+myButton.id = "submit-btn";
+
+// 2. Class ಸೇರಿಸುವುದು (ಹಳೆಯ ವಿಧಾನ)
+myButton.className = "btn btn-primary";
+
+// 3. ClassList ಬಳಸುವುದು (ಉತ್ತಮ/Pro ವಿಧಾನ)
+myButton.classList.add("active"); // ಸೇರಿಸಲು
+myButton.classList.remove("btn"); // ತೆಗೆಯಲು
+myButton.classList.toggle("hidden"); // ಟಾಗಲ್ ಮಾಡಲು</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- B -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-300 mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-tags mr-2"></i>B. Attributes ಸೇರಿಸುವುದು</h3>
+                        <p class="text-sm text-slate-400 mb-3">src, href, alt, type ಮುಂತಾದ ಆಟ್ರಿಬ್ಯೂಟ್‌ಗಳನ್ನು ಸೇರಿಸಲು:</p>
+                        <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const newImage = document.createElement("img");
+
+// setAttribute(name, value)
+newImage.setAttribute("src", "profile.jpg");
+newImage.setAttribute("alt", "ಬಳಕೆದಾರರ ಫೋಟೋ");
+
+// ಕೆಲವು ಆಟ್ರಿಬ್ಯೂಟ್‌ಗಳನ್ನು ನೇರವಾಗಿ ಸೇರಿಸಬಹುದು
+newImage.src = "profile.jpg";</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Advanced Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-2xl border border-purple-500/30">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                </div>
+                <div>
+                    <span class="text-purple-400 font-mono text-sm font-bold tracking-widest uppercase">Level 3</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Advanced: DOM ಗೆ ಸೇರಿಸುವ ವಿವಿಧ ವಿಧಾನಗಳು</h2>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 space-y-8">
+                <p class="text-slate-300">ಮೆಮೊರಿಯಲ್ಲಿ ಸಿದ್ಧಪಡಿಸಿದ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಯಾವ ಜಾಗದಲ್ಲಿ ಸೇರಿಸಬೇಕು ಎಂಬುದಕ್ಕೆ ಹಲವು ವಿಧಾನಗಳಿವೆ.</p>
+
+                <!-- A -->
+                <div>
+                    <h3 class="text-xl font-semibold text-purple-300 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-angle-right"></i> A. append() <span class="text-slate-500 text-sm">vs</span> appendChild()
+                    </h3>
+                    <ul class="space-y-3 mb-4 text-sm text-slate-300 ml-6 list-disc marker:text-purple-500">
+                        <li><strong class="text-purple-400 font-mono">appendChild():</strong> ಇದು ಕೇವಲ ಒಂದೇ ಒಂದು Node (ಎಲಿಮೆಂಟ್) ಅನ್ನು ಮಾತ್ರ ಕೊನೆಯಲ್ಲಿ ಸೇರಿಸುತ್ತದೆ. ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ನೇರವಾಗಿ ಸೇರಿಸಲು ಬರುವುದಿಲ್ಲ.</li>
+                        <li><strong class="text-purple-400 font-mono">append():</strong> ಇದು ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಮತ್ತು ಸಾಮಾನ್ಯ ಟೆಕ್ಸ್ಟ್ ಎರಡನ್ನೂ ಒಟ್ಟಿಗೆ ಸೇರಿಸಬಲ್ಲದು. (ಇದು ಹೆಚ್ಚು ಆಧುನಿಕ).</li>
+                    </ul>
+                    <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const parent = document.getElementById("container");
+const child1 = document.createElement("p");
+child1.textContent = "ಪ್ಯಾರಾಗ್ರಾಫ್ 1";
+
+// 1. appendChild (ಕೊನೆಯಲ್ಲಿ ಸೇರಿಸುತ್ತದೆ)
+parent.appendChild(child1);
+
+// 2. append (ಟೆಕ್ಸ್ಟ್ ಮತ್ತು ಎಲಿಮೆಂಟ್ ಎರಡನ್ನೂ ಒಟ್ಟಿಗೆ ಸೇರಿಸಬಹುದು)
+parent.append("ಇದು ಸಾಮಾನ್ಯ ಟೆಕ್ಸ್ಟ್ ", child1);</code></pre>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- B -->
+                    <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
+                        <h3 class="text-lg font-semibold text-purple-300 mb-3"><i class="fa-solid fa-arrow-up-from-bracket mr-2"></i>B. prepend()</h3>
+                        <p class="text-sm text-slate-400 mb-3">ಒಂದು ಕಂಟೇನರ್‌ನ ಮೊದಲ ಎಲಿಮೆಂಟ್ ಆಗಿ (ಆರಂಭದಲ್ಲಿ) ಸೇರಿಸಲು <code class="text-purple-300">prepend()</code> ಬಳಸುತ್ತಾರೆ.</p>
+                        <div class="rounded-lg overflow-hidden">
+<pre><code class="language-javascript">const title = document.createElement("h1");
+title.textContent = "ಸ್ವಾಗತ";
+// ಇದು ಕಂಟೇನರ್‌ನ ಮೇಲ್ಭಾಗದಲ್ಲಿ ಸೇರುತ್ತದೆ
+parent.prepend(title);</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- C -->
+                    <div class="bg-slate-800/40 p-6 rounded-xl border border-slate-700/50">
+                        <h3 class="text-lg font-semibold text-purple-300 mb-3"><i class="fa-solid fa-bullseye mr-2"></i>C. insertBefore()</h3>
+                        <p class="text-sm text-slate-400 mb-3">ಒಂದು ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್‌ನ ಹಿಂದೆ (ನಿಖರವಾದ ಜಾಗದಲ್ಲಿ) ಸೇರಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+                        <div class="rounded-lg overflow-hidden">
+<pre><code class="language-javascript">// ರಚನೆ: parent.insertBefore(ಹೊಸ, ಯಾವ_ಎಲಿಮೆಂಟ್‌ನ_ಹಿಂದೆ)
+const newItem = document.createElement("li");
+newItem.textContent = "ಹೊಸ ಐಟಂ";
+
+const list = document.getElementById("myList");
+const secondItem = list.children[1]; // 2ನೇ ಐಟಂ
+
+list.insertBefore(newItem, secondItem);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Pro Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.4s;">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 flex items-center justify-center text-white text-2xl shadow-[0_0_20px_rgba(249,115,22,0.4)]">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <span class="text-orange-400 font-mono text-sm font-bold tracking-widest uppercase">Level 4</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Pro Level: ಅತ್ಯಾಧುನಿಕ ತಂತ್ರಗಳು (Optimization)</h2>
+                </div>
+            </div>
+
+            <div class="glass-panel border-orange-500/30 rounded-2xl p-6 md:p-8 space-y-8 relative overflow-hidden">
+                <!-- Background decor -->
+                <i class="fa-solid fa-rocket absolute -right-10 -top-10 text-9xl text-white opacity-5"></i>
+
+                <p class="text-slate-200 leading-relaxed max-w-4xl">
+                    ನೀವು ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್ ಆದಾಗ, 100 ಅಥವಾ 1000 ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಂದೇ ಬಾರಿಗೆ ಲೂಪ್ (Loop) ಮೂಲಕ ಸೇರಿಸಬೇಕಾದ ಪರಿಸ್ಥಿತಿ ಬರುತ್ತದೆ. ಆಗ ಮೇಲಿನ ವಿಧಾನಗಳನ್ನು ಬಳಸಿದರೆ ವೆಬ್‌ಸೈಟ್ ಸ್ಲೋ ಆಗುತ್ತದೆ 
+                    <span class="text-orange-300 font-semibold">(ಕಾರಣ: ಪ್ರತಿ ಬಾರಿ DOM ಬದಲಾದಾಗ ಬ್ರೌಸರ್ ರೀ-ರೆಂಡರ್ ಆಗುತ್ತದೆ)</span>.
+                </p>
+
+                <!-- A. DocumentFragment -->
+                <div class="bg-slate-900/60 border border-orange-500/20 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-orange-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-box-open"></i> A. DocumentFragment 
+                        <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-1 rounded-full border border-orange-500/30 ml-2">ಮೆಮೊರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ - The Pro Way</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                        <code class="text-orange-300 font-mono">DocumentFragment</code> ಎಂಬುದು ಒಂದು ಅದೃಶ್ಯ ಕಂಟೇನರ್ (Invisible Container). ನೀವು 1000 ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಈ Fragment ಒಳಗೆ ಸೇರಿಸಿ, ಆಮೇಲೆ ಆ Fragment ಅನ್ನು ಒಂದೇ ಬಾರಿಗೆ DOM ಗೆ ಸೇರಿಸಬಹುದು. ಇದರಿಂದ ಬ್ರೌಸರ್ ಕೇವಲ ಒಮ್ಮೆ ಮಾತ್ರ ರಿಫ್ರೆಶ್/ರೆಂಡರ್ ಆಗುತ್ತದೆ. ಪರ್ಫಾರ್ಮೆನ್ಸ್ ಅದ್ಭುತವಾಗಿರುತ್ತದೆ.
+                    </p>
+                    <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const ul = document.getElementById("myList");
+
+// 1. ಒಂದು Fragment ಸೃಷ್ಟಿಸುವುದು
+const fragment = document.createDocumentFragment();
+
+// 2. 1000 &lt;li&gt; ಗಳನ್ನು ಸೃಷ್ಟಿಸಿ fragment ಗೆ ಸೇರಿಸುವುದು
+for (let i = 1; i &lt;= 1000; i++) {
+  const li = document.createElement("li");
+  li.textContent = `ಐಟಂ ಸಂಖ್ಯೆ ${i}`;
+  fragment.appendChild(li); // DOM ಗೆ ಅಲ್ಲ, fragment ಗೆ ಸೇರಿಸುತ್ತಿದ್ದೇವೆ
+}
+
+// 3. ಕೊನೆಗೆ ಒಂದೇ ಬಾರಿಗೆ fragment ಅನ್ನು DOM ಗೆ ಸೇರಿಸುವುದು
+ul.appendChild(fragment);</code></pre>
+                    </div>
+                </div>
+
+                <!-- B. insertAdjacentElement -->
+                <div class="bg-slate-900/60 border border-rose-500/20 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-rose-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-crosshairs"></i> B. insertAdjacentElement() 
+                        <span class="text-xs bg-rose-500/20 text-rose-300 px-2 py-1 rounded-full border border-rose-500/30 ml-2">ಸರ್ಜಿಕಲ್ ಪ್ಲೇಸ್‌ಮೆಂಟ್</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                        ಇದು ಅತ್ಯಂತ ನಿಖರವಾಗಿ, ಒಂದು ಎಲಿಮೆಂಟ್‌ನ ಸುತ್ತ 4 ಜಾಗಗಳಲ್ಲಿ ಎಲ್ಲಿ ಬೇಕಾದರೂ ಹೊಸ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಸೇರಿಸಲು ಅನುಮತಿಸುತ್ತದೆ.
+                    </p>
+
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <!-- Code -->
+                        <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const box = document.getElementById("box");
+const newSpan = document.createElement("span");
+newSpan.textContent = "ಹೊಸ ಸ್ಪ್ಯಾನ್";
+
+// 1. ಎಲಿಮೆಂಟ್‌ನ ಮುಂಚೆ (ಹೊರಗಡೆ)
+box.insertAdjacentElement("beforebegin", newSpan);
+
+// 2. ಎಲಿಮೆಂಟ್‌ನ ಒಳಗೆ, ಮೊದಲನೇ ಮಗುವಾಗಿ
+box.insertAdjacentElement("afterbegin", newSpan);
+
+// 3. ಎಲಿಮೆಂಟ್‌ನ ಒಳಗೆ, ಕೊನೆಯ ಮಗುವಾಗಿ
+box.insertAdjacentElement("beforeend", newSpan);
+
+// 4. ಎಲಿಮೆಂಟ್‌ನ ನಂತರ (ಹೊರಗಡೆ)
+box.insertAdjacentElement("afterend", newSpan);</code></pre>
+                        </div>
+                        
+                        <!-- Visual Diagram (SVG/CSS) -->
+                        <div class="bg-slate-800 rounded-xl p-6 flex flex-col items-center justify-center border border-slate-700 relative h-full min-h-[250px]">
+                            <span class="absolute top-3 left-4 text-xs font-mono text-slate-500">Visual Map</span>
+                            
+                            <!-- Box Map -->
+                            <div class="w-full max-w-[280px] mt-6 flex flex-col items-center gap-2">
+                                <div class="bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs py-1 px-3 rounded-full animate-pulse font-mono">1. beforebegin</div>
+                                
+                                <div class="w-full border-2 border-dashed border-sky-500/50 bg-sky-900/10 rounded-lg p-4 flex flex-col items-center gap-3 relative">
+                                    <div class="absolute -top-3 bg-slate-800 text-sky-400 text-xs px-2 font-mono">&lt;div id="box"&gt;</div>
+                                    
+                                    <div class="bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs py-1 px-3 rounded-full font-mono w-full text-center">2. afterbegin</div>
+                                    
+                                    <div class="text-slate-400 text-sm font-semibold my-2">-- Existing Content --</div>
+                                    
+                                    <div class="bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs py-1 px-3 rounded-full font-mono w-full text-center">3. beforeend</div>
+                                    
+                                    <div class="absolute -bottom-3 bg-slate-800 text-sky-400 text-xs px-2 font-mono">&lt;/div&gt;</div>
+                                </div>
+                                
+                                <div class="bg-rose-500/20 border border-rose-500/50 text-rose-300 text-xs py-1 px-3 rounded-full animate-pulse font-mono mt-2">4. afterend</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C. cloneNode -->
+                <div class="bg-slate-900/60 border border-emerald-500/20 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i> C. ಎಲಿಮೆಂಟ್ ಕಾಪಿ ಮಾಡುವುದು (cloneNode)
+                    </h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                        ಒಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮತ್ತೆ ಮತ್ತೆ ಹೊಸದಾಗಿ ಸೃಷ್ಟಿಸುವ ಬದಲು, ಇರುವ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕಾಪಿ (Clone) ಮಾಡಬಹುದು.
+                    </p>
+                    <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const originalDiv = document.getElementById("myCard");
+
+// cloneNode(true) ಎಂದರೆ ಅದರ ಒಳಗಿರುವ ಟೆಕ್ಸ್ಟ್ ಮತ್ತು ಮಕ್ಕಳನ್ನೂ ಸೇರಿಸಿ ಕಾಪಿ ಮಾಡುತ್ತದೆ.
+// false ಕೊಟ್ಟರೆ ಕೇವಲ ಖಾಲಿ &lt;div&gt; ಮಾತ್ರ ಕಾಪಿ ಆಗುತ್ತದೆ.
+const clonedDiv = originalDiv.cloneNode(true);
+
+document.body.appendChild(clonedDiv);</code></pre>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-12 py-8 text-center bg-slate-900/30">
+        <p class="text-slate-500 text-sm">
+            Crafted with <i class="fa-solid fa-heart text-rose-500 mx-1"></i> for Developers • Built with HTML5, Tailwind & Prism
+        </p>
+    </footer>
+
+    <!-- Scripts for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

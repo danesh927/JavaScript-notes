@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Operators, Math & Number Objects - Study Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Merged CSS Variables for Theming */
+        :root {
+            --bg-color: #f7f9fc;
+            --text-color: #2d3748;
+            --text-muted: #4a5568;
+            --card-bg: #ffffff;
+            --primary-color: #3498db;
+            --primary-alt: #5a67d8;
+            --secondary-color: #2ecc71;
+            --secondary-alt: #ed64a6;
+            --accent-color: #e74c3c;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --code-inline-bg: #2d3748;
+            --code-inline-text: #e2e8f0;
+            --code-keyword: #f6ad55;
+            --code-number: #9ae6b4;
+            --code-string: #fbb6ce;
+            --border-color: #e0e6ed;
+            --shadow: 0 10px 20px rgba(0,0,0,0.05);
+            --header-bg: #ffffff;
+            --list-bg: rgba(247, 249, 252, 0.8);
+            --list-hover: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --text-muted: #cbd5e1;
+            --card-bg: #1e293b;
+            --primary-color: #38bdf8;
+            --primary-alt: #818cf8;
+            --secondary-color: #4ade80;
+            --secondary-alt: #f472b6;
+            --accent-color: #f87171;
+            --code-bg: #000000;
+            --code-text: #e2e8f0;
+            --code-inline-bg: #0f172a;
+            --code-inline-text: #e2e8f0;
+            --border-color: #334155;
+            --shadow: 0 10px 20px rgba(0,0,0,0.3);
+            --header-bg: #1e293b;
+            --list-bg: #0f172a;
+            --list-hover: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--header-bg);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Intro Styling */
+        .intro {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .main-topic-title {
+            font-size: 2.2rem;
+            color: var(--primary-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 40px 0 20px 0;
+            text-align: center;
+        }
+
+        /* List/Card Layout from File 1 */
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-card h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-alt);
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .item-list li {
+            margin-bottom: 15px;
+            background: var(--list-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .item-list li:hover {
+            background: var(--list-hover);
+            transform: scale(1.01);
+            border-color: var(--primary-alt);
+        }
+
+        .icon-box {
+            background: var(--primary-alt);
+            color: white;
+            min-width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            font-family: 'Fira Code', monospace;
+            box-shadow: 0 4px 10px rgba(90, 103, 216, 0.3);
+        }
+
+        svg.section-icon {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+
+        /* Grid Layout from File 2 */
+        .level-section {
+            margin-bottom: 4rem;
+        }
+
+        .level-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card.visible {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: var(--primary-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .card-desc {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .visual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            height: 80px;
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .visual-svg {
+            max-height: 100%;
+            max-width: 100%;
+        }
+
+        /* Syntax Highlighting & Code Blocks */
+        code, .code-inline {
+            font-family: 'Fira Code', monospace;
+            background: var(--code-inline-bg);
+            color: var(--code-inline-text);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            display: block;
+            background: var(--code-inline-bg);
+            padding: 15px;
+            border-radius: 10px;
+            color: var(--code-inline-text);
+            font-family: 'Fira Code', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .keyword { color: var(--code-keyword); }
+        .number { color: var(--code-number); }
+        .string { color: var(--code-string); }
+
+        .code-container {
+            position: relative;
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        .code-container pre {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--code-text);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--code-text);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .copy-btn.copied {
+            background: var(--secondary-color);
+            color: #fff;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .level-title { font-size: 1.5rem; }
+            .header-title { font-size: 1.2rem; }
+            .main-topic-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <i class="fa-brands fa-js" style="color: #f7df1e;"></i>
+            JavaScript Operators & Math Notes
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </header>
+
+    <div class="container">
+        
+        <!-- ================= SECTION A: JavaScript Mathematical Operators ================= -->
+        <h1 class="main-topic-title">
+            <svg class="section-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V9H8v3H6v2h2v3h2v-3h2v-2zm6 5h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+            JavaScript ಗಣಿತದ ಆಪರೇಟರ್‌ಗಳು
+        </h1>
+
+        <div class="intro">
+            ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಗಣಿತದ ಕಾರ್ಯಾಚರಣೆಗಳನ್ನು (Mathematical operations) ಮಾಡಲು ಹಲವಾರು ಆಪರೇಟರ್‌ಗಳನ್ನು (Operators) ಬಳಸಲಾಗುತ್ತದೆ. ಮೂಲಭೂತ ಲೆಕ್ಕಾಚಾರಗಳಿಂದ ಹಿಡಿದು ಸಂಕೀರ್ಣ ಕಾರ್ಯಾಚರಣೆಗಳವರೆಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದರ ಸಂಪೂರ್ಣ ವಿವರ ಇಲ್ಲಿದೆ.
+        </div>
+
+        <div class="section-card">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                1. ಮೂಲಭೂತ ಅಂಕಗಣಿತದ ಆಪರೇಟರ್‌ಗಳು (Arithmetic Operators)
+            </h2>
+            <p>ಇವು ದಿನನಿತ್ಯದ ಲೆಕ್ಕಾಚಾರಗಳಿಗೆ ಬಳಸುವ ಸಾಮಾನ್ಯ ಆಪರೇಟರ್‌ಗಳು.</p>
+            <ul class="item-list">
+                <li>
+                    <div class="icon-box">+</div>
+                    <div><strong>Addition (ಸಂಕಲನ)</strong> - ಎರಡು ಸಂಖ್ಯೆಗಳನ್ನು ಕೂಡಿಸುತ್ತದೆ. <br> <span class="code-inline"><span class="number">5</span> + <span class="number">3</span> = <span class="number">8</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">-</div>
+                    <div><strong>Subtraction (ವ್ಯವಕಲನ)</strong> - ಒಂದು ಸಂಖ್ಯೆಯಿಂದ ಮತ್ತೊಂದನ್ನು ಕಳೆಯುತ್ತದೆ. <br> <span class="code-inline"><span class="number">10</span> - <span class="number">4</span> = <span class="number">6</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">*</div>
+                    <div><strong>Multiplication (ಗುಣಾಕಾರ)</strong> - ಎರಡು ಸಂಖ್ಯೆಗಳನ್ನು ಗುಣಿಸುತ್ತದೆ. <br> <span class="code-inline"><span class="number">5</span> * <span class="number">4</span> = <span class="number">20</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">/</div>
+                    <div><strong>Division (ಭಾಗಾಕಾರ)</strong> - ಒಂದು ಸಂಖ್ಯೆಯನ್ನು ಮತ್ತೊಂದರಿಂದ ಭಾಗಿಸುತ್ತದೆ. <br> <span class="code-inline"><span class="number">20</span> / <span class="number">4</span> = <span class="number">5</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">%</div>
+                    <div><strong>Modulus (ಶೇಷ)</strong> - ಭಾಗಾಕಾರ ಮಾಡಿದಾಗ ಉಳಿಯುವ ಶೇಷವನ್ನು ನೀಡುತ್ತದೆ. <br> <span class="code-inline"><span class="number">10</span> % <span class="number">3</span> = <span class="number">1</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">**</div>
+                    <div><strong>Exponentiation (ಘಾತಾಂಕ)</strong> - ಒಂದು ಸಂಖ್ಯೆಯ ಘಾತವನ್ನು ಲೆಕ್ಕಹಾಕುತ್ತದೆ. <br> <span class="code-inline"><span class="number">5</span> ** <span class="number">2</span> = <span class="number">25</span></span></div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                2. ಇನ್‌ಕ್ರಿಮೆಂಟ್ ಮತ್ತು ಡಿಕ್ರಿಮೆಂಟ್ (Increment & Decrement)
+            </h2>
+            <p>ವೇರಿಯೇಬಲ್‌ನ ಮೌಲ್ಯವನ್ನು 1 ರಿಂದ ಹೆಚ್ಚಿಸಲು ಅಥವಾ ಕಡಿಮೆ ಮಾಡಲು ಇವುಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ (ಹೆಚ್ಚಾಗಿ ಲೂಪ್‌ಗಳಲ್ಲಿ ಬಳಕೆಯಾಗುತ್ತದೆ).</p>
+            <ul class="item-list">
+                <li>
+                    <div class="icon-box">++</div>
+                    <div><strong>(Increment)</strong>: ಮೌಲ್ಯವನ್ನು 1 ಹೆಚ್ಚಿಸುತ್ತದೆ. <br> <span class="code-inline">x++</span> (Post-increment), <span class="code-inline">++x</span> (Pre-increment)</div>
+                </li>
+                <li>
+                    <div class="icon-box">--</div>
+                    <div><strong>(Decrement)</strong>: ಮೌಲ್ಯವನ್ನು 1 ಕಡಿಮೆ ಮಾಡುತ್ತದೆ. <br> <span class="code-inline">x--</span> (Post-decrement), <span class="code-inline">--x</span> (Pre-decrement)</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                3. ಗಣಿತದ ನಿಯೋಜನೆ ಆಪರೇಟರ್‌ಗಳು (Math Assignment Operators)
+            </h2>
+            <p>ಒಂದು ವೇರಿಯೇಬಲ್‌ಗೆ ಲೆಕ್ಕಾಚಾರ ಮಾಡಿ ಅದೇ ವೇರಿಯೇಬಲ್‌ನಲ್ಲಿ ಮೌಲ್ಯವನ್ನು ಸ್ಟೋರ್ ಮಾಡಲು ಶಾರ್ಟ್‌ಕಟ್ ಆಗಿ ಇವುಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+            <div class="code-block">
+                <span class="keyword">+=</span> : x += 5 ಎಂದರೆ x = x + 5 ಎಂದರ್ಥ.<br>
+                <span class="keyword">-=</span> : x -= 5 ಎಂದರೆ x = x - 5 ಎಂದರ್ಥ.<br>
+                <span class="keyword">*=</span> : x *= 5 ಎಂದರೆ x = x * 5 ಎಂದರ್ಥ.<br>
+                <span class="keyword">/=</span> : x /= 5 ಎಂದರೆ x = x / 5 ಎಂದರ್ಥ.<br>
+                <span class="keyword">%=</span> : x %= 5 ಎಂದರೆ x = x % 5 ಎಂದರ್ಥ.<br>
+                <span class="keyword">**=</span>: x **= 2 ಎಂದರೆ x = x ** 2 ಎಂದರ್ಥ.
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                4. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಗಣಿತದ ವಿಶಿಷ್ಟ ನಡವಳಿಕೆಗಳು (Tricky JS Math Behaviors)
+            </h2>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಡೇಟಾ ಟೈಪ್‌ಗಳು ತಾನಾಗಿಯೇ ಬದಲಾಗುವುದರಿಂದ (Type Coercion), ಕೆಲವು ಲೆಕ್ಕಾಚಾರಗಳು ವಿಭಿನ್ನವಾಗಿ ವರ್ತಿಸುತ್ತವೆ. ಇವುಗಳ ಬಗ್ಗೆ ಎಚ್ಚರವಿರಬೇಕು:</p>
+            <ul class="item-list">
+                <li>
+                    <div class="icon-box">!</div>
+                    <div><strong>ಸ್ಟ್ರಿಂಗ್ ಮತ್ತು ಸಂಖ್ಯೆಯ ಸಂಕಲನ (+):</strong> <br> <span class="code-inline"><span class="string">"5"</span> + <span class="number">3</span></span> ಫಲಿತಾಂಶ <span class="code-inline"><span class="string">"53"</span></span> (ಸ್ಟ್ರಿಂಗ್) ಆಗುತ್ತದೆ.</div>
+                </li>
+                <li>
+                    <div class="icon-box">!</div>
+                    <div><strong>ಸ್ಟ್ರಿಂಗ್ ಮತ್ತು ಸಂಖ್ಯೆಯ ಇತರ ಕಾರ್ಯಾಚರಣೆಗಳು (-, *, /):</strong> <br> <span class="code-inline"><span class="string">"10"</span> - <span class="number">2</span></span> ಫಲಿತಾಂಶ <span class="code-inline"><span class="number">8</span></span> ಆಗುತ್ತದೆ.</div>
+                </li>
+                <li>
+                    <div class="icon-box">NaN</div>
+                    <div><strong>NaN (Not a Number):</strong> ಸಂಖ್ಯೆಯಲ್ಲದ ಪಠ್ಯವನ್ನು ಸಂಖ್ಯೆಯ ಜೊತೆ ಲೆಕ್ಕಾಚಾರ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದರೆ. ಉದಾಹರಣೆ: <span class="code-inline"><span class="string">"Hello"</span> / <span class="number">2</span> = <span class="keyword">NaN</span></span>.</div>
+                </li>
+                <li>
+                    <div class="icon-box">∞</div>
+                    <div><strong>Infinity (ಅನಂತ):</strong> ಯಾವುದೇ ಸಂಖ್ಯೆಯನ್ನು ಸೊನ್ನೆಯಿಂದ (0) ಭಾಗಿಸಿದರೆ. ಉದಾಹರಣೆ: <span class="code-inline"><span class="number">10</span> / <span class="number">0</span> = <span class="keyword">Infinity</span></span>.</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                5. ಆಪರೇಟರ್ ಆದ್ಯತೆ (Operator Precedence / BODMAS)
+            </h2>
+            <p>ಒಂದೇ ಸಾಲಿನಲ್ಲಿ ಹಲವು ಆಪರೇಟರ್‌ಗಳಿದ್ದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಗಣಿತದ ನಿಯಮದಂತೆಯೇ (BODMAS/PEMDAS) ಆದ್ಯತೆ ನೀಡುತ್ತದೆ:</p>
+            <ol style="padding-left: 20px;">
+                <li><strong>()</strong> ಆವರಣ (Parentheses)</li>
+                <li><strong>**</strong> ಘಾತಾಂಕ (Exponentiation)</li>
+                <li><strong>*, /, %</strong> ಗುಣಾಕಾರ, ಭಾಗಾಕಾರ ಮತ್ತು ಶೇಷ (ಎಡದಿಂದ ಬಲಕ್ಕೆ)</li>
+                <li><strong>+, -</strong> ಸಂಕಲನ ಮತ್ತು ವ್ಯವಕಲನ (ಎಡದಿಂದ ಬಲಕ್ಕೆ)</li>
+            </ol>
+            <div class="code-block">
+                ಉದಾಹರಣೆ:<br>
+                <span class="number">10</span> + <span class="number">5</span> * <span class="number">2</span> ರ ಫಲಿತಾಂಶ <span class="number">20</span>.<br>
+                (<span class="number">10</span> + <span class="number">5</span>) * <span class="number">2</span> ರ ಫಲಿತಾಂಶ <span class="number">30</span>.
+            </div>
+        </div>
+
+        <div class="section-card" style="border: 2px solid var(--primary-alt);">
+            <h2>
+                <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                6. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮ್ಯಾಥ್ ಆಬ್ಜೆಕ್ಟ್ (JavaScript Math Object) - <em>[ಹೊಸ ಸೇರ್ಪಡೆ]</em>
+            </h2>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಸಂಕೀರ್ಣ ಗಣಿತದ ಲೆಕ್ಕಾಚಾರಗಳನ್ನು ಸುಲಭಗೊಳಿಸಲು <code>Math</code> ಎಂಬ ಇನ್-ಬಿಲ್ಟ್ ಆಬ್ಜೆಕ್ಟ್ ಇದೆ. ಇದರ ಪ್ರಮುಖ ಕಾರ್ಯಗಳು ಇಲ್ಲಿವೆ:</p>
+            <ul class="item-list">
+                <li>
+                    <div class="icon-box">≈</div>
+                    <div><strong>Math.round()</strong> - ಸಂಖ್ಯೆಯನ್ನು ಸಮೀಪದ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ (Nearest integer) ರೌಂಡ್ ಮಾಡುತ್ತದೆ. <br> <span class="code-inline">Math.<span class="keyword">round</span>(<span class="number">4.6</span>) = <span class="number">5</span></span> | <span class="code-inline">Math.<span class="keyword">round</span>(<span class="number">4.4</span>) = <span class="number">4</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">↑</div>
+                    <div><strong>Math.ceil()</strong> - ಸಂಖ್ಯೆಯನ್ನು ಮುಂದಿನ ಅತಿದೊಡ್ಡ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ (Upward) ಬದಲಾಯಿಸುತ್ತದೆ. <br> <span class="code-inline">Math.<span class="keyword">ceil</span>(<span class="number">4.1</span>) = <span class="number">5</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">↓</div>
+                    <div><strong>Math.floor()</strong> - ಸಂಖ್ಯೆಯನ್ನು ಹಿಂದಿನ ಅತಿಚಿಕ್ಕ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ (Downward) ಬದಲಾಯಿಸುತ್ತದೆ. <br> <span class="code-inline">Math.<span class="keyword">floor</span>(<span class="number">4.9</span>) = <span class="number">4</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">?</div>
+                    <div><strong>Math.random()</strong> - 0 ಮತ್ತು 1 ರ ನಡುವಿನ ಯಾವುದೇ ಯಾದೃಚ್ಛಿಕ (Random) ದಶಮಾಂಶ ಸಂಖ್ಯೆಯನ್ನು ನೀಡುತ್ತದೆ. <br> <span class="code-inline">Math.<span class="keyword">random</span>() = <span class="number">0.34982...</span></span></div>
+                </li>
+                <li>
+                    <div class="icon-box">MAX</div>
+                    <div><strong>Math.max() & Math.min()</strong> - ನೀಡಲಾದ ಸಂಖ್ಯೆಗಳಲ್ಲಿ ಅತಿ ದೊಡ್ಡ ಅಥವಾ ಅತಿ ಚಿಕ್ಕ ಸಂಖ್ಯೆಯನ್ನು ಹುಡುಕುತ್ತದೆ. <br> <span class="code-inline">Math.<span class="keyword">max</span>(<span class="number">10</span>, <span class="number">20</span>, <span class="number">5</span>) = <span class="number">20</span></span></div>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- ================= SECTION B: JavaScript Math & Number Objects ================= -->
+        <h1 class="main-topic-title" style="margin-top: 60px;">
+            <i class="fa-brands fa-js"></i> JavaScript Math & Number
+        </h1>
+
+        <div class="intro">
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (JavaScript) ಸಂಖ್ಯೆಗಳನ್ನು ನಿರ್ವಹಿಸಲು <strong>Number ಆಬ್ಜೆಕ್ಟ್</strong> ಮತ್ತು ಗಣಿತದ ಲೆಕ್ಕಾಚಾರಗಳನ್ನು ಮಾಡಲು <strong>Math ಆಬ್ಜೆಕ್ಟ್</strong> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಮೂಲ (Beginner) ಹಂತದಿಂದ ವೃತ್ತಿಪರ (Pro) ಹಂತದವರೆಗಿನ ಸಂಪೂರ್ಣ ಪಟ್ಟಿ ಇಲ್ಲಿದೆ:</p>
+        </div>
+
+        <!-- Beginner Level -->
+        <section class="level-section">
+            <h2 class="level-title"><i class="fa-solid fa-seedling"></i> 1. Beginner Level (ಮೂಲ ಹಂತ)</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color); opacity: 0.8;">ಈ ಹಂತದಲ್ಲಿ ದಿನನಿತ್ಯದ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ಗೆ ಬೇಕಾಗುವ ಸಾಮಾನ್ಯ ಮೆಥಡ್‌ಗಳಿವೆ.</p>
+            
+            <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Math ಆಬ್ಜೆಕ್ಟ್:</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-bullseye card-icon"></i>
+                        <span class="card-title">Math.round(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯನ್ನು ಹತ್ತಿರದ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ ಬದಲಾಯಿಸುತ್ತದೆ.</p>
+                    <div class="visual-container">
+                        <svg viewBox="0 0 200 50" class="visual-svg">
+                            <line x1="10" y1="25" x2="190" y2="25" stroke="var(--primary-color)" stroke-width="2"/>
+                            <circle cx="100" cy="25" r="4" fill="var(--accent-color)"/>
+                            <text x="100" y="15" fill="currentColor" font-size="12" text-anchor="middle">4.6 ➔ 5</text>
+                        </svg>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.round(4.6)); // 5
+console.log(Math.round(4.4)); // 4</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-arrow-up card-icon"></i>
+                        <span class="card-title">Math.ceil(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯನ್ನು ಮೇಲಿನ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ ಬದಲಾಯಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.ceil(4.1)); // 5
+console.log(Math.ceil(4.9)); // 5</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-arrow-down card-icon"></i>
+                        <span class="card-title">Math.floor(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯನ್ನು ಕೆಳಗಿನ ಪೂರ್ಣ ಸಂಖ್ಯೆಗೆ ಬದಲಾಯಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.floor(4.9)); // 4
+console.log(Math.floor(4.1)); // 4</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-dice card-icon"></i>
+                        <span class="card-title">Math.random()</span>
+                    </div>
+                    <p class="card-desc">0 (ಸೇರಿ) ಮತ್ತು 1 (ಸೇರದೆ) ರ ನಡುವಿನ ಯಾದೃಚ್ಛಿಕ (random) ಸಂಖ್ಯೆಯನ್ನು ನೀಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.random()); 
+// ಉದಾ: 0.384759...
+
+// 1 ರಿಂದ 10 ರ ನಡುವಿನ ಸಂಖ್ಯೆ ಪಡೆಯಲು:
+let num = Math.floor(Math.random() * 10) + 1;</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-arrow-up-right-dots card-icon"></i>
+                        <span class="card-title">Math.max(x, y, ...)</span>
+                    </div>
+                    <p class="card-desc">ನೀಡಲಾದ ಸಂಖ್ಯೆಗಳಲ್ಲಿ ಅತಿ ದೊಡ್ಡ ಸಂಖ್ಯೆಯನ್ನು ಹುಡುಕುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.max(10, 20, 5, 100)); // 100</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-arrow-down-right-dots card-icon"></i>
+                        <span class="card-title">Math.min(x, y, ...)</span>
+                    </div>
+                    <p class="card-desc">ನೀಡಲಾದ ಸಂಖ್ಯೆಗಳಲ್ಲಿ ಅತಿ ಚಿಕ್ಕ ಸಂಖ್ಯೆಯನ್ನು ಹುಡುಕುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.min(10, 20, 5, 100)); // 5</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem 0; color: var(--accent-color);">Number ಆಬ್ಜೆಕ್ಟ್:</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-hashtag card-icon"></i>
+                        <span class="card-title">Number(x)</span>
+                    </div>
+                    <p class="card-desc">ಬೇರೆ ಡೇಟಾ ಪ್ರಕಾರವನ್ನು (ಉದಾಹರಣೆಗೆ ಸ್ಟ್ರಿಂಗ್) ಸಂಖ್ಯೆಯಾಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number("123")); // 123
+console.log(Number("123.45")); // 123.45
+console.log(Number("abc")); // NaN (Not a Number)</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-quote-left card-icon"></i>
+                        <span class="card-title">parseInt(x)</span>
+                    </div>
+                    <p class="card-desc">ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ಪೂರ್ಣ ಸಂಖ್ಯೆಯಾಗಿ (Integer) ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(parseInt("10.55")); // 10
+console.log(parseInt("100 years")); // 100</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-quote-right card-icon"></i>
+                        <span class="card-title">parseFloat(x)</span>
+                    </div>
+                    <p class="card-desc">ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು ದಶಮಾಂಶ ಸಂಖ್ಯೆಯಾಗಿ (Float) ಪರಿವರ್ತಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(parseFloat("10.55")); // 10.55
+console.log(parseFloat("10.55 years")); // 10.55</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Intermediate Level -->
+        <section class="level-section">
+            <h2 class="level-title"><i class="fa-solid fa-layer-group"></i> 2. Intermediate Level (ಮಧ್ಯಮ ಹಂತ)</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color); opacity: 0.8;">ಈ ಹಂತದಲ್ಲಿ ಡೇಟಾವನ್ನು ಫಾರ್ಮ್ಯಾಟ್ ಮಾಡಲು ಮತ್ತು ವಿಶಿಷ್ಟ ಗಣಿತದ ಲೆಕ್ಕಾಚಾರಗಳಿಗೆ ಬಳಸುವ ಮೆಥಡ್‌ಗಳಿವೆ.</p>
+            
+            <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Math ಆಬ್ಜೆಕ್ಟ್:</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-plus-minus card-icon"></i>
+                        <span class="card-title">Math.abs(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯ ಧನಾತ್ಮಕ (absolute/positive) ಮೌಲ್ಯವನ್ನು ನೀಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.abs(-5)); // 5
+console.log(Math.abs(5));  // 5</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-superscript card-icon"></i>
+                        <span class="card-title">Math.pow(x, y)</span>
+                    </div>
+                    <p class="card-desc">x ನ y ಘಾತವನ್ನು (power) ಲೆಕ್ಕಾಚಾರ ಮಾಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.pow(2, 3)); // 8 (2*2*2)
+console.log(Math.pow(5, 2)); // 25</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-square-root-variable card-icon"></i>
+                        <span class="card-title">Math.sqrt(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯ ವರ್ಗಮೂಲವನ್ನು (square root) ಕಂಡುಹಿಡಿಯುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.sqrt(16)); // 4
+console.log(Math.sqrt(81)); // 9</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-scissors card-icon"></i>
+                        <span class="card-title">Math.trunc(x)</span>
+                    </div>
+                    <p class="card-desc">ದಶಮಾಂಶ ಭಾಗವನ್ನು ತೆಗೆದುಹಾಕಿ ಪೂರ್ಣ ಸಂಖ್ಯೆಯನ್ನು ಮಾತ್ರ ನೀಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.trunc(4.9)); // 4
+console.log(Math.trunc(-4.9)); // -4</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-map-pin card-icon"></i>
+                        <span class="card-title">Math.sign(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆ ಧನಾತ್ಮಕ (1), ಋಣಾತ್ಮಕ (-1) ಅಥವಾ ಸೊನ್ನೆ (0) ಎಂಬುದನ್ನು ತಿಳಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.sign(10)); // 1
+console.log(Math.sign(-10)); // -1
+console.log(Math.sign(0)); // 0</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-circle-notch card-icon"></i>
+                        <span class="card-title">Math.PI</span>
+                    </div>
+                    <p class="card-desc">ಪೈ (π) ನ ಮೌಲ್ಯ (3.14159...).</p>
+                    <div class="visual-container">
+                        <svg viewBox="0 0 100 100" class="visual-svg" style="height: 60px;">
+                            <circle cx="50" cy="50" r="40" stroke="var(--primary-color)" stroke-width="4" fill="none"/>
+                            <text x="50" y="55" fill="currentColor" font-size="20" text-anchor="middle">π</text>
+                        </svg>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.PI); 
+// 3.141592653589793</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem 0; color: var(--accent-color);">Number ಆಬ್ಜೆಕ್ಟ್:</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-ruler-horizontal card-icon"></i>
+                        <span class="card-title">num.toFixed(x)</span>
+                    </div>
+                    <p class="card-desc">ದಶಮಾಂಶದ ನಂತರ ಎಷ್ಟು ಅಂಕಿಗಳು ಬೇಕು ಎಂಬುದನ್ನು ನಿರ್ಧರಿಸಿ ಸ್ಟ್ರಿಂಗ್ ಆಗಿ ನೀಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>let num = 5.5678;
+console.log(num.toFixed(2)); // "5.57"
+console.log(num.toFixed(0)); // "6"</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-crosshairs card-icon"></i>
+                        <span class="card-title">num.toPrecision(x)</span>
+                    </div>
+                    <p class="card-desc">ನಿರ್ದಿಷ್ಟ ಉದ್ದಕ್ಕೆ ಸಂಖ್ಯೆಯನ್ನು ಫಾರ್ಮ್ಯಾಟ್ ಮಾಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>let num = 13.3714;
+console.log(num.toPrecision(2)); // "13"
+console.log(num.toPrecision(4)); // "13.37"</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-check-double card-icon"></i>
+                        <span class="card-title">Number.isInteger(x)</span>
+                    </div>
+                    <p class="card-desc">ಮೌಲ್ಯವು ಪೂರ್ಣ ಸಂಖ್ಯೆಯೇ (Integer) ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ (True/False).</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number.isInteger(10)); // true
+console.log(Number.isInteger(10.5)); // false</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-circle-question card-icon"></i>
+                        <span class="card-title">Number.isNaN(x)</span>
+                    </div>
+                    <p class="card-desc">ಮೌಲ್ಯವು 'NaN' (Not-a-Number) ಆಗಿದೆಯೇ ಎಂದು ಪರೀಕ್ಷಿಸುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number.isNaN(NaN)); // true
+console.log(Number.isNaN(123)); // false
+console.log(Number.isNaN("abc" / 2)); // true</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-scale-balanced card-icon"></i>
+                        <span class="card-title">Number.parseInt(x)</span>
+                    </div>
+                    <p class="card-desc">ಗ್ಲೋಬಲ್ parseInt() ನಂತೆಯೇ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ, ಆದರೆ ಇದು Number ಆಬ್ಜೆಕ್ಟ್‌ನ ಭಾಗವಾಗಿದೆ (ಹೆಚ್ಚು ಕಟ್ಟುನಿಟ್ಟಾದ ನಿರ್ವಹಣೆಗೆ).</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number.parseInt("10px")); // 10
+// ಆಧುನಿಕ JS ನಲ್ಲಿ ಇದನ್ನು ಬಳಸುವುದು ಉತ್ತಮ ಅಭ್ಯಾಸ.</code></pre>
+                    </div>
+                </div>
+                
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-chart-line card-icon"></i>
+                        <span class="card-title">Math.log(x)</span>
+                    </div>
+                    <p class="card-desc">ಸಂಖ್ಯೆಯ ನೈಸರ್ಗಿಕ ಲಾಗರಿಥಮ್ (natural logarithm) ಅನ್ನು ನೀಡುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.log(1)); // 0
+console.log(Math.log(10)); // 2.302585...</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pro Level -->
+        <section class="level-section">
+            <h2 class="level-title"><i class="fa-solid fa-rocket"></i> 3. Pro Level (ವೃತ್ತಿಪರ ಹಂತ)</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-color); opacity: 0.8;">ಈ ಹಂತದಲ್ಲಿ ದೊಡ್ಡ ಡೇಟಾಸೆಟ್‌ಗಳು, ತ್ರಿಕೋನಮಿತಿ (Trigonometry) ಮತ್ತು ಅತಿ ನಿಖರವಾದ ಮೆಮೊರಿ ಲೆಕ್ಕಾಚಾರಗಳನ್ನು ನಿರ್ವಹಿಸುವ ಪ್ರಾಪರ್ಟಿಗಳಿವೆ.</p>
+            
+            <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Math ಆಬ್ಜೆಕ್ಟ್ (ಸುಧಾರಿತ ಗಣಿತ):</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-cube card-icon"></i>
+                        <span class="card-title">Math.cbrt(x)</span>
+                    </div>
+                    <p class="card-desc">ಘನಮೂಲವನ್ನು (cube root) ಕಂಡುಹಿಡಿಯುತ್ತದೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Math.cbrt(8)); // 2
+console.log(Math.cbrt(27)); // 3</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-caret-up card-icon"></i>
+                        <span class="card-title">Trigonometry: sin, cos, tan</span>
+                    </div>
+                    <p class="card-desc">ತ್ರಿಕೋನಮಿತಿಯ ಮೌಲ್ಯಗಳನ್ನು ರೇಡಿಯನ್‌ಗಳಲ್ಲಿ (Radians) ಲೆಕ್ಕಾಚಾರ ಮಾಡುತ್ತದೆ.</p>
+                    <div class="visual-container">
+                        <svg viewBox="0 0 100 50" class="visual-svg" style="height: 60px;">
+                            <polygon points="10,40 90,40 10,10" fill="none" stroke="var(--primary-color)" stroke-width="2"/>
+                            <text x="35" y="35" fill="currentColor" font-size="10">θ</text>
+                        </svg>
+                    </div>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>// 90 ಡಿಗ್ರಿಗಳನ್ನು ರೇಡಿಯನ್ ಗೆ ಪರಿವರ್ತಿಸಿ
+let rad = 90 * Math.PI / 180;
+console.log(Math.sin(rad)); // 1
+console.log(Math.cos(rad)); // 0 (ಸರಿಸುಮಾರು)</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem 0; color: var(--accent-color);">Number ಆಬ್ಜೆಕ್ಟ್ (ಸುಧಾರಿತ):</h3>
+            <div class="grid">
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-arrow-up-wide-short card-icon"></i>
+                        <span class="card-title">Number.MAX_VALUE / MIN_VALUE</span>
+                    </div>
+                    <p class="card-desc">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರತಿನಿಧಿಸಬಹುದಾದ ಅತಿದೊಡ್ಡ ಮತ್ತು ಅತಿಚಿಕ್ಕ (ಧನಾತ್ಮಕ) ಸಂಖ್ಯೆಗಳು.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number.MAX_VALUE); 
+// 1.7976931348623157e+308
+
+console.log(Number.MIN_VALUE); 
+// 5e-324</code></pre>
+                    </div>
+                </div>
+
+                <div class="card observer-item">
+                    <div class="card-header">
+                        <i class="fa-solid fa-shield-halved card-icon"></i>
+                        <span class="card-title">MAX_SAFE_INTEGER</span>
+                    </div>
+                    <p class="card-desc">ನಿಖರತೆ ಕಳೆದುಕೊಳ್ಳದೆ ಬಳಸಬಹುದಾದ ಅತಿದೊಡ್ಡ ಪೂರ್ಣ ಸಂಖ್ಯೆ.</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code>console.log(Number.MAX_SAFE_INTEGER); 
+// 9007199254740991
+
+console.log(Number.MIN_SAFE_INTEGER);
+// -9007199254740991</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Dark/Light Mode Toggle functionality
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const rootElement = document.documentElement;
+        
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = rootElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                rootElement.removeAttribute('data-theme');
+                themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            } else {
+                rootElement.setAttribute('data-theme', 'dark');
+                themeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            }
+        });
+
+        // Hover Effect for Item Lists (from the Operator section)
+        document.querySelectorAll('.item-list li').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const icon = item.querySelector('.icon-box');
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+                icon.style.transition = 'transform 0.3s ease';
+            });
+            item.addEventListener('mouseleave', () => {
+                const icon = item.querySelector('.icon-box');
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Copy to Clipboard Functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.innerText;
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Intersection Observer for scroll animations on cards
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Animate only once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.observer-item').forEach(item => {
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>

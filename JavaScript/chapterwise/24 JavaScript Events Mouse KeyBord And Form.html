@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate JS Events Masterclass</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Syntax Highlighter -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0B1120',
+                        glass: 'rgba(30, 41, 59, 0.6)',
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(56, 189, 248, 0.2)' },
+                            '100%': { boxShadow: '0 0 40px rgba(56, 189, 248, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0B1120; color: #f8fafc; }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .gradient-text-sky { background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text-purple { background: linear-gradient(135deg, #c084fc, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text-emerald { background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1120; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0.75rem;
+            background: #0f172a !important;
+            border: 1px solid #1e293b;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- Navbar Sticky -->
+    <nav class="sticky top-0 z-50 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl flex items-center gap-2">
+                <i class="fa-brands fa-js text-yellow-400 text-2xl"></i> <span class="hidden md:inline">EventMaster</span>
+            </div>
+            <div class="flex gap-4 md:gap-8 text-sm font-semibold">
+                <a href="#mouse-events" class="hover:text-sky-400 transition"><i class="fa-solid fa-computer-mouse mr-1"></i> Mouse</a>
+                <a href="#keyboard-events" class="hover:text-purple-400 transition"><i class="fa-solid fa-keyboard mr-1"></i> Keyboard</a>
+                <a href="#form-events" class="hover:text-emerald-400 transition"><i class="fa-brands fa-wpforms mr-1"></i> Forms</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden py-16 border-b border-slate-800">
+        <!-- Abstract BG -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#fff"/></pattern></defs><rect width="100%" height="100%" fill="url(#dots)"/></svg>
+        </div>
+        
+        <div class="max-w-5xl mx-auto px-6 relative z-10 text-center animate-slide-up">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                The Ultimate Guide to <br/> <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">JavaScript Events</span>
+            </h1>
+            <p class="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed glass-panel p-6 rounded-2xl shadow-xl">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಬಳಕೆದಾರರು ವೆಬ್‌ಪುಟದೊಂದಿಗೆ ಮಾಡುವ ಪ್ರತಿಯೊಂದು ಕ್ರಿಯೆಯನ್ನೂ (Events) ನಿಯಂತ್ರಿಸುವ ಕಲೆ. <br/>ಮೌಸ್ ಕ್ಲಿಕ್, ಕೀಬೋರ್ಡ್ ಟೈಪಿಂಗ್, ಮತ್ತು ಫಾರ್ಮ್ ಸಬ್ಮಿಷನ್‌ಗಳನ್ನು <strong>Beginner</strong> ಹಂತದಿಂದ <strong>Pro</strong> ಹಂತದವರೆಗೆ ಆಳವಾಗಿ ಇಲ್ಲಿ ವಿವರಿಸಲಾಗಿದೆ.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-12 space-y-24">
+
+        <!-- ========================================== -->
+        <!-- SECTION 1: MOUSE EVENTS                    -->
+        <!-- ========================================== -->
+        <section id="mouse-events" class="animate-slide-up relative scroll-mt-24">
+            <!-- Section Header -->
+            <div class="flex items-center gap-4 mb-10 border-b border-slate-800 pb-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-3xl shadow-lg shadow-sky-500/30">
+                    <i class="fa-solid fa-computer-mouse"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Mouse Events <span class="text-sky-400 text-xl font-normal hidden md:inline">| ಮೌಸ್ ಈವೆಂಟ್‌ಗಳು</span></h2>
+                    <p class="text-slate-400 mt-1">ಬಳಕೆದಾರರು ಮೌಸ್ ಅಥವಾ ಟ್ರ್ಯಾಕ್‌ಪ್ಯಾಡ್ ಬಳಸಿ ಮಾಡುವ ಪ್ರತಿಯೊಂದು ಕ್ರಿಯೆ.</p>
+                </div>
+            </div>
+
+            <!-- 1. Beginner -->
+            <div class="space-y-6 mb-12">
+                <h3 class="text-2xl font-bold text-sky-300 flex items-center gap-2">
+                    <span class="bg-sky-900/50 text-sky-400 text-sm px-2 py-1 rounded">Level 1</span> ಮೂಲಭೂತ ಮೌಸ್ ಈವೆಂಟ್‌ಗಳು (Basic Clicks)
+                </h3>
+                <p class="text-slate-300">ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡುವುದು ಅಥವಾ ಡಬಲ್ ಕ್ಲಿಕ್ ಮಾಡುವುದು ಅತ್ಯಂತ ಸಾಮಾನ್ಯ ಮೌಸ್ ಈವೆಂಟ್‌ಗಳಾಗಿವೆ.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 items-start">
+                    <ul class="space-y-3 text-slate-300 bg-slate-800/40 p-6 rounded-2xl border border-slate-700">
+                        <li><strong class="text-sky-400 font-mono">click:</strong> ಮೌಸ್‌ನ ಎಡ ಬಟನ್ ಅನ್ನು ಒತ್ತಿ ಬಿಟ್ಟಾಗ (Press & Release).</li>
+                        <li><strong class="text-sky-400 font-mono">dblclick:</strong> ಮೌಸ್ ಅನ್ನು ವೇಗವಾಗಿ ಎರಡು ಬಾರಿ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ.</li>
+                        <li><strong class="text-sky-400 font-mono">mousedown:</strong> ಮೌಸ್ ಬಟನ್ ಅನ್ನು ಒತ್ತಿದ ತಕ್ಷಣ (ಇನ್ನೂ ಬಿಟ್ಟಿಲ್ಲ).</li>
+                        <li><strong class="text-sky-400 font-mono">mouseup:</strong> ಒತ್ತಿ ಹಿಡಿದ ಮೌಸ್ ಬಟನ್ ಅನ್ನು ಬಿಟ್ಟಾಗ.</li>
+                        <li class="mt-4 text-xs text-slate-400 bg-slate-900/50 p-2 rounded border border-slate-700"><i class="fa-solid fa-info-circle text-sky-500"></i> ಗಮನಿಸಿ: ಒಂದು click ಈವೆಂಟ್ ಪೂರ್ಣಗೊಳ್ಳಲು, ಮೊದಲು mousedown ಆಗಿ ನಂತರ mouseup ಆಗಬೇಕು.</li>
+                    </ul>
+                    <div class="rounded-xl overflow-hidden border border-slate-700 shadow-xl">
+<pre><code class="language-javascript">const btn = document.getElementById("myButton");
+
+btn.addEventListener("click", () => console.log("ಕ್ಲಿಕ್ ಆಯ್ತು!"));
+btn.addEventListener("dblclick", () => console.log("ಡಬಲ್ ಕ್ಲಿಕ್!"));
+btn.addEventListener("mousedown", () => console.log("ಒತ್ತಿದ್ದೀರಿ.."));
+btn.addEventListener("mouseup", () => console.log("ಬಿಟ್ಟಿರಿ."));</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Intermediate -->
+            <div class="space-y-6 mb-12">
+                <h3 class="text-2xl font-bold text-blue-400 flex items-center gap-2">
+                    <span class="bg-blue-900/50 text-blue-400 text-sm px-2 py-1 rounded">Level 2</span> ಹೋವರ್ (Hover) ಮತ್ತು ಚಲನೆ
+                </h3>
+                <p class="text-slate-300 border-l-4 border-blue-500 pl-4 py-1 bg-slate-800/30 rounded-r-lg">ಬಳಕೆದಾರರು ಮೌಸ್ ಕರ್ಸರ್ ಅನ್ನು ಎಲಿಮೆಂಟ್‌ನ ಮೇಲೆ ತಂದಾಗ ಅಥವಾ ಹೊರತೆಗೆದಾಗ ನಿರ್ಧರಿಸಲು ಇವುಗಳನ್ನು ಬಳಸುತ್ತಾರೆ. ಇಲ್ಲಿ ಡೆವಲಪರ್‌ಗಳು ಬಹಳ ಗೊಂದಲಕ್ಕೊಳಗಾಗುತ್ತಾರೆ, ಆದ್ದರಿಂದ ಇದನ್ನು ಎಚ್ಚರಿಕೆಯಿಂದ ಗಮನಿಸಿ.</p>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- A -->
+                    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
+                        <h4 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-arrows-to-eye text-blue-400"></i> mouseover <span class="text-slate-500">vs</span> mouseenter</h4>
+                        <ul class="space-y-4 text-sm text-slate-300">
+                            <li><strong class="text-red-400">mouseover (Event Bubbling ಇದೆ):</strong> ಪೇರೆಂಟ್ ಎಲಿಮೆಂಟ್ ಮೇಲೆ ತಂದಾಗ ರನ್ ಆಗುತ್ತದೆ. ಅಷ್ಟೇ ಅಲ್ಲದೆ, ಪೇರೆಂಟ್ ಒಳಗಿರುವ ಮಗುವಿನ ಎಲಿಮೆಂಟ್ (Child) ಮೇಲೆ ಮೌಸ್ ಹೋದಾಗಲೂ ಇದು ಮತ್ತೆ ಮತ್ತೆ ರನ್ ಆಗುತ್ತದೆ. (ಕಿರಿಕಿರಿಯುಂಟುಮಾಡಬಹುದು).</li>
+                            <li><strong class="text-emerald-400">mouseenter (Event Bubbling ಇಲ್ಲ):</strong> ಕೇವಲ ಪೇರೆಂಟ್ ಎಲಿಮೆಂಟ್ ಮೇಲೆ ಮೌಸ್ ಬಂದಾಗ ಒಮ್ಮೆ ಮಾತ್ರ ರನ್ ಆಗುತ್ತದೆ. ಒಳಗಿನ ಮಕ್ಕಳ ಮೇಲೆ ಮೌಸ್ ಹೋದರೂ ಇದು ಮತ್ತೆ ರನ್ ಆಗುವುದಿಲ್ಲ. (UI ಡಿಸೈನ್ ಮಾಡಲು ಡೆವಲಪರ್‌ಗಳು ಇದನ್ನೇ ಹೆಚ್ಚು ಬಳಸುತ್ತಾರೆ).</li>
+                        </ul>
+                    </div>
+                    <!-- B -->
+                    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
+                        <h4 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-person-walking-arrow-right text-blue-400"></i> mouseout <span class="text-slate-500">vs</span> mouseleave</h4>
+                        <ul class="space-y-4 text-sm text-slate-300 mb-6">
+                            <li><strong class="text-red-400">mouseout:</strong> ಒಳಗಿನ ಮಕ್ಕಳಿಂದ ಮೌಸ್ ಹೊರಬಂದರೂ ಪದೇ ಪದೇ ರನ್ ಆಗುತ್ತದೆ.</li>
+                            <li><strong class="text-emerald-400">mouseleave:</strong> ಸಂಪೂರ್ಣವಾಗಿ ಮುಖ್ಯ (Parent) ಎಲಿಮೆಂಟ್‌ನಿಂದ ಹೊರಬಂದಾಗ ಮಾತ್ರ ಒಮ್ಮೆ ರನ್ ಆಗುತ್ತದೆ. (ಇದು ಬೆಸ್ಟ್).</li>
+                        </ul>
+                        <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const card = document.getElementById("profileCard");
+
+// ಕಾರ್ಡ್ ಒಳಗೆ ಬಂದಾಗ ಒಮ್ಮೆ ರನ್ ಆಗುತ್ತದೆ
+card.addEventListener("mouseenter", () => {
+  card.style.boxShadow = "0px 10px 20px rgba(0,0,0,0.5)";
+});
+
+// ಕಾರ್ಡ್ ನಿಂದ ಹೊರಹೋದಾಗ ಒಮ್ಮೆ ರನ್ ಆಗುತ್ತದೆ
+card.addEventListener("mouseleave", () => {
+  card.style.boxShadow = "none";
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Advanced -->
+            <div class="space-y-6 mb-12">
+                <h3 class="text-2xl font-bold text-indigo-400 flex items-center gap-2">
+                    <span class="bg-indigo-900/50 text-indigo-400 text-sm px-2 py-1 rounded">Level 3</span> ಮೌಸ್ ಟ್ರ್ಯಾಕಿಂಗ್ ಮತ್ತು ರೈಟ್-ಕ್ಲಿಕ್ ಮೆನು
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 rounded-xl border-t-2 border-indigo-500">
+                        <h4 class="font-bold text-indigo-300 mb-2">A. mousemove</h4>
+                        <p class="text-sm text-slate-300 mb-3">ಮೌಸ್ ಕರ್ಸರ್ ಚಲಿಸುತ್ತಿರುವಾಗ ಪ್ರತಿ ಪಿಕ್ಸೆಲ್‌ಗೂ ರನ್ ಆಗುತ್ತದೆ. <code>e.clientX</code> ಮತ್ತು <code>e.clientY</code> ಬಳಸಿ ಮೌಸ್ ಎಲ್ಲಿದೆ ಎಂದು ಪತ್ತೆಹಚ್ಚಬಹುದು.</p>
+<pre><code class="language-javascript">canvas.addEventListener("mousemove", (e) => {
+  console.log(`ಮೌಸ್: X: ${e.clientX}, Y: ${e.clientY}`);
+});</code></pre>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-xl border-t-2 border-purple-500">
+                        <h4 class="font-bold text-purple-300 mb-2">B. contextmenu & C. wheel</h4>
+                        <p class="text-sm text-slate-300 mb-3"><strong>contextmenu:</strong> ಬ್ರೌಸರ್‌ನ ಸ್ವಂತ ರೈಟ್-ಕ್ಲಿಕ್ ಮೆನು ತಡೆದು (<code class="text-xs">e.preventDefault()</code>), ಸ್ವಂತ ಮೆನು ತೋರಿಸಲು.<br><strong>wheel:</strong> <code>e.deltaY</code> ಬಳಸಿ ಸ್ಕ್ರಾಲ್ ವೀಲ್ ಕೆಳಗೆ/ಮೇಲೆ ತಿರುಗಿದೆಯಾ ಎಂದು ತಿಳಿಯಲು (Zoom In/Out).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Pro -->
+            <div class="glass-panel p-8 rounded-3xl border border-sky-500/30 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-10"><i class="fa-solid fa-crown text-9xl text-sky-500"></i></div>
+                <h3 class="text-2xl font-bold text-white flex items-center gap-2 mb-6 relative z-10">
+                    <span class="bg-gradient-to-r from-sky-500 to-blue-600 text-white text-sm px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">Pro Level</span>
+                    Drag and Drop & Performance
+                </h3>
+                
+                <div class="grid md:grid-cols-3 gap-8 relative z-10">
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-sky-400"><i class="fa-solid fa-hand-pointer"></i> ಯಾವ ಬಟನ್ ಒತ್ತಲಾಗಿದೆ?</h4>
+                        <p class="text-sm text-slate-300"><code>e.button</code>: ಯಾವ ಬಟನ್ ಕ್ಲಿಕ್ ಆಗಿದೆ? (0=ಎಡ, 1=ಮಧ್ಯ, 2=ಬಲ).<br><br><code>e.buttons</code>: ಮೌಸ್ ಚಲಿಸುವಾಗ (mousemove) ಯಾವ ಬಟನ್ ಒತ್ತಿ ಹಿಡಿಯಲಾಗಿದೆ? (1 ಎಂದರೆ ಎಡ ಬಟನ್ - Drag ಮಾಡುವಾಗ ಉಪಯುಕ್ತ).</p>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-blue-400"><i class="fa-solid fa-arrows-up-down-left-right"></i> ಸ್ವಂತ Drag and Drop ತರ್ಕ</h4>
+                        <ol class="text-sm text-slate-300 space-y-2 list-decimal ml-4 marker:text-blue-500 font-semibold">
+                            <li><span class="font-mono text-xs text-blue-300">mousedown:</span> ಡ್ರ್ಯಾಗ್ ಶುರು (Flag = true).</li>
+                            <li><span class="font-mono text-xs text-blue-300">mousemove:</span> Flag true ಇದ್ದರೆ ಮೌಸ್ ಜೊತೆಗೆ ಸರಿಸು.</li>
+                            <li><span class="font-mono text-xs text-blue-300">mouseup:</span> ಡ್ರ್ಯಾಗ್ ನಿಲ್ಲಿಸು (Flag = false).</li>
+                        </ol>
+                    </div>
+
+                    <div class="space-y-3 bg-red-900/20 p-4 rounded-xl border border-red-500/20">
+                        <h4 class="font-bold text-red-400"><i class="fa-solid fa-triangle-exclamation"></i> Performance Warning</h4>
+                        <p class="text-sm text-slate-300"><code>mousemove</code> ಮತ್ತು <code>wheel</code> ಸೆಕೆಂಡಿಗೆ ನೂರಾರು ಬಾರಿ ರನ್ ಆಗುತ್ತವೆ. ವೆಬ್‌ಸೈಟ್ ಲ್ಯಾಗ್ ಆಗಬಹುದು.</p>
+                        <p class="text-sm text-emerald-400 font-bold mt-2"><i class="fa-solid fa-check"></i> Pro Solution:</p>
+                        <p class="text-sm text-slate-300"><strong>Throttling</strong> ಅಥವಾ <strong>Debouncing</strong>. "ಪ್ರತಿ 50ms ಗೆ ಒಮ್ಮೆ ರನ್ ಆಗು" ಎಂದು <code>setTimeout</code> ಅಥವಾ <code>requestAnimationFrame</code> ಬಳಸಿ ಆಪ್ಟಿಮೈಸ್ ಮಾಡುವುದು.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SECTION 2: KEYBOARD EVENTS                 -->
+        <!-- ========================================== -->
+        <section id="keyboard-events" class="animate-slide-up relative scroll-mt-24">
+            <div class="flex items-center gap-4 mb-10 border-b border-slate-800 pb-4 mt-20">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-fuchsia-500 to-purple-600 flex items-center justify-center text-white text-3xl shadow-lg shadow-purple-500/30">
+                    <i class="fa-solid fa-keyboard"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Keyboard Events <span class="text-purple-400 text-xl font-normal hidden md:inline">| ಕೀಬೋರ್ಡ್ ಈವೆಂಟ್‌ಗಳು</span></h2>
+                    <p class="text-slate-400 mt-1">ಬಳಕೆದಾರರು ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ ಗುಂಡಿ ಒತ್ತಿದಾಗ ಅಥವಾ ಬಿಟ್ಟಾಗ ನಡೆಯುವ ಕ್ರಿಯೆಗಳು.</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10">
+                <!-- 1. Beginner -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-purple-300 flex items-center gap-2">
+                        <span class="bg-purple-900/50 text-purple-400 text-sm px-2 py-1 rounded">Level 1</span> ಪ್ರಮುಖ ಈವೆಂಟ್‌ಗಳು
+                    </h3>
+                    <ul class="space-y-4 text-slate-300 bg-slate-800/40 p-6 rounded-2xl border border-slate-700">
+                        <li><strong class="text-purple-400 font-mono text-lg">keydown:</strong> ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ ಕೀ ಒತ್ತಿದ ತಕ್ಷಣ ರನ್ ಆಗುತ್ತದೆ. ಒತ್ತಿ ಹಿಡಿದರೆ ಪದೇ ಪದೇ ರನ್ ಆಗುತ್ತದೆ.</li>
+                        <li><strong class="text-purple-400 font-mono text-lg">keyup:</strong> ಒತ್ತಿದ ಕೀ ಅನ್ನು ಬಿಟ್ಟಾಗ ರನ್ ಆಗುತ್ತದೆ. ಟೈಪಿಂಗ್ ಮುಗಿಸಿದ ನಂತರ ಕೆಲಸವಾಗಬೇಕಿದ್ದರೆ ಇದು ಬೆಸ್ಟ್.</li>
+                        <li class="opacity-70"><strong class="text-slate-500 line-through">keypress:</strong> ಹಳೆಯ ಬ್ರೌಸರ್‌ಗಳಲ್ಲಿತ್ತು (Deprecated). ಬಳಸಬೇಡಿ.</li>
+                    </ul>
+                    <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+<pre><code class="language-javascript">const myInput = document.getElementById("searchBox");
+
+myInput.addEventListener("keydown", () => console.log("ಕೀ ಒತ್ತಿದ್ದೀರಿ!"));
+myInput.addEventListener("keyup", () => console.log("ಕೀ ಬಿಟ್ಟಿರಿ!"));</code></pre>
+                    </div>
+                </div>
+
+                <!-- 2. Intermediate -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-fuchsia-300 flex items-center gap-2">
+                        <span class="bg-fuchsia-900/50 text-fuchsia-400 text-sm px-2 py-1 rounded">Level 2</span> e.key <span class="text-slate-500 font-normal">vs</span> e.code
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-2">ಡೆವಲಪರ್‌ಗಳು ಇವೆರಡರ ನಡುವೆ ಬಹಳ ಗೊಂದಲಕ್ಕೊಳಗಾಗುತ್ತಾರೆ.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-panel p-5 rounded-xl border-t-2 border-fuchsia-500">
+                            <h4 class="font-bold text-fuchsia-300 mb-2"><i class="fa-solid fa-eye"></i> e.key (ತೋರಿಸುವ ಮೌಲ್ಯ)</h4>
+                            <p class="text-xs text-slate-300">ನೀವು ನಿಖರವಾಗಿ ಯಾವ ಅಕ್ಷರ ಟೈಪ್ ಮಾಡಿದ್ದೀರಿ ಎಂದು ಹೇಳುತ್ತದೆ.<br><br>
+                            <span class="bg-slate-800 px-1 rounded">a</span> ಒತ್ತಿದರೆ "a".<br>
+                            <span class="bg-slate-800 px-1 rounded">Shift + a</span> ಒತ್ತಿದರೆ "A".</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-xl border-t-2 border-pink-500">
+                            <h4 class="font-bold text-pink-300 mb-2"><i class="fa-solid fa-microchip"></i> e.code (ಭೌತಿಕ ಬಟನ್)</h4>
+                            <p class="text-xs text-slate-300">ಭೌತಿಕ ಕೀಯ (Physical Button) ಹೆಸರು. ಭಾಷೆ ಬದಲಾದರೂ ಇದು ಬದಲಾಗುವುದಿಲ್ಲ.<br><br>
+                            <span class="bg-slate-800 px-1 rounded">'A'</span> ಬಟನ್ ಒತ್ತಿದರೆ "KeyA" ಬರುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-purple-900/20 border-l-4 border-purple-500 p-3 rounded-r-lg">
+                        <p class="text-sm text-purple-200">
+                            <strong class="text-purple-400">Pro Tip:</strong> ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ಟೈಪಿಂಗ್‌ಗೆ <code>e.key</code> ಬಳಸಿ. ಗೇಮಿಂಗ್ (W,A,S,D) ಅಥವಾ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳಿಗೆ <code>e.code</code> ಬಳಸಿ.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 & 4. Advanced & Pro -->
+            <div class="mt-10 grid lg:grid-cols-2 gap-8">
+                <!-- Advanced -->
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-purple-300 flex items-center gap-2 mb-4">
+                        <span class="bg-purple-900/50 text-purple-400 text-xs px-2 py-1 rounded">Level 3</span> Modifier Keys & Shortcuts
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4">ಒಂದೇ ಬಾರಿಗೆ 2 ಕೀಗಳನ್ನು ಒತ್ತಿದಾಗ (ಉದಾ: Ctrl+S) ಪತ್ತೆಹಚ್ಚಲು: <code>e.ctrlKey</code>, <code>e.shiftKey</code>, <code>e.altKey</code>, <code>e.metaKey</code> ಗಳು <code>true/false</code> ನೀಡುತ್ತವೆ.</p>
+<pre><code class="language-javascript">document.addEventListener("keydown", (e) => {
+  // Ctrl + S ಒತ್ತಿದಾಗ
+  if (e.ctrlKey && e.key === "s") {
+    e.preventDefault(); // ಬ್ರೌಸರ್‌ನ Save ತಡೆಯುವುದು
+    console.log("ನಮ್ಮ ಸ್ವಂತ ಸೇವ್ ಫಂಕ್ಷನ್ ರನ್ ಆಗುತ್ತಿದೆ!");
+  }
+});</code></pre>
+                </div>
+
+                <!-- Pro -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/30">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 mb-4">
+                        <span class="bg-purple-500 text-white text-xs px-2 py-1 rounded uppercase tracking-wider shadow-lg">Pro Level</span> ತಂತ್ರಗಳು & Debouncing
+                    </h3>
+                    <ul class="text-sm text-slate-300 space-y-3 mb-4">
+                        <li><strong class="text-purple-400">Default ತಡೆಯುವುದು:</strong> ಫಾರ್ಮ್‌ನಲ್ಲಿ Enter ಒತ್ತಿದರೆ ಸಬ್ಮಿಟ್ ಆಗುವುದು, Space ಒತ್ತಿದರೆ ಪೇಜ್ ಸ್ಕ್ರಾಲ್ ಆಗುವುದನ್ನು <code>e.preventDefault()</code> ಬಳಸಿ ತಡೆಯಬಹುದು.</li>
+                        <li><strong class="text-purple-400">Global vs Local:</strong> <code>window.addEventListener</code> (ಇಡೀ ಪೇಜ್) vs <code>inputBox.addEventListener</code> (ಕೇವಲ ಇನ್‌ಪುಟ್).</li>
+                    </ul>
+                </div>
+
+                <!-- Debouncing Block Full width -->
+                <div class="lg:col-span-2 glass-panel p-8 rounded-2xl border-l-4 border-pink-500 relative overflow-hidden">
+                    <div class="absolute right-0 bottom-0 opacity-10"><i class="fa-solid fa-server text-9xl text-pink-500"></i></div>
+                    <h4 class="text-xl font-bold text-pink-400 mb-2 relative z-10">Performance & Debouncing (ಮೆಮೊರಿ ಉಳಿಸುವಿಕೆ)</h4>
+                    <p class="text-sm text-slate-300 mb-4 relative z-10 max-w-4xl">
+                        ನೀವು ಸರ್ಚ್ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಟೈಪ್ ಮಾಡುವಾಗ, ಪ್ರತಿಯೊಂದು ಅಕ್ಷರ ಟೈಪ್ ಮಾಡಿದಾಗಲೂ ಬ್ಯಾಕೆಂಡ್‌ಗೆ ರಿಕ್ವೆಸ್ಟ್ ಕಳಿಸಿದರೆ ಸರ್ವರ್ ಕ್ರ್ಯಾಶ್ ಆಗಬಹುದು! ಇದಕ್ಕೆ <strong>Debouncing</strong> ತಂತ್ರ ಬಳಸುತ್ತಾರೆ: "ಬಳಕೆದಾರ ಟೈಪ್ ಮಾಡುವುದನ್ನು ನಿಲ್ಲಿಸಿ ಅರ್ಧ ಸೆಕೆಂಡ್ (500ms) ಆದ ಮೇಲೆ ಮಾತ್ರ ಸರ್ಚ್ ಮಾಡು".
+                    </p>
+                    <div class="rounded-xl overflow-hidden border border-slate-700 relative z-10">
+<pre><code class="language-javascript">let timeoutId;
+const searchBox = document.getElementById("search");
+
+searchBox.addEventListener("keyup", function(e) {
+  clearTimeout(timeoutId); // ಹಳೆಯ ಟೈಮರ್ ಕ್ಯಾನ್ಸಲ್ ಮಾಡು
+  
+  // ಹೊಸ ಟೈಮರ್ ಶುರು ಮಾಡು (ಬಳಕೆದಾರ 500ms ಟೈಪ್ ಮಾಡದಿದ್ದರೆ ರನ್ ಆಗುತ್ತದೆ)
+  timeoutId = setTimeout(() => {
+    console.log("ಸರ್ವರ್‌ಗೆ ರಿಕ್ವೆಸ್ಟ್: " + e.target.value);
+  }, 500); 
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SECTION 3: FORM EVENTS                     -->
+        <!-- ========================================== -->
+        <section id="form-events" class="animate-slide-up relative scroll-mt-24">
+            <div class="flex items-center gap-4 mb-10 border-b border-slate-800 pb-4 mt-20">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-white text-3xl shadow-lg shadow-emerald-500/30">
+                    <i class="fa-brands fa-wpforms"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">Form Events <span class="text-emerald-400 text-xl font-normal hidden md:inline">| ಫಾರ್ಮ್ ಈವೆಂಟ್‌ಗಳು</span></h2>
+                    <p class="text-slate-400 mt-1">ಲಾಗಿನ್, ರಿಜಿಸ್ಟ್ರೇಷನ್, ಅಥವಾ ಸರ್ಚ್ ಮೂಲಕ ಬಳಕೆದಾರರಿಂದ ಡೇಟಾ ಪಡೆಯಲು.</p>
+                </div>
+            </div>
+
+            <!-- 1. Beginner -->
+            <div class="glass-panel p-8 rounded-2xl mb-10">
+                <h3 class="text-2xl font-bold text-emerald-300 flex items-center gap-2 mb-4">
+                    <span class="bg-emerald-900/50 text-emerald-400 text-sm px-2 py-1 rounded">Level 1</span> submit ಈವೆಂಟ್ (ಫಾರ್ಮ್ ಕಳುಹಿಸುವುದು)
+                </h3>
+                <p class="text-slate-300 mb-6">ಬಳಕೆದಾರರು ಫಾರ್ಮ್ ಅನ್ನು ತುಂಬಿ "Submit" ಬಟನ್ ಒತ್ತಿದಾಗ ಅಥವಾ Enter ಕೀ ಒತ್ತಿದಾಗ ರನ್ ಆಗುತ್ತದೆ.</p>
+                
+                <div class="grid lg:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-4">
+                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl">
+                            <h4 class="text-red-400 font-bold mb-2"><i class="fa-solid fa-triangle-exclamation"></i> ಅತಿ ದೊಡ್ಡ ನಿಯಮ (Beginner Mistake):</h4>
+                            <p class="text-sm text-slate-300"><code>submit</code> ಈವೆಂಟ್ ಅನ್ನು ಯಾವಾಗಲೂ <code>&lt;form&gt;</code> ಟ್ಯಾಗ್‌ಗೆ ಹಾಕಬೇಕು, ಅದರ ಒಳಗಿರುವ <code>&lt;button&gt;</code> ಗಲ್ಲ!</p>
+                        </div>
+                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-xl">
+                            <h4 class="text-emerald-400 font-bold mb-2"><i class="fa-solid fa-shield-halved"></i> e.preventDefault() ನ ಪ್ರಾಮುಖ್ಯತೆ:</h4>
+                            <p class="text-sm text-slate-300">ಸಬ್ಮಿಟ್ ಆದ ತಕ್ಷಣ ಇಡೀ ವೆಬ್‌ಪುಟ ರಿಫ್ರೆಶ್ (Reload) ಆಗುತ್ತದೆ. ಇದನ್ನು ತಡೆಯಲು ಕಡ್ಡಾಯವಾಗಿ ಇದನ್ನು ಬಳಸಬೇಕು.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-html">&lt;form id="loginForm"&gt;
+  &lt;input type="text" id="username" placeholder="ಹೆಸರು"&gt;
+  &lt;button type="submit"&gt;ಲಾಗಿನ್&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<pre class="border-t border-slate-700"><code class="language-javascript">const form = document.getElementById("loginForm");
+form.addEventListener("submit", function(e) {
+  e.preventDefault(); // ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗುವುದನ್ನು ತಡೆಯುವುದು
+  const user = document.getElementById("username").value;
+  console.log("ಲಾಗಿನ್ ಆದವರು: " + user);
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Intermediate -->
+            <div class="glass-panel p-8 rounded-2xl mb-10">
+                <h3 class="text-2xl font-bold text-teal-300 flex items-center gap-2 mb-6">
+                    <span class="bg-teal-900/50 text-teal-400 text-sm px-2 py-1 rounded">Level 2</span> input <span class="text-slate-500 font-normal">ಮತ್ತು</span> change ನಡುವಿನ ವ್ಯತ್ಯಾಸ
+                </h3>
+                <p class="text-slate-300 mb-6 border-l-4 border-teal-500 pl-4">ಡೆವಲಪರ್‌ಗಳು ಅತಿ ಹೆಚ್ಚು ಗೊಂದಲಕ್ಕೊಳಗಾಗುವುದು ಇವೆರಡರ ನಡುವೆಯೇ. ಇವೆರಡೂ ಬಳಕೆದಾರರು ಟೈಪ್ ಮಾಡಿದ ಡೇಟಾವನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡುತ್ತವೆ, ಆದರೆ ಅವು ರನ್ ಆಗುವ ಸಮಯ ಬೇರೆ ಬೇರೆ.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-teal-500/30 hover:border-teal-500 transition-colors">
+                        <h4 class="text-xl font-mono font-bold text-teal-400 mb-3"><i class="fa-solid fa-bolt text-yellow-400"></i> input ಈವೆಂಟ್</h4>
+                        <span class="text-xs bg-teal-900/50 text-teal-200 px-2 py-1 rounded mb-3 inline-block">Real-time / ತಕ್ಷಣದ ಪ್ರತಿಕ್ರಿಯೆ</span>
+                        <p class="text-sm text-slate-300 mb-3">ಪ್ರತಿಯೊಂದು ಅಕ್ಷರ ಟೈಪ್ ಮಾಡಿದಾಗಲೂ (ಅಥವಾ ಅಳಿಸಿದಾಗಲೂ) ತಕ್ಷಣವೇ ರನ್ ಆಗುತ್ತದೆ.</p>
+                        <p class="text-xs text-slate-400"><strong class="text-teal-300">ಬಳಕೆ:</strong> ಲೈವ್ ಸರ್ಚ್, ಪಾಸ್‌ವರ್ಡ್ ಸ್ಟ್ರೆಂತ್, ಅಕ್ಷರಗಳನ್ನು ಎಣಿಸಲು.</p>
+                    </div>
+                    
+                    <div class="bg-slate-800/50 p-6 rounded-xl border border-green-500/30 hover:border-green-500 transition-colors">
+                        <h4 class="text-xl font-mono font-bold text-green-400 mb-3"><i class="fa-solid fa-check-double text-green-500"></i> change ಈವೆಂಟ್</h4>
+                        <span class="text-xs bg-green-900/50 text-green-200 px-2 py-1 rounded mb-3 inline-block">Loss of focus / ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ</span>
+                        <p class="text-sm text-slate-300 mb-3">ಟೈಪ್ ಮಾಡುತ್ತಿರುವಾಗ ರನ್ ಆಗುವುದಿಲ್ಲ! ಟೈಪ್ ಮಾಡುವುದನ್ನು ಮುಗಿಸಿ ಆ ಬಾಕ್ಸ್‌ನಿಂದ ಹೊರಗೆ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ (Blur) ಮಾತ್ರ ಒಮ್ಮೆ ರನ್ ಆಗುತ್ತದೆ.</p>
+                        <p class="text-xs text-slate-400"><strong class="text-green-300">ಬಳಕೆ:</strong> ಈಮೇಲ್ ಟೈಪ್ ಮಾಡಿ ಮುಗಿಸಿದ ಮೇಲೆ ಸರಿಯಾಗಿದೆಯೇ ಎಂದು ಚೆಕ್ ಮಾಡಲು (Validation).</p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700">
+<pre><code class="language-javascript">const inputField = document.getElementById("myInput");
+
+// ಅಕ್ಷರ ಟೈಪ್ ಮಾಡಿದ ತಕ್ಷಣವೇ ಪ್ರಿಂಟ್ ಆಗುತ್ತಲೇ ಇರುತ್ತದೆ
+inputField.addEventListener("input", (e) => console.log("Input: " + e.target.value));
+
+// ಟೈಪ್ ಮಾಡಿ ಮುಗಿಸಿ, ಹೊರಗೆ ಕ್ಲಿಕ್ ಮಾಡಿದ ಮೇಲೆ ಮಾತ್ರ ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ
+inputField.addEventListener("change", (e) => console.log("Change: " + e.target.value));</code></pre>
+                </div>
+            </div>
+
+            <!-- 3 & 4. Advanced & Expert -->
+            <div class="grid lg:grid-cols-2 gap-10">
+                <!-- Advanced -->
+                <div class="glass-panel p-8 rounded-3xl relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-emerald-400 flex items-center gap-2 mb-4">
+                        <span class="bg-emerald-900/50 text-emerald-400 text-xs px-2 py-1 rounded">Level 3</span> FormData (The Modern Way)
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಒಂದು ಫಾರ್ಮ್‌ನಲ್ಲಿ 10 ಇನ್‌ಪುಟ್‌ಗಳಿದ್ದರೆ, ಹತ್ತು ಬಾರಿಯೂ <code>getElementById('id').value</code> ಎಂದು ಬರೆಯುವುದು ಹಳೆಯ ವಿಧಾನ. ವೃತ್ತಿಪರರು <strong>FormData Object</strong> ಅನ್ನು ಬಳಸುತ್ತಾರೆ. ಇದು ಫಾರ್ಮ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಡೇಟಾವನ್ನು ಒಂದೇ ಬಾರಿಗೆ ಒಂದು ಪ್ಯಾಕೆಟ್ ತರಹ ಕಲೆಹಾಕುತ್ತದೆ. (ಇದಕ್ಕೆ ನಿಮ್ಮ HTML ನಲ್ಲಿ <code>name</code> ಆಟ್ರಿಬ್ಯೂಟ್ ಇರಲೇಬೇಕು).
+                    </p>
+                    <div class="rounded-xl overflow-hidden border border-slate-700 relative z-10">
+<pre><code class="language-javascript">document.getElementById("registerForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  
+  // ಫಾರ್ಮ್‌ನ ಎಲ್ಲಾ ಡೇಟಾವನ್ನು ಒಂದೇ ಬಾರಿಗೆ ಪ್ಯಾಕ್ ಮಾಡುವುದು
+  const formData = new FormData(this); 
+
+  // ಡೇಟಾವನ್ನು JSON ಆಬ್ಜೆಕ್ಟ್ ಮಾಡುವುದು
+  const data = Object.fromEntries(formData);
+  console.log("ಸಂಪೂರ್ಣ ಡೇಟಾ:", data); 
+  // Output: {firstName: "ರಾಮ್", email: "ram@gmail.com"}
+});</code></pre>
+                    </div>
+                </div>
+
+                <!-- Expert -->
+                <div class="glass-panel p-8 rounded-3xl border border-emerald-500/30 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 p-6 opacity-10"><i class="fa-solid fa-crown text-8xl text-emerald-500"></i></div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 mb-4 relative z-10">
+                        <span class="bg-emerald-500 text-white text-xs px-2 py-1 rounded uppercase tracking-wider shadow-lg">Expert Level</span> Event Delegation on Forms
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-6 relative z-10 leading-relaxed">
+                        ದೊಡ್ಡ ಫಾರ್ಮ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಇನ್‌ಪುಟ್‌ಗಳಿಗೂ <code>input</code> ಈವೆಂಟ್ ಹಾಕಬೇಕಾದರೆ, ಪ್ರತಿಯೊಂದಕ್ಕೂ ಪ್ರತ್ಯೇಕ ಲಿಸನರ್ ಹಾಕಬೇಡಿ. ಬದಲಾಗಿ ಇಡೀ <code>&lt;form&gt;</code> ಗೇ ಕೇವಲ ಒಂದು ಲಿಸನರ್ ಹಾಕಿ.
+                    </p>
+                    <div class="rounded-xl overflow-hidden border border-slate-700 relative z-10">
+<pre><code class="language-javascript">const myForm = document.getElementById("registerForm");
+
+// ಫಾರ್ಮ್ ಒಳಗಿನ ಯಾವುದೇ ಇನ್‌ಪುಟ್‌ನಲ್ಲಿ ಬದಲಾವಣೆಯಾದರೂ ಇದು ಹಿಡಿಯುತ್ತದೆ
+myForm.addEventListener("input", function(e) {
+  const inputName = e.target.name;
+  const inputValue = e.target.value;
+  console.log(`${inputName} ನಲ್ಲಿ ${inputValue} ಟೈಪ್ ಆಗುತ್ತಿದೆ.`);
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        
+        <!-- Summary Banner -->
+        <div class="mt-20 bg-gradient-to-r from-slate-900 via-sky-900/30 to-slate-900 border border-sky-500/20 p-8 rounded-3xl text-center glass-panel">
+            <h3 class="text-2xl font-bold text-white mb-4"><i class="fa-solid fa-flag-checkered text-emerald-400 mr-2"></i> ಸಾರಾಂಶ (Summary)</h3>
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-slate-300">
+                <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><strong class="text-sky-400">Mouse:</strong> click, hover, contextmenu</span>
+                <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><strong class="text-purple-400">Keyboard:</strong> keydown, e.key, e.code</span>
+                <span class="bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><strong class="text-emerald-400">Form:</strong> submit, input vs change</span>
+            </div>
+            <p class="mt-6 text-slate-400 italic">ಈ ತಂತ್ರಗಳನ್ನು ಕರಗತ ಮಾಡಿಕೊಂಡರೆ, ನೀವು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಅತ್ಯಂತ ಸಂಕೀರ್ಣವಾದ ಗೇಮ್‌ಗಳು, ಟೆಕ್ಸ್ಟ್ ಎಡಿಟರ್‌ಗಳು ಮತ್ತು ಇಂಟರ್ಯಾಕ್ಟಿವ್ ವೆಬ್‌ಪುಟಗಳನ್ನು ಸುಲಭವಾಗಿ ನಿರ್ಮಿಸಬಹುದು!</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-16 py-10 text-center bg-dark text-slate-500 text-sm">
+        <p><i class="fa-solid fa-laptop-code text-sky-400 mr-2"></i>Crafted for JavaScript Masters • Comprehensive Events Guide</p>
+    </footer>
+
+    <!-- Prism.js Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+</body>
+</html>

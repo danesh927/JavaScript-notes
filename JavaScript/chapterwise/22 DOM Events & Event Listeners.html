@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Events Masterclass - Pro Notes</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Syntax Highlighter -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0B1120',
+                        glass: 'rgba(30, 41, 59, 0.7)',
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'float': 'float 4s ease-in-out infinite',
+                        'bubble-up': 'bubbleUp 2s ease-in infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        bubbleUp: {
+                            '0%': { opacity: '1', transform: 'translateY(20px) scale(0.8)' },
+                            '100%': { opacity: '0', transform: 'translateY(-40px) scale(1.2)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0B1120; color: #f8fafc; }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #38bdf8, #818cf8, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1120; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0.75rem;
+            background: #1e293b !important;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden py-16 lg:py-24 border-b border-slate-800">
+        <!-- Animated Background SVG elements -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <svg width="100%" height="100%">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#475569" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)"/>
+            </svg>
+        </div>
+        
+        <div class="absolute top-1/4 left-10 w-32 h-32 bg-sky-500 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 animate-float"></div>
+        <div class="absolute bottom-10 right-10 w-48 h-48 bg-purple-600 rounded-full mix-blend-multiply filter blur-[100px] opacity-30 animate-float" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-5xl mx-auto px-6 relative z-10 text-center animate-slide-up">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-sky-400 text-sm font-bold mb-6 border border-sky-500/20">
+                <i class="fa-solid fa-bolt text-yellow-400"></i> Interactive Web Secrets
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                DOM <span class="gradient-text">Events & Event Listeners</span>
+            </h1>
+            <p class="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed glass-panel p-6 rounded-2xl border-l-4 border-purple-500 text-left shadow-xl">
+                DOM ನಲ್ಲಿ Event Listener ಮತ್ತು Event Object ಗಳು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ <strong>ಹೃದಯವಿದ್ದಂತೆ</strong>. ವೆಬ್‌ಪುಟವನ್ನು ಬಳಕೆದಾರರೊಂದಿಗೆ ಸಂವಹನ ನಡೆಸುವಂತೆ (Interactive) ಮಾಡಲು ಇವು ಅತ್ಯಗತ್ಯ.<br><br>
+                ಯಾವುದೇ ಮಾಹಿತಿಯನ್ನು ಬಿಡದೆ, Beginner (ಆರಂಭಿಕ) ಹಂತದಿಂದ Pro (ತಜ್ಞ) ಹಂತದವರೆಗೆ ಪ್ರತಿಯೊಂದನ್ನೂ ಆಳವಾಗಿ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ಇಲ್ಲಿ ವಿವರಿಸಲಾಗಿದೆ.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-16 space-y-20">
+
+        <!-- 1. Beginner Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-teal-500/30">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div>
+                    <span class="text-emerald-400 font-mono text-xs font-bold tracking-widest uppercase">Level 1</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Event ಮತ್ತು Event Listener ಎಂದರೇನು?</h2>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-10">
+                <div class="glass-panel p-6 rounded-2xl border-t-2 border-emerald-500 relative overflow-hidden group">
+                    <i class="fa-solid fa-hand-pointer absolute -right-4 -bottom-4 text-6xl text-emerald-500/10 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-xl font-bold text-emerald-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Event (ಈವೆಂಟ್)</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">ವೆಬ್‌ಪುಟದಲ್ಲಿ ನಡೆಯುವ ಯಾವುದೇ ಕ್ರಿಯೆ. ಉದಾಹರಣೆಗೆ: ಮೌಸ್ ಕ್ಲಿಕ್ ಮಾಡುವುದು <code class="text-emerald-300 bg-emerald-900/40 px-1 rounded">(click)</code>, ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ ಟೈಪ್ ಮಾಡುವುದು <code class="text-emerald-300 bg-emerald-900/40 px-1 rounded">(keyup)</code>, ಸ್ಕ್ರಾಲ್ ಮಾಡುವುದು <code class="text-emerald-300 bg-emerald-900/40 px-1 rounded">(scroll)</code>.</p>
+                </div>
+                
+                <div class="glass-panel p-6 rounded-2xl border-t-2 border-sky-500 relative overflow-hidden group">
+                    <i class="fa-solid fa-user-shield absolute -right-4 -bottom-4 text-6xl text-sky-500/10 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-xl font-bold text-sky-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-headphones"></i> Event Listener</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">ಇದು ಒಂದು <strong>"ಕಾವಲುಗಾರ" (Watchman)</strong> ಇದ್ದಂತೆ. ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್ ಮೇಲೆ ಆ ಕ್ರಿಯೆ ನಡೆಯುವವರೆಗೂ ಕಾಯುತ್ತಿರುತ್ತದೆ. ಕ್ರಿಯೆ ನಡೆದ ತಕ್ಷಣ ನೀವು ಹೇಳಿದ ಕೆಲಸವನ್ನು (Function) ಮಾಡುತ್ತದೆ.</p>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold text-white mb-6">ಎಲಿಮೆಂಟ್‌ಗೆ Event ಸೇರಿಸುವ 3 ವಿಧಾನಗಳು:</h3>
+            <div class="space-y-6">
+                <!-- Method 1 -->
+                <div class="glass-panel rounded-xl p-5 border-l-4 border-red-500">
+                    <h4 class="text-red-400 font-bold mb-2">1. ಹಳೆಯ ವಿಧಾನ (Inline Events - ಬಳಸಬಾರದು):</h4>
+                    <p class="text-sm text-slate-400 mb-3">HTML ಒಳಗೇ ಬರೆಯುವುದು.</p>
+<pre><code class="language-html">&lt;button onclick="alert('ಕ್ಲಿಕ್ ಆಯ್ತು!')"&gt;ಕ್ಲಿಕ್ ಮಾಡಿ&lt;/button&gt;</code></pre>
+                </div>
+
+                <!-- Method 2 -->
+                <div class="glass-panel rounded-xl p-5 border-l-4 border-yellow-500">
+                    <h4 class="text-yellow-400 font-bold mb-2">2. DOM Property ವಿಧಾನ (ಒಂದು ಲಿಮಿಟ್ ಇದೆ):</h4>
+                    <div class="grid md:grid-cols-2 gap-4 items-center">
+                        <div>
+<pre><code class="language-javascript">const btn = document.getElementById("myBtn");
+btn.onclick = function() {
+  console.log("ಮೊದಲನೇ ಕ್ಲಿಕ್");
+};</code></pre>
+                        </div>
+                        <div class="bg-yellow-900/30 p-3 rounded-lg border border-yellow-500/30 text-sm text-yellow-200">
+                            <i class="fa-solid fa-triangle-exclamation mr-2 text-yellow-500"></i><strong>ಸಮಸ್ಯೆ:</strong> ನೀವು ಇನ್ನೊಂದು onclick ಬರೆದರೆ ಹಳೆಯದು ಅಳಿಸಿಹೋಗುತ್ತದೆ!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Method 3 -->
+                <div class="glass-panel rounded-xl p-5 border-l-4 border-emerald-500 animate-pulse-glow">
+                    <h4 class="text-emerald-400 font-bold mb-2 flex items-center gap-2">
+                        3. addEventListener <span class="bg-emerald-500/20 text-emerald-200 text-xs px-2 py-1 rounded-full border border-emerald-500/30">ಆಧುನಿಕ ಮತ್ತು ಸರಿಯಾದ ವಿಧಾನ</span>
+                    </h4>
+                    <p class="text-sm text-slate-300 mb-3">ಇದು ಅತ್ಯುತ್ತಮ ವಿಧಾನ. ಒಂದೇ ಎಲಿಮೆಂಟ್‌ಗೆ ಎಷ್ಟೇ ಈವೆಂಟ್‌ಗಳನ್ನು ಬೇಕಾದರೂ ಸೇರಿಸಬಹುದು.<br>
+                    <span class="text-emerald-400 font-mono mt-1 inline-block text-xs bg-emerald-900/30 px-2 py-1 rounded">ರಚನೆ: element.addEventListener(ಈವೆಂಟ್_ಹೆಸರು, ಮಾಡಬೇಕಾದ_ಫಂಕ್ಷನ್)</span></p>
+<pre><code class="language-javascript">const btn = document.getElementById("myBtn");
+
+// 'click' ಆದಾಗ ಏನು ಮಾಡಬೇಕು ಎಂದು ಹೇಳುತ್ತಿದ್ದೇವೆ
+btn.addEventListener("click", function() {
+  console.log("ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ!");
+});</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Intermediate Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div>
+                    <span class="text-blue-400 font-mono text-xs font-bold tracking-widest uppercase">Level 2</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Event Object (e ಅಥವಾ event)</h2>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden">
+                <!-- Visual Box for "Gift" -->
+                <i class="fa-solid fa-gift absolute -right-10 -top-10 text-9xl text-indigo-500/10"></i>
+                
+                <p class="text-slate-300 mb-6 relative z-10 leading-relaxed max-w-4xl">
+                    ನೀವು ಯಾವುದೇ Event Listener ಬರೆದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆ ಫಂಕ್ಷನ್‌ಗೆ ಒಂದು <strong>ಉಡುಗೊರೆಯನ್ನು (Object)</strong> ಕಳುಹಿಸುತ್ತದೆ. ಅದನ್ನೇ <span class="text-indigo-400 font-bold">Event Object</span> ಎನ್ನುತ್ತಾರೆ. ಅದರಲ್ಲಿ ಆ ಕ್ರಿಯೆಯ ಬಗ್ಗೆ ಎಲ್ಲಾ ಮಾಹಿತಿಯೂ ಇರುತ್ತದೆ (ಯಾರು ಕ್ಲಿಕ್ ಮಾಡಿದರು, ಎಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿದರು, ಯಾವ ಕೀ ಒತ್ತಿದರು ಇತ್ಯಾದಿ). ಸಾಮಾನ್ಯವಾಗಿ ಇದನ್ನು <code>e</code> ಅಥವಾ <code>event</code> ಎಂಬ ಹೆಸರಿನಿಂದ ಸ್ವೀಕರಿಸುತ್ತಾರೆ.
+                </p>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 mb-8 relative z-10">
+<pre><code class="language-javascript">const box = document.getElementById("box");
+
+box.addEventListener("click", function(e) {
+  console.log(e); // ಇದು ಸಂಪೂರ್ಣ Event Object ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ
+});</code></pre>
+                </div>
+
+                <h3 class="text-xl font-bold text-indigo-300 mb-4 relative z-10">Event Object ನ ಪ್ರಮುಖ ಪ್ರಾಪರ್ಟಿಗಳು:</h3>
+                <div class="grid sm:grid-cols-2 gap-4 relative z-10">
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 flex gap-3">
+                        <i class="fa-solid fa-tag text-sky-400 mt-1"></i>
+                        <div>
+                            <span class="font-mono text-sky-400 font-bold">e.type</span>
+                            <p class="text-sm text-slate-400">ಯಾವ ರೀತಿಯ ಈವೆಂಟ್ ನಡೆಯಿತು? (ಉದಾ: "click", "keydown").</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-900/30 p-4 rounded-xl border border-indigo-500/40 flex gap-3 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                        <i class="fa-solid fa-bullseye text-indigo-400 mt-1"></i>
+                        <div>
+                            <span class="font-mono text-indigo-400 font-bold">e.target</span> <span class="text-xs bg-indigo-500/20 px-1 rounded ml-1 text-indigo-300">(ಬಹಳ ಮುಖ್ಯ)</span>
+                            <p class="text-sm text-indigo-200">ನಿಖರವಾಗಿ ಯಾವ ಎಲಿಮೆಂಟ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಲಾಯಿತು?</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 flex gap-3">
+                        <i class="fa-solid fa-crosshairs text-sky-400 mt-1"></i>
+                        <div>
+                            <span class="font-mono text-sky-400 font-bold">e.clientX / e.clientY</span>
+                            <p class="text-sm text-slate-400">ಸ್ಕ್ರೀನ್ ಮೇಲೆ ಮೌಸ್ ಕ್ಲಿಕ್ ಆದ ನಿಖರವಾದ X ಮತ್ತು Y ಜಾಗ (Coordinates).</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 flex gap-3">
+                        <i class="fa-regular fa-keyboard text-sky-400 mt-1"></i>
+                        <div>
+                            <span class="font-mono text-sky-400 font-bold">e.key</span>
+                            <p class="text-sm text-slate-400">ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ ಯಾವ ಕೀ ಒತ್ತಲಾಗಿದೆ? (ಉದಾ: "Enter", "A").</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 rounded-xl overflow-hidden border border-slate-700 relative z-10">
+                    <div class="bg-slate-800 px-4 py-2 border-b border-slate-700 text-xs text-slate-400 font-mono">ಉದಾಹರಣೆ</div>
+<pre><code class="language-javascript">const inputField = document.getElementById("nameInput");
+
+inputField.addEventListener("keyup", function(e) {
+  console.log("ನೀವು ಒತ್ತಿದ ಕೀ: " + e.key);
+});</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Advanced Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-purple-500/30">
+                    <i class="fa-solid fa-wand-sparkles"></i>
+                </div>
+                <div>
+                    <span class="text-purple-400 font-mono text-xs font-bold tracking-widest uppercase">Level 3</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Default Behavior ತಡೆಯುವುದು ಮತ್ತು Bubbling</h2>
+                    <p class="text-slate-400 text-sm mt-1">ಇಲ್ಲಿಂದ ವೃತ್ತಿಪರ ಕಾನ್ಸೆಪ್ಟ್‌ಗಳು ಶುರುವಾಗುತ್ತವೆ.</p>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <!-- 3A -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-purple-300 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-ban text-rose-400"></i> A. e.preventDefault() 
+                        <span class="text-xs bg-purple-500/20 text-purple-200 px-2 py-1 rounded-full font-normal">(ಡೀಫಾಲ್ಟ್ ಕೆಲಸವನ್ನು ತಡೆಯುವುದು)</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4">
+                        ಕೆಲವು HTML ಎಲಿಮೆಂಟ್‌ಗಳಿಗೆ ಹುಟ್ಟಿನಿಂದಲೇ ಕೆಲವು ಗುಣಗಳಿರುತ್ತವೆ. ಉದಾಹರಣೆಗೆ, <code>&lt;a&gt;</code> ಲಿಂಕ್ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ಬೇರೆ ಪೇಜ್‌ಗೆ ಹೋಗುವುದು, <code>&lt;form&gt;</code> ಸಬ್ಮಿಟ್ ಮಾಡಿದರೆ ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗುವುದು. ಇದನ್ನು ತಡೆಯಲು <code>preventDefault()</code> ಬಳಸುತ್ತಾರೆ.
+                    </p>
+<pre><code class="language-javascript">const myForm = document.getElementById("loginForm");
+
+myForm.addEventListener("submit", function(e) {
+  e.preventDefault(); // ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗುವುದನ್ನು ತಡೆಯುತ್ತದೆ!
+  console.log("ಫಾರ್ಮ್ ಡೇಟಾವನ್ನು ಈಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಕಳುಹಿಸಬಹುದು.");
+});</code></pre>
+                </div>
+
+                <!-- 3B & 3C -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+                    <h3 class="text-xl font-bold text-pink-400 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-water"></i> B. Event Propagation (Event Bubbling)
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-6 leading-relaxed">
+                        DOM ನಲ್ಲಿ ಒಂದು ನಿಯಮವಿದೆ: ನೀವು ಒಂದು ಮಗುವಿನ (Child) ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ, ಆ ಕ್ಲಿಕ್ ಅದರ ತಂದೆಗೂ (Parent), ಅಜ್ಜನಿಗೂ (Grandparent) ಮತ್ತು ಕೊನೆಗೆ <code>document</code> ಗೂ ತಲುಪುತ್ತದೆ. ಇದು ನೀರಿನಲ್ಲಿ ಗುಳ್ಳೆಗಳು ಮೇಲಕ್ಕೆ ಬರುವಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದನ್ನೇ <strong>Event Bubbling</strong> ಎನ್ನುತ್ತಾರೆ.
+                    </p>
+
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <!-- Visual representation of Bubbling -->
+                        <div class="flex flex-col items-center justify-center p-6 bg-slate-900 rounded-xl border border-slate-700 relative">
+                            <span class="absolute top-2 left-3 text-xs text-slate-500 font-mono">Visual Concept</span>
+                            
+                            <!-- Bubbling arrows -->
+                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
+                                <i class="fa-solid fa-circle text-sky-400/50 absolute bottom-10 animate-bubble-up"></i>
+                                <i class="fa-solid fa-circle text-sky-400/50 absolute bottom-20 animate-bubble-up" style="animation-delay: 0.5s;"></i>
+                                <i class="fa-solid fa-circle text-sky-400/50 absolute bottom-30 animate-bubble-up" style="animation-delay: 1s;"></i>
+                            </div>
+
+                            <div class="w-full h-40 bg-rose-900/40 border-2 border-rose-500 rounded flex items-center justify-center flex-col relative z-10 shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                                <span class="text-xs text-rose-300 font-mono mb-2">#parent</span>
+                                <button class="bg-slate-800 text-white px-4 py-2 rounded border border-slate-600 shadow-lg relative group overflow-hidden">
+                                    <span class="relative z-10 font-mono text-sm">#child</span>
+                                    <div class="absolute inset-0 bg-sky-500/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Code -->
+                        <div class="flex flex-col justify-center">
+<pre><code class="language-html">&lt;div id="parent" style="padding: 50px; background: red;"&gt;
+  &lt;button id="child"&gt;ಕ್ಲಿಕ್ ಮಾಡಿ&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+<pre class="mt-3"><code class="language-javascript">document.getElementById("parent").addEventListener("click", () => console.log("Parent ಕ್ಲಿಕ್ ಆಯ್ತು!"));
+document.getElementById("child").addEventListener("click", () => console.log("Child ಕ್ಲಿಕ್ ಆಯ್ತು!"));
+
+// Child ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಔಟ್‌ಪುಟ್:
+// 1. Child ಕ್ಲಿಕ್ ಆಯ್ತು!
+// 2. Parent ಕ್ಲಿಕ್ ಆಯ್ತು! (ಇದೇ Bubbling)</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- 3C Stop Propagation -->
+                    <div class="bg-rose-900/30 border border-rose-500/30 p-5 rounded-xl border-l-4 border-l-rose-500">
+                        <h4 class="text-rose-400 font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-regular fa-hand"></i> C. e.stopPropagation() <span class="text-xs font-normal text-rose-200">(ಬಬ್ಲಿಂಗ್ ಅನ್ನು ನಿಲ್ಲಿಸುವುದು)</span>
+                        </h4>
+                        <p class="text-sm text-slate-300 mb-3">ಮಗುವಿನ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಅದು ಪೇರೆಂಟ್‌ಗೆ ಹೋಗಬಾರದು ಎಂದರೆ ಇದನ್ನು ಬಳಸಬೇಕು.</p>
+<pre><code class="language-javascript">document.getElementById("child").addEventListener("click", function(e) {
+  e.stopPropagation(); // ಇಲ್ಲಿಗೆ ಗುಳ್ಳೆ ಒಡೆಯುತ್ತದೆ, ಮೇಲಕ್ಕೆ ಹೋಗುವುದಿಲ್ಲ!
+  console.log("ಕೇವಲ Child ಮಾತ್ರ ಕ್ಲಿಕ್ ಆಯ್ತು.");
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Pro Level -->
+        <section class="animate-slide-up" style="animation-delay: 0.4s;">
+            <div class="relative p-1 rounded-3xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500">
+                <div class="bg-dark rounded-[22px] p-8 md:p-10 relative overflow-hidden">
+                    
+                    <div class="flex items-center gap-4 mb-8 relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-yellow-400 text-3xl border-2 border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.5)]">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <span class="text-yellow-400 font-mono text-xs font-bold tracking-widest uppercase bg-yellow-900/30 px-2 py-1 rounded">Expert Level</span>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">Event Delegation ಮತ್ತು Options</h2>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-300 mb-8 text-lg relative z-10 border-l-4 border-yellow-500 pl-4 bg-slate-800/40 py-2 rounded-r-lg max-w-4xl">
+                        ವೃತ್ತಿಪರ ಡೆವಲಪರ್‌ಗಳು ಕೋಡ್ ಅನ್ನು ಅತ್ಯಂತ ವೇಗವಾಗಿ (Optimized) ಕೆಲಸ ಮಾಡುವಂತೆ ಬರೆಯುತ್ತಾರೆ.
+                    </p>
+
+                    <div class="space-y-10 relative z-10">
+                        <!-- 4A. Event Delegation -->
+                        <div>
+                            <h3 class="text-2xl font-bold text-orange-400 mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-sitemap"></i> A. Event Delegation 
+                                <span class="text-sm font-normal text-yellow-200 bg-orange-900/40 px-2 py-1 rounded border border-orange-500/30">The Master Technique</span>
+                            </h3>
+                            <p class="text-slate-300 mb-4 leading-relaxed">
+                                ನಿಮ್ಮ ಬಳಿ 1000 <code>&lt;li&gt;</code> ಐಟಂಗಳಿವೆ. ಪ್ರತಿಯೊಂದಕ್ಕೂ 1000 <code>addEventListener</code> ಹಾಕಿದರೆ ಬ್ರೌಸರ್ ಹ್ಯಾಂಗ್ ಆಗುತ್ತದೆ.<br>
+                                <strong class="text-emerald-400">ಇದಕ್ಕೆ ಪರಿಹಾರ:</strong> Event Bubbling ಅನ್ನು ನಮಗೆ ಬೇಕಾದಂತೆ ಬಳಸಿಕೊಳ್ಳುವುದು. ಕೇವಲ ಒಂದು ಲಿಸನರ್ ಅನ್ನು ಪೇರೆಂಟ್‌ಗೆ <code>&lt;ul&gt;</code> ಹಾಕುವುದು!
+                            </p>
+
+                            <div class="grid md:grid-cols-2 gap-6 items-start">
+                                <div class="space-y-4">
+<pre><code class="language-html">&lt;ul id="myList"&gt;
+  &lt;li&gt;ಐಟಂ 1&lt;/li&gt;
+  &lt;li&gt;ಐಟಂ 2&lt;/li&gt;
+  &lt;li&gt;ಐಟಂ 3&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                                    <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-xl">
+                                        <h4 class="text-emerald-400 font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-check-circle"></i> ಲಾಭ:</h4>
+                                        <p class="text-sm text-slate-300 mb-2">ಮೆಮೊರಿ ಉಳಿತಾಯವಾಗುತ್ತದೆ ಮತ್ತು ಹೊಸ <code>&lt;li&gt;</code> ಗಳನ್ನು ಸೇರಿಸಿದರೂ ಈ ಕೋಡ್ ಕೆಲಸ ಮಾಡುತ್ತದೆ!</p>
+                                        <hr class="border-emerald-500/20 my-3">
+                                        <p class="text-sm text-slate-300">
+                                            <strong class="text-sky-400 font-mono">e.target</strong>: ನಿಖರವಾಗಿ ಕ್ಲಿಕ್ ಆದ ಮಗು (ಉದಾ: li).<br>
+                                            <strong class="text-purple-400 font-mono mt-1 inline-block">e.currentTarget</strong>: ನಾವು ಲಿಸನರ್ ಹಾಕಿದ ಪೇರೆಂಟ್ (ಉದಾ: ul).
+                                        </p>
+                                    </div>
+                                </div>
+                                
+<pre><code class="language-javascript">const list = document.getElementById("myList");
+
+// ನಾವು &lt;li&gt; ಬದಲಾಗಿ &lt;ul&gt; ಗೆ ಲಿಸನರ್ ಹಾಕುತ್ತಿದ್ದೇವೆ!
+list.addEventListener("click", function(e) {
+
+  // e.target ಎಂದರೆ ನಿಖರವಾಗಿ ಎಲ್ಲಿ ಕ್ಲಿಕ್ ಆಗಿದೆ
+  if (e.target.tagName === "LI") {
+    console.log("ನೀವು ಕ್ಲಿಕ್ ಮಾಡಿದ್ದು: " + e.target.textContent);
+    e.target.style.backgroundColor = "yellow";
+  }
+});</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 4B. Event Listener Options -->
+                        <div class="pt-6 border-t border-slate-700">
+                            <h3 class="text-2xl font-bold text-yellow-400 mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-sliders"></i> B. Event Listener Options 
+                                <span class="text-sm font-normal text-slate-400">(ಮೂರನೇ ಪ್ಯಾರಾಮೀಟರ್)</span>
+                            </h3>
+                            <p class="text-slate-300 mb-4"><code>addEventListener</code> ಕೇವಲ 2 ಅಲ್ಲ, 3 ಪ್ಯಾರಾಮೀಟರ್‌ಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳಬಲ್ಲದು.</p>
+                            
+                            <ul class="space-y-3 mb-4 text-sm text-slate-300 list-disc ml-5 marker:text-yellow-500">
+                                <li><strong class="text-yellow-400 font-mono">{ once: true }</strong>: ಕೇವಲ ಒಮ್ಮೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡಬೇಕು. ಎರಡನೇ ಬಾರಿ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.</li>
+                                <li><strong class="text-sky-400 font-mono">{ capture: true }</strong>: Event ಬಬ್ಲಿಂಗ್ (ಕೆಳಗಿನಿಂದ ಮೇಲೆ) ಆಗುವ ಬದಲು, ಮೇಲಿನಿಂದ ಕೆಳಗೆ (Trickling/Capturing) ಬರಲು ಬಳಸುತ್ತಾರೆ.</li>
+                            </ul>
+<pre><code class="language-javascript">const myButton = document.getElementById("oneTimeBtn");
+
+myButton.addEventListener("click", function() {
+  console.log("ನಾನು ಕೇವಲ ಒಮ್ಮೆ ಮಾತ್ರ ರನ್ ಆಗುತ್ತೇನೆ!");
+}, { once: true }); // ಈ ಸೆಟ್ಟಿಂಗ್ Pro ಲೆವೆಲ್ ನದ್ದು!</code></pre>
+                        </div>
+
+                        <!-- 4C. Memory Leaks -->
+                        <div class="pt-6 border-t border-slate-700">
+                            <h3 class="text-2xl font-bold text-rose-400 mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-shield-virus"></i> C. Memory Leaks ತಡೆಯುವುದು 
+                                <span class="text-sm font-normal text-slate-400">(removeEventListener)</span>
+                            </h3>
+                            <p class="text-slate-300 mb-4 text-sm leading-relaxed border-l-4 border-rose-500 pl-3">
+                                ನೀವು ಡಿಲೀಟ್ ಮಾಡುವ ಎಲಿಮೆಂಟ್‌ಗಳಿಗೆ ಈವೆಂಟ್ ಅನ್ನು ತೆಗೆಯದಿದ್ದರೆ ಮೆಮೊರಿ ಲೀಕ್ ಆಗುತ್ತದೆ. ಆನಾಮಧೇಯ (Anonymous / Arrow) ಫಂಕ್ಷನ್‌ಗಳನ್ನು ರಿಮೂವ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ಯಾವಾಗಲೂ <strong>ಹೆಸರಿರುವ ಫಂಕ್ಷನ್ (Named Function)</strong> ಬಳಸಿ.
+                            </p>
+<pre><code class="language-javascript">const btn = document.getElementById("saveBtn");
+
+// 1. ಹೆಸರಿರುವ ಫಂಕ್ಷನ್ (Named Function)
+function saveData(e) {
+  console.log("ಡೇಟಾ ಸೇವ್ ಆಯ್ತು!");
+}
+
+btn.addEventListener("click", saveData);
+
+// 2. ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ ಈವೆಂಟ್ ಅನ್ನು ತೆಗೆಯುವುದು
+btn.removeEventListener("click", saveData);</code></pre>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-10 py-10 text-center bg-dark text-slate-500 text-sm">
+        <p><i class="fa-solid fa-code text-slate-400"></i> Engineered for interactive mastery • DOM Events</p>
+    </footer>
+
+    <!-- Prism.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+</body>
+</html>

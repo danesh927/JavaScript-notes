@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ಡಾಕ್ಯುಮೆಂಟೇಶನ್ - ಕನ್ನಡದಲ್ಲಿ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans Kannada"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#f7df1e', // JS Yellow
+                        darkBg: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts: Noto Sans Kannada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            line-height: 1.8;
+        }
+        
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Callout Cards */
+        .analogy-card {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(to right, #eff6ff, #ffffff);
+        }
+        .dark .analogy-card {
+            border-left: 4px solid #60a5fa;
+            background: linear-gradient(to right, #1e3a8a33, #0f172a);
+        }
+        
+        /* Code Block Adjustments */
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            margin: 1.5em 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary text-black font-bold rounded p-1 text-xl flex items-center justify-center w-10 h-10 shadow-md">JS</div>
+                    <span class="font-bold text-xl md:text-2xl tracking-tight">JavaScript ಮಾಸ್ಟರ್‌ಕ್ಲಾಸ್</span>
+                </div>
+                
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 transition-all focus:outline-none focus:ring-2 focus:ring-primary shadow-inner" aria-label="Toggle Dark Mode">
+                    <!-- Sun Icon -->
+                    <svg id="sun-icon" class="w-6 h-6 hidden dark:block text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 3.22a1 1 0 011.415 0l.708.708a1 1 0 01-1.414 1.414l-.708-.708a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM14.22 15.364a1 1 0 010 1.414l-.708.708a1 1 0 01-1.414-1.414l.708-.708a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-3.22a1 1 0 01-1.415 0l-.708-.708a1 1 0 011.414-1.414l.708.708a1 1 0 010 1.414zM3 10a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zM6.485 5.925a1 1 0 010-1.414l.708-.708a1 1 0 011.414 1.414l-.708.708a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <!-- Moon Icon -->
+                    <svg id="moon-icon" class="w-6 h-6 block dark:hidden text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-16 fade-in-up">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ಸುಲಭ ಪಾಠಗಳು</h1>
+            <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400">ನೀವು ಐಟಿ ಹಿನ್ನೆಲೆಯಿಂದ ಬಂದಿಲ್ಲದಿದ್ದರೂ ಇದನ್ನು ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಹುದು.</p>
+        </header>
+
+        <!-- Section 1: forEach -->
+        <section id="forEach" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg text-blue-600 dark:text-blue-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">1. forEach (ಲೂಪ್ಸ್)</h2>
+            </div>
+            
+            <p class="mb-4 text-lg"><strong>forEach</strong> ಎನ್ನುವುದು ಒಂದು Array (ಪಟ್ಟಿ) ಯಲ್ಲಿರುವ ಪ್ರತಿಯೊಂದು ಅಂಶಕ್ಕೂ (item) ಒಂದು ನಿರ್ದಿಷ್ಟ ಕೆಲಸವನ್ನು ಮಾಡಲು ಬಳಸುವ ವಿಧಾನ (method).</p>
+            
+            <div class="analogy-card p-5 rounded-lg shadow-sm mb-6">
+                <p class="text-md m-0"><strong class="text-blue-700 dark:text-blue-400">ಸರಳ ಉದಾಹರಣೆ:</strong> ನಿಮ್ಮ ಬಳಿ 5 ಸೇಬುಗಳಿವೆ. ಪ್ರತಿಯೊಂದು ಸೇಬಿಗೂ ಒಂದು ಸ್ಟಿಕ್ಕರ್ ಅಂಟಿಸಬೇಕು. ನೀವು ಒಂದೊಂದೇ ಸೇಬನ್ನು ತೆಗೆದುಕೊಂಡು ಸ್ಟಿಕ್ಕರ್ ಅಂಟಿಸುತ್ತೀರಿ. ಇದನ್ನೇ ಕೋಡಿಂಗ್‌ನಲ್ಲಿ forEach ಮಾಡುತ್ತದೆ!</p>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Beginner -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-green-600 dark:text-green-400">ಹಂತ 1: ಬಿಗಿನರ್ (Beginner) - ಮೂಲ ಬಳಕೆ</h3>
+                    <p class="mb-2">ಒಂದು ಹೆಸರಿನ ಪಟ್ಟಿಯಲ್ಲಿದ್ದ ಪ್ರತಿಯೊಬ್ಬರಿಗೂ "ಹಲೋ" ಎಂದು ಹೇಳಬೇಕು ಎಂದುಕೊಳ್ಳಿ.</p>
+<pre><code class="language-javascript">let names = ["ರಾಮು", "ಸೋಮು", "ಗೀತಾ"];
+
+// ಪ್ರತಿಯೊಂದು ಹೆಸರಿಗೂ ಹಲೋ ಹೇಳುವುದು
+names.forEach(function(name) {
+  console.log("ಹಲೋ " + name);
+});</code></pre>
+                    <p class="text-sm mt-2 text-gray-600 dark:text-gray-400"><strong>ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</strong> ಪಟ್ಟಿಯಲ್ಲಿ 3 ಹೆಸರುಗಳಿವೆ. forEach 3 ಬಾರಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಮೊದಲಿಗೆ name ಅಂದರೆ "ರಾಮು", ಆಮೇಲೆ "ಸೋಮು", ಕೊನೆಗೆ "ಗೀತಾ".</p>
+                </div>
+
+                <!-- Intermediate -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-yellow-600 dark:text-yellow-400">ಹಂತ 2: ಇಂಟರ್ಮೀಡಿಯೇಟ್ (Intermediate) - ಬಾಣದ ಫಂಕ್ಷನ್ (Arrow Function)</h3>
+                    <p class="mb-2">ಇದೇ ಕೋಡ್ ಅನ್ನು ಶಾರ್ಟ್ ಕಟ್ (ಆರೋ ಫಂಕ್ಷನ್ - Arrow Function) ಬಳಸಿ ಬರೆಯಬಹುದು. ಮತ್ತು forEach ನಮಗೆ ಕೇವಲ ಐಟಂ ಮಾತ್ರವಲ್ಲದೆ ಅದರ ಜಾಗದ ಸಂಖ್ಯೆ (index) ಕೂಡ ನೀಡುತ್ತದೆ.</p>
+<pre><code class="language-javascript">let fruits = ["ಸೇಬು", "ಬಾಳೆಹಣ್ಣು", "ಕಿತ್ತಳೆ"];
+
+fruits.forEach((fruit, index) => {
+  console.log(index + ": " + fruit);
+});
+
+/* ಔಟ್‌ಪುಟ್:
+0: ಸೇಬು
+1: ಬಾಳೆಹಣ್ಣು
+2: ಕಿತ್ತಳೆ
+*/</code></pre>
+                    <p class="text-sm mt-2 text-gray-600 dark:text-gray-400"><strong>ಗಮನಿಸಿ:</strong> ಕಂಪ್ಯೂಟರ್ ಯಾವಾಗಲೂ ಎಣಿಕೆಯನ್ನು 0 ಯಿಂದ ಶುರು ಮಾಡುತ್ತದೆ.</p>
+                </div>
+
+                <!-- Pro -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-2 text-red-600 dark:text-red-400">ಹಂತ 3: ಪ್ರೊ (Pro Level) - ಆಳವಾದ ವಿಷಯಗಳು</h3>
+                    <p class="mb-4">ನೀವು ಪ್ರೊಫೆಷನಲ್ ಆದಾಗ, forEach ಬಗ್ಗೆ ಈ 3 ಪ್ರಮುಖ ವಿಷಯಗಳು ತಿಳಿದಿರಬೇಕು:</p>
+                    
+                    <ul class="list-none space-y-4">
+                        <li class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <strong>1. ಹೊಸ Array ಅನ್ನು ಹಿಂದಿರುಗಿಸುವುದಿಲ್ಲ (Returns undefined):</strong><br>
+                            forEach ಕೇವಲ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಆದರೆ ಹೊಸ ಪಟ್ಟಿಯನ್ನು ಕೊಡುವುದಿಲ್ಲ. ನಿಮಗೆ ಹೊಸ ಪಟ್ಟಿ ಬೇಕಿದ್ದರೆ <code>map()</code> ಬಳಸಬೇಕು.
+                        </li>
+                        <li class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <strong>2. break ಅಥವಾ continue ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ:</strong><br>
+                            ನೀವು forEach ಶುರು ಮಾಡಿದರೆ, ಅದು ಪಟ್ಟಿಯ ಕೊನೆಯವರೆಗೂ ಹೋಗಲೇಬೇಕು. ಮಧ್ಯದಲ್ಲಿ ನಿಲ್ಲಿಸಲು (break) ಆಗುವುದಿಲ್ಲ. ನಿಲ್ಲಿಸಬೇಕಿದ್ದರೆ <code>for...of</code> ಲೂಪ್ ಬಳಸಬೇಕು.
+                        </li>
+                        <li class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <strong>3. Objects (ವಸ್ತುಗಳ) ಜೊತೆ ಬಳಕೆ:</strong><br>
+                            ಬ್ಯಾಂಕ್ ಅಕೌಂಟ್, ವಿದ್ಯಾರ್ಥಿಗಳ ಮಾರ್ಕ್ಸ್ ಮುಂತಾದ ಡೇಟಾಬೇಸ್ ಮಾಹಿತಿಯನ್ನು ನಿರ್ವಹಿಸಲು ಇದು ತುಂಬಾ ಉಪಯುಕ್ತ.
+<pre><code class="language-javascript">let students = [
+  { name: "ರಾಮು", marks: 45 },
+  { name: "ಗೀತಾ", marks: 80 }
+];
+
+// ಪ್ರತಿಯೊಬ್ಬ ವಿದ್ಯಾರ್ಥಿಗೆ 5 ಗ್ರೇಸ್ ಮಾರ್ಕ್ಸ್ ಸೇರಿಸುವುದು
+students.forEach((student) => {
+  student.marks = student.marks + 5;
+});
+
+console.log(students);
+// ರಾಮು ಮಾರ್ಕ್ಸ್ 50, ಗೀತಾ ಮಾರ್ಕ್ಸ್ 85 ಆಗಿರುತ್ತದೆ.</code></pre>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Timers -->
+        <section id="timers" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg text-purple-600 dark:text-purple-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">2. Timers (ಟೈಮರ್‌ಗಳು)</h2>
+            </div>
+
+            <!-- setTimeout -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold mb-3">setTimeout() <span class="text-lg font-normal text-gray-500">(ಟೈಮರ್ ಅಥವಾ ಅಲಾರ್ಮ್ ಇಡುವುದು)</span></h3>
+                <p class="mb-4"><strong>ಇದು ಏನು ಮಾಡುತ್ತದೆ?</strong> "ಇಷ್ಟು ಸಮಯದ ನಂತರ ಈ ಕೆಲಸ ಮಾಡು" ಎಂದು ವೆಬ್‌ಸೈಟ್‌ಗೆ ಹೇಳಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="analogy-card p-4 rounded-lg shadow-sm">
+                        <strong class="text-blue-700 dark:text-blue-400">ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ನೀವು ಒಲೆಯ ಮೇಲೆ ಹಾಲು ಇಟ್ಟು, "5 ನಿಮಿಷದ ನಂತರ ಬಂದು ಆಫ್ ಮಾಡಬೇಕು" ಎಂದು ಅಲಾರ್ಮ್ ಇಟ್ಟುಕೊಳ್ಳುತ್ತೀರಲ್ಲ, ಅದೇ ರೀತಿ.
+                    </div>
+                    <div class="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+                        <strong class="text-gray-700 dark:text-gray-300">ವೆಬ್‌ಸೈಟ್ ಉದಾಹರಣೆ:</strong> ನೀವು ಕೆಲವು ಸುದ್ದಿ ವೆಬ್‌ಸೈಟ್‌ಗಳನ್ನು ಓಪನ್ ಮಾಡಿ ಸುಮ್ಮನೆ ಓದುತ್ತಾ ಕೂತರೆ, ಸರಿಯಾಗಿ 10 ಸೆಕೆಂಡ್ ಆದ ಮೇಲೆ ತಾನಾಗಿಯೇ ಒಂದು ಜಾಹೀರಾತು (Ad) ಬರುತ್ತದಲ್ಲ, ಅದುವೇ setTimeout().
+                    </div>
+                </div>
+<pre><code class="language-javascript">// ಕೋಡ್ ಹೇಗಿರುತ್ತದೆ?
+// 3000 ಎಂದರೆ 3 ಸೆಕೆಂಡುಗಳು (3000 ಮಿಲಿಸೆಕೆಂಡು)
+setTimeout(function() {
+  alert("3 ಸೆಕೆಂಡ್ ಆಯ್ತು!"); 
+}, 3000);</code></pre>
+            </div>
+
+            <!-- setInterval -->
+            <div>
+                <h3 class="text-2xl font-bold mb-3">setInterval() <span class="text-lg font-normal text-gray-500">(ಮತ್ತೆ ಮತ್ತೆ ಕೆಲಸ ಮಾಡುವ ಅಲಾರ್ಮ್)</span></h3>
+                <p class="mb-4"><strong>ಇದು ಏನು ಮಾಡುತ್ತದೆ?</strong> setTimeout ಒಮ್ಮೆ ಮಾತ್ರ ಅಲಾರ್ಮ್ ಬಾರಿಸಿ ಸುಮ್ಮನಾಗುತ್ತದೆ. ಆದರೆ setInterval ನೀವು ಹೇಳಿದ ಸಮಯಕ್ಕೆ ಮತ್ತೆ ಮತ್ತೆ ಆ ಕೆಲಸವನ್ನು ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ (ನೀವು ನಿಲ್ಲಿಸುವವರೆಗೂ).</p>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="analogy-card p-4 rounded-lg shadow-sm">
+                        <strong class="text-blue-700 dark:text-blue-400">ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಶಾಲೆಯಲ್ಲಿ ಪ್ರತಿ 45 ನಿಮಿಷಕ್ಕೊಮ್ಮೆ ಬೆಲ್ ಹೊಡೆಯುತ್ತಾರಲ್ಲ, ಹಾಗೆ!
+                    </div>
+                    <div class="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+                        <strong class="text-gray-700 dark:text-gray-300">ವೆಬ್‌ಸೈಟ್ ಉದಾಹರಣೆ:</strong> ವೆಬ್‌ಸೈಟ್‌ಗಳಲ್ಲಿ ಒಂದು ಗಡಿಯಾರ (Digital Clock) ಇರುತ್ತದಲ್ಲ, ಅದರಲ್ಲಿ ಪ್ರತೀ ಸೆಕೆಂಡಿಗೆ ಸೆಕೆಂಡ್ ಮುಳ್ಳು ಬದಲಾಗುತ್ತಲೇ ಇರುತ್ತದೆ. ಅಲ್ಲಿ ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.
+                    </div>
+                </div>
+<pre><code class="language-javascript">// ಕೋಡ್ ಹೇಗಿರುತ್ತದೆ?
+// ಪ್ರತಿ 10 ನಿಮಿಷಕ್ಕೊಮ್ಮೆ (600,000 ಮಿಲಿಸೆಕೆಂಡು) ಈ ಮೆಸೇಜ್ ಬರುತ್ತಲೇ ಇರುತ್ತದೆ
+setInterval(function() {
+  alert("10 ನಿಮಿಷ ಆಯ್ತು, ಸ್ವಲ್ಪ ನೀರು ಕುಡಿಯಿರಿ!"); 
+}, 600000);</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Toggle & classList -->
+        <section id="toggle" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg text-green-600 dark:text-green-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">3. Toggle ಮತ್ತು classList</h2>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold mb-3">Toggle (ಟಾಗಲ್)</h3>
+                <p class="mb-4"><strong>Toggle</strong> ಎಂದರೆ ಒಂದೇ ಗುಂಡಿಯನ್ನು ಬಳಸಿ ಎರಡು ವಿರುದ್ಧವಾದ ಕೆಲಸಗಳನ್ನು (On ಮತ್ತು Off) ಮಾಡುವುದು.</p>
+                
+                <div class="analogy-card p-5 rounded-lg shadow-sm mb-6">
+                    <strong class="text-blue-700 dark:text-blue-400">ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ನಿಮ್ಮ ಮನೆಯ ಟಿವಿ ರಿಮೋಟ್‌ನ 'ಪವರ್ (Power)' ಬಟನ್ ಅಥವಾ ಪೆನ್ನಿನ ಮೇಲಿರುವ ಟಿಕ್-ಟಿಕ್ ಗುಂಡಿ.
+                    <ul class="list-disc ml-5 mt-2">
+                        <li>ನೀವು ಪವರ್ ಬಟನ್ ಅನ್ನು ಒಮ್ಮೆ ಒತ್ತಿದರೆ ಟಿವಿ ಆನ್ (ON) ಆಗುತ್ತದೆ.</li>
+                        <li>ಅದೇ ಬಟನ್ ಅನ್ನು ಮತ್ತೆ ಒತ್ತಿದರೆ ಟಿವಿ ಆಫ್ (OFF) ಆಗುತ್ತದೆ.</li>
+                    </ul>
+                    <p class="mt-2">ಒಂದೇ ಗುಂಡಿ, ಆದರೆ ಸಂದರ್ಭಕ್ಕೆ ತಕ್ಕಂತೆ ಎರಡು ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದನ್ನೇ ಕಂಪ್ಯೂಟರ್ ಭಾಷೆಯಲ್ಲಿ Toggle ಎನ್ನುತ್ತಾರೆ.</p>
+                </div>
+
+                <h4 class="text-xl font-semibold mb-2">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Toggle ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h4>
+                <p class="mb-2">ನಾವು <code>classList.toggle("dark-theme")</code> ಎಂದು ಬಳಸಿದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತನ್ನಷ್ಟಕ್ಕೆ ತಾನೇ ಹೀಗೆ ಆಲೋಚಿಸುತ್ತದೆ:</p>
+                <ul class="list-none space-y-2 mb-4 ml-4 border-l-2 border-gray-300 dark:border-slate-600 pl-4">
+                    <li><strong>1. ಮೊದಲನೇ ಬಾರಿ ಗುಂಡಿ ಒತ್ತಿದಾಗ:</strong> "ಇಲ್ಲಿ dark-theme ಇದೆಯಾ? ಇಲ್ಲ, ಸ್ಕ್ರೀನ್ ಬಿಳಿಯಾಗಿದೆ. ಸರಿ, ಹಾಗಾದರೆ ಕಪ್ಪು ಬಣ್ಣವನ್ನು ಹಾಕುತ್ತೇನೆ (Add)." (ಈಗ ಡಾರ್ಕ್ ಮೋಡ್ ಆನ್ ಆಯ್ತು)</li>
+                    <li><strong>2. ಎರಡನೇ ಬಾರಿ ಅದೇ ಗುಂಡಿ ಒತ್ತಿದಾಗ:</strong> "ಈಗ dark-theme ಇದೆಯಾ? ಹೌದು, ಈಗ ಸ್ಕ್ರೀನ್ ಕಪ್ಪಗಿದೆ. ಸರಿ, ಹಾಗಾದರೆ ಆ ಕಪ್ಪು ಬಣ್ಣವನ್ನು ತೆಗೆಯುತ್ತೇನೆ (Remove)." (ಈಗ ಡಾರ್ಕ್ ಮೋಡ್ ಆಫ್ ಆಯ್ತು)</li>
+                </ul>
+
+                <h4 class="text-xl font-semibold mb-2 mt-6 text-red-600 dark:text-red-400">Toggle ಇಲ್ಲದಿದ್ದರೆ ಏನಾಗುತ್ತಿತ್ತು? (Pro Level)</h4>
+                <p class="mb-2">ಒಂದು ವೇಳೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಈ toggle ಎನ್ನುವ ಮ್ಯಾಜಿಕ್ ಪದ ಇಲ್ಲದೆ ಹೋಗಿದ್ದರೆ, ನಾವು ಡಾರ್ಕ್ ಮೋಡ್ ಮಾಡಲು ಇಷ್ಟೊಂದು ಉದ್ದದ ಕೋಡ್ (If-Else) ಬರೆಯಬೇಕಾಗಿತ್ತು:</p>
+<pre><code class="language-javascript">// Toggle ಇಲ್ಲದಿದ್ದರೆ ನಾವು ಹೀಗೆ ಕಷ್ಟಪಡಬೇಕಿತ್ತು:
+function changeMode() {
+  if (document.body.classList.contains("dark-theme")) {
+    // ಕಪ್ಪು ಬಣ್ಣ ಮೊದಲೇ ಇದ್ದರೆ, ಅದನ್ನು ತೆಗೆ
+    document.body.classList.remove("dark-theme"); 
+  } else {
+    // ಕಪ್ಪು ಬಣ್ಣ ಇಲ್ಲದಿದ್ದರೆ, ಅದನ್ನು ಹಾಕು
+    document.body.classList.add("dark-theme");
+  }
+}</code></pre>
+                <p class="mb-2 font-medium">ಆದರೆ toggle ಇರುವುದರಿಂದ, ಈ 5-6 ಸಾಲಿನ ಕೋಡ್ ಅನ್ನು ನಾವು ಕೇವಲ ಒಂದೇ ಸಾಲಿನಲ್ಲಿ ಮುಗಿಸಬಹುದು!</p>
+<pre><code class="language-javascript">// Toggle ಬಳಸಿ ಸ್ಮಾರ್ಟ್ ಆಗಿ ಮಾಡುವುದು:
+document.body.classList.toggle("dark-theme");</code></pre>
+            </div>
+
+            <!-- classList Deep Dive -->
+            <div>
+                <h3 class="text-2xl font-bold mb-3 mt-10">classList ಮತ್ತು ಅದರ ಸಾಧನಗಳು</h3>
+                <p class="mb-4">classList ಮತ್ತು classList.contains() ಇವೆರಡೂ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ವೆಬ್‌ಸೈಟ್‌ನ ಡಿಸೈನ್ (CSS) ಜೊತೆ ಆಟವಾಡಲು ಬಳಸುವ ಅತ್ಯಂತ ಪ್ರಮುಖ ಸಾಧನಗಳು. ಇದನ್ನು <strong>"ಒಬ್ಬ ವ್ಯಕ್ತಿ ಹಾಕಿರುವ ಬಟ್ಟೆಗಳು ಮತ್ತು ಆತನ ಐಡಿ ಕಾರ್ಡ್"</strong> ಗೆ ಹೋಲಿಸಿ ಬಹಳ ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಹುದು.</p>
+
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                        <h4 class="font-bold text-lg text-blue-600 dark:text-blue-400">1. classList ಎಂದರೇನು?</h4>
+                        <p class="mb-2">ಒಂದು HTML ವಸ್ತು (ಉದಾಹರಣೆಗೆ ಒಂದು ಬಟನ್ ಅಥವಾ ಪ್ಯಾರಾಗ್ರಾಫ್) ಮೇಲೆ ಯಾವೆಲ್ಲಾ ಸ್ಟೈಲ್‌ಗಳು (CSS Classes) ಇವೆ ಎಂದು ತೋರಿಸುವ ಪಟ್ಟಿಯೇ classList.</p>
+                        <p class="text-sm"><strong>ಉದಾಹರಣೆ:</strong> ರಾಮು ಎಂಬ ಹುಡುಗನನ್ನು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ಅವನು "ಶರ್ಟ್", "ಪ್ಯಾಂಟ್" ಮತ್ತು "ಕನ್ನಡಕ" ಹಾಕಿದ್ದಾನೆ. ಇವು ಅವನ ಕ್ಲಾಸ್‌ಗಳು (Classes). ಯಾರಾದರೂ ಬಂದು "ರಾಮು ಏನೇನು ಹಾಕಿದ್ದಾನೆ?" ಎಂದು ಕೇಳಿದರೆ, ನಾವು ಕೊಡುವ ಲಿಸ್ಟ್ (ಪಟ್ಟಿ) ಇದೆಯಲ್ಲ, ಅದೇ classList.</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                        <h4 class="font-bold text-lg text-blue-600 dark:text-blue-400">2. classList.contains() ಎಂದರೇನು?</h4>
+                        <p class="mb-2">contains ಎಂದರೆ "ಒಳಗೊಂಡಿದೆಯೇ?" ಅಥವಾ "ಇದೆಯಾ?" ಎಂದು ಕೇಳುವ ಒಂದು ಪ್ರಶ್ನೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೇವಲ true (ಹೌದು) ಅಥವಾ false (ಇಲ್ಲ) ಎಂದು ಉತ್ತರಿಸುತ್ತದೆ.</p>
+                        <p class="text-sm mb-3"><strong>ಉದಾಹರಣೆ:</strong> ಸಿನಿಮಾ ಥಿಯೇಟರ್ ಬಾಗಿಲಲ್ಲಿ ನಿಂತಿರುವ ಸೆಕ್ಯೂರಿಟಿ ಗಾರ್ಡ್ "ನಿಮ್ಮ ಬಳಿ VIP ಪಾಸ್ ಇದೆಯಾ?" ಎಂದು ಚೆಕ್ ಮಾಡುತ್ತಾನಲ್ಲ, ಅದೇ contains().</p>
+<pre><code class="language-javascript">// 'myButton' ಎಂಬ ಗುಂಡಿಯನ್ನು ಹುಡುಕಿ ತರುವುದು
+let button = document.getElementById("myButton");
+
+// ಗುಂಡಿಯ ಮೇಲೆ 'active' ಎಂಬ ಸ್ಟೈಲ್/ಪಾಸ್ ಇದೆಯಾ ಎಂದು ಚೆಕ್ ಮಾಡುವುದು
+if (button.classList.contains("active")) {
+  alert("ಹೌದು, ಈ ಗುಂಡಿ ಆಕ್ಟಿವ್ ಆಗಿದೆ!"); // (true)
+} else {
+  alert("ಇಲ್ಲ, ಇದು ಆಕ್ಟಿವ್ ಆಗಿಲ್ಲ."); // (false)
+}</code></pre>
+                    </div>
+
+                    <div class="bg-yellow-50 dark:bg-yellow-900/30 p-5 rounded-lg shadow-sm border border-yellow-200 dark:border-yellow-700/50">
+                        <h4 class="font-bold text-xl mb-3">ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳ 4 ಮ್ಯಾಜಿಕ್‌ಗಳು:</h4>
+                        <ul class="list-decimal ml-5 space-y-2">
+                            <li><strong>classList.add("ಸ್ಟೈಲ್")</strong> (ಹೊಸ ಬಟ್ಟೆ ಹಾಕುವುದು): ಯಾವುದಾದರೂ ಹೊಸ ಸ್ಟೈಲ್ ಸೇರಿಸಲು.</li>
+                            <li><strong>classList.remove("ಸ್ಟೈಲ್")</strong> (ಬಟ್ಟೆ ತೆಗೆಯುವುದು): ಸ್ಟೈಲ್ ಅನ್ನು ತೆಗೆದುಹಾಕಲು.</li>
+                            <li><strong>classList.contains("ಸ್ಟೈಲ್")</strong> (ಚೆಕ್ ಮಾಡುವುದು): ಸ್ಟೈಲ್ ಇದೆಯಾ ಎಂದು ಕನ್ಫರ್ಮ್ ಮಾಡಿಕೊಳ್ಳಲು.</li>
+                            <li><strong>classList.toggle("ಸ್ಟೈಲ್")</strong> (ಸ್ವಿಚ್ ಆನ್/ಆಫ್): ಇದ್ದರೆ ತೆಗೆಯುವುದು, ಇಲ್ಲದಿದ್ದರೆ ಹಾಕುವುದು.</li>
+                        </ul>
+                        <p class="mt-4 text-sm font-medium"><strong>ರಿಯಲ್-ವರ್ಲ್ಡ್ ಉದಾಹರಣೆ:</strong> ಯೂಟ್ಯೂಬ್‌ನಲ್ಲಿ 'ಲೈಕ್ (Like)' ಗುಂಡಿ ಒತ್ತಿದಾಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಹೀಗೆ ಯೋಚಿಸುತ್ತದೆ: "ಈ ಗುಂಡಿಯ classList ನಲ್ಲಿ ಈಗಾಗಲೇ liked ಎಂಬ ಕ್ಲಾಸ್ ಇದೆಯಾ (contains)? ಹೌದು ಇದ್ದರೆ, ಅದನ್ನು ತೆಗೆದುಹಾಕು (remove). ಇಲ್ಲದಿದ್ದರೆ, ಹೊಸದಾಗಿ ಸೇರಿಸು (add)."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Browser Controls -->
+        <section id="browserControls" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-red-100 dark:bg-red-900/50 rounded-lg text-red-600 dark:text-red-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">4. Browser Controls (ಬ್ರೌಸರ್ ನಿಯಂತ್ರಣ)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- window.scrollTo -->
+                <div>
+                    <h3 class="text-xl font-bold mb-2">window.scrollTo() <br><span class="text-base font-normal text-gray-500">(ಪೇಜ್ ಅನ್ನು ಜಾರಿಸುವುದು)</span></h3>
+                    <p class="mb-3 text-sm">ಬಳಕೆದಾರರು (ನೀವು) ಸ್ಕ್ರೀನ್ ಅನ್ನು ಬೆರಳಿನಿಂದ ಮೇಲಕ್ಕೆ ಅಥವಾ ಕೆಳಕ್ಕೆ ಎಳೆಯುವ ಬದಲು, ಕಂಪ್ಯೂಟರ್ ತಾನಾಗಿಯೇ ಪೇಜ್ ಅನ್ನು ಮೇಲೆ-ಕೆಳಗೆ ಜಾರುವಂತೆ (Scroll) ಮಾಡುತ್ತದೆ.</p>
+                    <p class="mb-2 text-sm"><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಒಂದು ಉದ್ದವಾದ ಕ್ಯಾಲೆಂಡರ್ ಅನ್ನು ಸುರುಳಿ ಸುತ್ತುತ್ತಾ ಕೆಳಗೆ ಅಥವಾ ಮೇಲಕ್ಕೆ ನೋಡುವುದು.</p>
+                    <p class="mb-3 text-sm"><strong>ವೆಬ್‌ಸೈಟ್ ಉದಾಹರಣೆ:</strong> ಅಮೆಜಾನ್ ಓದುತ್ತಾ ತೀರಾ ಕೆಳಗೆ ಹೋದಾಗ, ಅಲ್ಲಿ "Go to Top" ಗುಂಡಿ ಇರುತ್ತದೆ. ಅದನ್ನು ಒತ್ತಿದಾಗ ತಾನಾಗಿಯೇ ವೇಗವಾಗಿ ಮೇಲ್ಭಾಗಕ್ಕೆ ಹೋಗುತ್ತೀರಲ್ಲ, ಅಲ್ಲಿ scrollTo() ಬಳಸಿರುತ್ತಾರೆ.</p>
+<pre><code class="language-javascript">// ಪೇಜ್ ಅನ್ನು ಅತ್ಯಂತ ಮೇಲ್ಭಾಗಕ್ಕೆ 
+// (0, 0 ಜಾಗಕ್ಕೆ) ತಳ್ಳುತ್ತದೆ
+window.scrollTo(0, 0);</code></pre>
+                </div>
+
+                <!-- focus -->
+                <div>
+                    <h3 class="text-xl font-bold mb-2">focus() <br><span class="text-base font-normal text-gray-500">(ಬೆಳಕು ಚೆಲ್ಲುವುದು / ಗಮನ ಸೆಳೆಯುವುದು)</span></h3>
+                    <p class="mb-3 text-sm">ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿರುವ ಯಾವುದಾದರೂ ಒಂದು ಟೆಕ್ಸ್ಟ್ ಬಾಕ್ಸ್‌ಗೆ (ಬರೆಯುವ ಜಾಗ) ನೇರವಾಗಿ ಕರ್ಸರ್ (ಟೈಪ್ ಮಾಡುವ ಗೆರೆ) ಹೋಗಿ ನಿಲ್ಲುವಂತೆ ಮಾಡುತ್ತದೆ.</p>
+                    <p class="mb-2 text-sm"><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಕತ್ತಲೆಯಲ್ಲಿ ಸ್ಟೇಜ್ ಮೇಲೆ ನಿಂತಿರುವ ಒಬ್ಬನೇ ವ್ಯಕ್ತಿಯ ಮೇಲೆ ಲೈಟ್ ಬಿಟ್ಟು (Spotlight) ಎಲ್ಲರ ಗಮನ ಸೆಳೆಯುವ ಹಾಗೆ.</p>
+                    <p class="mb-3 text-sm"><strong>ವೆಬ್‌ಸೈಟ್ ಉದಾಹರಣೆ:</strong> ಗೂಗಲ್ (Google) ಆಪ್ ಓಪನ್ ಮಾಡಿದ ತಕ್ಷಣ, ಸರ್ಚ್ ಬಾಕ್ಸ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡದಿದ್ದರೂ ಕೀಬೋರ್ಡ್ ತಾನಾಗಿಯೇ ಓಪನ್ ಆಗಿ ಟೈಪ್ ಮಾಡಲು ರೆಡಿ ಇರುತ್ತದಲ್ಲ? ಅಲ್ಲಿ focus() ಮಾಡಿರುತ್ತಾರೆ.</p>
+<pre><code class="language-javascript">// 'searchBox' ಜಾಗಕ್ಕೆ ಹೋಗಿ ಟೈಪ್ ಮಾಡಲು ರೆಡಿಯಾಗು
+document.getElementById("searchBox").focus();</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: JSON -->
+        <section id="json" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg text-yellow-600 dark:text-yellow-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">5. JSON (ಜೆಸನ್)</h2>
+            </div>
+
+            <p class="text-lg mb-6">JSON (JavaScript Object Notation) ಎನ್ನುವುದು ಕಂಪ್ಯೂಟರ್ ಜಗತ್ತಿನ <strong>ಪಾರ್ಸೆಲ್ ಅಥವಾ ಕುರಿಯರ್ ಸರ್ವೀಸ್</strong> ಇದ್ದ ಹಾಗೆ! ಮಾಹಿತಿಯನ್ನು (Data) ಬರೆದಿಡುವ ಮತ್ತು ಕಳುಹಿಸುವ ಒಂದು ಸರಳವಾದ ಶೈಲಿ.</p>
+
+            <div class="analogy-card p-5 rounded-lg shadow-sm mb-8">
+                <strong class="text-blue-700 dark:text-blue-400">ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ನೀವು ಮನೆ ಶಿಫ್ಟ್ ಮಾಡುವಾಗ ನಿಮ್ಮ ಎಲ್ಲಾ ವಸ್ತುಗಳನ್ನು ಬೇರೆ ಬೇರೆ ರಟ್ಟಿನ ಬಾಕ್ಸ್‌ಗಳಲ್ಲಿ ಹಾಕಿ, ಅದರ ಮೇಲೆ ಲೇಬಲ್ ಅಂಟಿಸುತ್ತೀರಲ್ಲ? ಅದೇ ರೀತಿ, ಇಂಟರ್ನೆಟ್‌ನಲ್ಲಿ ಒಂದು ಕಂಪ್ಯೂಟರ್‌ನಿಂದ ಇನ್ನೊಂದು ಕಂಪ್ಯೂಟರ್‌ಗೆ ಮಾಹಿತಿಯನ್ನು ಕಳುಹಿಸಲು ಮಾಡುವ 'ಪ್ಯಾಕಿಂಗ್' ಅನ್ನು JSON ಎನ್ನುತ್ತಾರೆ.
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Stringify -->
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                    <h3 class="text-xl font-bold mb-2">1. JSON.stringify()</h3>
+                    <p class="text-sm text-gray-500 mb-3">(ಬಾಕ್ಸ್‌ಗೆ ಹಾಕಿ ಪ್ಯಾಕ್ ಮಾಡುವುದು)</p>
+                    <p class="mb-2 text-sm">ನಿಮ್ಮ ಬಳಿ ಇರುವ ಮಾಹಿತಿಯನ್ನು (Object) ಒಂದು ಸಾಮಾನ್ಯ ಟೆಕ್ಸ್ಟ್ ಅಥವಾ ವಾಕ್ಯವಾಗಿ (String) ಬದಲಾಯಿಸುತ್ತದೆ. ಇಂಟರ್ನೆಟ್ ಎಂಬ ರಸ್ತೆಯಲ್ಲಿ ಡೇಟಾ ಟೆಕ್ಸ್ಟ್ ರೂಪದಲ್ಲಿ ಮಾತ್ರ ಪ್ರಯಾಣ ಮಾಡಬೇಕು.</p>
+                    <p class="mb-3 text-sm text-gray-600 dark:text-gray-400"><em>ಉದಾಹರಣೆ: ಊರಿಗೆ ಹೋಗುವಾಗ ಬೀರುದಲ್ಲಿರುವ ಬಟ್ಟೆಗಳನ್ನೆಲ್ಲಾ ತೆಗೆದು ಸೂಟ್‌ಕೇಸ್‌ಗೆ ಹಾಕಿ ಜಿಪ್ (Zip) ಹಾಕಿದ ಹಾಗೆ.</em></p>
+<pre><code class="language-javascript">let student = { name: "ರಾಮು", marks: 95 };
+
+// ಇಂಟರ್ನೆಟ್‌ನಲ್ಲಿ ಕಳುಹಿಸಲು ಪ್ಯಾಕ್ ಮಾಡೋಣ
+let packedData = JSON.stringify(student); 
+
+// ಈಗ ಟೆಕ್ಸ್ಟ್ ಬಾಕ್ಸ್: '{"name":"ರಾಮು","marks":95}'
+console.log(packedData);</code></pre>
+                </div>
+
+                <!-- Parse -->
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                    <h3 class="text-xl font-bold mb-2">2. JSON.parse()</h3>
+                    <p class="text-sm text-gray-500 mb-3">(ಪಾರ್ಸೆಲ್ ಓಪನ್ ಮಾಡಿ ಹೊರತೆಗೆಯುವುದು)</p>
+                    <p class="mb-2 text-sm">ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಬಂದ ಟೆಕ್ಸ್ಟ್ ಬಾಕ್ಸ್ (String) ಅನ್ನು ಒಡೆದು/ಬಿಡಿಸಿ, ಮತ್ತೆ ಬಳಸಬಹುದಾದ ಅಸಲಿ ಮಾಹಿತಿಯನ್ನಾಗಿ (Object) ಮಾಡುತ್ತದೆ.</p>
+                    <p class="mb-3 text-sm text-gray-600 dark:text-gray-400"><em>ಉದಾಹರಣೆ: ಊರಿಗೆ ತಲುಪಿದ ಮೇಲೆ, ಬಸ್‌ನಿಂದ ತಂದ ಸೂಟ್‌ಕೇಸ್ ಓಪನ್ ಮಾಡಿ ಬಟ್ಟೆಗಳನ್ನು ಹೊರತೆಗೆದು ಮತ್ತೆ ಧರಿಸಲು ರೆಡಿ ಮಾಡಿದ ಹಾಗೆ.</em></p>
+<pre><code class="language-javascript">let receivedBox = '{"name":"ಗೀತಾ","marks":98}';
+
+// ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಬಂದ ಪಾರ್ಸೆಲ್ ಓಪನ್ ಮಾಡೋಣ
+let unpackedData = JSON.parse(receivedBox);
+
+// ಈಗ ಹೆಸರನ್ನು ಸುಲಭವಾಗಿ ತೆಗೆದುಕೊಳ್ಳಬಹುದು
+console.log(unpackedData.name); // ಗೀತಾ</code></pre>
+                </div>
+            </div>
+
+            <div class="bg-indigo-50 dark:bg-indigo-900/30 p-5 rounded-lg border border-indigo-200 dark:border-indigo-700/50">
+                <h3 class="text-xl font-bold mb-3">ಹಂತ 3: ಪ್ರೊ (Pro Level) - ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ ಇದರ ಬಳಕೆ ಏನು?</h3>
+                <p class="mb-4">ದೊಡ್ಡ ದೊಡ್ಡ ವೆಬ್‌ಸೈಟ್‌ಗಳಲ್ಲಿ (Amazon, Swiggy, WhatsApp) ಈ JSON ಅನ್ನು ಮುಖ್ಯವಾಗಿ 2 ಕಡೆ ಬಳಸುತ್ತಾರೆ:</p>
+                <ul class="list-none space-y-4">
+                    <li>
+                        <strong>1. localStorage (ಮೆಮೊರಿ) ಜೊತೆಗೆ:</strong><br>
+                        ಮೆಮೊರಿಯಲ್ಲಿ ಕೇವಲ 'ಅಕ್ಷರಗಳನ್ನು (Text)' ಮಾತ್ರ ಸೇವ್ ಮಾಡಬಹುದು. ಹಾಗಾಗಿ 'ಶಾಪಿಂಗ್ ಕಾರ್ಟ್' ಸೇವ್ ಮಾಡಬೇಕಾದರೆ, ಮೊದಲು <code>JSON.stringify()</code> ಬಳಸಿ ಪ್ಯಾಕ್ ಮಾಡಿ ಸೇವ್ ಮಾಡಬೇಕು. ಮರುದಿನ ನೋಡುವಾಗ <code>JSON.parse()</code> ಬಳಸಿ ಅನ್‌ಪ್ಯಾಕ್ ಮಾಡಿ ಸ್ಕ್ರೀನ್ ಮೇಲೆ ತೋರಿಸಬೇಕು.
+                    </li>
+                    <li>
+                        <strong>2. fetch() (ಡೆಲಿವರಿ ಬಾಯ್) ಜೊತೆಗೆ:</strong><br>
+                        ಅಮೆಜಾನ್ ಸರ್ವರ್‌ನಿಂದ ನಿಮ್ಮ ಫೋನ್‌ಗೆ 100 ಮೊಬೈಲ್‌ಗಳ ಲಿಸ್ಟ್ ಬರುವಾಗ, ಅದು JSON ಪ್ಯಾಕೆಟ್ ರೂಪದಲ್ಲಿಯೇ ಬರುತ್ತದೆ. ನಿಮ್ಮ ಫೋನ್ ಆ ಪ್ಯಾಕೆಟ್ ಅನ್ನು ರಿಸೀವ್ ಮಾಡಿಕೊಂಡು <code>JSON.parse()</code> ಮಾಡಿ, ಅದರಲ್ಲಿರುವ ಮೊಬೈಲ್ ಹೆಸರು, ಬೆಲೆಗಳನ್ನು ಬಿಡಿಸಿ ಸುಂದರವಾಗಿ ತೋರಿಸುತ್ತದೆ.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 6: Pro Developer Tools -->
+        <section id="proTools" class="mb-20 fade-in-up">
+            <div class="flex items-center gap-4 mb-6 border-b pb-2 border-gray-200 dark:border-slate-700">
+                <div class="p-3 bg-teal-100 dark:bg-teal-900/50 rounded-lg text-teal-600 dark:text-teal-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">6. ಬ್ರಹ್ಮಾಸ್ತ್ರಗಳು (Pro Developer Tools)</h2>
+            </div>
+            
+            <p class="mb-8 text-lg">ನೀವು ಈ ಎಲ್ಲಾ ಕಾನ್ಸೆಪ್ಟ್‌ಗಳನ್ನು ಒಟ್ಟುಗೂಡಿಸಿ ಪ್ರಾಜೆಕ್ಟ್ (Swiggy, Amazon ನಂತಹ ವೆಬ್‌ಸೈಟ್) ಮಾಡಲು ಹೊರಟಾಗ, ಪ್ರತಿಯೊಬ್ಬ ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್ ಬಳಸುವ ಇನ್ನೂ 4 ಪ್ರಮುಖ ಬ್ರಹ್ಮಾಸ್ತ್ರಗಳು ಇವೆ.</p>
+
+            <div class="space-y-10">
+                
+                <!-- querySelector -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">1. document.querySelector()</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">(ಸ್ಮಾರ್ಟ್ ಹುಡುಕಾಟ / GPS ಟ್ರ್ಯಾಕಿಂಗ್)</p>
+                    <p class="mb-3">ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿರುವ ಸಾವಿರಾರು ಲೈನ್‌ಗಳ ಕೋಡ್‌ನಲ್ಲಿ, ನಿಮಗೆ ಬೇಕಾದ ಒಂದು ನಿರ್ದಿಷ್ಟ ಗುಂಡಿ, ಫೋಟೋ ಅಥವಾ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಹುಡುಕಿ ತರಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ. ಇದು getElementById ಗಿಂತ ಬಹಳ ಅಡ್ವಾನ್ಸ್ಡ್.</p>
+                    <ul class="list-disc ml-5 mb-4 space-y-1 text-sm">
+                        <li><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಸ್ವಿಗ್ಗಿಯಲ್ಲಿ ಊಟ ಆರ್ಡರ್ ಮಾಡಿದಾಗ, ಡೆಲಿವರಿ ಬಾಯ್ ಗೂಗಲ್ ಮ್ಯಾಪ್ (GPS) ಬಳಸಿ ನಿಖರವಾಗಿ ನಿಮ್ಮ ಮನೆ ಬಾಗಿಲಿಗೆ ಬರುತ್ತಾನಲ್ಲ, ಹಾಗೆ.</li>
+                        <li><strong>ಪ್ರಾಜೆಕ್ಟ್ ಉದಾಹರಣೆ:</strong> ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್‌ನಲ್ಲಿ ಯಾರಿಗಾದರೂ 'ಲೈಕ್' ಮಾಡುವಾಗ, ನೀವು ಒತ್ತಿದ ಆ ನಿರ್ದಿಷ್ಟ ಫೋಟೋದ ಲೈಕ್ ಗುಂಡಿಯನ್ನು ಮಾತ್ರ ಹುಡುಕಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇದನ್ನು ಬಳಸುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">// "submit-btn" ಎಂಬ ಹೆಸರಿರುವ ಗುಂಡಿಯನ್ನು ಹುಡುಕಿ ತಾ
+let myButton = document.querySelector(".submit-btn");</code></pre>
+                </div>
+
+                <!-- Template Literals -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">2. ಟೆಂಪ್ಲೇಟ್ ಲಿಟರಲ್ಸ್ <code>${...}</code></h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">(ಫಿಲ್-ಇನ್-ದಿ-ಬ್ಲಾಂಕ್ಸ್)</p>
+                    <p class="mb-3">ವಾಕ್ಯಗಳ (Text) ಮಧ್ಯೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ನಂಬರ್ ಅಥವಾ ಮಾಹಿತಿಯನ್ನು ಸುಲಭವಾಗಿ ಸೇರಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ. ಇಲ್ಲಿ ಸಾಮಾನ್ಯ ಕೋಟ್ಸ್ ಬದಲು ಬ್ಯಾಕ್-ಟಿಕ್ (`) ಬಳಸುತ್ತಾರೆ (ಇದು ಕೀಬೋರ್ಡ್‌ನಲ್ಲಿ 1 ನಂಬರ್‌ನ ಪಕ್ಕ ಇರುತ್ತದೆ).</p>
+                    <ul class="list-disc ml-5 mb-4 space-y-1 text-sm">
+                        <li><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಶಾಲೆಯಲ್ಲಿ ಕೊಡುವ "ಪ್ರೋಗ್ರೆಸ್ ರಿಪೋರ್ಟ್". ಅದರಲ್ಲಿ ಎಲ್ಲಾ ಪ್ರಿಂಟ್ ಆಗಿರುತ್ತದೆ, ಕೇವಲ ನಿಮ್ಮ [ಹೆಸರು] ಮತ್ತು [ಮಾರ್ಕ್ಸ್] ಜಾಗ ಮಾತ್ರ ಖಾಲಿ ಬಿಟ್ಟಿರುತ್ತಾರೆ (Fill in the blanks).</li>
+                        <li><strong>ಪ್ರಾಜೆಕ್ಟ್ ಉದಾಹರಣೆ:</strong> ಅಮೆಜಾನ್‌ನಲ್ಲಿ ವಸ್ತುಗಳನ್ನು ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿದಾಗ "ನಿಮ್ಮ ಕಾರ್ಟ್‌ನಲ್ಲಿ 5 ವಸ್ತುಗಳಿವೆ, ಒಟ್ಟು ಮೊತ್ತ ₹500" ಎಂದು ತೋರಿಸಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">let items = 5;
+let price = 500;
+
+// ವಾಕ್ಯದ ಮಧ್ಯೆ ವೇರಿಯೇಬಲ್ ಸೇರಿಸಲು ${} ಬಳಸುತ್ತೇವೆ
+let message = `ನಿಮ್ಮ ಕಾರ್ಟ್‌ನಲ್ಲಿ ${items} ವಸ್ತುಗಳಿವೆ, ಒಟ್ಟು ಮೊತ್ತ ₹${price}.`;
+console.log(message);</code></pre>
+                </div>
+
+                <!-- map() -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">3. map()</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">(ಫ್ಯಾಕ್ಟರಿ ಮಶೀನ್ / ಆಟೋಮ್ಯಾಟಿಕ್ ಕಾಪಿ)</p>
+                    <p class="mb-3">forEach ಕೇವಲ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಆದರೆ map() ಒಂದು ಪಟ್ಟಿಯಲ್ಲಿರುವ (Array) ಪ್ರತಿಯೊಂದು ವಸ್ತುವನ್ನು ತೆಗೆದುಕೊಂಡು, ಅದನ್ನು ಬದಲಾಯಿಸಿ, <strong>ಒಂದು ಹೊಸ ಪಟ್ಟಿಯನ್ನು (New Array)</strong> ಕೊಡುತ್ತದೆ.</p>
+                    <ul class="list-disc ml-5 mb-4 space-y-1 text-sm">
+                        <li><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಫ್ಯಾಕ್ಟರಿ ಮಶೀನ್. ನೀವು 10 ಹಸಿ ಆಲೂಗಡ್ಡೆಗಳನ್ನು ಹಾಕಿದರೆ, ಅದು ಆಲೂಗಡ್ಡೆಯನ್ನು ಕತ್ತರಿಸಿ, ಹುರಿದು, ಇನ್ನೊಂದು ಕಡೆಯಿಂದ 10 'ಪೊಟ್ಯಾಟೊ ಚಿಪ್ಸ್' ಪ್ಯಾಕೆಟ್‌ಗಳನ್ನು ಹೊರಹಾಕುತ್ತದೆ.</li>
+                        <li><strong>ಪ್ರಾಜೆಕ್ಟ್ ಉದಾಹರಣೆ:</strong> Zomato ಸರ್ವರ್‌ನಿಂದ 10 ಹೋಟೆಲ್‌ಗಳ ಹೆಸರು ಬಂದಾಗ, ಆ 10 ಹೆಸರುಗಳನ್ನು ಸುಂದರವಾದ 10 "HTML ಡಿಸೈನ್ ಕಾರ್ಡ್" ಗಳನ್ನಾಗಿ ಬದಲಾಯಿಸಲು map() ಬಳಸುತ್ತಾರೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">let numbers = [1, 2, 3];
+
+// ಪ್ರತಿಯೊಂದು ನಂಬರ್ ಅನ್ನು 2 ರಿಂದ ಗುಣಿಸಿ ಹೊಸ ಪಟ್ಟಿ ಮಾಡುವುದು
+let doubledNumbers = numbers.map(num => num * 2);
+
+console.log(doubledNumbers); // ಉತ್ತರ: [2, 4, 6] ಬರುತ್ತದೆ</code></pre>
+                </div>
+
+                <!-- Async / Await -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">4. Async / Await</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">(ಟೋಕನ್ ವ್ಯವಸ್ಥೆ / ಕಾಯುವಿಕೆ)</p>
+                    <p class="mb-3">ಒಂದು ಕೆಲಸ ಆಗಲು ಸಮಯ ಹಿಡಿಯುತ್ತದೆ ಎಂದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆ ಕೆಲಸ ಮುಗಿಯುವವರೆಗೆ ಕಾಯುವಂತೆ ಮಾಡುತ್ತದೆ.</p>
+                    <ul class="list-disc ml-5 mb-4 space-y-1 text-sm">
+                        <li><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ನೀವು ಕಾಫಿ ಶಾಪ್‌ಗೆ ಹೋಗಿ ಕಾಫಿ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಅವರು ತಕ್ಷಣ ಕಾಫಿ ಕೊಡಲ್ಲ, ಟೋಕನ್ ಕೊಡುತ್ತಾರೆ. ನೀವು ಕಾಯುತ್ತೀರಿ (Await). ಕಾಫಿ ರೆಡಿ ಆದಾಗ ತೆಗೆದುಕೊಂಡು ಕುಡಿಯುತ್ತೀರಿ.</li>
+                        <li><strong>ಪ್ರಾಜೆಕ್ಟ್ ಉದಾಹರಣೆ:</strong> fetch() ಬಳಸಿ ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ತರುವಾಗ, ಅದು ಬರಲು 2 ಸೆಕೆಂಡ್ ಬೇಕು. ಆ ಡೇಟಾ ಸಂಪೂರ್ಣವಾಗಿ ಬರುವವರೆಗೂ ಕಾಯಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ. ಇಲ್ಲದಿದ್ದರೆ ಡೇಟಾ ಬರುವ ಮೊದಲೇ ಸ್ಕ್ರೀನ್ ಓಪನ್ ಆಗಿ, "ಮಾಹಿತಿ ಇಲ್ಲ (undefined)" ಎಂದು ಎರರ್ ಬರುತ್ತದೆ.</li>
+                    </ul>
+<pre><code class="language-javascript">// async ಎಂದರೆ "ಇದರಲ್ಲಿ ಸಮಯ ಹಿಡಿಯುವ ಕೆಲಸ ಇದೆ" ಎಂದು ಅರ್ಥ
+async function getRestaurantData() {
+  
+  // ಹೋಟೆಲ್ ಲಿಸ್ಟ್ ಬರುವವರೆಗೂ ಇಲ್ಲಿಯೇ ಕಾಯುತ್ತಿರು (await)
+  let response = await fetch("https://api.swiggy.com/hotels");
+  
+  // ಡೇಟಾ ಬಂದ ಮೇಲೆ ಮುಂದಿನ ಕೆಲಸ ಮಾಡು
+  console.log("ಹೋಟೆಲ್ ಲಿಸ್ಟ್ ರೆಡಿ ಇದೆ!");
+}</code></pre>
+                </div>
+
+            </div>
+            
+            <div class="mt-12 p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl text-white shadow-lg text-center fade-in-up">
+                <h3 class="text-2xl font-bold mb-2">ಸಾರಾಂಶ 🎯</h3>
+                <p class="text-blue-100">ನೀವು ಮೇಲೆ ಪಟ್ಟಿ ಮಾಡಿರುವ forEach, JSON, setTimeout ಗಳ ಜೊತೆಗೆ, ಈ ಹೊಸ querySelector, map(), ಮತ್ತು Async/Await ಸೇರಿಸಿಕೊಂಡರೆ, ನೀವು ಯಾವುದೇ ರಿಯಲ್-ವರ್ಲ್ಡ್ ಪ್ರಾಜೆಕ್ಟ್ (ಉದಾಹರಣೆಗೆ: To-Do List, Weather App, Shopping Cart) ಅನ್ನು ಸುಲಭವಾಗಿ ಪ್ರಾರಂಭಿಸಬಹುದು!</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 dark:text-gray-400 text-sm mt-20 pb-10 border-t border-gray-200 dark:border-slate-800 pt-8">
+            <p>JavaScript Notes Documentation © 2023-2024</p>
+            <p class="mt-2 text-xs">Built with ❤️ and Tailwind CSS</p>
+        </footer>
+
+    </div>
+
+    <!-- PrismJS Script for Code Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+        // Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        // Check local storage or system preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle the dark class on html element
+            document.documentElement.classList.toggle('dark');
+            
+            // Save preference to local storage
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+        });
+
+        // Scroll Animations (Fade In Up)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach((elem) => {
+            observer.observe(elem);
+        });
+    </script>
+</body>
+</html>

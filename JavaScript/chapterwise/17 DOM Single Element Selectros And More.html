@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS DOM Selectors - Pro Notes</title>
+    
+    <!-- Tailwind CSS for Modern Responsive Design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Noto Sans Kannada & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 glass-card border-b border-gray-700 shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-brands fa-js text-yellow-400 text-3xl animate-pulse-slow"></i>
+                <h1 class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">DOM MasterClass</h1>
+            </div>
+            <a href="#demo-section" class="hidden md:inline-block bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+                <i class="fa-solid fa-play mr-2"></i>Live Demo
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-10 space-y-12">
+
+        <!-- Introduction -->
+        <section class="opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="p-3 bg-blue-500/20 rounded-xl text-blue-400">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                </div>
+                <h2 class="text-3xl font-bold text-white">JavaScript DOM "Single Element Selector"</h2>
+            </div>
+            <p class="text-lg leading-relaxed text-gray-300 border-l-4 border-blue-500 pl-4 bg-gray-800/50 py-3 rounded-r-lg">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ DOM (Document Object Model) ನಲ್ಲಿ "Single Element Selector" ಎನ್ನುವುದು HTML ಪೇಜ್‌ನಿಂದ ಕೇವಲ ಒಂದು ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹಿಡಿದು (select), ಅದರ ಮೇಲೆ ನಮಗೆ ಬೇಕಾದ ಬದಲಾವಣೆಗಳನ್ನು (ಉದಾಹರಣೆಗೆ ಬಣ್ಣ, ಟೆಕ್ಸ್ಟ್ ಬದಲಾಯಿಸುವುದು, ಅನಿಮೇಷನ್ ಸೇರಿಸುವುದು) ಮಾಡಲು ಸಹಾಯ ಮಾಡುವ ವಿಧಾನವಾಗಿದೆ.
+            </p>
+            <p class="mt-4 text-gray-400"><i class="fa-solid fa-arrow-down mr-2 text-emerald-400"></i>ಇದರ ಆಳವಾದ ಕಾರ್ಯವಿಧಾನ ಮತ್ತು ಉದಾಹರಣೆಗಳು ಇಲ್ಲಿವೆ:</p>
+        </section>
+
+        <!-- Section 1: getElementById -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <h3 class="text-2xl font-bold text-blue-400 mb-4 flex items-center">
+                <i class="fa-solid fa-bolt mr-3 text-yellow-400"></i>1. document.getElementById('id_name') - ಆಳವಾದ ವಿವರಣೆ
+            </h3>
+            <h4 class="text-xl font-semibold mt-4 mb-2">ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h4>
+            <p class="text-gray-300 leading-relaxed mb-4">
+                ಇದು HTML ಎಲಿಮೆಂಟ್‌ಗಳಿಗೆ ನೀಡಲಾದ id ಅಟ್ರಿಬ್ಯೂಟ್ ಅನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತದೆ. ನಿಯಮದ ಪ್ರಕಾರ, ಒಂದು HTML ಪೇಜ್‌ನಲ್ಲಿ ಒಂದು ನಿರ್ದಿಷ್ಟ id ಕೇವಲ ಒಂದೇ ಎಲಿಮೆಂಟ್‌ಗೆ ಇರಬೇಕು. ಹಾಗಾಗಿ ಬ್ರೌಸರ್ ಇಡೀ ಪೇಜ್ ಅನ್ನು ಹುಡುಕುವ ಬದಲು ನೇರವಾಗಿ ಆ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹಿಡಿಯುತ್ತದೆ. ಇದು ಅತ್ಯಂತ ವೇಗವಾದ (Fastest) ವಿಧಾನವಾಗಿದೆ.
+            </p>
+            <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4 mb-6">
+                <p class="text-red-300"><i class="fa-solid fa-triangle-exclamation mr-2"></i><strong>Edge Case (ನೆನಪಿಡಬೇಕಾದ ಅಂಶ):</strong> ನೀವು ಹುಡುಕುತ್ತಿರುವ id ಪೇಜ್‌ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, ಇದು null (ಏನೂ ಇಲ್ಲ) ಎಂದು ಹಿಂದಿರುಗಿಸುತ್ತದೆ.</p>
+            </div>
+            <p class="font-semibold text-gray-200 mb-2">ಉದಾಹರಣೆ:</p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-4">
+                <div class="bg-gray-800 text-gray-400 px-4 py-2 text-sm flex justify-between items-center border-b border-gray-700">
+                    <span><i class="fa-brands fa-html5 mr-2 text-orange-500"></i>HTML</span>
+                </div>
+<pre><code class="language-html">&lt;!-- HTML ಭಾಗ --&gt;
+&lt;h1 id="heading"&gt;ಹಲೋ ಜಗತ್ತೇ!&lt;/h1&gt;
+&lt;p id="description"&gt;ಇದು ಹಳೆಯ ಪ್ಯಾರಾಗ್ರಾಫ್.&lt;/p&gt;</code></pre>
+            </div>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21]">
+                <div class="bg-gray-800 text-gray-400 px-4 py-2 text-sm flex justify-between items-center border-b border-gray-700">
+                    <span><i class="fa-brands fa-square-js mr-2 text-yellow-400"></i>JavaScript</span>
+                </div>
+<pre><code class="language-javascript">// JavaScript ಭಾಗ
+
+// 1. ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುವುದು
+const myHeading = document.getElementById('heading');
+const myPara = document.getElementById('description');
+
+// 2. ಅದರ ಮೇಲೆ ಬದಲಾವಣೆ ಮಾಡುವುದು (Manipulation)
+myHeading.innerText = "ನಮಸ್ಕಾರ ಕನ್ನಡಿಗರೇ!"; // ಟೆಕ್ಸ್ಟ್ ಬದಲಾಯಿಸಿದೆ
+myHeading.style.color = "red"; // ಅಕ್ಷರದ ಬಣ್ಣ ಕೆಂಪು ಮಾಡಿದೆ
+myHeading.style.fontSize = "50px"; // ಅಕ್ಷರದ ಗಾತ್ರ ದೊಡ್ಡದು ಮಾಡಿದೆ
+
+// 3. HTML ಅನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಬದಲಾಯಿಸುವುದು
+myPara.innerHTML = "&lt;strong&gt;ಇದು ಹೊಸ, ದಪ್ಪವಾದ ಪ್ಯಾರಾಗ್ರಾಫ್.&lt;/strong&gt;";</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: querySelector -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4 flex items-center">
+                <i class="fa-solid fa-magnifying-glass mr-3"></i>2. document.querySelector('css_selector') - ಆಳವಾದ ವಿವರಣೆ
+            </h3>
+            <h4 class="text-xl font-semibold mt-4 mb-2">ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h4>
+            <p class="text-gray-300 leading-relaxed mb-4">
+                ಇದು ಅತ್ಯಂತ ಶಕ್ತಿಶಾಲಿ (Powerful) ಸೆಲೆಕ್ಟರ್. CSS ನಲ್ಲಿ ನೀವು ಎಲಿಮೆಂಟ್‌ಗಳಿಗೆ ಸ್ಟೈಲ್ ಮಾಡಲು ಯಾವ ನಿಯಮಗಳನ್ನು ಬಳಸುತ್ತೀರೋ (ಉದಾಹರಣೆಗೆ: .class, #id, tag, [attribute]), ಅದೇ ನಿಯಮಗಳನ್ನು ಇಲ್ಲಿ ಬಳಸಬಹುದು.
+            </p>
+            <div class="bg-emerald-900/30 border border-emerald-500/50 rounded-lg p-4 mb-6 text-emerald-200">
+                <i class="fa-solid fa-circle-check mr-2"></i><strong>ಮುಖ್ಯ ನಿಯಮ:</strong> ಇದು ಇಡೀ ಪೇಜ್ ಅನ್ನು ಮೇಲಿನಿಂದ ಕೆಳಗೆ ಹುಡುಕುತ್ತಾ ಬಂದು, ಸಿಗುವ ಮೊದಲನೇ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡಿ ಅಲ್ಲಿಗೆ ಹುಡುಕುವುದನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ.
+            </div>
+            <p class="font-semibold text-gray-200 mb-2">ಉದಾಹರಣೆಗಳು:</p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-4">
+                <div class="bg-gray-800 text-gray-400 px-4 py-2 text-sm flex justify-between items-center border-b border-gray-700">
+                    <span><i class="fa-brands fa-html5 mr-2 text-orange-500"></i>HTML</span>
+                </div>
+<pre><code class="language-html">&lt;!-- HTML ಭಾಗ --&gt;
+&lt;div class="box"&gt;ಬಾಕ್ಸ್ 1&lt;/div&gt;
+&lt;div class="box"&gt;ಬಾಕ್ಸ್ 2&lt;/div&gt;
+&lt;a href="https://google.com"&gt;ಗೂಗಲ್&lt;/a&gt;
+&lt;input type="password" placeholder="ಪಾಸ್‌ವರ್ಡ್ ಹಾಕಿ"&gt;</code></pre>
+            </div>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21]">
+                <div class="bg-gray-800 text-gray-400 px-4 py-2 text-sm flex justify-between items-center border-b border-gray-700">
+                    <span><i class="fa-brands fa-square-js mr-2 text-yellow-400"></i>JavaScript</span>
+                </div>
+<pre><code class="language-javascript">// JavaScript ಭಾಗ
+
+// A. Class ಮೂಲಕ ಆಯ್ಕೆ ಮಾಡುವುದು (ಕ್ಲಾಸ್ ಹೆಸರಿನ ಹಿಂದೆ ಚುಕ್ಕೆ '.' ಬಳಸಬೇಕು)
+const firstBox = document.querySelector('.box');
+firstBox.style.border = "2px solid blue";
+// ಗಮನಿಸಿ: ಇದು 'ಬಾಕ್ಸ್ 1' ಗೆ ಮಾತ್ರ ನೀಲಿ ಬಾರ್ಡರ್ ಹಾಕುತ್ತದೆ, 'ಬಾಕ್ಸ್ 2' ಗಲ್ಲ. 
+// ಏಕೆಂದರೆ ಇದು ಮೊದಲನೇ ಮ್ಯಾಚ್ ಅನ್ನು ಮಾತ್ರ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ.
+
+// B. ಟ್ಯಾಗ್ ಮೂಲಕ ಆಯ್ಕೆ (ನೇರವಾಗಿ ಟ್ಯಾಗ್ ಹೆಸರು)
+const myLink = document.querySelector('a');
+myLink.setAttribute('href', 'https://yahoo.com'); // ಲಿಂಕ್ ಅನ್ನು yahoo ಗೆ ಬದಲಾಯಿಸಿದೆ
+myLink.innerText = "ಯಾಹೂ";
+
+// C. Attribute (ಗುಣಲಕ್ಷಣ) ಮೂಲಕ ಸಂಕೀರ್ಣ ಆಯ್ಕೆ
+// (ಪಾಸ್‌ವರ್ಡ್ ಇನ್ಪುಟ್ ಅನ್ನು ಮಾತ್ರ ಹುಡುಕಲು)
+const passInput = document.querySelector('input[type="password"]');
+passInput.style.backgroundColor = "lightgray";</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: DOM Manipulation -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <h3 class="text-2xl font-bold text-purple-400 mb-4 flex items-center">
+                <i class="fa-solid fa-wand-magic-sparkles mr-3"></i>3. ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡಿದ ಮೇಲೆ ಏನೇನು ಮಾಡಬಹುದು? (DOM Manipulation)
+            </h3>
+            <p class="text-gray-300 leading-relaxed mb-6">ಒಮ್ಮೆ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಸೆಲೆಕ್ಟ್ ಮಾಡಿದ ಮೇಲೆ, ಅದಕ್ಕೆ ಜೀವ ತುಂಬಬಹುದು:</p>
+            
+            <h4 class="text-lg font-semibold text-white mb-2">1. ಕ್ಲಾಸ್ ಸೇರಿಸುವುದು ಮತ್ತು ತೆಗೆಯುವುದು (classList):</h4>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-6">
+<pre><code class="language-javascript">const myButton = document.querySelector('#submit-btn');
+
+myButton.classList.add('active'); // CSS ನಲ್ಲಿರುವ .active ಸ್ಟೈಲ್ ಅನ್ವಯವಾಗುತ್ತದೆ
+myButton.classList.remove('hidden'); // .hidden ಸ್ಟೈಲ್ ತೆಗೆದುಹಾಕುತ್ತದೆ
+myButton.classList.toggle('dark-mode'); // ಇದ್ದರೆ ತೆಗೆಯುತ್ತದೆ, ಇಲ್ಲದಿದ್ದರೆ ಸೇರಿಸುತ್ತದೆ</code></pre>
+            </div>
+
+            <h4 class="text-lg font-semibold text-white mb-2">2. ಅಟ್ರಿಬ್ಯೂಟ್ (ಗುಣಲಕ್ಷಣ) ಓದುವುದು ಮತ್ತು ಬದಲಾಯಿಸುವುದು:</h4>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21]">
+<pre><code class="language-javascript">const myImage = document.querySelector('.profile-pic');
+
+// ಇಮೇಜ್‌ನ src ಅಟ್ರಿಬ್ಯೂಟ್ ಬದಲಾಯಿಸುವುದು
+myImage.src = "new-photo.jpg"; 
+myImage.alt = "ಹೊಸ ಪ್ರೊಫೈಲ್ ಚಿತ್ರ";</code></pre>
+            </div>
+        </section>
+
+        <!-- Pro Tip 1: Null Check -->
+        <section class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-6 md:p-8 shadow-2xl opacity-0 animate-fade-in-up" style="animation-delay: 0.5s;">
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4 flex items-center">
+                <i class="fa-solid fa-crown mr-3"></i>4. Pro Level Tip: Null Check (ದೋಷ ತಡೆಯುವುದು)
+            </h3>
+            <p class="text-gray-200 leading-relaxed mb-4">
+                ನಾವು ಹುಡುಕುತ್ತಿರುವ ಎಲಿಮೆಂಟ್ ಪೇಜ್‌ನಲ್ಲಿ ಇಲ್ಲದಿದ್ದರೆ, ಅದರ ಮೇಲೆ ಸ್ಟೈಲ್ ಅಪ್ಲೈ ಮಾಡಲು ಹೋದಾಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ TypeError ಕೊಡುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ ಮುಂದಿನ ಕೋಡ್ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ. ಇದನ್ನು ತಡೆಯಲು ಯಾವಾಗಲೂ if ಕಂಡೀಶನ್ ಬಳಸಿ ದೃಢಪಡಿಸಿಕೊಳ್ಳಬೇಕು.
+            </p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21]">
+<pre><code class="language-javascript">// ಪೇಜ್‌ನಲ್ಲಿ .main-title ಎಂಬ ಕ್ಲಾಸ್ ಇದೆಯೋ ಇಲ್ಲವೋ ಎಂದು ಚೆಕ್ ಮಾಡುವುದು
+const title = document.querySelector('.main-title');
+
+if (title) { 
+    // ಎಲಿಮೆಂಟ್ ಸಿಕ್ಕರೆ ಮಾತ್ರ ಈ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ (ಇದು ಸೇಫ್ ವಿಧಾನ)
+    title.style.color = "green";
+} else {
+    // ಎಲಿಮೆಂಟ್ ಸಿಗದಿದ್ದರೆ ಏನಾಗಬೇಕು?
+    console.log("ಎಲಿಮೆಂಟ್ ಪೇಜ್‌ನಲ್ಲಿ ಕಂಡುಬಂದಿಲ್ಲ!");
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Pseudo-classes -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
+            <h3 class="text-2xl font-bold text-pink-400 mb-4">
+                <i class="fa-brands fa-css3-alt mr-3"></i>CSS Pseudo-classes ಮತ್ತು querySelector
+            </h3>
+            <p class="text-gray-300 leading-relaxed mb-4">
+                JavaScript ನ <code>querySelector</code> ನ ಅತಿ ದೊಡ್ಡ ಶಕ್ತಿ ಎಂದರೆ ಅದು CSS ನ Pseudo-classes (:first-child, :last-child, :nth-child) ಗಳನ್ನು ಕೂಡ ಬೆಂಬಲಿಸುತ್ತದೆ. ಒಂದು ಗುಂಪಿನಲ್ಲಿರುವ (ಉದಾಹರಣೆಗೆ ಒಂದು ಲಿಸ್ಟ್ ಅಥವಾ ಟೇಬಲ್‌ನಲ್ಲಿರುವ) ನಿರ್ದಿಷ್ಟವಾದ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡಲು ಇವು ಅತ್ಯಂತ ಉಪಯುಕ್ತವಾಗಿವೆ.
+            </p>
+            <p class="text-gray-400 mb-2">ಉದಾಹರಣೆಗೆ, ನಮ್ಮ ಬಳಿ ಈ ಕೆಳಗಿನ HTML ಇದೆ ಎಂದುಕೊಳ್ಳಿ:</p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-6">
+<pre><code class="language-html">&lt;ul class="fruits-list"&gt;
+    &lt;li&gt;ಸೇಬು (Apple) - 1&lt;/li&gt;
+    &lt;li&gt;ಬಾಳೆಹಣ್ಣು (Banana) - 2&lt;/li&gt;
+    &lt;li&gt;ಮಾವಿನಹಣ್ಣು (Mango) - 3&lt;/li&gt;
+    &lt;li&gt;ದ್ರಾಕ್ಷಿ (Grapes) - 4&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+            </div>
+            
+            <p class="text-gray-300 mb-4">ಈಗ ಇವುಗಳನ್ನು JavaScript ನಲ್ಲಿ ಒಂದೊಂದಾಗಿ ಹೇಗೆ ಆಯ್ಕೆ ಮಾಡುವುದು ಎಂದು ನೋಡೋಣ:</p>
+
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-2">1. :first-child (ಮೊದಲನೇ ಎಲಿಮೆಂಟ್)</h4>
+                    <p class="text-sm text-gray-400 mb-2">ಒಂದು ಗುಂಪಿನಲ್ಲಿರುವ (siblings) ಎಲಿಮೆಂಟ್‌ಗಳಲ್ಲಿ ಮೊದಲನೆಯದನ್ನು ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+<pre><code class="language-javascript">// ಲಿಸ್ಟ್‌ನ ಮೊದಲನೇ &lt;li&gt; (ಸೇಬು) ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ
+const firstFruit = document.querySelector('.fruits-list li:first-child');
+firstFruit.style.color = "red"; 
+// ಈಗ 'ಸೇಬು' ಮಾತ್ರ ಕೆಂಪು ಬಣ್ಣಕ್ಕೆ ತಿರುಗುತ್ತದೆ.</code></pre>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-2">2. :last-child (ಕೊನೆಯ ಎಲಿಮೆಂಟ್)</h4>
+                    <p class="text-sm text-gray-400 mb-2">ಒಂದು ಗುಂಪಿನಲ್ಲಿರುವ ಎಲಿಮೆಂಟ್‌ಗಳಲ್ಲಿ ಕೊನೆಯದನ್ನು ಮಾತ್ರ ಆಯ್ಕೆ ಮಾಡಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+<pre><code class="language-javascript">// ಲಿಸ್ಟ್‌ನ ಕೊನೆಯ &lt;li&gt; (ದ್ರಾಕ್ಷಿ) ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ
+const lastFruit = document.querySelector('.fruits-list li:last-child');
+lastFruit.style.fontWeight = "bold"; 
+// ಈಗ 'ದ್ರಾಕ್ಷಿ' ದಪ್ಪ (bold) ಅಕ್ಷರಗಳಲ್ಲಿ ಕಾಣುತ್ತದೆ.</code></pre>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-2">3. :nth-child(n) (ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್)</h4>
+                    <p class="text-sm text-gray-400 mb-2">ನಮಗೆ ಮೊದಲನೇ ಅಥವಾ ಕೊನೆಯ ಎಲಿಮೆಂಟ್ ಬೇಡ, ಬದಲಾಗಿ ಮಧ್ಯದಲ್ಲಿರುವ 2ನೇ ಅಥವಾ 3ನೇ ಎಲಿಮೆಂಟ್ ಬೇಕು ಎಂದಾಗ ಇದನ್ನು ಬಳಸುತ್ತೇವೆ. n ಜಾಗದಲ್ಲಿ ನಮಗೆ ಬೇಕಾದ ಸಂಖ್ಯೆಯನ್ನು ಹಾಕಬೇಕು.</p>
+<pre><code class="language-javascript">// ಲಿಸ್ಟ್‌ನ 2ನೇ &lt;li&gt; (ಬಾಳೆಹಣ್ಣು) ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ
+const secondFruit = document.querySelector('.fruits-list li:nth-child(2)');
+secondFruit.style.backgroundColor = "yellow"; 
+// ಈಗ 2ನೇ ಐಟಂ 'ಬಾಳೆಹಣ್ಣು' ನ ಹಿನ್ನೆಲೆ ಬಣ್ಣ ಹಳದಿಯಾಗುತ್ತದೆ.
+
+// ಲಿಸ್ಟ್‌ನ 3ನೇ &lt;li&gt; (ಮಾವಿನಹಣ್ಣು) ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ
+const thirdFruit = document.querySelector('.fruits-list li:nth-child(3)');</code></pre>
+                </div>
+            </div>
+
+            <div class="mt-8 bg-gray-800 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                <h4 class="text-yellow-400 font-bold mb-2"><i class="fa-solid fa-lightbulb mr-2"></i>💡 Pro Tip: nth-child ಜೊತೆ even ಮತ್ತು odd ಬಳಕೆ</h4>
+                <p class="text-gray-300 text-sm mb-2">ನೀವು nth-child ಒಳಗೆ even (ಸಮ ಸಂಖ್ಯೆ) ಅಥವಾ odd (ಬೆಸ ಸಂಖ್ಯೆ) ಯನ್ನು ಕೂಡ ಬಳಸಬಹುದು.</p>
+                <p class="text-gray-300 text-sm font-semibold mb-2">ಆದರೆ ನೆನಪಿಡಿ: ನಾವು ಇಲ್ಲಿ ಕಲಿಯುತ್ತಿರುವುದು Single Element Selector (querySelector). ಇದು ಪೇಜ್‌ನಲ್ಲಿ ಮ್ಯಾಚ್ ಆಗುವ ಮೊದಲನೇ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮಾತ್ರ ಹಿಡಿಯುತ್ತದೆ.</p>
+                <ul class="list-disc list-inside text-sm text-gray-400 space-y-1 ml-2">
+                    <li>ನೀವು <code>document.querySelector('li:nth-child(even)')</code> ಎಂದು ಕೊಟ್ಟರೆ, ಅದು ಪೇಜ್‌ನ ಮೊದಲನೇ ಸಮ ಸಂಖ್ಯೆಯ (ಅಂದರೆ 2ನೇ) ಐಟಂ ಅನ್ನು ಮಾತ್ರ ಹಿಡಿಯುತ್ತದೆ.</li>
+                    <li>ಎಲ್ಲಾ ಸಮ/ಬೆಸ ಸಂಖ್ಯೆಯ ಐಟಂಗಳನ್ನು ಒಟ್ಟಿಗೆ ಹಿಡಿಯಲು ನಾವು Multiple Element Selector (querySelectorAll) ಅನ್ನು ಬಳಸಬೇಕಾಗುತ್ತದೆ.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- innerHTML vs innerText vs textContent -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.7s;">
+            <h3 class="text-2xl font-bold text-cyan-400 mb-4">
+                <i class="fa-solid fa-file-code mr-3"></i>innerHTML vs innerText vs textContent
+            </h3>
+            <p class="text-gray-300 leading-relaxed mb-4">
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಆಯ್ಕೆ ಮಾಡಿದ ನಂತರ, ಆ ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ವಿಷಯವನ್ನು (Content) ಓದಲು ಅಥವಾ ಬದಲಾಯಿಸಲು ನಾವು ಕೆಲವು ಮುಖ್ಯವಾದ ಪ್ರಾಪರ್ಟಿಗಳನ್ನು (Properties) ಬಳಸುತ್ತೇವೆ.
+            </p>
+            <p class="text-gray-400 mb-2">ಒಂದು ಉದಾಹರಣೆ HTML ನೊಂದಿಗೆ ಇವುಗಳ ಆಳವಾದ ವ್ಯತ್ಯಾಸವನ್ನು ನೋಡೋಣ:</p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-6">
+<pre><code class="language-html">&lt;div id="demo-box"&gt;
+    ನಮಸ್ಕಾರ, &lt;span style="display: none;"&gt;ಗುಪ್ತ ಸಂದೇಶ&lt;/span&gt; &lt;strong&gt;ಕನ್ನಡಿಗರೇ&lt;/strong&gt;!
+&lt;/div&gt;</code></pre>
+            </div>
+
+            <div class="grid md:grid-cols-1 gap-6">
+                <!-- 1 -->
+                <div class="bg-gray-800/50 p-5 rounded-xl border border-gray-700 hover:border-cyan-500 transition">
+                    <h4 class="text-xl font-semibold text-cyan-300 mb-2">1. innerHTML</h4>
+                    <p class="text-sm text-gray-300 mb-2">ಇದು ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಸಂಪೂರ್ಣ HTML ಕೋಡ್ ಅನ್ನು (ಟ್ಯಾಗ್‌ಗಳ ಸಮೇತ) ಹಿಡಿಯುತ್ತದೆ ಅಥವಾ ಹೊಸ HTML ಅನ್ನು ಸೇರಿಸಲು ಬಿಡುತ್ತದೆ.</p>
+                    <ul class="list-disc list-inside text-sm text-gray-400 mb-3">
+                        <li><strong>ಬಳಕೆ:</strong> ನೀವು ಟೆಕ್ಸ್ಟ್ ಜೊತೆಗೆ ಹೊಸ HTML ಟ್ಯಾಗ್‌ಗಳನ್ನು (ಉದಾ: ಲಿಂಕ್, ಬೋಲ್ಡ್, ಹೊಸ ಲಿಸ್ಟ್) ಸೇರಿಸಬೇಕಾದರೆ ಇದನ್ನು ಬಳಸಿ.</li>
+                    </ul>
+<pre><code class="language-javascript">const box = document.querySelector('#demo-box');
+
+// ಓದುವುದು (Get): 
+console.log(box.innerHTML); 
+// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, &lt;span style="display: none;"&gt;ಗುಪ್ತ ಸಂದೇಶ&lt;/span&gt; &lt;strong&gt;ಕನ್ನಡಿಗರೇ&lt;/strong&gt;!
+
+// ಬದಲಾಯಿಸುವುದು (Set):
+box.innerHTML = "&lt;h1&gt;ಹೊಸ ಸ್ವಾಗತ&lt;/h1&gt;&lt;p&gt;ಇದು ಹೊಸ ಪ್ಯಾರಾಗ್ರಾಫ್.&lt;/p&gt;";
+// ಈಗ ಹಳೆಯ ಕಂಟೆಂಟ್ ಹೋಗಿ, ಹೊಸ &lt;h1&gt; ಮತ್ತು &lt;p&gt; ಟ್ಯಾಗ್‌ಗಳು ಪೇಜ್‌ನಲ್ಲಿ ರೆಂಡರ್ ಆಗುತ್ತವೆ.</code></pre>
+                </div>
+
+                <!-- 2 -->
+                <div class="bg-gray-800/50 p-5 rounded-xl border border-gray-700 hover:border-cyan-500 transition">
+                    <h4 class="text-xl font-semibold text-cyan-300 mb-2">2. innerText</h4>
+                    <p class="text-sm text-gray-300 mb-2">ಇದು ಕೇವಲ ಬಳಕೆದಾರನಿಗೆ ಪರದೆಯ ಮೇಲೆ ಕಾಣುವ (Visible) ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಮಾತ್ರ ಹಿಡಿಯುತ್ತದೆ. ಇದು HTML ಟ್ಯಾಗ್‌ಗಳನ್ನು ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ ಮತ್ತು CSS ಮೂಲಕ ಅಡಗಿಸಿಟ್ಟ (hidden) ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ತೋರಿಸುವುದಿಲ್ಲ.</p>
+                    <ul class="list-disc list-inside text-sm text-gray-400 mb-3">
+                        <li><strong>ಬಳಕೆ:</strong> ಕೇವಲ ಓದಲು ಸಾಧ್ಯವಾಗುವ ಟೆಕ್ಸ್ಟ್ ಬೇಕಿದ್ದಾಗ, ಅಥವಾ ನೀವು ನೀಡುವ ಟೆಕ್ಸ್ಟ್ HTML ಕೋಡ್ ಆಗಿ ಕನ್ವರ್ಟ್ ಆಗಬಾರದು ಎಂದಾಗ ಇದನ್ನು ಬಳಸಿ.</li>
+                    </ul>
+<pre><code class="language-javascript">// ಓದುವುದು (Get):
+console.log(box.innerText); 
+// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ಕನ್ನಡಿಗರೇ! 
+// (ಇಲ್ಲಿ 'ಗುಪ್ತ ಸಂದೇಶ' ಕಾಣುವುದಿಲ್ಲ ಏಕೆಂದರೆ ಅದು display: none ನಲ್ಲಿದೆ)
+
+// ಬದಲಾಯಿಸುವುದು (Set):
+box.innerText = "&lt;strong&gt;ಹೊಸ ಟೆಕ್ಸ್ಟ್&lt;/strong&gt;";
+// ಇದು ದಪ್ಪಕ್ಷರದಲ್ಲಿ (Bold) ಬರುವುದಿಲ್ಲ. ಬದಲಾಗಿ &lt;strong&gt;ಹೊಸ ಟೆಕ್ಸ್ಟ್&lt;/strong&gt; ಎಂಬುದು ಸಾಧಾರಣ ಟೆಕ್ಸ್ಟ್ ಆಗಿ ಪರದೆಯ ಮೇಲೆ ಹಾಗೆಯೇ ಕಾಣುತ್ತದೆ.</code></pre>
+                </div>
+
+                <!-- 3 -->
+                <div class="bg-gray-800/50 p-5 rounded-xl border border-gray-700 hover:border-cyan-500 transition">
+                    <h4 class="text-xl font-semibold text-cyan-300 mb-2">3. textContent</h4>
+                    <p class="text-sm text-gray-300 mb-3">ಇದು innerText ಗೆ ಬಹಳ ಹತ್ತಿರವಾಗಿದೆ, ಆದರೆ ಇದು ಎಲಿಮೆಂಟ್‌ನ ಒಳಗಿರುವ ಪ್ರತಿಯೊಂದು ಟೆಕ್ಸ್ಟ್ ಅನ್ನು (ಅಡಗಿಸಿಟ್ಟದ್ದನ್ನು ಸೇರಿ) ಹಿಡಿಯುತ್ತದೆ. ಇದು innerText ಗಿಂತ ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಏಕೆಂದರೆ ಇದು CSS ಸ್ಟೈಲ್‌ಗಳನ್ನು ಲೆಕ್ಕಿಸುವುದಿಲ್ಲ.</p>
+<pre><code class="language-javascript">// ಓದುವುದು (Get):
+console.log(box.textContent); 
+// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ಗುಪ್ತ ಸಂದೇಶ ಕನ್ನಡಿಗರೇ! 
+// (ಅಡಗಿಸಿಟ್ಟ ಟೆಕ್ಸ್ಟ್ ಕೂಡ ಇಲ್ಲಿ ಬರುತ್ತದೆ)</code></pre>
+                </div>
+            </div>
+
+            <!-- Other Properties -->
+            <div class="mt-8">
+                <h4 class="text-xl font-bold text-white mb-4">ಇತರ ಮುಖ್ಯವಾದ Properties</h4>
+                
+                <h5 class="text-lg font-semibold text-gray-200 mb-2">4. value (ಇನ್ಪುಟ್ ಫೀಲ್ಡ್‌ಗಳಿಗಾಗಿ)</h5>
+                <p class="text-sm text-gray-400 mb-2">innerHTML ಅಥವಾ innerText ಗಳು div, p, h1 ಗಳಿಗೆ ಕೆಲಸ ಮಾಡಿದರೆ, ಫಾರ್ಮ್ ಎಲಿಮೆಂಟ್‌ಗಳಾದ <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> ಗಳಲ್ಲಿ ಬಳಕೆದಾರರು ಟೈಪ್ ಮಾಡಿದ ಡೇಟಾವನ್ನು ಹಿಡಿಯಲು value ಪ್ರಾಪರ್ಟಿಯನ್ನು ಬಳಸಬೇಕು.</p>
+                <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-6">
+<pre><code class="language-html">&lt;input type="text" id="username" value="ರಾಜಕುಮಾರ್"&gt;</code></pre>
+<pre><code class="language-javascript">const inputField = document.querySelector('#username');
+
+// ಓದುವುದು:
+console.log(inputField.value); // ಔಟ್‌ಪುಟ್: ರಾಜಕುಮಾರ್
+
+// ಬದಲಾಯಿಸುವುದು:
+inputField.value = "ಪುನೀತ್"; // ಈಗ ಟೆಕ್ಸ್ಟ್ ಬಾಕ್ಸ್‌ನಲ್ಲಿ 'ಪುನೀತ್' ಎಂದು ಬದಲಾಗುತ್ತದೆ.</code></pre>
+                </div>
+
+                <h5 class="text-lg font-semibold text-gray-200 mb-2">5. id ಮತ್ತು className</h5>
+                <p class="text-sm text-gray-400 mb-2">ಎಲಿಮೆಂಟ್‌ನ ಐಡಿ ಅಥವಾ ಕ್ಲಾಸ್ ಅನ್ನು ನೇರವಾಗಿ ಬದಲಾಯಿಸಲು ಇವು ಬಳಕೆಯಾಗುತ್ತವೆ.</p>
+                <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-6">
+<pre><code class="language-javascript">const myPara = document.querySelector('p');
+
+// ಹೊಸ ಐಡಿ ಕೊಡುವುದು
+myPara.id = "new-id-name";
+
+// ಕ್ಲಾಸ್ ಹೆಸರನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಬದಲಾಯಿಸುವುದು (ಹಳೆಯ ಕ್ಲಾಸ್ ಅಳಿಸಿಹೋಗುತ್ತದೆ)
+myPara.className = "alert-text error";</code></pre>
+                </div>
+            </div>
+
+            <div class="bg-red-900/40 border-l-4 border-red-500 p-4 rounded-r-lg mt-6">
+                <p class="text-red-200 text-sm">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i><strong>ಮುಖ್ಯ ಸೂಚನೆ:</strong> innerHTML ಅನ್ನು ಬಳಸುವಾಗ ಎಚ್ಚರಿಕೆ ವಹಿಸಿ. ಬಳಕೆದಾರರು ಟೈಪ್ ಮಾಡಿದ ಡೇಟಾವನ್ನು (ಉದಾಹರಣೆಗೆ ಕಮೆಂಟ್ ಸೆಕ್ಷನ್) ನೇರವಾಗಿ innerHTML ಮೂಲಕ ಪೇಜ್‌ಗೆ ಸೇರಿಸಬಾರದು, ಇದು ಹ್ಯಾಕಿಂಗ್‌ಗೆ (Cross-Site Scripting ಅಥವಾ XSS) ದಾರಿ ಮಾಡಿಕೊಡುತ್ತದೆ. ಅಂತ ಕಡೆ ಕೇವಲ textContent ಅಥವಾ innerText ಬಳಸಿ.
+                </p>
+            </div>
+        </section>
+
+        <!-- classList vs className -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.8s;">
+            <h3 class="text-2xl font-bold text-orange-400 mb-4 flex items-center">
+                <i class="fa-solid fa-layer-group mr-3"></i>classList vs className
+            </h3>
+            <p class="text-gray-300 leading-relaxed mb-6">
+                JavaScript ನಲ್ಲಿ ಒಂದು ಎಲಿಮೆಂಟ್‌ಗೆ CSS ಕ್ಲಾಸ್‌ಗಳನ್ನು ಸೇರಿಸಲು ಅಥವಾ ತೆಗೆಯಲು className ಮತ್ತು classList ಎರಡನ್ನೂ ಬಳಸಬಹುದು. ಆದರೆ ಪ್ರೊಗ್ರಾಮರ್‌ಗಳು ಯಾವಾಗಲೂ <strong>classList</strong> ಅನ್ನು ಹೆಚ್ಚು ಇಷ್ಟಪಡುತ್ತಾರೆ. ಇದಕ್ಕೆ ಮುಖ್ಯ ಕಾರಣ "ಹಳೆಯ ಡೇಟಾ ಅಳಿಸಿಹೋಗದಿರುವುದು" (Avoids Overwriting).
+            </p>
+
+            <h4 class="text-xl font-semibold text-white mb-2">1. className ನ ಸಮಸ್ಯೆ ಏನು?</h4>
+            <p class="text-gray-400 text-sm mb-3">className ಅನ್ನು ಬಳಸಿದಾಗ, ಎಲಿಮೆಂಟ್‌ನಲ್ಲಿ ಮೊದಲಿರುವ ಎಲ್ಲಾ ಕ್ಲಾಸ್‌ಗಳು ಸಂಪೂರ್ಣವಾಗಿ ಅಳಿಸಿಹೋಗುತ್ತವೆ ಮತ್ತು ನೀವು ನೀಡಿದ ಹೊಸ ಕ್ಲಾಸ್ ಮಾತ್ರ ಸೇರ್ಪಡೆಯಾಗುತ್ತದೆ.</p>
+            <div class="rounded-lg overflow-hidden bg-[#1d1f21] mb-4">
+<pre><code class="language-html">&lt;!-- HTML ನಲ್ಲಿ ಒಂದು ಬಟನ್ ಇದೆ, ಅದಕ್ಕೆ 2 ಕ್ಲಾಸ್‌ಗಳಿವೆ --&gt;
+&lt;button id="myBtn" class="btn btn-primary"&gt;ಸಬ್ಮಿಟ್&lt;/button&gt;</code></pre>
+<pre><code class="language-javascript">const button = document.querySelector('#myBtn');
+
+// className ಬಳಸಿದರೆ:
+button.className = "active"; 
+
+// ಈಗ HTML ಏನಾಗುತ್ತದೆ? 
+// &lt;button id="myBtn" class="active"&gt;ಸಬ್ಮಿಟ್&lt;/button&gt;
+// ಗಮನಿಸಿ: ಹಳೆಯ 'btn' ಮತ್ತು 'btn-primary' ಕ್ಲಾಸ್‌ಗಳು ಡಿಲೀಟ್ ಆಗಿಹೋದವು! ಇದರಿಂದ ಬಟನ್‌ನ ಡಿಸೈನ್ ಹಾಳಾಗುತ್ತದೆ.</code></pre>
+            </div>
+            <p class="text-gray-400 text-sm mb-8 border-l-2 border-orange-500 pl-3">ಒಂದು ವೇಳೆ ಹಳೆಯದನ್ನು ಉಳಿಸಿಕೊಂಡು ಹೊಸದನ್ನು ಸೇರಿಸಬೇಕೆಂದರೆ <code>button.className += " active";</code> ಎಂದು ಸ್ಪೇಸ್ ಕೊಟ್ಟು ಬರೆಯಬೇಕು. ಇದು ಕೋಡಿಂಗ್ ಮಾಡುವಾಗ ತಪ್ಪುಗಳಿಗೆ (Bugs) ದಾರಿ ಮಾಡಿಕೊಡುತ್ತದೆ.</p>
+
+            <h4 class="text-xl font-semibold text-white mb-2">2. classList ಏಕೆ ಉತ್ತಮ?</h4>
+            <p class="text-gray-400 text-sm mb-4">classList ಎನ್ನುವುದು ಎಲಿಮೆಂಟ್‌ನಲ್ಲಿರುವ ಕ್ಲಾಸ್‌ಗಳನ್ನು ಒಂದು ಪಟ್ಟಿಯಂತೆ (List) ನೋಡುತ್ತದೆ. ಇದರಿಂದ ನೀವು ಹಳೆಯ ಕ್ಲಾಸ್‌ಗಳಿಗೆ ಯಾವುದೇ ತೊಂದರೆ ಮಾಡದೆ, ಕೇವಲ ಒಂದೇ ಒಂದು ಕ್ಲಾಸ್‌ನ ಮೇಲೆ ನಿಖರವಾಗಿ ಕೆಲಸ ಮಾಡಬಹುದು. ಇದರಲ್ಲಿ 4 ಬಹಳ ಮುಖ್ಯವಾದ ವಿಧಾನಗಳಿವೆ (Methods):</p>
+
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="text-emerald-400 font-semibold mb-2">A. classList.add()</h5>
+                    <p class="text-xs text-gray-400 mb-2">ಹಳೆಯ ಕ್ಲಾಸ್‌ಗಳನ್ನು ಹಾಗೆಯೇ ಉಳಿಸಿಕೊಂಡು, ಹೊಸ ಕ್ಲಾಸ್ ಅನ್ನು ಮಾತ್ರ ಕೊನೆಗೆ ಸೇರಿಸುತ್ತದೆ.</p>
+<pre><code class="language-javascript">button.classList.add('active');</code></pre>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="text-red-400 font-semibold mb-2">B. classList.remove()</h5>
+                    <p class="text-xs text-gray-400 mb-2">ನೀವು ಹೇಳಿದ ಕ್ಲಾಸ್ ಅನ್ನು ಮಾತ್ರ ಹುಡುಕಿ ತೆಗೆದುಹಾಕುತ್ತದೆ.</p>
+<pre><code class="language-javascript">button.classList.remove('btn-primary');</code></pre>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="text-purple-400 font-semibold mb-2">C. classList.toggle()</h5>
+                    <p class="text-xs text-gray-400 mb-2">ಕ್ಲಾಸ್ ಇಲ್ಲದಿದ್ದರೆ ಸೇರಿಸುತ್ತದೆ, ಇದ್ದರೆ ತೆಗೆಯುತ್ತದೆ. (On/Off ಸ್ವಿಚ್).</p>
+<pre><code class="language-javascript">button.classList.toggle('dark-mode');</code></pre>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h5 class="text-blue-400 font-semibold mb-2">D. classList.contains()</h5>
+                    <p class="text-xs text-gray-400 mb-2">ನಿರ್ದಿಷ್ಟ ಕ್ಲಾಸ್ ಇದೆಯೋ ಇಲ್ಲವೋ ಎಂದು ಚೆಕ್ ಮಾಡುತ್ತದೆ (true/false).</p>
+<pre><code class="language-javascript">if(button.classList.contains('active'))</code></pre>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-gradient-to-r from-gray-800 to-gray-700 p-4 rounded-lg border border-gray-600">
+                <h5 class="text-white font-bold mb-2">ಸಾರಾಂಶ:</h5>
+                <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                    <li><strong>className:</strong> ಗುಡಿಸಿಹಾಕಿ ಹೊಸದಾಗಿ ಬರೆಯುತ್ತದೆ (Overwrite).</li>
+                    <li><strong>classList:</strong> ನಿಖರವಾಗಿ ಬೇಕಾದ್ದನ್ನು ಮಾತ್ರ ಸೇರಿಸುತ್ತದೆ, ತೆಗೆಯುತ್ತದೆ ಅಥವಾ ಟಾಗಲ್ ಮಾಡುತ್ತದೆ. ಇದು ಕ್ಲೀನ್, ಸೇಫ್ ಮತ್ತು ಆಧುನಿಕ ವಿಧಾನ.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- getAttribute & setAttribute -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 opacity-0 animate-fade-in-up" id="demo-section" style="animation-delay: 0.9s;">
+            <h3 class="text-2xl font-bold text-indigo-400 mb-4 flex items-center">
+                <i class="fa-solid fa-tags mr-3"></i>getAttribute ಮತ್ತು setAttribute
+            </h3>
+            <p class="text-gray-300 leading-relaxed mb-6">
+                HTML ಎಲಿಮೆಂಟ್‌ಗಳು ತಮ್ಮದೇ ಆದ ಕೆಲವು ಗುಣಲಕ್ಷಣಗಳನ್ನು (Attributes) ಹೊಂದಿರುತ್ತವೆ. ಉದಾಹರಣೆಗೆ: ಇಮೇಜ್‌ಗಳಿಗೆ src ಮತ್ತು alt, ಲಿಂಕ್‌ಗಳಿಗೆ href, ಇನ್ಪುಟ್ ಫೀಲ್ಡ್‌ಗಳಿಗೆ type ಮತ್ತು placeholder ಇತ್ಯಾದಿ. ಈ ಗುಣಲಕ್ಷಣಗಳ ಮೌಲ್ಯವನ್ನು (value) ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಓದಲು (Read) ಮತ್ತು ಹೊಸದಾಗಿ ಸೇರಿಸಲು/ಬದಲಾಯಿಸಲು (Write/Update) getAttribute ಮತ್ತು setAttribute ವಿಧಾನಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.
+            </p>
+
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-2">1. getAttribute('attribute_name') (ಓದಲು)</h4>
+                    <p class="text-sm text-gray-400 mb-2">ಇದು ಒಂದು ಎಲಿಮೆಂಟ್‌ನಲ್ಲಿರುವ ನಿರ್ದಿಷ್ಟ ಅಟ್ರಿಬ್ಯೂಟ್‌ನ ಮೌಲ್ಯವನ್ನು (value) ನಮಗೆ ನೀಡುತ್ತದೆ. ಆ ಅಟ್ರಿಬ್ಯೂಟ್ ಇಲ್ಲದಿದ್ದರೆ ಅದು null ಎಂದು ಹಿಂದಿರುಗಿಸುತ್ತದೆ.</p>
+<pre><code class="language-html">&lt;a id="myLink" href="https://google.com" target="_blank"&gt;ಗೂಗಲ್&lt;/a&gt;</code></pre>
+<pre><code class="language-javascript">const link = document.querySelector('#myLink');
+const linkUrl = link.getAttribute('href');
+console.log(linkUrl); // ಔಟ್‌ಪುಟ್: https://google.com</code></pre>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-2">2. setAttribute('attribute_name', 'new_value') (ಬದಲಾಯಿಸಲು)</h4>
+                    <p class="text-sm text-gray-400 mb-2">ಇದು ಒಂದು ಎಲಿಮೆಂಟ್‌ಗೆ ಹೊಸ ಅಟ್ರಿಬ್ಯೂಟ್ ಅನ್ನು ಸೇರಿಸುತ್ತದೆ. ಒಂದು ವೇಳೆ ಆ ಅಟ್ರಿಬ್ಯೂಟ್ ಈಗಾಗಲೇ ಇದ್ದರೆ, ಅದರ ಹಳೆಯ ಮೌಲ್ಯವನ್ನು ಅಳಿಸಿ, ನಾವು ನೀಡುವ ಹೊಸ ಮೌಲ್ಯಕ್ಕೆ ಬದಲಾಯಿಸುತ್ತದೆ (Overwrite ಮಾಡುತ್ತದೆ).</p>
+<pre><code class="language-html">&lt;img id="profile-pic" src="old-photo.jpg" alt="ಹಳೆಯ ಫೋಟೋ"&gt;</code></pre>
+<pre><code class="language-javascript">const image = document.querySelector('#profile-pic');
+image.setAttribute('src', 'new-photo.jpg');
+image.setAttribute('alt', 'ಹೊಸ ಪ್ರೊಫೈಲ್ ಚಿತ್ರ');
+image.setAttribute('title', 'ಇದು ನನ್ನ ಹೊಸ ಫೋಟೋ');</code></pre>
+                </div>
+
+                <div class="bg-indigo-900/30 border border-indigo-500/50 p-6 rounded-xl mt-6">
+                    <h4 class="text-xl font-bold text-indigo-300 mb-4 flex items-center">
+                        <i class="fa-solid fa-laptop-code mr-2"></i>3. ರಿಯಲ್-ವರ್ಲ್ಡ್ ಉದಾಹರಣೆ (ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸು/ಅಡಗಿಸು)
+                    </h4>
+                    <p class="text-sm text-gray-300 mb-4">ವೆಬ್‌ಸೈಟ್‌ಗಳಲ್ಲಿ ಲಾಗಿನ್ ಆಗುವಾಗ "Show Password" (ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸು) ಎಂಬ ಆಯ್ಕೆ ಇರುತ್ತದೆ. ಇದು getAttribute ಮತ್ತು setAttribute ಬಳಸಿ ಮಾಡುವ ಅತ್ಯಂತ ಜನಪ್ರಿಯ ಟ್ರಿಕ್ ಆಗಿದೆ.</p>
+                    
+                    <!-- Live Demo Appended Here! -->
+                    <div class="bg-gray-800 p-4 rounded-lg mb-4 flex items-center gap-3">
+                        <div class="relative w-full max-w-sm">
+                            <input type="password" id="livePassInput" value="secret123" class="w-full bg-gray-900 text-white px-4 py-2 rounded border border-gray-600 focus:outline-none focus:border-indigo-500 transition">
+                            <button id="toggleBtn" class="absolute right-3 top-2.5 text-gray-400 hover:text-white transition">
+                                <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <span class="text-xs text-emerald-400 animate-pulse">&larr; Live Working Demo!</span>
+                    </div>
+
+<pre><code class="language-javascript">const passwordBox = document.querySelector('#passInput');
+
+// 1. ಮೊದಲು ಇನ್ಪುಟ್‌ನ type ಏನಿದೆ ಎಂದು ಚೆಕ್ ಮಾಡುವುದು
+const currentType = passwordBox.getAttribute('type');
+
+// 2. ಅದು 'password' ಆಗಿದ್ದರೆ, ಅದನ್ನು 'text' ಗೆ ಬದಲಾಯಿಸುವುದು
+if (currentType === 'password') {
+    passwordBox.setAttribute('type', 'text'); 
+    // ಈಗ ಪಾಸ್‌ವರ್ಡ್ ಪರದೆಯ ಮೇಲೆ ಅಕ್ಷರಗಳ ರೂಪದಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ!
+} else {
+    passwordBox.setAttribute('type', 'password');
+    // ಮತ್ತೆ ಚುಕ್ಕೆಗಳ (dots) ರೂಪದಲ್ಲಿ ಅಡಗಿಕೊಳ್ಳುತ್ತದೆ!
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-gray-800/80 p-4 rounded-lg text-sm border-l-4 border-gray-500">
+                <strong class="text-white"><i class="fa-solid fa-gift mr-2 text-pink-400"></i>ಬೋನಸ್ ಟಿಪ್:</strong> <code>removeAttribute('attribute_name')</code> ಎಂಬ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಇದೆ. ಇದು ಎಲಿಮೆಂಟ್‌ನಿಂದ ಗುಣಲಕ್ಷಣವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಡಿಲೀಟ್ ಮಾಡಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ. (ಉದಾ: ಬಟನ್ ಮೇಲಿರುವ disabled ಅನ್ನು ತೆಗೆದುಹಾಕಲು <code>button.removeAttribute('disabled')</code> ಬಳಸಬಹುದು).
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-gray-500 text-sm mt-10 border-t border-gray-800">
+        <p>Built with ❤️ using HTML, Tailwind CSS & JavaScript</p>
+    </footer>
+
+    <!-- Prism.js script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Live Demo Script for Password Toggle -->
+    <script>
+        // Adding the Live Demo logic for the Password Field inside the page itself
+        document.addEventListener('DOMContentLoaded', () => {
+            const passInput = document.querySelector('#livePassInput');
+            const toggleBtn = document.querySelector('#toggleBtn');
+            const eyeIcon = document.querySelector('#eyeIcon');
+
+            toggleBtn.addEventListener('click', () => {
+                const currentType = passInput.getAttribute('type');
+                if (currentType === 'password') {
+                    passInput.setAttribute('type', 'text');
+                    eyeIcon.classList.remove('fa-eye');
+                    eyeIcon.classList.add('fa-eye-slash');
+                } else {
+                    passInput.setAttribute('type', 'password');
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

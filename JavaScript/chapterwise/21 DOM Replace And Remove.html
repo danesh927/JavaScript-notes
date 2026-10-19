@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="kn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Remove & Replace Elements - Pro Notes</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Noto Sans Kannada & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Syntax Highlighter -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#0B1121',
+                        darker: '#060913',
+                        glass: 'rgba(30, 41, 59, 0.6)',
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(239, 68, 68, 0.2)' },
+                            '50%': { boxShadow: '0 0 40px rgba(239, 68, 68, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0B1121; color: #f8fafc; }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gradient-text-red {
+            background: linear-gradient(135deg, #f87171, #ef4444, #b91c1c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6, #4f46e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1121; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0.75rem;
+            background: #1e293b !important;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-red-500 selection:text-white">
+
+    <!-- Header / Hero Section -->
+    <header class="relative overflow-hidden py-20 border-b border-slate-800 bg-darker">
+        <!-- SVG Background -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="hexagons" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(2)">
+                        <path d="M25 0 L50 14.4 L50 43.3 L25 57.7 L0 43.3 L0 14.4 Z" fill="none" stroke="#ef4444" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#hexagons)"/>
+            </svg>
+        </div>
+        
+        <!-- Glowing Orbs -->
+        <div class="absolute top-10 left-10 w-72 h-72 bg-red-600 rounded-full mix-blend-multiply filter blur-[120px] opacity-20"></div>
+        <div class="absolute bottom-10 right-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-[120px] opacity-20"></div>
+
+        <div class="max-w-5xl mx-auto px-6 relative z-10 animate-slide-up text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-red-400 text-sm font-bold mb-6 border border-red-500/20">
+                <i class="fa-solid fa-trash-can animate-bounce-slow"></i> DOM Manipulation Series
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                DOM ನಲ್ಲಿ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು <br/> <span class="gradient-text-red">ತೆಗೆದುಹಾಕುವುದು (Removing)</span> <span class="text-white">&</span> <span class="gradient-text-blue">ಬದಲಾಯಿಸುವುದು (Replacing)</span>
+            </h1>
+            <p class="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed glass-panel p-5 rounded-2xl border-l-4 border-red-500 text-left">
+                DOM (Document Object Model) ನಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ಬಳಸಿ ಇರುವ HTML ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ತೆಗೆದುಹಾಕುವುದು ಮತ್ತು ಒಂದು ಎಲಿಮೆಂಟ್‌ನ ಜಾಗದಲ್ಲಿ ಬೇರೊಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಬದಲಾಯಿಸುವುದು ವೆಬ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನ ಪ್ರಮುಖ ಭಾಗವಾಗಿದೆ.<br/><br/>
+                ನೀವು ಕೇಳಿದಂತೆ, Beginner (ಆರಂಭಿಕ) ಹಂತದಿಂದ Pro (ವೃತ್ತಿಪರ/ತಜ್ಞ) ಹಂತದವರೆಗೆ ಯಾವುದೇ ತಾಂತ್ರಿಕ ಮಾಹಿತಿಯನ್ನು ಬಿಡದೆ, ಆಳವಾಗಿ (Under the hood) ಮತ್ತು ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ಇಲ್ಲಿ ವಿವರಿಸಲಾಗಿದೆ.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-16 space-y-20">
+
+        <!-- 1. Beginner Level: Remove -->
+        <section class="animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-red-500/30">
+                    <i class="fa-solid fa-eraser"></i>
+                </div>
+                <div>
+                    <span class="text-red-400 font-mono text-xs font-bold tracking-widest uppercase">Level 1</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Beginner: ಎಲಿಮೆಂಟ್ ಅನ್ನು ತೆಗೆದುಹಾಕುವುದು (Remove)</h2>
+                </div>
+            </div>
+            
+            <p class="text-slate-300 mb-6 text-lg">ಒಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು DOM (ಸ್ಕ್ರೀನ್) ನಿಂದ ಡಿಲೀಟ್ ಮಾಡಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಎರಡು ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ.</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 1A -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 text-red-500/5 text-9xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3 class="text-xl font-bold text-red-300 mb-4 flex items-center gap-2">
+                        A. remove() 
+                        <span class="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded border border-red-500/30 font-normal">ಆಧುನಿಕ ಮತ್ತು ಸುಲಭ</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಇದು ಅತ್ಯಂತ ಸರಳವಾದ ವಿಧಾನ. ಯಾವ ಎಲಿಮೆಂಟ್ ಅನ್ನು ನೀವು ತೆಗೆದುಹಾಕಬೇಕೋ, ನೇರವಾಗಿ ಆ ಎಲಿಮೆಂಟ್ ಮೇಲೆಯೇ <code>remove()</code> ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯಬಹುದು.
+                    </p>
+<pre><code class="language-javascript">// 1. ಯಾವ ಎಲಿಮೆಂಟ್ ಅನ್ನು ತೆಗೆಯಬೇಕೋ ಅದನ್ನು ಸೆಲೆಕ್ಟ್ ಮಾಡುವುದು
+const myBox = document.getElementById("box");
+
+// 2. ನೇರವಾಗಿ ಅದನ್ನು ತೆಗೆದುಹಾಕುವುದು
+myBox.remove();</code></pre>
+                </div>
+
+                <!-- 1B -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 text-orange-500/5 text-9xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-people-arrows"></i></div>
+                    <h3 class="text-xl font-bold text-orange-300 mb-4 flex items-center gap-2">
+                        B. removeChild() 
+                        <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-1 rounded border border-orange-500/30 font-normal">ಹಳೆಯ / Parent ಆಧಾರಿತ</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಹಳೆಯ ಬ್ರೌಸರ್‌ಗಳಲ್ಲಿ <code>remove()</code> ಇರಲಿಲ್ಲ. ಆಗ ಒಂದು ಎಲಿಮೆಂಟ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡಲು, ಮೊದಲು ಅದರ ತಂದೆ (Parent) ಯನ್ನು ಹುಡುಕಿ, ಆಮೇಲೆ "ನಿನ್ನ ಮಗನನ್ನು ಡಿಲೀಟ್ ಮಾಡು" ಎಂದು ಹೇಳಬೇಕಿತ್ತು.
+                    </p>
+<pre><code class="language-javascript">// 1. ಪೇರೆಂಟ್ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಸೆಲೆಕ್ಟ್ ಮಾಡುವುದು
+const parent = document.getElementById("container");
+
+// 2. ಡಿಲೀಟ್ ಮಾಡಬೇಕಾದ ಮಗುವನ್ನು ಸೆಲೆಕ್ಟ್ ಮಾಡುವುದು
+const childToDelete = document.getElementById("item-1");
+
+// 3. ಪೇರೆಂಟ್ ಮೂಲಕ ಮಗುವನ್ನು ಡಿಲೀಟ್ ಮಾಡುವುದು
+parent.removeChild(childToDelete);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Intermediate Level: Replace -->
+        <section class="animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-right-left"></i>
+                </div>
+                <div>
+                    <span class="text-blue-400 font-mono text-xs font-bold tracking-widest uppercase">Level 2</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Intermediate: ಎಲಿಮೆಂಟ್ ಅನ್ನು ಬದಲಾಯಿಸುವುದು (Replace)</h2>
+                </div>
+            </div>
+
+            <p class="text-slate-300 mb-6 text-lg">ಒಂದು ಹಳೆಯ ಎಲಿಮೆಂಟ್ ಅನ್ನು ತೆಗೆದು, ಅದೇ ಜಾಗದಲ್ಲಿ ಹೊಸ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಕೂರಿಸಲು (Replace) ಕೂಡ ಎರಡು ವಿಧಾನಗಳಿವೆ.</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 2A -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-blue-300 mb-4 flex items-center gap-2">
+                        A. replaceWith() 
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded border border-blue-500/30 font-normal">ಆಧುನಿಕ ವಿಧಾನ</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಹಳೆಯ ಎಲಿಮೆಂಟ್‌ನ ಜಾಗದಲ್ಲಿ ಹೊಸ ಎಲಿಮೆಂಟ್ ಅಥವಾ ಕೇವಲ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ನೇರವಾಗಿ ಬದಲಾಯಿಸಲು ಇದು ಅತ್ಯುತ್ತಮ.
+                    </p>
+<pre><code class="language-javascript">const oldElement = document.getElementById("old-para");
+
+// ಹೊಸ ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸುವುದು
+const newElement = document.createElement("h2");
+newElement.textContent = "ಇದು ಹೊಸ ಹೆಡ್ಡಿಂಗ್!";
+
+// ಹಳೆಯ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹೊಸದರೊಂದಿಗೆ ರಿಪ್ಲೇಸ್ ಮಾಡುವುದು
+oldElement.replaceWith(newElement);</code></pre>
+                </div>
+
+                <!-- 2B -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-blue-300 mb-4 flex items-center gap-2">
+                        B. replaceChild() 
+                        <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded border border-indigo-500/30 font-normal">ಪೇರೆಂಟ್ ಮೂಲಕ</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        ಇದು ಕೂಡ <code>removeChild</code> ತರಹವೇ ಪೇರೆಂಟ್ ಅನ್ನು ಅವಲಂಬಿಸಿದೆ.<br> 
+                        <span class="text-indigo-400 font-mono text-xs">(ರಚನೆ: parent.replaceChild(ಹೊಸ_ಎಲಿಮೆಂಟ್, ಹಳೆಯ_ಎಲಿಮೆಂಟ್))</span>
+                    </p>
+<pre><code class="language-javascript">const parentList = document.getElementById("myList");
+const oldItem = document.getElementById("item-2"); // ಹಳೆಯದು
+
+const newItem = document.createElement("li"); // ಹೊಸದು
+newItem.textContent = "ರಿಪ್ಲೇಸ್ ಆದ ಹೊಸ ಐಟಂ";
+
+// ಪೇರೆಂಟ್ ಮೂಲಕ ಬದಲಾಯಿಸುವುದು
+parentList.replaceChild(newItem, oldItem);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Advanced Level: Emptying Container -->
+        <section class="animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-purple-500/30">
+                    <i class="fa-solid fa-broom"></i>
+                </div>
+                <div>
+                    <span class="text-purple-400 font-mono text-xs font-bold tracking-widest uppercase">Level 3</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Advanced: ಕಂಟೇನರ್ ಅನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡುವುದು (Emptying)</h2>
+                </div>
+            </div>
+
+            <p class="text-slate-300 mb-8 text-lg max-w-4xl">
+                ನೀವು ಒಂದು <code>&lt;div&gt;</code> ಅಥವಾ <code>&lt;ul&gt;</code> ಒಳಗಿರುವ ಎಲ್ಲಾ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಕ್ಲಿಯರ್ ಮಾಡಬೇಕಾದರೆ ಏನು ಮಾಡುತ್ತೀರಿ? ಇಲ್ಲಿ ಡೆವಲಪರ್‌ಗಳು ಮಾಡುವ ತಪ್ಪುಗಳು ಮತ್ತು ಸರಿಯಾದ ವಿಧಾನಗಳನ್ನು ನೋಡೋಣ:
+            </p>
+
+            <div class="space-y-6">
+                <!-- 3A - Bad Way -->
+                <div class="glass-panel border-l-4 border-red-500 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-start">
+                    <div class="md:w-1/3">
+                        <h3 class="text-xl font-bold text-red-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-ban"></i> A. innerHTML = ""
+                        </h3>
+                        <span class="text-xs bg-red-500/20 text-red-200 px-2 py-1 rounded border border-red-500/30">ಬೇಡದ ವಿಧಾನ - The Bad Way</span>
+                        <div class="mt-4 bg-red-900/30 p-3 rounded-lg border border-red-500/30">
+                            <p class="text-sm text-red-200">
+                                <strong class="text-red-400">ಸಮಸ್ಯೆ:</strong> ಇದು ಸುಲಭ, ಆದರೆ ಬ್ರೌಸರ್‌ಗೆ ಇದು ಭಾರೀ ಕೆಲಸ (Performance issue). ಜೊತೆಗೆ ಇದು ಭದ್ರತೆಗೆ (XSS Attacks) ಅಪಾಯಕಾರಿ.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 w-full">
+<pre><code class="language-javascript">const container = document.getElementById("container");
+container.innerHTML = ""; // ಇದು ಎಲ್ಲವನ್ನೂ ಖಾಲಿ ಮಾಡುತ್ತದೆ</code></pre>
+                    </div>
+                </div>
+
+                <!-- 3B - Pro Way -->
+                <div class="glass-panel border-l-4 border-emerald-500 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-start animate-pulse-glow">
+                    <div class="md:w-1/3">
+                        <h3 class="text-xl font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-crown text-yellow-400"></i> B. replaceChildren()
+                        </h3>
+                        <span class="text-xs bg-emerald-500/20 text-emerald-200 px-2 py-1 rounded border border-emerald-500/30">The Modern Pro Way - ಅತ್ಯುತ್ತಮ ವಿಧಾನ</span>
+                        <p class="mt-4 text-sm text-slate-300">
+                            ಇದು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಅತ್ಯಂತ ವೇಗವಾದ ವಿಧಾನ. ಇದು ಕಂಟೇನರ್ ಒಳಗಿನ ಎಲ್ಲವನ್ನೂ ಒಮ್ಮೆಲೆ ಕ್ಲಿಯರ್ ಮಾಡುತ್ತದೆ.
+                        </p>
+                    </div>
+                    <div class="md:w-2/3 w-full">
+<pre><code class="language-javascript">const container = document.getElementById("container");
+
+// ಒಳಗಿರುವ ಎಲ್ಲವನ್ನೂ ಡಿಲೀಟ್ ಮಾಡಲು ಇದನ್ನೇ ಬಳಸಿ!
+container.replaceChildren(); 
+
+// ಅಥವಾ ಕ್ಲಿಯರ್ ಮಾಡಿ ಹೊಸ ಎಲಿಮೆಂಟ್ ಸೇರಿಸಲು:
+const newSpan = document.createElement("span");
+newSpan.textContent = "ಎಲ್ಲಾ ಡಿಲೀಟ್ ಆಗಿ ನಾನು ಬಂದೆ!";
+container.replaceChildren(newSpan);</code></pre>
+                    </div>
+                </div>
+
+                <!-- 3C - Legacy -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-gear"></i> C. While Loop <span class="text-xs bg-yellow-500/20 text-yellow-200 px-2 py-1 rounded border border-yellow-500/30 font-normal ml-2">The Legacy High-Performance Way</span>
+                    </h3>
+                    <p class="text-sm text-slate-300 mb-4">
+                        ಹಳೆಯ ಬ್ರೌಸರ್‌ಗಳಿಗೆ ಸಪೋರ್ಟ್ ನೀಡಬೇಕಾದರೆ ಮತ್ತು ಅತ್ಯಂತ ವೇಗವಾಗಿ ಡಿಲೀಟ್ ಮಾಡಬೇಕಾದರೆ ಈ ಲೂಪ್ ಬಳಸುತ್ತಾರೆ:
+                    </p>
+<pre><code class="language-javascript">const container = document.getElementById("container");
+
+// ಪೇರೆಂಟ್ ಒಳಗೆ ಮೊದಲನೇ ಮಗು ಇರುವವರೆಗೂ ಡಿಲೀಟ್ ಮಾಡುತ್ತಲೇ ಇರು
+while (container.firstChild) {
+  container.removeChild(container.firstChild);
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Pro/Expert Level: Memory Leaks -->
+        <section class="animate-slide-up" style="animation-delay: 0.4s;">
+            <div class="relative p-1 rounded-3xl bg-gradient-to-r from-emerald-500 via-sky-500 to-purple-500">
+                <div class="bg-darker rounded-[22px] p-8 md:p-10 relative overflow-hidden">
+                    <!-- Background Circuit SVG -->
+                    <div class="absolute inset-0 opacity-10 pointer-events-none">
+                        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 20 L20 20 L40 0 L60 20 L100 20 M20 40 L40 60 L60 40 L80 60" fill="none" stroke="#fff" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center gap-4 mb-8 relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-white text-3xl border-2 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <div>
+                            <span class="text-emerald-400 font-mono text-xs font-bold tracking-widest uppercase bg-emerald-900/40 px-2 py-1 rounded">Expert Level</span>
+                            <h2 class="text-2xl md:text-3xl font-bold text-white mt-1">ಮೆಮೊರಿ ಲೀಕ್ಸ್ ಮತ್ತು ಅಂಡರ್-ದ-ಹುಡ್ (Under the Hood)</h2>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-300 mb-10 text-lg max-w-4xl relative z-10 border-l-4 border-emerald-500 pl-4 bg-slate-800/40 py-2 rounded-r-lg">
+                        ವೃತ್ತಿಪರ ಮಟ್ಟದಲ್ಲಿ ನೀವು ಕೇವಲ ಕೋಡ್ ಬರೆದರೆ ಸಾಲದು, ಬ್ರೌಸರ್‌ನ ಮೆಮೊರಿ (RAM) ಅನ್ನು ಹೇಗೆ ನಿರ್ವಹಿಸಬೇಕು ಎಂದು ತಿಳಿಯಬೇಕು.
+                    </p>
+
+                    <div class="space-y-10 relative z-10">
+                        <!-- 4A. Detached DOM -->
+                        <div>
+                            <h3 class="text-2xl font-bold text-sky-400 mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-ghost"></i> A. Detached DOM 
+                                <span class="text-sm font-normal text-slate-400">(ಡಿಲೀಟ್ ಆದರೂ ಬದುಕಿರುವ ಎಲಿಮೆಂಟ್!)</span>
+                            </h3>
+                            <p class="text-slate-300 mb-4 leading-relaxed">
+                                ನೀವು <code>remove()</code> ಅಥವಾ <code>removeChild()</code> ಮಾಡಿದಾಗ, ಆ ಎಲಿಮೆಂಟ್ ಕೇವಲ ವೆಬ್‌ಪುಟದ ಸ್ಕ್ರೀನ್ (DOM Tree) ನಿಂದ ಮರೆಯಾಗುತ್ತದೆ ಅಷ್ಟೇ. ಆದರೆ, ಆ ಎಲಿಮೆಂಟ್ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ವೇರಿಯೇಬಲ್ ಒಳಗೆ ಇನ್ನೂ ಜೀವಂತವಾಗಿರುತ್ತದೆ!
+                            </p>
+<pre><code class="language-javascript">const box = document.getElementById("myBox");
+
+// ಸ್ಕ್ರೀನ್ ನಿಂದ ಡಿಲೀಟ್ ಮಾಡಿದೆವು
+box.remove(); 
+
+console.log(box); // ಆದರೂ ಕನ್ಸೋಲ್ ನಲ್ಲಿ ಎಲಿಮೆಂಟ್ ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ!
+
+// ಬೇಕಿದ್ದರೆ ಡಿಲೀಟ್ ಆದ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮತ್ತೆ ಬೇರೆ ಕಡೆ ಸೇರಿಸಬಹುದು!
+document.body.appendChild(box);</code></pre>
+                            
+                            <div class="mt-4 bg-sky-900/30 border border-sky-500/30 p-4 rounded-xl flex items-start gap-3">
+                                <i class="fa-solid fa-lightbulb text-sky-400 text-xl mt-1"></i>
+                                <p class="text-sm text-sky-200 leading-relaxed">
+                                    <strong class="text-sky-400">Pro Tip:</strong> ಒಂದು ವೇಳೆ ಎಲಿಮೆಂಟ್ ಡಿಲೀಟ್ ಆದ ಮೇಲೆ ಅದು ನಿಮಗೆ ಭವಿಷ್ಯದಲ್ಲಿ ಬೇಡವೇ ಬೇಡ ಎಂದಾದರೆ, ಆ ವೇರಿಯೇಬಲ್‌ಗೆ <code class="bg-sky-900 px-1 rounded text-white">null</code> ಎಂದು ಸೆಟ್ ಮಾಡಬೇಕು. ಆಗ ಬ್ರೌಸರ್‌ನ <strong>Garbage Collector</strong> ಆ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮೆಮೊರಿಯಿಂದ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸುತ್ತದೆ. (<code>box = null;</code>)
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 4B. Memory Leaks -->
+                        <div class="pt-6 border-t border-slate-700">
+                            <h3 class="text-2xl font-bold text-rose-400 mb-4 flex items-center gap-3">
+                                <i class="fa-solid fa-biohazard"></i> B. Memory Leaks 
+                                <span class="text-sm font-normal text-slate-400">(Event Listeners ಬಿಡುವಿಕೆ)</span>
+                            </h3>
+                            <p class="text-slate-300 mb-4 leading-relaxed">
+                                ಅತ್ಯಂತ ಅನುಭವಿ ಡೆವಲಪರ್‌ಗಳು ಮಾಡುವ ದೊಡ್ಡ ತಪ್ಪು ಎಂದರೆ, ಎಲಿಮೆಂಟ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡುವ ಮುನ್ನ ಅದಕ್ಕಿರುವ ಈವೆಂಟ್‌ಗಳನ್ನು (Events) ತೆಗೆಯದಿರುವುದು.<br>
+                                ಒಂದು ಬಟನ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡಿದರೂ, ಅದಕ್ಕೆ ಅಟ್ಯಾಚ್ ಆಗಿರುವ <code>onclick</code> ಫಂಕ್ಷನ್ ಮೆಮೊರಿಯಲ್ಲಿಯೇ ಉಳಿದು, ವೆಬ್‌ಸೈಟ್ ಸ್ಲೋ ಆಗಲು (Memory Leak) ಕಾರಣವಾಗುತ್ತದೆ.
+                            </p>
+                            
+                            <h4 class="text-lg font-bold text-emerald-400 mt-6 mb-3"><i class="fa-solid fa-shield-check"></i> ಸರಿಯಾದ ಮತ್ತು ಸುರಕ್ಷಿತ ವಿಧಾನ (The Absolute Pro Way):</h4>
+                            
+<pre><code class="language-javascript">const myButton = document.getElementById("submitBtn");
+
+// 1. ಫಂಕ್ಷನ್ ಅನ್ನು ಹೊರಗಡೆ ಬರೆಯಿರಿ
+function handleClick() {
+  console.log("ಬಟನ್ ಕ್ಲಿಕ್ ಆಯ್ತು");
+}
+
+// 2. ಈವೆಂಟ್ ಸೇರಿಸುವುದು
+myButton.addEventListener("click", handleClick);
+
+// --- ಕೆಲವು ಸಮಯದ ನಂತರ ಬಟನ್ ಡಿಲೀಟ್ ಮಾಡಬೇಕಾದ ಪರಿಸ್ಥಿತಿ ಬಂದಾಗ ---
+
+// 3. ಮೊದಲು ಈವೆಂಟ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡಬೇಕು! (Preventing Memory Leak)
+myButton.removeEventListener("click", handleClick);
+
+// 4. ಆಮೇಲೆ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡಬೇಕು
+myButton.remove();
+
+// 5. ಮೆಮೊರಿಯಿಂದ ಸಂಪೂರ್ಣ ಮುಕ್ತಗೊಳಿಸಲು (Garbage collection) null ಮಾಡಬೇಕು
+// (ಒಂದು ವೇಳೆ let ವೇರಿಯೇಬಲ್ ಬಳಸಿದ್ದರೆ)
+// myButton = null;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusion Banner -->
+            <div class="mt-12 bg-gradient-to-r from-emerald-900/40 to-sky-900/40 border border-emerald-500/30 p-6 rounded-2xl text-center glass-panel">
+                <i class="fa-solid fa-trophy text-4xl text-yellow-400 mb-4 animate-bounce-slow"></i>
+                <p class="text-lg text-slate-200">
+                    ಈ ಮೇಲಿನ ಎಲ್ಲಾ ತಂತ್ರಗಳನ್ನು ಬಳಸುವುದರಿಂದ, ನೀವು ಬರೆಯುವ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೋಡ್ ಅತ್ಯಂತ ವೇಗವಾಗಿ <span class="text-emerald-400 font-bold">(Optimized)</span> ಮತ್ತು ದೋಷಮುಕ್ತವಾಗಿ <span class="text-sky-400 font-bold">(Bug-free)</span> ಇರುತ್ತದೆ!
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 mt-10 py-10 text-center bg-darker">
+        <p class="text-slate-500 text-sm">
+            <i class="fa-solid fa-code text-slate-400"></i> Engineered with perfection • DOM Mastery Notes
+        </p>
+    </footer>
+
+    <!-- Prism.js Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

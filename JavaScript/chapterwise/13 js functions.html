@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Functions: 0 to Pro | ಆಧುನಿಕ ನೋಟ್ಸ್</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Eye-friendly Dark Theme */
+        :root {
+            --bg-main: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-surface-hover: #334155;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --code-bg: #020617;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        /* Layout */
+        .container { display: flex; max-width: 1400px; margin: 0 auto; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px; height: 100vh; position: sticky; top: 0;
+            background-color: var(--bg-surface); padding: 30px 20px;
+            border-right: 1px solid var(--border-color); overflow-y: auto; z-index: 10;
+        }
+        .sidebar h2 { color: var(--accent-blue); font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .nav-links { list-style: none; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; display: block;
+            padding: 10px 15px; border-radius: 8px; transition: 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--bg-surface-hover); color: var(--text-primary);
+            border-left: 4px solid var(--accent-blue); transform: translateX(5px);
+        }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 40px 60px; max-width: 1000px; }
+        h1 { font-size: 2.5rem; background: -webkit-linear-gradient(45deg, var(--accent-blue), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 1.8rem; margin-top: 50px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        h3 { font-size: 1.3rem; margin-top: 30px; color: var(--accent-purple); }
+        p { margin-bottom: 20px; color: var(--text-secondary); }
+        strong { color: var(--text-primary); }
+
+        ul, ol { margin-bottom: 20px; padding-left: 20px; color: var(--text-secondary); }
+        li { margin-bottom: 10px; }
+        ul li::marker { color: var(--accent-blue); }
+
+        /* Code Blocks */
+        .code-window {
+            background-color: var(--code-bg); border-radius: 10px; border: 1px solid var(--border-color);
+            margin: 25px 0; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: 0.3s;
+        }
+        .code-window:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+        .code-header { background-color: var(--bg-surface); padding: 10px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-secondary); }
+        .dots { display: flex; gap: 8px; margin-right: 15px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background-color: #ff5f56; } .dot.yellow { background-color: #ffbd2e; } .dot.green { background-color: #27c93f; }
+        .copy-btn { margin-left: auto; background: none; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 4px 12px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .copy-btn:hover { background-color: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+        pre { padding: 20px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.95rem; color: #a6accd; line-height: 1.5; margin: 0; }
+        code .keyword { color: #c792ea; } code .string { color: #c3e88d; } code .comment { color: #697098; font-style: italic; } code .number { color: #f78c6c; } code .function { color: #82aaff; } code .operator { color: #89ddff; }
+
+        /* Alert Cards */
+        .alert-card { padding: 20px; border-radius: 10px; margin: 25px 0; display: flex; gap: 15px; align-items: flex-start; }
+        .alert-info { background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent-blue); }
+        .alert-pro { background-color: rgba(139, 92, 246, 0.1); border-left: 4px solid var(--accent-purple); }
+        .alert-success { background-color: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--accent-green); }
+        .alert-warning { background-color: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--accent-warning); }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .icon-float { animation: float 3s ease-in-out infinite; }
+        .fade-in-up { opacity: 0; transform: translateY(40px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        .icon { width: 24px; height: 24px; fill: currentColor; }
+
+        /* Step Box */
+        .step-box { background: var(--bg-surface); padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); display: flex; gap: 15px; align-items: center; }
+        .step-num { background: var(--accent-cyan); color: #020617; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; flex-shrink: 0; font-size: 1.3rem; }
+
+        @media (max-width: 1024px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { padding: 30px 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2>
+                <svg class="icon icon-float" viewBox="0 0 24 24"><path d="M13 3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                JS ಫಂಕ್ಷನ್‌ಗಳು
+            </h2>
+            <ul class="nav-links">
+                <li><a href="#intro" class="active">ಪೀಠಿಕೆ: ಫಂಕ್ಷನ್ ಎಂದರೆ ಏನು?</a></li>
+                <li><a href="#how-it-works">ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ? (Call Stack)</a></li>
+                <li><a href="#parameters">ಪ್ಯಾರಾಮೀಟರ್ ಮತ್ತು ರಿಟರ್ನ್</a></li>
+                <li><a href="#level-2">ಮಧ್ಯಮ ಹಂತ (Function Expr)</a></li>
+                <li><a href="#level-3">ವೃತ್ತಿಪರ ಹಂತ (Pro Concepts)</a></li>
+                <li><a href="#iife">IIFE ಫಂಕ್ಷನ್ (ಹೊಸ ಸೇರ್ಪಡೆ)</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <header id="intro" class="fade-in-up">
+                <h1>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಫಂಕ್ಷನ್‌ಗಳು</h1>
+                <p><strong>ಶೂನ್ಯದಿಂದ ವೃತ್ತಿಪರ ಹಂತದವರೆಗೆ (Beginner to Pro)</strong></p>
+
+                <div class="alert-card alert-info" style="margin-top: 30px;">
+                    <svg style="width: 40px; height: 40px; fill: var(--accent-blue); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+                    <div>
+                        <strong style="font-size: 1.2rem; color: var(--accent-blue);">1. ಫಂಕ್ಷನ್ ಎಂದರೆ ಏನು? (Absolute Basic)</strong>
+                        <p style="margin-top: 10px; margin-bottom: 0;">ಫಂಕ್ಷನ್ ಎಂದರೆ ಒಂದು <strong>"ಯಂತ್ರ (Machine)"</strong> ಇದ್ದಂತೆ. ನೀವು ಅದಕ್ಕೆ ಏನಾದರೂ ಕಚ್ಚಾವಸ್ತು (Input) ನೀಡಿದರೆ, ಅದು ಒಳಗೆ ಪ್ರಕ್ರಿಯೆ (Process) ನಡೆಸಿ ಒಂದು ಫಲಿತಾಂಶವನ್ನು (Output) ನೀಡುತ್ತದೆ.</p>
+                        <p style="margin-top: 10px; margin-bottom: 0;"><strong>ಸರಳ ಉದಾಹರಣೆ:</strong> ಮಿಕ್ಸಿ ಜಾರ್ (Mixer Grinder) ಒಂದು ಫಂಕ್ಷನ್. ಅದಕ್ಕೆ ಹಣ್ಣುಗಳನ್ನು (Input) ಹಾಕಿದರೆ, ಅದು ಜ್ಯೂಸ್ (Output) ಕೊಡುತ್ತದೆ. ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ, ಒಂದೇ ಕೋಡ್ ಅನ್ನು ಮತ್ತೆ ಮತ್ತೆ ಬರೆಯುವುದನ್ನು ತಪ್ಪಿಸಲು (Reusability) ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+                        <p style="margin-top: 10px; margin-bottom: 0;"><em>(ಉದಾಹರಣೆಗೆ: ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ "Buy Now" ಬಟನ್ ಅನ್ನು 10 ಕಡೆ ಹಾಕಿದ್ದರೂ, 10 ಬಾರಿ ಕೋಡ್ ಬರೆಯುವ ಬದಲು ಒಂದೇ ಫಂಕ್ಷನ್ ಬರೆದು 10 ಕಡೆ ಲಿಂಕ್ ಮಾಡಬಹುದು).</em></p>
+                    </div>
+                </div>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript - Basic Function</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// 1. ಫಂಕ್ಷನ್ ಅನ್ನು ರಚಿಸುವುದು (Declaration) - ಯಂತ್ರವನ್ನು ತರುವುದು</span>
+<span class="keyword">function</span> <span class="function">sayHello</span>() {
+    <span class="function">console.log</span>(<span class="string">"ನಮಸ್ಕಾರ! ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಜಗತ್ತಿಗೆ ಸ್ವಾಗತ."</span>);
+}
+
+<span class="comment">// 2. ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವುದು (Calling / Invocation) - ಯಂತ್ರದ ಸ್ವಿಚ್ ಆನ್ ಮಾಡುವುದು</span>
+<span class="function">sayHello</span>(); <span class="comment">// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ! ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಜಗತ್ತಿಗೆ ಸ್ವಾಗತ.</span></code></pre>
+                </div>
+            </header>
+
+            <section id="how-it-works" class="fade-in-up">
+                <h2>
+                    <svg class="icon icon-float" style="color: var(--accent-warning);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    ಫಂಕ್ಷನ್ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ? (Under the Hood)
+                </h2>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವಾಗ (Call ಮಾಡಿದಾಗ) ಪ್ರೊಸೆಸರ್ ಮತ್ತು ಮೆಮೊರಿಯಲ್ಲಿ 3 ಮುಖ್ಯ ಹಂತಗಳು ನಡೆಯುತ್ತವೆ:</p>
+
+                <div class="step-box">
+                    <div class="step-num">1</div>
+                    <div>
+                        <strong style="color: var(--accent-cyan); font-size: 1.1rem;">ಮೆಮೊರಿ ಹಂಚಿಕೆ (Memory Allocation):</strong> 
+                        <p style="margin: 5px 0 0 0;">ನೀವು <code>function name() {}</code> ಎಂದು ಬರೆದ ತಕ್ಷಣ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ (ಉದಾ: V8) RAM ನಲ್ಲಿ ಒಂದು ನಿರ್ದಿಷ್ಟ ಜಾಗವನ್ನು ಕಾಯ್ದಿರಿಸುತ್ತದೆ ಮತ್ತು ಸಂಪೂರ್ಣ ಕೋಡ್ ಬ್ಲಾಕ್ ಅನ್ನು ಆ ಮೆಮೊರಿಯಲ್ಲಿ ಸೇವ್ ಮಾಡುತ್ತದೆ.</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">2</div>
+                    <div>
+                        <strong style="color: var(--accent-cyan); font-size: 1.1rem;">ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ (Call Stack): ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಸರಳ ಉದಾಹರಣೆ</strong> 
+                        <p style="margin: 5px 0 0 0;"><strong>ಉದಾಹರಣೆ:</strong> ಮದುವೆ ಮನೆಯಲ್ಲಿ ಪ್ಲೇಟ್‌ಗಳನ್ನು (ತಟ್ಟೆಗಳನ್ನು) ಒಂದರ ಮೇಲೊಂದು ಜೋಡಿಸಿಟ್ಟಿರುತ್ತಾರೆ. ನೀವು ಯಾವ ಪ್ಲೇಟ್ ಅನ್ನು ಮೊದಲು ತೆಗೆಯುತ್ತೀರಿ? <strong>ಅತ್ಯಂತ ಮೇಲಿರುವ ಪ್ಲೇಟ್!</strong> (Last In, First Out).<br>
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೂಡ ಇದೇ ರೀತಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ನೀವು <code>sayHello()</code> ಎಂದು ಕರೆದಾಗ, ಈ ಫಂಕ್ಷನ್ "ಕಾಲ್ ಸ್ಟ್ಯಾಕ್" ಎಂಬ ಸರದಿಯ <strong>ಮೇಲ್ಭಾಗಕ್ಕೆ (Top)</strong> ಹೋಗಿ ಕೂರುತ್ತದೆ. ಪ್ರೊಸೆಸರ್ ತನ್ನ ಎಲ್ಲಾ ಬೇರೆ ಕೆಲಸ ಬಿಟ್ಟು ಮೊದಲು ಈ ಮೇಲಿರುವ ಫಂಕ್ಷನ್ ಒಳಗೆ ಪ್ರವೇಶಿಸುತ್ತದೆ (ಇದನ್ನೇ Execution Context ಎನ್ನುತ್ತಾರೆ).</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <div class="step-num">3</div>
+                    <div>
+                        <strong style="color: var(--accent-cyan); font-size: 1.1rem;">ಗಾರ್ಬೇಜ್ ಕಲೆಕ್ಷನ್ (Execution & Cleanup):</strong> 
+                        <p style="margin: 5px 0 0 0;">ಕೋಡ್ ರನ್ ಆಗಿ ಮುಗಿದ ತಕ್ಷಣ, ಆ ಫಂಕ್ಷನ್ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ನಿಂದ ಹೊರಬರುತ್ತದೆ (ಪ್ಲೇಟ್ ತೆಗೆದಂತೆ). ಅದರ ಒಳಗಿದ್ದ ತಾತ್ಕಾಲಿಕ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ಮೆಮೊರಿಯಿಂದ ಡಿಲೀಟ್ ಮಾಡಲಾಗುತ್ತದೆ (ಸ್ವಚ್ಛಗೊಳಿಸುವಿಕೆ).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="parameters" class="fade-in-up">
+                <h2>ಪ್ಯಾರಾಮೀಟರ್ ಮತ್ತು ರಿಟರ್ನ್ (Parameters & Return)</h2>
+                <p><strong>ಸರಳ ಉದಾಹರಣೆ:</strong> ನೀವು ರೆಸ್ಟೋರೆಂಟ್‌ಗೆ ಹೋಗಿ "ಮಸಾಲ ದೋಸೆ" ಎಂದು ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ (ಇದು <strong>Parameter / Input</strong>). ವೈಟರ್ ಒಳಗೆ ಹೋಗಿ ದೋಸೆ ತಂದು ನಿಮ್ಮ ಟೇಬಲ್ ಮೇಲೆ ಇಡುತ್ತಾನೆ (ಇದು <strong>Return / Output</strong>).</p>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript - Parameters & Return</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// a ಮತ್ತು b ಎಂಬುದು Parameters (ಕಚ್ಚಾವಸ್ತು/ಆರ್ಡರ್)</span>
+<span class="keyword">function</span> <span class="function">addNumbers</span>(a, b) {
+    <span class="keyword">let</span> sum = a + b;
+    <span class="keyword">return</span> sum; <span class="comment">// ಫಲಿತಾಂಶವನ್ನು ವಾಪಸ್ ಕಳುಹಿಸುತ್ತದೆ (ದೋಸೆ ತಂದುಕೊಟ್ಟಂತೆ)</span>
+}
+
+<span class="comment">// 10 ಮತ್ತು 5 ಎಂಬುದು Arguments (ನೈಜ ಮೌಲ್ಯಗಳು)</span>
+<span class="keyword">let</span> result = <span class="function">addNumbers</span>(<span class="number">10</span>, <span class="number">5</span>);
+<span class="function">console.log</span>(result); <span class="comment">// ಔಟ್‌ಪುಟ್: 15</span></code></pre>
+                </div>
+                
+                <div class="alert-card alert-success">
+                    <svg style="width: 30px; height: 30px; fill: var(--accent-green); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <div>
+                        <strong style="color: var(--accent-green);">ಗಮನಿಸಿ (Key Rule):</strong>
+                        <p style="margin: 0;">ಫಂಕ್ಷನ್ ಒಳಗೆ <code>return</code> ಕೀವರ್ಡ್ ನೋಡಿದ ತಕ್ಷಣ ಪ್ರೊಸೆಸರ್ ಆ ಫಂಕ್ಷನ್‌ನಿಂದ <strong>ತಕ್ಷಣವೇ ಹೊರಬರುತ್ತದೆ</strong>. <code>return</code> ನ ಕೆಳಗೆ ನೀವು ಯಾವುದೇ ಕೋಡ್ ಬರೆದರೂ ಅದು ರನ್ ಆಗುವುದಿಲ್ಲ!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="level-2" class="fade-in-up">
+                <h2>
+                    <svg class="icon icon-float" style="color: var(--accent-pink);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                    ಮಧ್ಯಮ ಹಂತ (Intermediate Level)
+                </h2>
+                <h3>ಫಂಕ್ಷನ್ ಎಕ್ಸ್‌ಪ್ರೆಶನ್ (Function Expression)</h3>
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ನಾವು ಕೇವಲ ಒಂದು 'ಮೌಲ್ಯ' (Value) ದಂತೆ ನೋಡಬಹುದು. ಅಂದರೆ ಒಂದು ವೇರಿಯೇಬಲ್‌ಗೆ ಫಂಕ್ಷನ್ ಅನ್ನು ಅಸೈನ್ ಮಾಡಬಹುದು.</p>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="keyword">const</span> <span class="function">multiply</span> = <span class="keyword">function</span>(x, y) { <span class="comment">// ಇದಕ್ಕೆ ಹೆಸರಿಲ್ಲ (Anonymous Function)</span>
+    <span class="keyword">return</span> x * y;
+};
+
+<span class="function">console.log</span>(<span class="function">multiply</span>(<span class="number">4</span>, <span class="number">3</span>)); <span class="comment">// ಔಟ್‌ಪುಟ್: 12</span></code></pre>
+                </div>
+            </section>
+
+            <section id="level-3" class="fade-in-up">
+                <h2>
+                    <svg class="icon icon-float" style="color: var(--accent-purple);" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 11.6l-9-9C12 2.2 11.5 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .5.2 1 .6 1.4l9 9c.4.4.9.6 1.4.6s1-.2 1.4-.6l5-5c.4-.4.6-.9.6-1.4s-.2-1-.6-1.4zM13 19l-9-9V4h7l9 9-7 6zM6.5 5C7.3 5 8 5.7 8 6.5S7.3 8 6.5 8 5 7.3 5 6.5 5.7 5 6.5 5z"/></svg>
+                    ವೃತ್ತಿಪರ ಹಂತ (Pro Concepts)
+                </h2>
+
+                <h3>1. ಆರೋ ಫಂಕ್ಷನ್ಸ್ (Arrow Functions - ES6)</h3>
+                <p>ಇದು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಫಂಕ್ಷನ್ ಬರೆಯುವ ಅತ್ಯಂತ ಚಿಕ್ಕ ಮತ್ತು ಸ್ಮಾರ್ಟ್ ವಿಧಾನ. ಇದರಲ್ಲಿ <code>function</code> ಕೀವರ್ಡ್ ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ.</p>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript - Arrow Function</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// ಸಾಂಪ್ರದಾಯಿಕ ವಿಧಾನ</span>
+<span class="keyword">let</span> squareOld = <span class="keyword">function</span>(n) { <span class="keyword">return</span> n * n; };
+
+<span class="comment">// ಆರೋ ಫಂಕ್ಷನ್ (Pro Level)</span>
+<span class="keyword">const</span> <span class="function">square</span> = (n) =&gt; n * n; 
+
+<span class="function">console.log</span>(<span class="function">square</span>(<span class="number">5</span>)); <span class="comment">// ಔಟ್‌ಪುಟ್: 25</span></code></pre>
+                </div>
+
+                <h3>2. ಕಾಲ್‌ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ (Callback Functions)</h3>
+                <p>ಒಂದು ಫಂಕ್ಷನ್ ಅನ್ನು ಮತ್ತೊಂದು ಫಂಕ್ಷನ್‌ಗೆ "ಆರ್ಗ್ಯುಮೆಂಟ್" (Parameter) ಆಗಿ ಕಳುಹಿಸುವುದನ್ನು ಕಾಲ್‌ಬ್ಯಾಕ್ ಎನ್ನುತ್ತಾರೆ. ಇದು ಅಸಿಂಕ್ರೋನಸ್ (Asynchronous) ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ಗೆ ಬಹಳ ಮುಖ್ಯ.</p>
+                <div class="code-window">
+<pre><code><span class="keyword">function</span> <span class="function">processUserInput</span>(name, callbackFn) {
+    <span class="function">console.log</span>(<span class="string">"ಬಳಕೆದಾರ: "</span> + name);
+    <span class="function">callbackFn</span>(); <span class="comment">// ಇಲ್ಲಿ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಕಾಲ್ ಆಗುತ್ತದೆ</span>
+}
+
+<span class="keyword">function</span> <span class="function">greet</span>() {
+    <span class="function">console.log</span>(<span class="string">"ಸ್ವಾಗತ!"</span>);
+}
+
+<span class="comment">// greet ಫಂಕ್ಷನ್ ಅನ್ನು ಪಾಸ್ ಮಾಡುತ್ತಿದ್ದೇವೆ (ಕರೆಯುತ್ತಿಲ್ಲ, ಕೇವಲ ಹೆಸರು ಕೊಡುತ್ತಿದ್ದೇವೆ)</span>
+<span class="function">processUserInput</span>(<span class="string">"ರಾಜು"</span>, greet); 
+<span class="comment">// ಔಟ್‌ಪುಟ್:</span>
+<span class="comment">// ಬಳಕೆದಾರ: ರಾಜು</span>
+<span class="comment">// ಸ್ವಾಗತ!</span></code></pre>
+                </div>
+
+                <div class="alert-card alert-pro">
+                    <svg class="icon-float" style="width: 30px; height: 30px; fill: var(--accent-purple); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2L1 21h22M12 6l7.5 13h-15M11 10h2v4h-2m0 2h2v2h-2"/></svg>
+                    <div>
+                        <strong style="color: var(--accent-purple); display: block; margin-bottom: 5px;">Pro Tip - ಕ್ಲೋಜರ್ಸ್ (Closures):</strong>
+                        <p style="margin: 0; font-size: 0.95rem;">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಫಂಕ್ಷನ್‌ಗಳು ತಮ್ಮ ಹುಟ್ಟಿದ ಜಾಗವನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುತ್ತವೆ! ಒಂದು ಫಂಕ್ಷನ್‌ನ ಒಳಗಿರುವ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್, ತಾನು ಎಕ್ಸಿಕ್ಯೂಟ್ ಆದ ಮೇಲೂ ತನ್ನ ಪೇರೆಂಟ್ (Parent) ಫಂಕ್ಷನ್‌ನ ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ಮೆಮೊರಿಯಲ್ಲಿ ಭದ್ರವಾಗಿ ಇಟ್ಟುಕೊಳ್ಳುವ ಶಕ್ತಿಯನ್ನು <strong>Closure</strong> ಎನ್ನುತ್ತಾರೆ. ಇದು ಡೇಟಾ ಪ್ರೈವೆಸಿ (Data Privacy) ಕಾಪಾಡಲು ವೃತ್ತಿಪರರು ಬಳಸುವ ಪ್ರಮುಖ ತಂತ್ರ.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ಹೊಸ ಸೇರ್ಪಡೆ: IIFE Section -->
+            <section id="iife" class="fade-in-up">
+                <h2>
+                    <svg class="icon icon-float" style="color: var(--accent-warning);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    3. IIFE ಫಂಕ್ಷನ್ (ಹೊಸ ಸೇರ್ಪಡೆ)
+                </h2>
+                <p><strong>IIFE (Immediately Invoked Function Expression):</strong> ಇದರ ಹೆಸರೇ ಹೇಳುವಂತೆ ಇದು "ತಕ್ಷಣವೇ ಕಾರ್ಯಗತಗೊಳ್ಳುವ (Invoke ಆಗುವ) ಫಂಕ್ಷನ್".</p>
+                <p>ಸಾಮಾನ್ಯವಾಗಿ ಫಂಕ್ಷನ್ ಬರೆದ ಮೇಲೆ ಅದನ್ನು ನಾವು ಬೇರೆ ಕಡೆ ಕರೆಯಬೇಕು (Call ಮಾಡಬೇಕು). ಆದರೆ, IIFE ಅನ್ನು <strong>ಬರೆದ ತಕ್ಷಣವೇ ಅದೇ ತಾನೇ ತಾನಾಗಿ ರನ್ ಆಗುತ್ತದೆ.</strong></p>
+
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                        <span class="lang">JavaScript - IIFE Syntax</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+<pre><code><span class="comment">// ಸಾಧಾರಣ ಫಂಕ್ಷನ್ ಅನ್ನು ಬ್ರಾಕೆಟ್ ( ) ಒಳಗೆ ಹಾಕಿ, ಕೊನೆಯಲ್ಲಿ () ಸೇರಿಸಿದರೆ ಅದು IIFE ಆಗುತ್ತದೆ.</span>
+
+(<span class="keyword">function</span>() {
+    <span class="keyword">let</span> secretMessage = <span class="string">"ಇದು ಗುಪ್ತ ಸಂದೇಶ!"</span>;
+    <span class="function">console.log</span>(<span class="string">"ನಾನು ಹುಟ್ಟಿದ ತಕ್ಷಣ ರನ್ ಆದೆ!"</span>);
+})<span class="operator">()</span>; <span class="comment">// &lt;-- ಈ ಕೊನೆಯ () ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣ ಕಾಲ್ ಮಾಡುತ್ತದೆ!</span>
+
+<span class="comment">// ಔಟ್‌ಪುಟ್: ನಾನು ಹುಟ್ಟಿದ ತಕ್ಷಣ ರನ್ ಆದೆ!</span></code></pre>
+                </div>
+
+                <div class="alert-card alert-warning">
+                    <svg style="width: 30px; height: 30px; fill: var(--accent-warning); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2L1 21h22M12 6l7.5 13h-15M11 10h2v4h-2m0 2h2v2h-2"/></svg>
+                    <div>
+                        <strong style="color: var(--accent-warning); display: block; margin-bottom: 5px;">IIFE ಅನ್ನು ಏಕೆ ಬಳಸುತ್ತಾರೆ? (Why use IIFE?)</strong>
+                        <ul style="margin-bottom: 0; margin-top: 10px; font-size: 0.95rem; color: var(--text-secondary);">
+                            <li><strong>ಗ್ಲೋಬಲ್ ಮೆಮೊರಿ ಮಾಲಿನ್ಯ ತಪ್ಪಿಸಲು (Avoid Global Scope Pollution):</strong> ನೀವು ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್ ಅಥವಾ ವೇರಿಯೇಬಲ್ ಬರೆದರೆ ಅದು ಇಡೀ ವೆಬ್‌ಪೇಜ್‌ನ (Global) ಮೆಮೊರಿಯಲ್ಲಿ ಕೂರುತ್ತದೆ. ಒಂದೇ ಹೆಸರಿನ 2 ವೇರಿಯೇಬಲ್ ಇದ್ದರೆ ಬ್ರೌಸರ್ ಕ್ರ್ಯಾಶ್ ಅಥವಾ ಎರರ್ ಬರಬಹುದು.</li>
+                            <li>IIFE ಒಳಗೆ ಬರೆದ ವೇರಿಯೇಬಲ್‌ಗಳು (ಉದಾ: <code>secretMessage</code>) ಆ ಫಂಕ್ಷನ್‌ನಿಂದ ಆಚೆ ಯಾರಿಗೂ ಸಿಗುವುದಿಲ್ಲ. ರನ್ ಆದ ತಕ್ಷಣ ಮೆಮೊರಿಯಿಂದ ಅಳಿಸಿಹೋಗುತ್ತದೆ. ಇದು <strong>Data Privacy</strong> ಕಾಪಾಡಲು ವೃತ್ತಿಪರರು (Pro Developers) ಬಳಸುವ ಅತ್ಯುತ್ತಮ ತಂತ್ರ.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </section>
+
+            <footer class="fade-in-up" style="margin-top: 50px; text-align: center; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 30px; padding-bottom: 20px;">
+                <p>Designed for Professional Reading | 0 to Pro JS Concepts</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Script for Animations and Interactivity -->
+    <script>
+        // 1. Copy Code Feature
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const codeText = pre.innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                button.innerText = 'Copied! ✓';
+                button.style.backgroundColor = 'var(--accent-green)';
+                button.style.color = '#fff';
+                button.style.borderColor = 'var(--accent-green)';
+                button.style.transform = 'scale(1.1)';
+                
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.style.backgroundColor = 'transparent';
+                    button.style.color = 'var(--text-secondary)';
+                    button.style.borderColor = 'var(--border-color)';
+                    button.style.transform = 'scale(1)';
+                }, 2000);
+            });
+        }
+
+        // 2. Smooth Scroll Reveal Animation
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+        // 3. Highlight Active Link on Scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section, header');
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
