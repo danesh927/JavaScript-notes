@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Masterclass: Async Patterns & Core Concepts</title>
+    
+    <!-- Tailwind CSS for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for SVG Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- Tailwind Configuration for Custom Colors & Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        primary: '#3b82f6',
+                        accent: '#10b981'
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        kannada: ['Tunga', 'Kedage', 'Mallige', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Animations & Scrollbar -->
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        /* Custom Scrollbar for Dark Mode */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+
+        /* Fade-in Animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Copy Button Styles */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .copy-btn:hover { background: rgba(59, 130, 246, 0.8); }
+        .copy-btn.copied { background: #10b981; }
+
+        pre { position: relative; border-radius: 0.5rem; padding-top: 2.5rem !important; }
+
+        /* Sidebar Active Link */
+        .nav-link.active {
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+            font-weight: bold;
+        }
+
+        /* Responsive Layout fixes */
+        body { font-family: 'Segoe UI', 'Roboto', sans-serif; line-height: 1.8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300 font-sans">
+
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-darkCard/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-brands fa-js text-yellow-400 text-3xl"></i>
+                <h1 class="text-xl font-bold font-kannada tracking-wide">JS Masterclass Notes</h1>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all focus:outline-none">
+                <i id="theme-icon" class="fa-solid fa-moon text-gray-800 dark:text-yellow-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sticky Sidebar Navigation -->
+        <aside class="w-full md:w-1/4 hidden md:block">
+            <div class="sticky top-24 bg-white dark:bg-darkCard p-5 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                <h3 class="text-lg font-bold mb-4 uppercase tracking-wider text-gray-500 dark:text-gray-400 text-sm">Table of Contents</h3>
+                <nav id="toc" class="flex flex-col space-y-2 font-kannada">
+                    <a href="#intro" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">ಪೀಠಿಕೆ</a>
+                    <a href="#callbacks" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">1. ಕಾಲ್‌ಬ್ಯಾಕ್ (Callbacks)</a>
+                    <a href="#promises" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">2. ಪ್ರಾಮಿಸ್ (Promises)</a>
+                    <a href="#async-await" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">3. ಅಸಿಂಕ್ / ಅವೇಟ್ (Async/Await)</a>
+                    <a href="#summary" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">ಸಾರಾಂಶ (Summary)</a>
+                    <a href="#dom-manipulation" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">4. DOM & Selection</a>
+                    <a href="#event-handling" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">5. ಈವೆಂಟ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್</a>
+                    <a href="#client-storage" class="nav-link block px-3 py-2 border-l-4 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-all">6. ಸ್ಟೋರೇಜ್ APIs</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="w-full md:w-3/4 space-y-12 font-kannada text-lg">
+            
+            <!-- Intro Section (Preserved Verbatim) -->
+            <section id="intro" class="fade-in bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಅಸಿಂಕ್ರೊನಸ್ (Asynchronous) ಕೆಲಸಗಳನ್ನು ನಿರ್ವಹಿಸಲು ಪ್ರಮುಖವಾಗಿ <strong>3 ವಿಧಾನಗಳಿವೆ (Patterns)</strong>. ನಾನ್-ಐಟಿ ಹಿನ್ನೆಲೆಯವರಿಗಾಗಿ ದೈನಂದಿನ ಉದಾಹರಣೆಗಳಿಂದ ಶುರುಮಾಡಿ, ಫ್ರಂಟ್-ಎಂಡ್ (Front-end) ಡೆವಲಪರ್ ಹಂತದವರೆಗೆ ಈ ಮೂರೂ ವಿಧಾನಗಳನ್ನು ಆಳವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.</p>
+            </section>
+
+            <!-- 1. Callbacks (Preserved Verbatim) -->
+            <section id="callbacks" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-primary flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-phone-volume"></i> 1. ಕಾಲ್‌ಬ್ಯಾಕ್ (Callbacks) - [ಹಳೆಯ ವಿಧಾನ]
+                </h2>
+                
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <p><strong>ನಾನ್-ಐಟಿ (Non-IT) ಉದಾಹರಣೆ:</strong><br>
+                    ನೀವು ನಿಮ್ಮ ಬೈಕ್ ಅನ್ನು ಸರ್ವಿಸ್‌ಗೆ ಬಿಡುತ್ತೀರಿ. ಮೆಕ್ಯಾನಿಕ್‌ಗೆ, "ನಾನು ಹೋಗುತ್ತೇನೆ, ಬೈಕ್ ರೆಡಿ ಆದ ಮೇಲೆ ನನಗೆ <strong>ಕಾಲ್ ಬ್ಯಾಕ್ (Call back)</strong> ಮಾಡು" ಎಂದು ಹೇಳುತ್ತೀರಿ. ಮೆಕ್ಯಾನಿಕ್ ರಿಪೇರಿ ಮುಗಿಸಿದ ಮೇಲೆ ನಿಮಗೆ ಕರೆ ಮಾಡಿ ತಿಳಿಸುತ್ತಾನೆ. ಅಲ್ಲಿಯವರೆಗೆ ನೀವು ನಿಮ್ಮ ಬೇರೆ ಕೆಲಸಗಳನ್ನು ಮಾಡಿಕೊಂಡಿರಬಹುದು.</p>
+                </div>
+
+                <p><strong>ಪ್ರೊಫೆಷನಲ್ (Professional) ವಿವರಣೆ:</strong><br>
+                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಫಂಕ್ಷನ್‌ಗಳು 'ಫಸ್ಟ್-ಕ್ಲಾಸ್ ಸಿಟಿಜನ್ಸ್'. ಅಂದರೆ, ಒಂದು ಫಂಕ್ಷನ್ ಅನ್ನು ಮತ್ತೊಂದು ಫಂಕ್ಷನ್‌ಗೆ 'ಆರ್ಗ್ಯುಮೆಂಟ್' ಆಗಿ ಕಳುಹಿಸಬಹುದು. ಮುಖ್ಯ ಕೆಲಸ ಮುಗಿದ ನಂತರ ಆ ಆರ್ಗ್ಯುಮೆಂಟ್ ಆಗಿ ಬಂದ ಫಂಕ್ಷನ್ ಅನ್ನು ರನ್ ಮಾಡುವುದೇ 'ಕಾಲ್‌ಬ್ಯಾಕ್'.</p>
+
+                <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border-l-4 border-red-500">
+                    <ul class="list-disc pl-5">
+                        <li><strong>ಸಮಸ್ಯೆ (Callback Hell / Pyramid of Doom):</strong><br>
+                        ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನಲ್ಲಿ, ನೀವು ಮೊದಲು ಯೂಸರ್ ಡೇಟಾ ತಂದು, ಆಮೇಲೆ ಅವರ ಪೋಸ್ಟ್‌ಗಳನ್ನು ತಂದು, ಆಮೇಲೆ ಕಮೆಂಟ್‌ಗಳನ್ನು ತರಬೇಕಾದರೆ, ಒಂದರೊಳಗೆ ಮತ್ತೊಂದು ಕಾಲ್‌ಬ್ಯಾಕ್ ಬರೆಯುತ್ತಾ ಹೋದರೆ ಕೋಡ್ ತ್ರಿಕೋನಾಕಾರದಲ್ಲಿ (Pyramid) ಬೆಳೆಯುತ್ತದೆ. ಇದನ್ನು ಓದುವುದು ಮತ್ತು ಡಿಬಗ್ ಮಾಡುವುದು ಬಹಳ ಕಷ್ಟ.</li>
+                    </ul>
+                </div>
+
+<pre><code class="language-javascript">// ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪರ್ ಎದುರಿಸುವ 'Callback Hell' ಉದಾಹರಣೆ
+getUserData(function(user) {
+    getPosts(user.id, function(posts) {
+        getComments(posts[0].id, function(comments) {
+            updateDOM(comments); // DOM Manipulation
+        });
+    });
+});</code></pre>
+            </section>
+
+            <!-- 2. Promises (Preserved Verbatim) -->
+            <section id="promises" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-accent flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-handshake"></i> 2. ಪ್ರಾಮಿಸ್ (Promises) - [ಸುಧಾರಿತ ವಿಧಾನ]
+                </h2>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <p><strong>ನಾನ್-ಐಟಿ (Non-IT) ಉದಾಹರಣೆ:</strong><br>
+                    ನೀವು ಒಂದು ಆನ್‌ಲೈನ್ ಆ್ಯಪ್‌ನಲ್ಲಿ (ಉದಾ: Swiggy/Zomato) ಊಟ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಅವರು ನಿಮಗೆ ಊಟ ತಲುಪಿಸುವ ಒಂದು <strong>"ಭರವಸೆ" (Promise)</strong> ಕೊಡುತ್ತಾರೆ ಮತ್ತು ಆ್ಯಪ್‌ನಲ್ಲಿ ಒಂದು ಸ್ಟೇಟಸ್ ಕಾಣಿಸುತ್ತದೆ.<br>
+                    ಇದು 3 ಹಂತಗಳಲ್ಲಿ ಇರುತ್ತದೆ:</p>
+                    <ol class="list-decimal pl-5 mt-2 space-y-1">
+                        <li><strong>Pending (ಕಾಯುವಿಕೆ):</strong> ಊಟ ತಯಾರಾಗುತ್ತಿದೆ, ಇನ್ನು ಬಂದಿಲ್ಲ.</li>
+                        <li><strong>Fulfilled (ಯಶಸ್ಸು):</strong> ಊಟ ಮನೆಗೆ ಬಂತು (ಭರವಸೆ ಈಡೇರಿತು).</li>
+                        <li><strong>Rejected (ವಿಫಲ):</strong> ಮಳೆಯಿಂದಾಗಿ ಆರ್ಡರ್ ಕ್ಯಾನ್ಸಲ್ ಆಯಿತು (ಭರವಸೆ ಮುರಿಯಿತು).</li>
+                    </ol>
+                </div>
+
+                <!-- Conceptual SVG Illustration for Promises -->
+                <div class="w-full flex justify-center py-6 bg-white dark:bg-gray-800 rounded-lg shadow-inner">
+                    <svg viewBox="0 0 600 200" class="w-full max-w-lg h-auto">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#888" />
+                            </marker>
+                        </defs>
+                        <rect x="50" y="80" width="100" height="40" rx="20" fill="#f59e0b" class="opacity-90"/>
+                        <text x="100" y="105" text-anchor="middle" fill="white" font-weight="bold" font-family="sans-serif">Pending</text>
+                        
+                        <path d="M 150 90 L 230 60" stroke="#888" stroke-width="2" marker-end="url(#arrow)"/>
+                        <path d="M 150 110 L 230 140" stroke="#888" stroke-width="2" marker-end="url(#arrow)"/>
+                        
+                        <rect x="250" y="30" width="100" height="40" rx="20" fill="#10b981" class="opacity-90"/>
+                        <text x="300" y="55" text-anchor="middle" fill="white" font-weight="bold" font-family="sans-serif">Fulfilled</text>
+                        <text x="300" y="85" text-anchor="middle" fill="#10b981" font-size="12" font-family="sans-serif">.then()</text>
+                        
+                        <rect x="250" y="130" width="100" height="40" rx="20" fill="#ef4444" class="opacity-90"/>
+                        <text x="300" y="155" text-anchor="middle" fill="white" font-weight="bold" font-family="sans-serif">Rejected</text>
+                        <text x="300" y="185" text-anchor="middle" fill="#ef4444" font-size="12" font-family="sans-serif">.catch()</text>
+                    </svg>
+                </div>
+
+                <p><strong>ಪ್ರೊಫೆಷನಲ್ (Professional) ವಿವರಣೆ:</strong><br>
+                ಕಾಲ್‌ಬ್ಯಾಕ್ ಸಮಸ್ಯೆಯನ್ನು ಬಗೆಹರಿಸಲು ES6 (2015) ನಲ್ಲಿ <code>Promises</code> ಪರಿಚಯಿಸಲಾಯಿತು. Promise ಎಂಬುದು ಭವಿಷ್ಯದಲ್ಲಿ ಸಿಗುವ ಒಂದು ಮೌಲ್ಯವನ್ನು (Value) ಪ್ರತಿನಿಧಿಸುವ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆಬ್ಜೆಕ್ಟ್.</p>
+                <ul class="list-disc pl-5">
+                    <li>ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಬಂದರೆ <code>.then()</code> ಬಳಸಿ ಅದನ್ನು ಪಡೆಯುತ್ತೇವೆ.</li>
+                    <li>ಏನಾದರೂ ಎರರ್ ಬಂದರೆ <code>.catch()</code> ಬಳಸಿ ಅದನ್ನು ನಿಭಾಯಿಸುತ್ತೇವೆ (Error Handling).</li>
+                    <li>ಇದರಿಂದ ಕೋಡ್ ಸಮತಟ್ಟಾಗಿ (Flat) ಮತ್ತು ಓದಲು ಸುಲಭವಾಗಿ ಇರುತ್ತದೆ.</li>
+                </ul>
+
+<pre><code class="language-javascript">// Promise ಅನ್ನು ಬಳಸಿ ಡೇಟಾ ತರುವುದು (Fetch API)
+fetch('https://api.example.com/user')
+    .then(response => response.json()) // ಇದು ಯಶಸ್ವಿಯಾದರೆ (Fulfilled)
+    .then(user => fetch(`https://api.example.com/posts/${user.id}`)) // Promise Chaining
+    .then(response => response.json())
+    .then(posts => {
+        document.getElementById('post-container').innerHTML = posts[0].title; // DOM Update
+    })
+    .catch(error => {
+        console.error("ಏನೋ ತಪ್ಪಾಗಿದೆ!", error); // ವಿಫಲವಾದರೆ (Rejected)
+    });</code></pre>
+            </section>
+
+            <!-- 3. Async/Await (Preserved Verbatim) -->
+            <section id="async-await" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-purple-500 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 3. ಅಸಿಂಕ್ / ಅವೇಟ್ (Async / Await) - [ಆಧುನಿಕ ಮತ್ತು ಅತ್ಯುತ್ತಮ ವಿಧಾನ]
+                </h2>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <p><strong>ನಾನ್-ಐಟಿ (Non-IT) ಉದಾಹರಣೆ:</strong><br>
+                    ನೀವು ವಾಷಿಂಗ್ ಮೆಷಿನ್‌ಗೆ ಬಟ್ಟೆ ಹಾಕುತ್ತೀರಿ. ಬಟ್ಟೆ ಒಗೆಯುವುದು ಮುಗಿಯುವವರೆಗೆ (Await) ನೀವು ಬೇರೆ ಬಟ್ಟೆಗಳನ್ನು ಮಡಚುವ ಕೆಲಸ ಮಾಡುತ್ತೀರಿ. ನೋಡಲು ನೀವು ಒಂದಾದ ಮೇಲೊಂದು ಕೆಲಸ (Synchronous) ಮಾಡುತ್ತಿರುವಂತೆ ಕಾಣುತ್ತದೆ, ಆದರೆ ವಾಷಿಂಗ್ ಮೆಷಿನ್ ತನ್ನ ಕೆಲಸವನ್ನು ಹಿನ್ನೆಲೆಯಲ್ಲಿ (Asynchronous) ಮಾಡುತ್ತಿರುತ್ತದೆ. ನಿಮ್ಮ ದಿನಚರಿ ಎಲ್ಲಿಯೂ ನಿಲ್ಲುವುದಿಲ್ಲ (Not blocked).</p>
+                </div>
+
+                <p><strong>ಪ್ರೊಫೆಷನಲ್ (Professional) ವಿವರಣೆ:</strong><br>
+                ಇದು ES8 (2017) ನಲ್ಲಿ ಬಂದ ಹೊಸ ಫೀಚರ್. ಇದು ವಾಸ್ತವವಾಗಿ ಪ್ರಾಮಿಸ್‌ಗಳ (Promises) ಮೇಲೆಯೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಆದರೆ ಕೋಡ್ ಅನ್ನು ಬರೆಯುವ ಶೈಲಿ <strong>ಸಿಂಕ್ರೊನಸ್ ಕೋಡ್‌ನಂತೆಯೇ (Synchronous-looking)</strong> ಕಾಣುತ್ತದೆ.</p>
+                
+                <ul class="list-disc pl-5">
+                    <li>ಯಾವುದೇ ಫಂಕ್ಷನ್ ಹಿಂದೆ <code>async</code> ಎಂದು ಬರೆದರೆ, ಆ ಫಂಕ್ಷನ್ ಯಾವಾಗಲೂ ಒಂದು Promise ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡುತ್ತದೆ.</li>
+                    <li><code>await</code> ಕೀ-ವರ್ಡ್ ಅನ್ನು ಕೇವಲ <code>async</code> ಫಂಕ್ಷನ್ ಒಳಗೆ ಮಾತ್ರ ಬಳಸಬಹುದು. ಇದು ಪ್ರಾಮಿಸ್‌ನ ಫಲಿತಾಂಶ ಬರುವವರೆಗೂ ಆ ಸಾಲಿನಲ್ಲಿ ಎಕ್ಸಿಕ್ಯೂಷನ್ ಅನ್ನು (ಹಿನ್ನೆಲೆಯಲ್ಲಿ) ತಡೆಹಿಡಿಯುತ್ತದೆ.</li>
+                    <li>ಎರರ್‌ಗಳನ್ನು ನಿಭಾಯಿಸಲು ಸಾಂಪ್ರದಾಯಿಕ <code>try...catch</code> ಬ್ಲಾಕ್ ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</li>
+                </ul>
+
+<pre><code class="language-javascript">// ಅತ್ಯಂತ ಸುಲಭವಾದ ಮತ್ತು ಕ್ಲೀನ್ ಆದ Async/Await ವಿಧಾನ
+async function displayUserContent() {
+    try {
+        // ಡೇಟಾ ಬರುವವರೆಗೆ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಕಾಯುತ್ತದೆ (await)
+        const userResponse = await fetch('https://api.example.com/user');
+        const user = await userResponse.json();
+
+        const postResponse = await fetch(`https://api.example.com/posts/${user.id}`);
+        const posts = await postResponse.json();
+
+        // Browser DOM Architecture ಪ್ರಕಾರ ಎಲಿಮೆಂಟ್ ಸೆಲೆಕ್ಟ್ ಮಾಡಿ ಅಪ್‌ಡೇಟ್ ಮಾಡುವುದು
+        const container = document.querySelector('#content');
+        container.textContent = `User: ${user.name}, Latest Post: ${posts[0].title}`;
+        
+    } catch (error) {
+        // ನೆಟ್‌ವರ್ಕ್ ಹೋದರೆ ಅಥವಾ API ಫೇಲ್ ಆದರೆ ಇಲ್ಲಿಗೆ ಬರುತ್ತದೆ
+        console.error("ಡೇಟಾ ತರುವಲ್ಲಿ ವಿಫಲವಾಗಿದೆ:", error);
+    }
+}
+
+displayUserContent();</code></pre>
+            </section>
+
+            <!-- Summary (Preserved Verbatim) -->
+            <section id="summary" class="fade-in bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold mb-4">ಡೆವಲಪರ್‌ಗಳಿಗಾಗಿ ಸಾರಾಂಶ:</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-2"><span>❌</span> <strong>Callbacks:</strong> ಹಳೆಯ ಕೋಡ್‌ಬೇಸ್‌ಗಳಲ್ಲಿ ಅಥವಾ ಈವೆಂಟ್ ಲಿಸ್ನರ್‌ಗಳಲ್ಲಿ (addEventListener) ಮಾತ್ರ ಬಳಸಲಾಗುತ್ತದೆ. Nested ಆದಾಗ ನಿರ್ವಹಣೆ ಕಷ್ಟ.</li>
+                    <li class="flex items-start gap-2"><span>⚠️</span> <strong>Promises:</strong> .then() ಚೈನಿಂಗ್ ಮೂಲಕ ಕಾಲ್‌ಬ್ಯಾಕ್ ಹೆಲ್ ಅನ್ನು ತಪ್ಪಿಸುತ್ತದೆ.</li>
+                    <li class="flex items-start gap-2"><span>✅</span> <strong>Async/Await:</strong> ಇಂದಿನ ಮಾಡರ್ನ್ ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನಲ್ಲಿ API ಕಾಲ್‌ಗಳನ್ನು ಮಾಡಲು (ಉದಾ: ಯೂಸರ್ ಲಾಗಿನ್, ಡೇಟಾ ಫೆಚ್) ಶೇ. 99% ಇದನ್ನೇ ಬಳಸಲಾಗುತ್ತದೆ. ಇದು ಕೋಡ್ ಅನ್ನು ಸ್ವಚ್ಛವಾಗಿ ಮತ್ತು ನಿರ್ವಹಿಸಲು ಸುಲಭವಾಗಿ ಇಡುತ್ತದೆ.</li>
+                </ul>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700 my-8">
+
+            <!-- EXPANDED CONTENT SECTION: Crucial JS Concepts -->
+            <div class="text-center fade-in">
+                <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+                    <i class="fa-solid fa-layer-group"></i> ವಿಸ್ತೃತ ತಾಂತ್ರಿಕ ಮಾಹಿತಿ (Extended Core Concepts)
+                </h2>
+                <p class="text-sm text-gray-500 mt-2">ಉತ್ತಮ ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪರ್ ಆಗಲು ಅತ್ಯಗತ್ಯವಾದ ಮೂಲಭೂತ ಕಾನ್ಸೆಪ್ಟ್‌ಗಳು</p>
+            </div>
+
+            <!-- 4. DOM Manipulation -->
+            <section id="dom-manipulation" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-yellow-500 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-sitemap"></i> 4. ಕೋರ್ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮತ್ತು DOM ಮ್ಯಾನಿಪುಲೇಷನ್
+                </h2>
+                
+                <p><strong>DOM (Document Object Model) ಎಂದರೇನು?</strong><br>
+                ಬ್ರೌಸರ್ ನೀವು ಬರೆದ HTML ಅನ್ನು ಓದಿ, ಅದನ್ನು ಒಂದು 'ಟ್ರೀ ಸ್ಟ್ರಕ್ಚರ್' (Tree Structure) ಆಗಿ ಪರಿವರ್ತಿಸುತ್ತದೆ. ಈ ಟ್ರೀ ಯನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಬಳಸಿ ಬದಲಾಯಿಸುವುದನ್ನೇ <strong>DOM Manipulation</strong> ಎನ್ನುತ್ತೇವೆ. ಇದರಿಂದ ವೆಬ್‌ಪೇಜ್ ರಿಫ್ರೆಶ್ ಆಗದೆಯೇ ಹೊಸ ವಿಷಯಗಳನ್ನು ಪರದೆಯ ಮೇಲೆ ತೋರಿಸಬಹುದು.</p>
+
+                <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">ಪ್ರಮುಖ Element Selection ವಿಧಾನಗಳು:</h4>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><code>getElementById('id')</code>: ಐಡಿ ಮೂಲಕ ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್ ಹುಡುಕಲು (ಅತಿ ವೇಗವಾದ ವಿಧಾನ).</li>
+                        <li><code>querySelector('.class')</code>: CSS ಸೆಲೆಕ್ಟರ್ ಮೂಲಕ ಮೊದಲ ಎಲಿಮೆಂಟ್ ಅನ್ನು ಹುಡುಕಲು (ಅತ್ಯಂತ ಹೆಚ್ಚು ಬಳಕೆಯಾಗುವ ಆಧುನಿಕ ವಿಧಾನ).</li>
+                        <li><code>querySelectorAll('div')</code>: ಆ ಹೆಸರಿನ ಎಲ್ಲಾ ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಂದು ಲಿಸ್ಟ್ (NodeList) ಆಗಿ ತರಲು.</li>
+                    </ul>
+                </div>
+
+<pre><code class="language-javascript">// DOM ಮ್ಯಾನಿಪುಲೇಷನ್ ಉದಾಹರಣೆ
+// 1. ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ ಮಾಡುವುದು
+const titleElement = document.querySelector('.main-title');
+
+// 2. ಅದರ ಒಳಗಿನ ಟೆಕ್ಸ್ಟ್ ಬದಲಾಯಿಸುವುದು
+titleElement.textContent = "ಹೊಸ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಟೈಟಲ್";
+
+// 3. ಸ್ಟೈಲ್ (CSS) ಬದಲಾಯಿಸುವುದು
+titleElement.style.color = "blue";
+titleElement.style.fontSize = "24px";
+
+// 4. ಹೊಸ ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸಿ ಸೇರಿಸುವುದು
+const newDiv = document.createElement('div');
+newDiv.innerHTML = "&lt;strong&gt;ಹೊಸ ಪ್ಯಾರಾಗ್ರಾಫ್!&lt;/strong&gt;";
+document.body.appendChild(newDiv);
+</code></pre>
+            </section>
+
+            <!-- 5. Event Handling -->
+            <section id="event-handling" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-pink-500 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-computer-mouse"></i> 5. ಈವೆಂಟ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ (Event Handling)
+                </h2>
+                
+                <p>ಯೂಸರ್ ವೆಬ್‌ಪೇಜ್ ಜೊತೆ ಏನೇ ಇಂಟರಾಕ್ಟ್ ಮಾಡಿದರೂ (ಕ್ಲಿಕ್ ಮಾಡುವುದು, ಟೈಪ್ ಮಾಡುವುದು, ಸ್ಕ್ರಾಲ್ ಮಾಡುವುದು) ಅದು ಒಂದು <strong>"Event"</strong>. 
+                ಅದನ್ನು ಹಿಡಿದು (Listen) ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಪ್ರತಿಕ್ರಿಯಿಸುವುದೇ 'Event Handling'. 
+                ಇದಕ್ಕಾಗಿ ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಯಾವಾಗಲೂ <code>addEventListener</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+<pre><code class="language-javascript">// ಬಟನ್ ಕ್ಲಿಕ್ ಈವೆಂಟ್ ನಿರ್ವಹಣೆ
+const submitBtn = document.querySelector('#submit-button');
+
+// ಈವೆಂಟ್ ಲಿಸ್ನರ್ ಸೇರಿಸುವುದು (Event = 'click')
+submitBtn.addEventListener('click', function(event) {
+    // ಫಾರ್ಮ್ ರಿಫ್ರೆಶ್ ಆಗುವುದನ್ನು ತಡೆಯಲು
+    event.preventDefault(); 
+    
+    console.log("ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ!");
+    
+    // ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಬಟನ್ ಬಣ್ಣ ಬದಲಾಯಿಸಿ
+    event.target.style.backgroundColor = 'green';
+});
+
+// ಕೀಬೋರ್ಡ್ ಈವೆಂಟ್ (ಉದಾಹರಣೆಗೆ Enter ಕೀ ಒತ್ತಿದಾಗ)
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') {
+        console.log("Enter ಕೀ ಒತ್ತಿದ್ದೀರಿ!");
+    }
+});
+</code></pre>
+            </section>
+
+            <!-- 6. Client-Side Storage API -->
+            <section id="client-storage" class="fade-in space-y-4">
+                <h2 class="text-2xl font-bold text-emerald-500 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fa-solid fa-database"></i> 6. ಬ್ರೌಸರ್ ಸ್ಟೋರೇಜ್ (Client-Side Storage API)
+                </h2>
+                
+                <p>ಬಳಕೆದಾರನ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ಕೆಲವು ಡೇಟಾವನ್ನು ಸೇವ್ ಮಾಡಿಡಲು HTML5 ಸ್ಟೋರೇಜ್ API ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ. ಇದು ಲಾಗಿನ್ ಟೋಕನ್, ಡಾರ್ಕ್ ಥೀಮ್ ಸೆಟ್ಟಿಂಗ್ ಅಥವಾ ಕಾರ್ಟ್ ಡೇಟಾವನ್ನು ಉಳಿಸಲು ಬಹಳ ಮುಖ್ಯ.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border-t-4 border-green-500">
+                        <h4 class="font-bold mb-2"><i class="fa-solid fa-hard-drive text-green-500"></i> Local Storage</h4>
+                        <p class="text-sm">ಬ್ರೌಸರ್ ಕ್ಲೋಸ್ ಮಾಡಿದರೂ ಡೇಟಾ ಅಳಿಸಿಹೋಗುವುದಿಲ್ಲ. ಶಾಶ್ವತವಾಗಿ (ನೀವಾಗಿ ಡಿಲೀಟ್ ಮಾಡುವವರೆಗೆ) ಇರುತ್ತದೆ.</p>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border-t-4 border-yellow-500">
+                        <h4 class="font-bold mb-2"><i class="fa-solid fa-stopwatch text-yellow-500"></i> Session Storage</h4>
+                        <p class="text-sm">ಟ್ಯಾಬ್ ಅಥವಾ ಬ್ರೌಸರ್ ಕ್ಲೋಸ್ ಮಾಡಿದ ತಕ್ಷಣ ಡೇಟಾ ಅಳಿಸಿಹೋಗುತ್ತದೆ. ತಾತ್ಕಾಲಿಕ ಬಳಕೆಗೆ ಮಾತ್ರ.</p>
+                    </div>
+                </div>
+
+<pre><code class="language-javascript">// LocalStorage ಬಳಕೆಯ ಉದಾಹರಣೆ: ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದು
+// ಗಮನಿಸಿ: ಸ್ಟೋರೇಜ್ ಯಾವಾಗಲೂ ಸ್ಟ್ರಿಂಗ್ (String) ರೂಪದಲ್ಲಿ ಮಾತ್ರ ಡೇಟಾ ಸ್ವೀಕರಿಸುತ್ತದೆ.
+
+const userProfile = { name: "ರಮೇಶ್", role: "Developer" };
+
+// Object ಅನ್ನು String ಆಗಿ ಕನ್ವರ್ಟ್ ಮಾಡಿ ಸೇವ್ ಮಾಡುವುದು
+localStorage.setItem('user', JSON.stringify(userProfile));
+
+// ಡೇಟಾ ವಾಪಸ್ ಪಡೆಯುವುದು
+const savedData = localStorage.getItem('user');
+
+if (savedData) {
+    // String ಅನ್ನು ಮತ್ತೆ Object ಆಗಿ ಕನ್ವರ್ಟ್ ಮಾಡುವುದು
+    const parsedUser = JSON.parse(savedData);
+    console.log("Welcome back, " + parsedUser.name);
+}
+
+// ನಿರ್ದಿಷ್ಟ ಡೇಟಾ ಅಳಿಸಲು
+localStorage.removeItem('user');
+
+// ಸಂಪೂರ್ಣ ಸ್ಟೋರೇಜ್ ಖಾಲಿ ಮಾಡಲು
+localStorage.clear();
+</code></pre>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts for Interactions -->
+    <script>
+        // 1. Syntax Highlighting Initialization
+        hljs.highlightAll();
+
+        // 2. Dark/Light Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Check local storage for theme preference, default to dark
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if(savedTheme === 'light') {
+            htmlElement.classList.remove('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            themeIcon.classList.remove('text-yellow-400');
+            themeIcon.classList.add('text-orange-500');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.remove('text-orange-500');
+                themeIcon.classList.add('text-yellow-400');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.remove('text-yellow-400');
+                themeIcon.classList.add('text-orange-500');
+            }
+        });
+
+        // 3. Custom Copy Code Button logic
+        document.querySelectorAll('pre').forEach(pre => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+            pre.appendChild(btn);
+
+            btn.addEventListener('click', () => {
+                const code = pre.querySelector('code').innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+        });
+
+        // 4. ScrollSpy / Active link highlighting on scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

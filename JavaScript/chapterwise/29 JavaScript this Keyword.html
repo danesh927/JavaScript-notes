@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript 'this' Keyword - Master Class</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Variables & Theming --- */
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #f59e0b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --info-bg: #eff6ff;
+            --info-border: #bfdbfe;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --nav-width: 280px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --border-color: #334155;
+            --code-bg: #000000;
+            --info-bg: #172554;
+            --info-border: #1e3a8a;
+            --success-bg: #052e16;
+            --success-border: #14532d;
+            --warning-bg: #422006;
+            --warning-border: #78350f;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+        }
+
+        /* --- Reset & Global --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans Kannada', 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- Progress Bar --- */
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: var(--primary); width: 0%; z-index: 1000;
+            transition: width 0.2s ease-out;
+        }
+
+        /* --- Layout --- */
+        .layout { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: var(--nav-width); background: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            position: fixed; height: 100vh; overflow-y: auto;
+            padding: 2rem 1.5rem; transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--primary); }
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 0.75rem; }
+        .sidebar a {
+            text-decoration: none; color: var(--text-muted);
+            font-weight: 500; font-size: 0.95rem; display: block;
+            padding: 0.5rem; border-radius: 6px; transition: all 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--info-bg); color: var(--primary);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: var(--nav-width); padding: 3rem;
+            max-width: 900px; width: 100%;
+        }
+
+        /* --- Header / Hero --- */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+            color: white; padding: 3rem; border-radius: 12px;
+            margin-bottom: 3rem; box-shadow: var(--shadow); position: relative;
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.3; }
+        .hero p { font-size: 1.1rem; opacity: 0.9; }
+        
+        .theme-toggle {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.2); border: none;
+            color: white; padding: 10px; border-radius: 50%;
+            cursor: pointer; transition: background 0.2s; display: flex;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.3); }
+
+        /* --- Typography & Sections --- */
+        section { margin-bottom: 4rem; scroll-margin-top: 2rem; }
+        h2 { font-size: 1.8rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+        h3 { font-size: 1.3rem; margin: 1.5rem 0 1rem; color: var(--primary); }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+
+        /* --- Teaching Level Badges --- */
+        .level-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; margin-bottom: 10px;
+        }
+        .level-1 { background: var(--success-bg); color: #166534; border: 1px solid var(--success-border); }
+        .level-2 { background: var(--info-bg); color: #1e40af; border: 1px solid var(--info-border); }
+        .level-3 { background: var(--warning-bg); color: #92400e; border: 1px solid var(--warning-border); }
+        
+        [data-theme="dark"] .level-1 { color: #4ade80; }
+        [data-theme="dark"] .level-2 { color: #60a5fa; }
+        [data-theme="dark"] .level-3 { color: #fbbf24; }
+
+        /* --- Callout Boxes (Added Info) --- */
+        .callout {
+            padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;
+            border-left: 4px solid; background: var(--surface-color);
+            box-shadow: var(--shadow);
+        }
+        .callout.original { border-color: var(--secondary); background: var(--warning-bg); }
+        .callout.added { border-color: var(--primary); background: var(--info-bg); }
+        .callout-title { font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+
+        /* --- Code Blocks --- */
+        .code-wrapper {
+            background: var(--code-bg); border-radius: 8px;
+            margin: 1.5rem 0; overflow: hidden; box-shadow: var(--shadow);
+        }
+        .code-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.1); padding: 0.5rem 1rem;
+            color: #a3a3a3; font-size: 0.85rem; font-family: 'Inter', sans-serif;
+        }
+        .copy-btn {
+            background: transparent; border: 1px solid #555; color: #ccc;
+            padding: 4px 10px; border-radius: 4px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #333; color: white; }
+        pre { padding: 1rem; overflow-x: auto; margin: 0; }
+        code {
+            font-family: 'Fira Code', monospace; color: var(--code-text);
+            font-size: 0.95rem; line-height: 1.5;
+        }
+        
+        /* Syntax Highlighting Colors (Custom lightweight) */
+        .kw { color: #569cd6; } /* Keyword */
+        .str { color: #ce9178; } /* String */
+        .num { color: #b5cea8; } /* Number */
+        .fn { color: #dcdcaa; } /* Function */
+        .cmt { color: #6a9955; font-style: italic; } /* Comment */
+        .obj { color: #4ec9b0; } /* Object/Class */
+
+        /* Inline code */
+        :not(pre) > code {
+            background: var(--border-color); padding: 2px 6px;
+            border-radius: 4px; font-family: 'Fira Code', monospace;
+            font-size: 0.9em; color: var(--primary);
+        }
+
+        /* --- SVG Concept Diagram --- */
+        .diagram-container {
+            background: var(--surface-color); padding: 2rem;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            text-align: center; margin: 2rem 0;
+        }
+        .diagram-container svg { max-width: 100%; height: auto; }
+
+        /* --- Archive Section --- */
+        .archive-section {
+            background: var(--surface-color); padding: 2rem;
+            border: 2px dashed var(--border-color); border-radius: 8px;
+            opacity: 0.9;
+        }
+
+        /* --- Mobile Menu Button --- */
+        .menu-btn {
+            display: none; position: fixed; bottom: 20px; right: 20px;
+            background: var(--primary); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; cursor: pointer;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .menu-btn { display: block; }
+            .hero { padding: 2rem 1.5rem; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reading Progress -->
+    <div id="progress-bar"></div>
+
+    <!-- Mobile Menu Button -->
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h2>ವಿಷಯ ಸೂಚಿ (TOC)</h2>
+            <ul>
+                <li><a href="#intro">1. ಪೀಠಿಕೆ: ಓತಿಕ್ಯಾತದಂತಹ 'this'</a></li>
+                <li><a href="#object-method">2. Object ಒಳಗೆ this</a></li>
+                <li><a href="#standalone">3. ಸಾಮಾನ್ಯ Function ಒಳಗೆ this</a></li>
+                <li><a href="#constructor">4. Constructor ಒಳಗೆ this</a></li>
+                <li><a href="#real-world">5. ನೈಜ ಉದಾಹರಣೆ (person ಆಬ್ಜೆಕ್ಟ್)</a></li>
+                <li><a href="#modern-js">6. ಆಧುನಿಕ ವಿಧಾನ (Arrow Functions)</a></li>
+                <li><a href="#original-archive">7. ಮೂಲ ನೋಟ್ಸ್ (Archive)</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Hero Section -->
+            <header class="hero">
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Theme">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+                <h1>JavaScript <code>this</code> Keyword</h1>
+                <p>ಒಂದು ಸಂಪೂರ್ಣ ಮಾರ್ಗದರ್ಶಿ: ಮೂಲಭೂತ ಹಂತದಿಂದ ವೃತ್ತಿಪರ ಹಂತದವರೆಗೆ (Beginner to Professional)</p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;">⏳ ಓದಲು ಬೇಕಾಗುವ ಸಮಯ: 10 ನಿಮಿಷ</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.9rem;">🎯 Target Audience: Beginners & Non-IT</span>
+                </div>
+            </header>
+
+            <!-- Section 1: Introduction -->
+            <section id="intro">
+                <h2>1. ಪೀಠಿಕೆ: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ `this` ಎಂದರೆ ಏನು?</h2>
+                
+                <div class="callout original">
+                    <div class="callout-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        ಮೂಲ ನೋಟ್ಸ್‌ನಿಂದ (From Original Notes)
+                    </div>
+                    <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <code>this</code> ಕೀವರ್ಡ್ ಒಂದು "ಬಣ್ಣ ಬದಲಿಸುವ ಓತಿಕ್ಯಾತ" (Chameleon) ಇದ್ದಂತೆ. ನೀವು ಅದನ್ನು ಎಲ್ಲಿ ಮತ್ತು ಹೇಗೆ ಬಳಸುತ್ತೀರಿ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ಅದರ ಅರ್ಥ ಸಂಪೂರ್ಣವಾಗಿ ಬದಲಾಗುತ್ತದೆ. ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ <code>this</code> ಎಂದರೆ ಸಾಮಾನ್ಯವಾಗಿ "ನನ್ನ" (My) ಅಥವಾ "ನಾನು ಸೇರಿರುವ ವಸ್ತು" ಎಂದರ್ಥ.</p>
+                </div>
+
+                <div class="callout added">
+                    <div class="callout-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ (Technical Concept)
+                    </div>
+                    <p><strong>ಅದು ಏಕೆ ಅಗತ್ಯ (Why is it needed)?</strong><br>
+                    ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಬೇರೆ ಬೇರೆ ಆಬ್ಜೆಕ್ಟ್‌ಗಳಿಗೆ ಮರುಬಳಕೆ (Reuse) ಮಾಡಲು <code>this</code> ಸಹಾಯ ಮಾಡುತ್ತದೆ. ಪ್ರತಿ ಬಾರಿಯೂ ಆಬ್ಜೆಕ್ಟ್‌ನ ಹೆಸರನ್ನು ಹಾರ್ಡ್‌ಕೋಡ್ (Hardcode) ಮಾಡುವ ಬದಲು, <code>this</code> ಬಳಸುವುದರಿಂದ ಕೋಡ್ ಚಲನಶೀಲ (Dynamic) ಆಗುತ್ತದೆ.</p>
+                </div>
+                
+                <p><code>this</code> ಕೀವರ್ಡ್ ಪ್ರಮುಖವಾಗಿ ಮೂರು ಬೇರೆ ಬೇರೆ ಸನ್ನಿವೇಶಗಳಲ್ಲಿ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನಾವು ಈಗ ಹಂತ-ಹಂತವಾಗಿ ನೋಡೋಣ.</p>
+            </section>
+
+            <!-- Section 2: Object Method -->
+            <section id="object-method">
+                <h2>2. Object ಒಳಗೆ `this` (ಆಬ್ಜೆಕ್ಟ್ ಮೆಥಡ್)</h2>
+                
+                <span class="level-badge level-1">ಹಂತ 1 - ಸರಳ ವಿವರಣೆ (Simple)</span>
+                <p>ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನ (ವಸ್ತುವಿನ) ಒಳಗಿರುವ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ <code>this</code> ಅನ್ನು ಬಳಸಿದರೆ, ಅದು ಅದೇ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಅಂದರೆ, "ನಾನು ಸೇರಿರುವ ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣ" ಎಂದರ್ಥ.</p>
+
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>JavaScript - Object Method</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-js"><span class="kw">let</span> employee = {
+  name: <span class="str">"ರಮೇಶ್"</span>,
+  salary: <span class="num">50000</span>,
+  
+  <span class="fn">showDetails</span>: <span class="kw">function</span>() {
+    <span class="cmt">// ಇಲ್ಲಿ 'this' ಎಂದರೆ 'employee' ಆಬ್ಜೆಕ್ಟ್</span>
+    <span class="obj">console</span>.<span class="fn">log</span>(<span class="str">"ನನ್ನ ಹೆಸರು "</span> + <span class="kw">this</span>.name + <span class="str">", ನನ್ನ ಸಂಬಳ "</span> + <span class="kw">this</span>.salary);
+  }
+};
+
+employee.<span class="fn">showDetails</span>(); 
+<span class="cmt">// ಔಟ್‌ಪುಟ್: ನನ್ನ ಹೆಸರು ರಮೇಶ್, ನನ್ನ ಸಂಬಳ 50000</span></code></pre>
+                </div>
+
+                <span class="level-badge level-2">ಹಂತ 2 - Technical Explanation</span>
+                <p>ಇಲ್ಲಿ <code>showDetails</code> ಎಂಬುದು <code>employee</code> ಆಬ್ಜೆಕ್ಟ್‌ನ ಮೆಥಡ್ (Method - ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಇರುವ ಫಂಕ್ಷನ್). ಹಾಗಾಗಿ <code>this.name</code> ಎಂದರೆ, ನೇರವಾಗಿ <code>employee.name</code> (ರಮೇಶ್) ಎಂದೇ ಅರ್ಥ. ಫಂಕ್ಷನ್ ಅನ್ನು ಯಾರು ಕರೆಯುತ್ತಿದ್ದಾರೆ (Who is calling the function?) ಎಂಬುದರ ಮೇಲೆ <code>this</code> ನಿರ್ಧಾರವಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಫಂಕ್ಷನ್ ಕರೆಯುತ್ತಿರುವುದು <code>employee</code>.</p>
+            </section>
+
+            <!-- Section 3: Standalone Function -->
+            <section id="standalone">
+                <h2>3. ಸಾಮಾನ್ಯ Function ಒಳಗೆ `this` (Standalone Function)</h2>
+                
+                <span class="level-badge level-1">ಹಂತ 1 - ಸರಳ ವಿವರಣೆ (Simple)</span>
+                <p>ಒಂದು ಫಂಕ್ಷನ್ ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಇಲ್ಲದೆ, ಪ್ರೋಗ್ರಾಮ್‌ನಲ್ಲಿ ಸುಮ್ಮನೆ ಹೊರಗಡೆ ಇದ್ದರೆ, ಆಗ <code>this</code> ಅನ್ನು ಬಳಸಿದರೆ ಅದು "ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್" (Global Object) ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ರನ್ ಮಾಡುವಾಗ ಈ ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು <code>Window</code> ಎನ್ನುತ್ತಾರೆ.</p>
+
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>JavaScript - Standalone Function</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-js"><span class="kw">function</span> <span class="fn">sayHello</span>() {
+  <span class="cmt">// ಈ ಫಂಕ್ಷನ್ ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಇಲ್ಲ.</span>
+  <span class="obj">console</span>.<span class="fn">log</span>(<span class="kw">this</span>); 
+}
+
+<span class="fn">sayHello</span>(); 
+<span class="cmt">// ಔಟ್‌ಪುಟ್: Window {...} (ಇಡೀ ಬ್ರೌಸರ್‌ನ ವಿಂಡೋ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ)</span></code></pre>
+                </div>
+
+                <span class="level-badge level-2">ಹಂತ 2 - Technical Explanation</span>
+                <p>ಇಲ್ಲಿ <code>sayHello</code> ಫಂಕ್ಷನ್‌ಗೆ ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ಯಜಮಾನ (Object) ಇಲ್ಲ. ಆದ್ದರಿಂದ <code>this</code> ಎನ್ನುವುದು ಇಡೀ ಪ್ರೋಗ್ರಾಮ್‌ನ ಅತಿ ದೊಡ್ಡ ಯಜಮಾನನಾದ (Global Object / Window Object) ಕಡೆ ಬೆರಳು ತೋರಿಸುತ್ತದೆ.</p>
+
+                <div class="callout added">
+                    <div class="callout-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        ವೃತ್ತಿಪರ ಎಚ್ಚರಿಕೆ (Strict Mode Warning)
+                    </div>
+                    <p>ಒಂದು ವೇಳೆ ನಿಮ್ಮ ಕೋಡ್‌ನ ಆರಂಭದಲ್ಲಿ <code>"use strict";</code> ಎಂದು ಬರೆದಿದ್ದರೆ, ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್ ಒಳಗೆ <code>this</code> ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುವುದಿಲ್ಲ. ಬದಲಾಗಿ ಅದು <code>undefined</code> ಆಗಿರುತ್ತದೆ. ಇದು ತಪ್ಪುಗಳನ್ನು ತಡೆಯಲು JavaScript ನಲ್ಲಿರುವ ಭದ್ರತಾ ವ್ಯವಸ್ಥೆ.</p>
+                </div>
+            </section>
+
+            <!-- Section 4: Constructor -->
+            <section id="constructor">
+                <h2>4. Constructor ಒಳಗೆ `this` (ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವಾಗ)</h2>
+                
+                <span class="level-badge level-1">ಹಂತ 1 - ಸರಳ ವಿವರಣೆ (Simple)</span>
+                <p>ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಎಂದರೆ ಒಂದೇ ರೀತಿಯ ಹಲವು ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸಲು ಬಳಸುವ ಒಂದು 'ಅಚ್ಚು' (Blueprint). ನೀವು <code>new</code> ಕೀವರ್ಡ್ ಬಳಸಿ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಮೂಲಕ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವಾಗ, <code>this</code> ಎಂದರೆ "ಹೊಸದಾಗಿ ಹುಟ್ಟುತ್ತಿರುವ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್" ಎಂದರ್ಥ.</p>
+
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>JavaScript - Constructor Function</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-js"><span class="cmt">// ಇದು ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (ಅಚ್ಚು)</span>
+<span class="kw">function</span> <span class="fn">BankAccount</span>(accountHolderName, depositAmount) {
+  <span class="cmt">// ಇಲ್ಲಿ 'this' ಎಂದರೆ, ಹೊಸದಾಗಿ ಹುಟ್ಟುವ ಖಾಲಿ ಅಕೌಂಟ್ ಡಬ್ಬಿ</span>
+  <span class="kw">this</span>.name = accountHolderName;
+  <span class="kw">this</span>.balance = depositAmount;
+}
+
+<span class="cmt">// 'new' ಕೀವರ್ಡ್ ಬಳಸಿ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ</span>
+<span class="kw">let</span> customer1 = <span class="kw">new</span> <span class="fn">BankAccount</span>(<span class="str">"ಸೀತಾ"</span>, <span class="num">10000</span>);
+<span class="kw">let</span> customer2 = <span class="kw">new</span> <span class="fn">BankAccount</span>(<span class="str">"ರಾಮು"</span>, <span class="num">5000</span>);
+
+<span class="obj">console</span>.<span class="fn">log</span>(customer1.name);
+<span class="cmt">// ಔಟ್‌ಪುಟ್: ಸೀತಾ</span>
+<span class="obj">console</span>.<span class="fn">log</span>(customer2.balance);
+<span class="cmt">// ಔಟ್‌ಪುಟ್: 5000</span></code></pre>
+                </div>
+
+                <span class="level-badge level-2">ಹಂತ 2 - Technical Explanation</span>
+                <p>ನೀವು <code>new BankAccount("ಸೀತಾ", 10000)</code> ಎಂದಾಗ, ಕಂಪ್ಯೂಟರ್‌ನ ಆಂತರಿಕ ಕಾರ್ಯವಿಧಾನ (Internal Working) ಹೀಗಿರುತ್ತದೆ:</p>
+                <ol>
+                    <li>ಮೊದಲು ಒಂದು ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ <code>{}</code> ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ.</li>
+                    <li>ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನೇ ಇಲ್ಲಿ <code>this</code> ಎಂದು ಕರೆಯಲಾಗುತ್ತದೆ.</li>
+                    <li>ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಹೆಸರು ಮತ್ತು ಹಣವನ್ನು ತುಂಬುತ್ತದೆ.</li>
+                    <li>ಕೊನೆಯಲ್ಲಿ ಆ ಆಬ್ಜೆಕ್ಟ್ ತಾನಾಗಿಯೇ return ಆಗುತ್ತದೆ.</li>
+                </ol>
+            </section>
+
+            <!-- Concept Diagram -->
+            <div class="diagram-container">
+                <h3 style="margin-top:0;">`this` ನ ಬಣ್ಣ ಬದಲಾವಣೆ (Visual Diagram)</h3>
+                <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Global Context -->
+                    <rect x="10" y="50" width="150" height="100" rx="10" fill="#f87171" opacity="0.8"/>
+                    <text x="85" y="90" font-family="sans-serif" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Standalone</text>
+                    <text x="85" y="115" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">this = Window</text>
+
+                    <!-- Object Method Context -->
+                    <rect x="225" y="50" width="150" height="100" rx="10" fill="#3b82f6" opacity="0.8"/>
+                    <text x="300" y="90" font-family="sans-serif" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Object Method</text>
+                    <text x="300" y="115" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">this = Object itself</text>
+
+                    <!-- Constructor Context -->
+                    <rect x="440" y="50" width="150" height="100" rx="10" fill="#10b981" opacity="0.8"/>
+                    <text x="515" y="90" font-family="sans-serif" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Constructor (new)</text>
+                    <text x="515" y="115" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">this = New Object</text>
+                    
+                    <!-- Arrows -->
+                    <path d="M 170 100 L 215 100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    <path d="M 385 100 L 430 100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
+                    
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <!-- Section 5: Real World Example -->
+            <section id="real-world">
+                <h2>5. ನೈಜ ಉದಾಹರಣೆಯ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆ (`person` ಆಬ್ಜೆಕ್ಟ್)</h2>
+                
+                <p>ಈಗ ಮೇಲಿನ ನಿಯಮಗಳನ್ನು ಇಟ್ಟುಕೊಂಡು, ಈ ಕೆಳಗಿನ ಕೋಡ್ ಹೇಗೆ ಹಂತ-ಹಂತವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ನೋಡೋಣ.</p>
+
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span>JavaScript - Complex Object</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-js"><span class="kw">const</span> person = {
+  firstName: <span class="str">"Mani"</span>,
+  age: <span class="num">25</span>,
+  
+  <span class="fn">getBirthDay</span>: <span class="kw">function</span> () {
+    <span class="kw">return</span> <span class="num">2020</span> - <span class="kw">this</span>.age;
+  },
+  
+  hobbies: [<span class="str">"eat"</span>, <span class="str">"sleep"</span>, <span class="str">"code"</span>],
+  
+  <span class="fn">getHobbies</span>: <span class="kw">function</span> () {
+    <span class="kw">this</span>.hobbies.<span class="fn">forEach</span>(<span class="kw">function</span> (hobby) {
+      <span class="obj">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.firstName, hobby);
+    }, <span class="kw">this</span>); <span class="cmt">// ಗಮನಿಸಿ: ಇಲ್ಲಿ ಕೊನೆಯಲ್ಲಿ 'this' ಕಳುಹಿಸಲಾಗಿದೆ</span>
+  }
+};</code></pre>
+                </div>
+
+                <h3>ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ (Execution Flow)</h3>
+
+                <p><strong>ಹಂತ 1: ಆಬ್ಜೆಕ್ಟ್ ಮತ್ತು ಗುಣಲಕ್ಷಣಗಳು (Object & Properties)</strong></p>
+                <ul>
+                    <li><code>const person = {</code>: ಇಲ್ಲಿ person ಎಂಬ ಹೆಸರಿನ ಒಂದು ಮುಖ್ಯ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಲಾಗುತ್ತಿದೆ.</li>
+                    <li><code>firstName: "Mani"</code> & <code>age: 25</code>: ಇವು ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣಗಳು (Properties). ಈ ವ್ಯಕ್ತಿಯ ಹೆಸರು ಮಣಿ ಮತ್ತು ವಯಸ್ಸು 25.</li>
+                </ul>
+
+                <p><strong>ಹಂತ 2: ಮೊದಲ ಮೆಥಡ್ (getBirthDay)</strong></p>
+                <ul>
+                    <li><code>getBirthDay: function () {</code>: ವ್ಯಕ್ತಿಯು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಲೆಕ್ಕಹಾಕಲು ಬರೆದ ಫಂಕ್ಷನ್ ಇದು.</li>
+                    <li><code>return 2020 - this.age;</code>: ಇಲ್ಲಿ <code>this</code> ಎಂದರೆ <code>person</code> ಆಬ್ಜೆಕ್ಟ್. ಹಾಗಾಗಿ <code>this.age</code> ಎಂದರೆ 25. ಇದು 2020 ರಿಂದ 25 ನ್ನು ಕಳೆದು 1995 ಎಂಬ ಉತ್ತರವನ್ನು ನೀಡುತ್ತದೆ.</li>
+                </ul>
+
+                <p><strong>ಹಂತ 3: ಅರೇ (Array - ಪಟ್ಟಿ)</strong></p>
+                <ul>
+                    <li><code>hobbies: ["eat", "sleep", "code"]</code>: ಇದು ಹವ್ಯಾಸಗಳ ಪಟ್ಟಿ (Array). ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಮಾಹಿತಿಗಳನ್ನು ಒಂದೇ ಕಡೆ ಸೇರಿಸಿಡಲು ಅರೇ ಬಳಸುತ್ತೇವೆ.</li>
+                </ul>
+
+                <p><strong>ಹಂತ 4: ಎರಡನೇ ಮೆಥಡ್ ಮತ್ತು ಲೂಪ್ (getHobbies)</strong></p>
+                <ul>
+                    <li><code>getHobbies: function () {</code>: ಹವ್ಯಾಸಗಳನ್ನು ಸ್ಕ್ರೀನ್ ಮೇಲೆ ತೋರಿಸಲು ಬರೆದ ಫಂಕ್ಷನ್.</li>
+                    <li><code>this.hobbies.forEach(...)</code>: <code>this.hobbies</code> ಎಂದರೆ ಮೇಲಿರುವ ಹವ್ಯಾಸಗಳ ಪಟ್ಟಿ. <code>forEach</code> ಎಂದರೆ ಆ ಪಟ್ಟಿಯಲ್ಲಿರುವ ಪ್ರತಿಯೊಂದು ಹವ್ಯಾಸಕ್ಕೂ ಲೂಪ್ ಮಾಡು (ಒಂದೊಂದಾಗಿ ಹೋಗು) ಎಂದು ಅರ್ಥ.</li>
+                </ul>
+
+                <span class="level-badge level-3">ಹಂತ 3 - Professional Explanation (ಪ್ರೊ-ಲೆವೆಲ್ ರಹಸ್ಯ)</span>
+                <p><strong>Callback ದೋಷವನ್ನು ತಪ್ಪಿಸುವುದು (Fixing Context Loss):</strong></p>
+                <ul>
+                    <li><code>forEach</code> ನ ಒಳಗೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಇದೆ: <code>function (hobby) { console.log(this.firstName, hobby); }</code>. ಇದನ್ನು <strong>ಕಾಲ್-ಬ್ಯಾಕ್ (Callback)</strong> ಫಂಕ್ಷನ್ ಎನ್ನುತ್ತಾರೆ.</li>
+                    <li>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ನಿಯಮದ ಪ್ರಕಾರ, ಈ ರೀತಿ ಒಂದು ಫಂಕ್ಷನ್‌ನ ಒಳಗೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಬರೆದಾಗ, ಆ ಒಳಗಿನ ಫಂಕ್ಷನ್‌ಗೆ ತನ್ನ ಮೂಲ 'ಯಜಮಾನ' (ಆಬ್ಜೆಕ್ಟ್) ಯಾರು ಎಂಬುದು ಮರೆತುಹೋಗುತ್ತದೆ. ಅದು ನೇರವಾಗಿ 'Global Window' ಅನ್ನು ನೋಡಲು ಶುರುಮಾಡುತ್ತದೆ. ಆಗ <code>this.firstName</code> ಎಂಬುದು ಸಿಗದೆ ದೋಷ (Error / undefined) ಉಂಟಾಗುತ್ತದೆ.</li>
+                    <li><strong>ಪರಿಹಾರ:</strong> ಈ ಗೊಂದಲವನ್ನು ತಪ್ಪಿಸಲು, <code>forEach</code> ನ ಬ್ರಾಕೆಟ್ ಮುಗಿಯುವ ಮುನ್ನ ಕಾಮಾ (,) ಹಾಕಿ <code>this</code> ಅನ್ನು ಎರಡನೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ಆಗಿ <code>}, this);</code> ಕಳುಹಿಸಲಾಗಿದೆ. </li>
+                    <li>ಇದು <i>"ಮರೆಯಬೇಡ, ನಿನ್ನ ಯಜಮಾನ person ಆಬ್ಜೆಕ್ಟ್"</i> ಎಂದು ಒಳಗಿನ ಫಂಕ್ಷನ್‌ಗೆ ನೆನಪಿಸುವ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದರಿಂದ ಕೋಡ್ ಸರಿಯಾಗಿ <code>"Mani eat"</code>, <code>"Mani sleep"</code>, <code>"Mani code"</code> ಎಂದು ಔಟ್‌ಪುಟ್ ನೀಡುತ್ತದೆ.</li>
+                </ul>
+            </section>
+
+            <!-- Section 6: Additional Info (Modern JS) -->
+            <section id="modern-js">
+                <div class="callout added">
+                    <div class="callout-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        ಆಧುನಿಕ ತಂತ್ರಜ್ಞಾನ (Modern ES6 JavaScript)
+                    </div>
+                    <h2>6. Arrow Functions ಮತ್ತು `this` (Modern Approach)</h2>
+                    
+                    <p>ಮೂಲ ನೋಟ್ಸ್‌ನಲ್ಲಿ ವಿವರಿಸಿರುವ Callback ದೋಷವನ್ನು ಸರಿಪಡಿಸಲು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>Arrow Functions <code>() => {}</code></strong> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                    
+                    <p>Arrow ಫಂಕ್ಷನ್‌ಗಳಿಗೆ ತಮ್ಮದೇ ಆದ <code>this</code> ಇರುವುದಿಲ್ಲ. ಅವು ತಮ್ಮ ಸುತ್ತಮುತ್ತಲಿನ (Lexical scope) <code>this</code> ಅನ್ನು ಹಾಗೆಯೇ ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ. ಹಾಗಾಗಿ ನೀವು ಎರಡನೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ಆಗಿ <code>this</code> ಕಳುಹಿಸುವ ಅವಶ್ಯಕತೆ ಇರುವುದಿಲ್ಲ.</p>
+
+                    <div class="code-wrapper">
+                        <div class="code-header">
+                            <span>Modern JS - Arrow Function</span>
+                        </div>
+                        <pre><code class="language-js"><span class="fn">getHobbies</span>: <span class="kw">function</span> () {
+  <span class="cmt">// Arrow function ಬಳಸಿರುವುದರಿಂದ 'this' ದೋಷ ಉಂಟಾಗುವುದಿಲ್ಲ</span>
+  <span class="kw">this</span>.hobbies.<span class="fn">forEach</span>((hobby) => {
+    <span class="obj">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.firstName, hobby);
+  }); 
+}</code></pre>
+                    </div>
+                </div>
+                
+                <p><strong>ಮೂಲ ನೋಟ್ಸ್‌ನ ಕೊನೆಯ ಪ್ರಶ್ನೆ:</strong> <br>
+                <i>"ಈಗ ನಿಮಗೆ ಕಾಲ್-ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ (Callback function) ಮತ್ತು ಅದರಲ್ಲಿ ಉಂಟಾಗುವ ಗೊಂದಲಗಳ ಬಗ್ಗೆ ಸ್ಪಷ್ಟ ಚಿತ್ರಣ ಸಿಕ್ಕಿತೇ ಅಥವಾ ಬೇರೆ ಯಾವುದಾದರೂ ಲೂಪ್ ಉದಾಹರಣೆ (ಉದಾಹರಣೆಗೆ for-loop) ಮೂಲಕ ವಿವರಿಸಬೇಕೇ?"</i></p>
+                <p><strong>ಉತ್ತರ:</strong> ಸಾಮಾನ್ಯ <code>for-loop</code> (ಉದಾ: <code>for(let i=0; i&lt;length; i++)</code>) ಬಳಸಿದರೆ ಅದು ಪ್ರತ್ಯೇಕ ಫಂಕ್ಷನ್ ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಅಲ್ಲಿ <code>this</code> ನ ಗೊಂದಲ ಇರುವುದಿಲ್ಲ. <code>this</code> ನ ಗೊಂದಲ ಕೇವಲ Callback ಫಂಕ್ಷನ್‌ಗಳಲ್ಲಿ (forEach, map, setTimeout) ಮಾತ್ರ ಬರುತ್ತದೆ.</p>
+            </section>
+
+            <!-- Section 7: Original Notes Archive -->
+            <section id="original-archive" class="archive-section">
+                <h2 style="border-bottom: none; color: var(--text-muted);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg> 7. Original Notes Archive (ಮೂಲ ನೋಟ್ಸ್)</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">ಯಾವುದೇ ಬದಲಾವಣೆ ಇಲ್ಲದೆ ಮೂಲ ಬರಹವನ್ನು ಇಲ್ಲಿ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ (Zero Content Loss).</p>
+                
+                <div style="font-family: inherit; font-size: 0.95rem; line-height: 1.8; white-space: pre-wrap; background: var(--bg-color); padding: 1.5rem; border-radius: 8px;">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ this ಕೀವರ್ಡ್ ಮತ್ತು ಅದರ ಬಳಕೆ
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ this ಕೀವರ್ಡ್ ಒಂದು "ಬಣ್ಣ ಬದಲಿಸುವ ಓತಿಕ್ಯಾತ" (Chameleon) ಇದ್ದಂತೆ. ನೀವು ಅದನ್ನು ಎಲ್ಲಿ ಮತ್ತು ಹೇಗೆ ಬಳಸುತ್ತೀರಿ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ಅದರ ಅರ್ಥ ಸಂಪೂರ್ಣವಾಗಿ ಬದಲಾಗುತ್ತದೆ. ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ this ಎಂದರೆ ಸಾಮಾನ್ಯವಾಗಿ "ನನ್ನ" (My) ಅಥವಾ "ನಾನು ಸೇರಿರುವ ವಸ್ತು" ಎಂದರ್ಥ.
+ 
+this ಕೀವರ್ಡ್ ಪ್ರಮುಖವಾಗಿ ಮೂರು ಬೇರೆ ಬೇರೆ ಸನ್ನಿವೇಶಗಳಲ್ಲಿ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ಮೊದಲು ತಿಳಿದುಕೊಳ್ಳೋಣ.
+
+1. Object 
+ಒಳಗೆ this (ಆಬ್ಜೆಕ್ಟ್ ಮೆಥಡ್)
+ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನ (ವಸ್ತುವಿನ) ಒಳಗಿರುವ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ this ಅನ್ನು ಬಳಸಿದರೆ, ಅದು ಅದೇ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಅಂದರೆ, "ನಾನು ಸೇರಿರುವ ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣ" ಎಂದರ್ಥ.
+
+JavaScript
+let employee = {
+  name: "ರಮೇಶ್",
+  salary: 50000,
+  
+  showDetails: function() {
+    // ಇಲ್ಲಿ 'this' ಎಂದರೆ 'employee' ಆಬ್ಜೆಕ್ಟ್
+    console.log("ನನ್ನ ಹೆಸರು " + this.name + ", ನನ್ನ ಸಂಬಳ " + this.salary);
+  }
+};
+ 
+employee.showDetails(); 
+// ಔಟ್‌ಪುಟ್: ನನ್ನ ಹೆಸರು ರಮೇಶ್, ನನ್ನ ಸಂಬಳ 50000
+ಇಲ್ಲಿ showDetails ಎಂಬುದು employee ಆಬ್ಜೆಕ್ಟ್‌ನ ಸ್ವತ್ತು. ಹಾಗಾಗಿ this.name ಎಂದರೆ, ನೇರವಾಗಿ employee.name (ರಮೇಶ್) ಎಂದೇ ಅರ್ಥ.
+
+2. ಸಾಮಾನ್ಯ Function ಒಳಗೆ this (Standalone Function)
+ಒಂದು ಫಂಕ್ಷನ್ ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಇಲ್ಲದೆ, ಪ್ರೋಗ್ರಾಮ್‌ನಲ್ಲಿ ಸುಮ್ಮನೆ ಹೊರಗಡೆ ಇದ್ದರೆ, ಆಗ this ಅನ್ನು ಬಳಸಿದರೆ ಅದು "ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್" (Global Object) ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ರನ್ ಮಾಡುವಾಗ ಈ ಗ್ಲೋಬಲ್ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು 'Window' ಎನ್ನುತ್ತಾರೆ.
+
+JavaScript
+function sayHello() {
+  // ಈ ಫಂಕ್ಷನ್ ಯಾವುದೇ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಇಲ್ಲ.
+  console.log(this); 
+}
+ 
+sayHello(); 
+// ಔಟ್‌ಪುಟ್: Window {...} (ಇಡೀ ಬ್ರೌಸರ್‌ನ ವಿಂಡೋ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ)
+ಇಲ್ಲಿ sayHello ಫಂಕ್ಷನ್‌ಗೆ ಯಾವುದೇ ನಿರ್ದಿಷ್ಟ ಯಜಮಾನ (Object) ಇಲ್ಲ. ಆದ್ದರಿಂದ this ಎನ್ನುವುದು ಇಡೀ ಪ್ರೋಗ್ರಾಮ್‌ನ ಅತಿ ದೊಡ್ಡ ಯಜಮಾನನಾದ (Global Object) ಕಡೆ ಬೆರಳು ತೋರಿಸುತ್ತದೆ.
+
+3. Constructor ಒಳಗೆ this (ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವಾಗ)
+ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಎಂದರೆ ಒಂದೇ ರೀತಿಯ ಹಲವು ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸಲು ಬಳಸುವ ಒಂದು 'ಅಚ್ಚು' (Blueprint). ನೀವು new ಕೀವರ್ಡ್ ಬಳಸಿ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಮೂಲಕ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವಾಗ, this ಎಂದರೆ "ಹೊಸದಾಗಿ ಹುಟ್ಟುತ್ತಿರುವ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್" ಎಂದರ್ಥ.
+
+JavaScript
+// ಇದು ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (ಅಚ್ಚು)
+function
+BankAccount(accountHolderName, depositAmount) {
+  // ಇಲ್ಲಿ 'this' ಎಂದರೆ, ಹೊಸದಾಗಿ ಹುಟ್ಟುವ ಖಾಲಿ ಅಕೌಂಟ್ ಡಬ್ಬಿ
+  this.name = accountHolderName;
+  this.balance = depositAmount;
+}
+ 
+// 'new' ಕೀವರ್ಡ್ ಬಳಸಿ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ
+let customer1 = new
+BankAccount("ಸೀತಾ", 10000);
+let customer2 = new
+BankAccount("ರಾಮು", 5000);
+ 
+console.log(customer1.name);
+// ಔಟ್‌ಪುಟ್: ಸೀತಾ
+console.log(customer2.balance);
+// ಔಟ್‌ಪುಟ್: 5000
+ನೀವು new BankAccount("ಸೀತಾ", 10000) ಎಂದಾಗ, ಕಂಪ್ಯೂಟರ್ ಮೊದಲು ಒಂದು ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ {} ಸೃಷ್ಟಿಸುತ್ತದೆ. ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನೇ ಇಲ್ಲಿ this ಎಂದು ಕರೆಯಲಾಗುತ್ತಿದೆ. ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಹೆಸರು ಮತ್ತು ಹಣವನ್ನು ತುಂಬುತ್ತದೆ.
+
+ನೈಜ ಉದಾಹರಣೆಯ ಸಂಪೂರ್ಣ ವಿಶ್ಲೇಷಣೆ (person ಆಬ್ಜೆಕ್ಟ್)
+ಈಗ ಮೇಲಿನ ನಿಯಮಗಳನ್ನು ಇಟ್ಟುಕೊಂಡು, ಈ ಕೆಳಗಿನ ಕೋಡ್ ಹೇಗೆ ಹಂತ-ಹಂತವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ನೋಡೋಣ.
+
+JavaScript
+const person = {
+  firstName: "Mani",
+  age: 25,
+  
+  getBirthDay: function () {
+    return 2020 - this.age;
+  },
+  
+  hobbies: ["eat", "sleep",
+"code"],
+  
+  getHobbies: function () {
+    this.hobbies.forEach(function (hobby) {
+      console.log(this.firstName, hobby);
+    }, this);
+  }
+};
+ಹಂತ 1: ಆಬ್ಜೆಕ್ಟ್ ಮತ್ತು ಗುಣಲಕ್ಷಣಗಳು (Object & Properties)
+
+-  const person = {: ಇಲ್ಲಿ person ಎಂಬ ಹೆಸರಿನ ಒಂದು ಮುಖ್ಯ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಲಾಗುತ್ತಿದೆ.
+-  firstName: "Mani" & age: 25: ಇವು ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣಗಳು (Properties).
+     ಈ ವ್ಯಕ್ತಿಯ ಹೆಸರು ಮಣಿ ಮತ್ತು ವಯಸ್ಸು 25.
+ 
+ಹಂತ 2: ಮೊದಲ ಮೆಥಡ್ (getBirthDay)
+
+-  getBirthDay: function () {: ವ್ಯಕ್ತಿಯು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಲೆಕ್ಕಹಾಕಲು ಬರೆದ ಫಂಕ್ಷನ್ ಇದು.
+-  return 2020 - this.age;: ಇಲ್ಲಿ this ಎಂದರೆ person ಆಬ್ಜೆಕ್ಟ್. ಹಾಗಾಗಿ this.age ಎಂದರೆ 25.
+     ಇದು 2020 ರಿಂದ 25
+     ನ್ನು ಕಳೆದು 1995
+     ಎಂಬ ಉತ್ತರವನ್ನು ನೀಡುತ್ತದೆ.
+ 
+ಹಂತ 3: ಅರೇ (Array - ಪಟ್ಟಿ)
+
+-  hobbies: ["eat", "sleep",
+     "code"]: ಇದು ಹವ್ಯಾಸಗಳ ಪಟ್ಟಿ (Array).
+     ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಮಾಹಿತಿಗಳನ್ನು ಒಂದೇ ಕಡೆ ಸೇರಿಸಿಡಲು ಅರೇ ಬಳಸುತ್ತೇವೆ.
+ 
+ಹಂತ 4: ಎರಡನೇ ಮೆಥಡ್ ಮತ್ತು ಲೂಪ್ (getHobbies)
+
+-  getHobbies: function () {: ಹವ್ಯಾಸಗಳನ್ನು ಸ್ಕ್ರೀನ್ ಮೇಲೆ ತೋರಿಸಲು ಬರೆದ ಫಂಕ್ಷನ್.
+-  this.hobbies.forEach(...): this.hobbies ಎಂದರೆ ಮೇಲಿರುವ ಹವ್ಯಾಸಗಳ ಪಟ್ಟಿ.
+     forEach ಎಂದರೆ ಆ ಪಟ್ಟಿಯಲ್ಲಿರುವ ಪ್ರತಿಯೊಂದು ಹವ್ಯಾಸಕ್ಕೂ ಲೂಪ್ ಮಾಡು (ಒಂದೊಂದಾಗಿ ಹೋಗು) ಎಂದು ಅರ್ಥ.
+ 
+ಹಂತ 5: ಪ್ರೊ-ಲೆವೆಲ್ ರಹಸ್ಯ (Callback ದೋಷವನ್ನು ತಪ್ಪಿಸುವುದು)
+
+-  forEach ನ ಒಳಗೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಇದೆ:
+     function (hobby) { console.log(this.firstName, hobby); }. ಇದನ್ನು ಕಾಲ್-ಬ್ಯಾಕ್ (Callback)
+     ಫಂಕ್ಷನ್ ಎನ್ನುತ್ತಾರೆ.
+-  ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ನಿಯಮದ ಪ್ರಕಾರ, ಈ ರೀತಿ ಒಂದು ಫಂಕ್ಷನ್‌ನ ಒಳಗೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಬರೆದಾಗ, ಆ ಒಳಗಿನ ಫಂಕ್ಷನ್‌ಗೆ ತನ್ನ ಮೂಲ 'ಯಜಮಾನ' (ಆಬ್ಜೆಕ್ಟ್) ಯಾರು ಎಂಬುದು ಮರೆತುಹೋಗುತ್ತದೆ. ಅದು ನೇರವಾಗಿ 'Global
+     Window' ಅನ್ನು ನೋಡಲು ಶುರುಮಾಡುತ್ತದೆ. ಆಗ
+     this.firstName ಎಂಬುದು ಸಿಗದೆ ದೋಷ (Error)
+     ಉಂಟಾಗುತ್ತದೆ.
+-  ಪರಿಹಾರ (}, this);): ಈ ಗೊಂದಲವನ್ನು ತಪ್ಪಿಸಲು, forEach ನ ಬ್ರಾಕೆಟ್ ಮುಗಿಯುವ ಮುನ್ನ ಕಾಮಾ (,)
+     ಹಾಕಿ this ಅನ್ನು ಎರಡನೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ಆಗಿ ಕಳುಹಿಸಲಾಗಿದೆ. ಇದು "ಮರೆಯಬೇಡ, ನಿನ್ನ ಯಜಮಾನ person ಆಬ್ಜೆಕ್ಟ್" ಎಂದು ಒಳಗಿನ ಫಂಕ್ಷನ್‌ಗೆ ನೆನಪಿಸುವ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದರಿಂದ ಕೋಡ್ ಸರಿಯಾಗಿ "Mani eat", "Mani sleep", "Mani
+     code" ಎಂದು ಔಟ್‌ಪುಟ್ ನೀಡುತ್ತದೆ.
+ 
+ಈ ರೀತಿಯಲ್ಲಿ this ಕೀವರ್ಡ್ ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ಒಳಗೆ, ಹೊರಗೆ ಮತ್ತು ಲೂಪ್‌ಗಳ ಒಳಗೆ ತನ್ನ ವರ್ತನೆಯನ್ನು ಬದಲಾಯಿಸಿಕೊಳ್ಳುತ್ತಾ ಪ್ರೋಗ್ರಾಮ್ ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುವಂತೆ ನೋಡಿಕೊಳ್ಳುತ್ತದೆ.
+ 
+ಈಗ ನಿಮಗೆ ಕಾಲ್-ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ (Callback function) ಮತ್ತು ಅದರಲ್ಲಿ ಉಂಟಾಗುವ ಗೊಂದಲಗಳ ಬಗ್ಗೆ ಸ್ಪಷ್ಟ ಚಿತ್ರಣ ಸಿಕ್ಕಿತೇ ಅಥವಾ ಬೇರೆ ಯಾವುದಾದರೂ ಲೂಪ್ ಉದಾಹರಣೆ (ಉದಾಹರಣೆಗೆ for-loop) ಮೂಲಕ ವಿವರಿಸಬೇಕೇ?</div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts for Interactivity -->
+    <script>
+        // 1. Theme Toggle Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Initialize Theme from LocalStorage or System Preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // 2. Copy Code Logic
+        function copyCode(btn) {
+            const pre = btn.parentElement.nextElementSibling;
+            const code = pre.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                btn.style.background = '#10b981';
+                btn.style.color = 'white';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = 'transparent';
+                    btn.style.color = '#ccc';
+                }, 2000);
+            });
+        }
+
+        // 3. Reading Progress Bar
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        // 4. Mobile Menu Toggle
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // 5. Active TOC Highlighting (Intersection Observer)
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".sidebar a");
+
+        const observerOptions = { root: null, rootMargin: "0px", threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove("active");
+                        if (link.getAttribute("href").substring(1) === entry.target.id) {
+                            link.classList.add("active");
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>

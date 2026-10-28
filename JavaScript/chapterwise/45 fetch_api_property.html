@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch API: ಸಂಪೂರ್ಣ ಮಾರ್ಗದರ್ಶಿ</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#111827', // bg-gray-900
+                        darkCard: '#1F2937', // bg-gray-800
+                        lightBg: '#F9FAFB', // bg-gray-50
+                        lightCard: '#FFFFFF', // bg-white
+                        brand: '#6366F1' // indigo-500
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/javascript.min.js"></script>
+
+    <style>
+        /* Custom Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Sidebar Active Link Style */
+        .toc-link.active {
+            color: #6366F1;
+            font-weight: 600;
+            border-left-color: #6366F1;
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Code Block Tweaks */
+        pre {
+            margin: 0 !important;
+            padding: 1.5rem !important;
+            border-radius: 0.5rem !important;
+            background-color: #1e1e24 !important; /* Keep code blocks dark */
+        }
+        
+        /* Custom Scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+    </style>
+</head>
+<body class="bg-lightBg text-gray-900 dark:bg-darkBg dark:text-gray-100 font-sans antialiased transition-colors duration-300">
+
+    <!-- Header / Navbar for Mobile & Theme Toggle -->
+    <header class="fixed top-0 w-full z-50 bg-lightCard dark:bg-darkCard shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                    <span class="font-bold text-xl tracking-tight hidden sm:block">JS Notes</span>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- Theme Toggle Button -->
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none" aria-label="Toggle Theme">
+                        <!-- Sun Icon (shows in dark mode) -->
+                        <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <!-- Moon Icon (shows in light mode) -->
+                        <svg id="icon-moon" class="w-5 h-5 text-gray-700 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto flex pt-16 relative">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="hidden lg:block w-64 fixed h-[calc(100vh-4rem)] overflow-y-auto py-8 pr-6 border-r border-gray-200 dark:border-gray-700 top-16">
+            <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4 pl-4">ಪರಿವಿಡಿ (Table of Contents)</h3>
+            <nav id="toc" class="flex flex-col space-y-1">
+                <a href="#intro" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 border-l-2 border-transparent hover:border-brand hover:text-brand transition-all">ಪೀಠಿಕೆ</a>
+                <a href="#part1" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 border-l-2 border-transparent hover:border-brand hover:text-brand transition-all">ಭಾಗ 1: ಪಾರ್ಸೆಲ್ ಮೇಲಿರುವ ಚೀಟಿಗಳು</a>
+                <a href="#part2" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 border-l-2 border-transparent hover:border-brand hover:text-brand transition-all">ಭಾಗ 2: ಪಾರ್ಸೆಲ್ ಬಿಡಿಸುವ ವಿಧಾನಗಳು</a>
+                <a href="#part3" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 border-l-2 border-transparent hover:border-brand hover:text-brand transition-all">ಭಾಗ 3: ಸಂಪೂರ್ಣ ಉದಾಹರಣೆ</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content area -->
+        <main class="flex-1 w-full lg:ml-64 px-4 sm:px-8 py-10 lg:py-12 max-w-4xl">
+            
+            <article class="space-y-16">
+                <!-- Title -->
+                <div class="fade-in">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-brand mb-4 flex items-center gap-3">
+                        <svg class="w-10 h-10 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Fetch API: ಸಂಪೂರ್ಣ ಮಾರ್ಗದರ್ಶಿ (ಉದಾಹರಣೆಗಳೊಂದಿಗೆ)
+                    </h1>
+                </div>
+
+                <!-- Section 1: Intro -->
+                <section id="intro" class="fade-in scroll-mt-24">
+                    <div class="bg-lightCard dark:bg-darkCard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+                        <h2 class="text-xl font-bold mb-3 text-gray-800 dark:text-white flex items-center gap-2">
+                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Fetch API ಎಂದರೆ ಏನು?
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
+                            ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಅಥವಾ ಬೇರೆ ಫೈಲ್‌ನಿಂದ ಮಾಹಿತಿಯನ್ನು (Data) ತಂದುಕೊಡುವ 'ಸಪ್ಲೈಯರ್' ಅಥವಾ ಡೆಲಿವರಿ ವ್ಯವಸ್ಥೆಯೇ Fetch. ನೀವು ಆರ್ಡರ್ (Request) ಮಾಡಿದರೆ, ಅದು ನಿಮಗೆ ಪಾರ್ಸೆಲ್ (Response) ತಂದುಕೊಡುತ್ತದೆ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 2: Part 1 -->
+                <section id="part1" class="fade-in scroll-mt-24 space-y-6">
+                    <h2 class="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-3 flex items-center gap-2">
+                        <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                        ಭಾಗ 1: ಪಾರ್ಸೆಲ್ ಮೇಲಿರುವ ಚೀಟಿಗಳು (Properties of Response Object)
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300">
+                        ಡೆಲಿವರಿ ಬಾಯ್ ತಂದ ಪಾರ್ಸೆಲ್ (Response) ಬಾಕ್ಸ್‌ನ ಮೇಲೆ ಕೆಲವು ಪ್ರಮುಖ ಮಾಹಿತಿಗಳಿರುತ್ತವೆ. ಪ್ರತಿಯೊಂದಕ್ಕೂ ಉದಾಹರಣೆ ಮತ್ತು ವಿವರಣೆ ಇಲ್ಲಿದೆ:
+                    </p>
+
+                    <div class="space-y-8">
+                        <!-- Property 1 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">1. response.ok (ಆರ್ಡರ್ ಯಶಸ್ವಿಯಾಗಿದೆಯೇ?)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಫೈಲ್ ಅಥವಾ ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಸಿಕ್ಕರೆ ಇದು true ಆಗಿರುತ್ತದೆ. ಸಿಗದೆ ಹೋದರೆ (ಉದಾ: ಫೈಲ್ ಡಿಲೀಟ್ ಆಗಿದ್ದರೆ) false ಆಗಿರುತ್ತದೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">if (response.ok === true) {
+    console.log("ಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ಸಿಕ್ಕಿದೆ!");
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 2 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">2. response.status (ಇಂಟರ್ನೆಟ್‌ನ ರಹಸ್ಯ ಕೋಡ್)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಇದು ಸರ್ವರ್ ನೀಡುವ ನಂಬರ್ ಕೋಡ್. 200 ಎಂದರೆ ಯಶಸ್ವಿ, 404 ಎಂದರೆ ಫೈಲ್ ಸಿಗಲಿಲ್ಲ, 500 ಎಂದರೆ ಸರ್ವರ್ ತೊಂದರೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.status); // ಔಟ್‌ಪುಟ್: 200 (ಎಲ್ಲವೂ ಸರಿಯಿದೆ ಎಂದರ್ಥ)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 3 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">3. response.statusText (ಕೋಡ್‌ನ ಅರ್ಥ)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಮೇಲಿನ ನಂಬರ್ ಕೋಡ್‌ನ ಅರ್ಥವನ್ನು ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಹೇಳುತ್ತದೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.statusText); // ಔಟ್‌ಪುಟ್: "OK" (200 ಇದ್ದರೆ), ಅಥವಾ "Not Found" (404 ಇದ್ದರೆ)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 4 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">4. response.url (ನಿಖರವಾದ ವಿಳಾಸ)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ನೀವು ಆರ್ಡರ್ ಮಾಡಿದ ಫೈಲ್ ಇಂಟರ್ನೆಟ್‌ನ ಯಾವ ವಿಳಾಸದಿಂದ (URL) ಬಂದಿದೆ ಎಂದು ಹೇಳುತ್ತದೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.url); // ಔಟ್‌ಪುಟ್: "https://example.com/student.json"</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 5 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">5. response.redirected (ಬೇರೆ ಕಡೆಯಿಂದ ಬಂದಿದೆಯೇ?)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಹೋಟೆಲ್‌ನ ಒಂದು ಬ್ರಾಂಚ್ ಮುಚ್ಚಿದ್ದು, ಅವರು ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಪಕ್ಕದ ಬ್ರಾಂಚ್‌ನಿಂದ ಊಟ ಕಳುಹಿಸಿದರೆ ಇದು true ಆಗಿರುತ್ತದೆ. ನೇರವಾಗಿ ಅದೇ ವಿಳಾಸದಿಂದ ಬಂದರೆ false.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.redirected); // ಔಟ್‌ಪುಟ್: false (ನೇರವಾಗಿ ಬಂದಿದೆ)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 6 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">6. response.headers (ರಸೀದಿ / ಬಿಲ್)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಪಾರ್ಸೆಲ್ ಒಳಗೆ ಇರುವ ಡೇಟಾ ಯಾವ ಪ್ರಕಾರದ್ದು (ಉದಾಹರಣೆಗೆ ಅದು ಟೆಕ್ಸ್ಟ್, ಅಥವಾ ಇಮೇಜ್?) ಎಂಬ ಮಾಹಿತಿಯನ್ನು ಇದು ಹೊಂದಿರುತ್ತದೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.headers.get("Content-Type")); // ಔಟ್‌ಪುಟ್: "application/json"</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 7 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">7. response.type (ಯಾವ ರೀತಿಯ ಪಾರ್ಸೆಲ್?)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಡೇಟಾ ನಿಮ್ಮದೇ ವೆಬ್‌ಸೈಟ್‌ನಿಂದ ಬಂದರೆ basic ಎಂದು, ಬೇರೆ ಕಡೆಯ ವೆಬ್‌ಸೈಟ್‌ನಿಂದ (ಉದಾ: Google ನಿಂದ) ಬಂದರೆ cors ಎಂದು ತೋರಿಸುತ್ತದೆ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.type); // ಔಟ್‌ಪುಟ್: "basic"</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 8 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">8. response.bodyUsed (ಪಾರ್ಸೆಲ್ ಓದಿದ್ದೇವಾ?)</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4">ವಿವರಣೆ: ಪಾರ್ಸೆಲ್ ಅನ್ನು ಈಗಾಗಲೇ ಒಡೆದು ಓದಲಾಗಿದೆಯೇ? ಓದಿದ್ದರೆ true, ಓದಿಲ್ಲ ಎಂದರೆ false. ನೆನಪಿಡಿ, ಒಂದು ಪಾರ್ಸೆಲ್ ಅನ್ನು ಒಮ್ಮೆ ಮಾತ್ರ ಓದಲು (Extract ಮಾಡಲು) ಸಾಧ್ಯ.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">console.log(response.bodyUsed); // ಪಾರ್ಸೆಲ್ ಒಡೆಯುವ ಮುನ್ನ ಔಟ್‌ಪುಟ್: false</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Property 9 -->
+                        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-100 dark:border-gray-700">
+                            <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-100 mb-2">9. response.body (ಕಚ್ಚಾ ಮಾಹಿತಿ)</h3>
+                            <p class="text-gray-600 dark:text-gray-400">ವಿವರಣೆ: ಇದು ಪಾರ್ಸೆಲ್ ಒಳಗಿರುವ ಕಚ್ಚಾ (Raw ReadableStream) ಡೇಟಾ. ಇದನ್ನು ನಾವು ನೇರವಾಗಿ ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ, ಬದಲಾಗಿ ಕೆಳಗಿನ ವಿಧಾನಗಳನ್ನು (Methods) ಬಳಸಬೇಕು.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Part 2 -->
+                <section id="part2" class="fade-in scroll-mt-24 space-y-6">
+                    <h2 class="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-3 flex items-center gap-2">
+                        <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                        ಭಾಗ 2: ಪಾರ್ಸೆಲ್ ಬಿಡಿಸುವ ವಿಧಾನಗಳು (Methods to read Data)
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300">
+                        ಬಾಕ್ಸ್ ಮೇಲಿನ ಮಾಹಿತಿಯನ್ನು ನೋಡಿದ ನಂತರ, ಒಳಗಿನ ಮಾಹಿತಿಯನ್ನು ನಮ್ಮ ಭಾಷೆಗೆ ತಕ್ಕಂತೆ ಬಿಡಿಸಿ ಓದಲು 5 ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ:
+                    </p>
+
+                    <ul class="space-y-8 mt-6">
+                        <li class="bg-lightCard dark:bg-darkCard p-5 rounded-lg border-l-4 border-indigo-500 shadow-sm">
+                            <h3 class="font-bold text-lg mb-2">1. .json():</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">ವ್ಯವಸ್ಥಿತ ಮಾಹಿತಿ (ವಿದ್ಯಾರ್ಥಿಗಳ ಹೆಸರು, ಊರು) ಅಥವಾ ಡೇಟಾಬೇಸ್ ಮಾಹಿತಿಯನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆಬ್ಜೆಕ್ಟ್ ಆಗಿ ಓದಲು. (ಅತಿ ಹೆಚ್ಚು ಬಳಕೆಯಾಗುವುದು).</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">let data = await response.json();
+console.log(data.name); // ಉದಾ: "ರಾಮ"</code></pre>
+                            </div>
+                        </li>
+                        
+                        <li class="bg-lightCard dark:bg-darkCard p-5 rounded-lg border-l-4 border-indigo-400 shadow-sm">
+                            <h3 class="font-bold text-lg mb-2">2. .text():</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">ಕೇವಲ ಸಾಧಾರಣ ಪಠ್ಯವಾಗಿ (Plain Text / ಕಥೆ, ಲೇಖನ) ಓದಲು.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">let textData = await response.text();
+console.log(textData); // ಪೂರ್ತಿ ಲೇಖನ ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ</code></pre>
+                            </div>
+                        </li>
+
+                        <li class="bg-lightCard dark:bg-darkCard p-5 rounded-lg border-l-4 border-indigo-400 shadow-sm">
+                            <h3 class="font-bold text-lg mb-2">3. .blob():</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">ಚಿತ್ರಗಳು (Images), ಆಡಿಯೋ ಅಥವಾ ವಿಡಿಯೋ ಫೈಲ್‌ಗಳನ್ನು ಓದಲು (Blob = Binary Large Object).</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">let imageBlob = await response.blob();
+let imageUrl = URL.createObjectURL(imageBlob);
+document.getElementById('myImage').src = imageUrl;</code></pre>
+                            </div>
+                        </li>
+
+                        <li class="bg-lightCard dark:bg-darkCard p-5 rounded-lg border-l-4 border-indigo-400 shadow-sm">
+                            <h3 class="font-bold text-lg mb-2">4. .formData():</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಯಾರಾದರೂ ತುಂಬಿದ ಅರ್ಜಿಯ (Form) ಮಾಹಿತಿಯನ್ನು ಓದಲು.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">let formData = await response.formData();
+console.log(formData.get("username")); // ಫಾರ್ಮ್‌ನ ಹೆಸರು ಓದಲು</code></pre>
+                            </div>
+                        </li>
+
+                        <li class="bg-lightCard dark:bg-darkCard p-5 rounded-lg border-l-4 border-indigo-400 shadow-sm">
+                            <h3 class="font-bold text-lg mb-2">5. .arrayBuffer():</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">ವೃತ್ತಿಪರ ಗೇಮಿಂಗ್ ಅಥವಾ ವಿಡಿಯೋ ಎಡಿಟಿಂಗ್‌ಗೆ ಬೇಕಾದ ಕಚ್ಚಾ ಬೈನರಿ ಡೇಟಾವನ್ನು ಓದಲು.</p>
+                            <div class="relative group">
+                                <button class="copy-btn absolute top-2 right-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors z-10">Copy Code</button>
+                                <pre><code class="language-javascript">let buffer = await response.arrayBuffer();
+console.log(buffer.byteLength); // ಕಚ್ಚಾ ಡೇಟಾದ ಅಳತೆ (bytes ನಲ್ಲಿ)</code></pre>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Section 4: Part 3 -->
+                <section id="part3" class="fade-in scroll-mt-24 space-y-6">
+                    <h2 class="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-3 flex items-center gap-2">
+                        <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        ಭಾಗ 3: ಸಂಪೂರ್ಣ ಉದಾಹರಣೆ (ಎಲ್ಲಾ Properties ಜೊತೆಗೆ)
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                        ಇಲ್ಲಿ Arrow function ಇಲ್ಲದೆ, ಸಾಂಪ್ರದಾಯಿಕ function() {} ಮತ್ತು async / await ಬಳಸಿ ಬರೆದ ವೃತ್ತಿಪರ ಕೋಡ್ ಇಲ್ಲಿದೆ. ಇದು student.json ಎಂಬ ಫೈಲ್ ಅನ್ನು ತರುತ್ತದೆ ಎಂದು ಭಾವಿಸೋಣ.
+                    </p>
+
+                    <div class="relative group shadow-lg rounded-lg overflow-hidden">
+                        <button class="copy-btn absolute top-3 right-3 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm transition-colors z-10">Copy Code</button>
+                        <pre><code class="language-javascript">// 1. async ಬಳಸಿ ಪೂರ್ಣ ಫಂಕ್ಷನ್ ರಚಿಸುವುದು
+async function getStudentInformation() {
+    
+    // 'try' ಬ್ಲಾಕ್: ಎಲ್ಲವೂ ಸರಿಯಾಗಿ ನಡೆದರೆ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ
+    try {
+        console.log("ಡೇಟಾ ತರಲು ಶುರು ಮಾಡಲಾಗಿದೆ...");
+
+        // ಹಂತ 1: ಸಪ್ಲೈಯರ್ 'student.json' ಫೈಲ್ ತರುವವರೆಗೆ 'ಕಾಯಿರಿ' (await)
+        let response = await fetch('student.json');
+
+        // ಹಂತ 2: ಪಾರ್ಸೆಲ್ ಬಂದ ನಂತರ ಮೇಲಿನ ಎಲ್ಲಾ Properties ಗಳನ್ನು ಪರೀಕ್ಷಿಸುವುದು
+        console.log("--- ಪಾರ್ಸೆಲ್ ಮೇಲಿನ ವಿವರಗಳು (Properties) ---");
+        console.log("1. ವಿಳಾಸ (url): " + response.url);
+        console.log("2. ಇಂಟರ್ನೆಟ್ ಕೋಡ್ (status): " + response.status);
+        console.log("3. ಕೋಡ್‌ನ ಅರ್ಥ (statusText): " + response.statusText);
+        console.log("4. ಬೇರೆ ಕಡೆಯಿಂದ ಬಂದಿದೆಯೇ? (redirected): " + response.redirected);
+        console.log("5. ಡೇಟಾ ಪ್ರಕಾರ (type): " + response.type);
+        console.log("6. ಪಾರ್ಸೆಲ್ ಓದಿದ್ದೇವಾ? (ಮೊದಲು): " + response.bodyUsed); // false ಇರುತ್ತದೆ
+
+        // ಹಂತ 3: ಆರ್ಡರ್ ಸಿಕ್ಕಿಲ್ಲ ಎಂದರೆ (ಉದಾಹರಣೆಗೆ 404 Error ಬಂದರೆ)
+        if (response.ok === false) {
+            // throw ಎಂದರೆ ಇಲ್ಲಿಗೆ ಕೆಲಸ ನಿಲ್ಲಿಸಿ 'catch' ವಿಭಾಗಕ್ಕೆ ಎರರ್ ಕಳುಹಿಸು
+            throw new Error("ಕ್ಷಮಿಸಿ, ನೀವು ಕೇಳಿದ ಫೈಲ್ ಸಿಗಲಿಲ್ಲ!");
+        }
+
+        // ಹಂತ 4: ಎಲ್ಲವೂ ಸರಿಯಿದ್ದರೆ, ಪಾರ್ಸೆಲ್ ಅನ್ನು JSON ಆಗಿ ಬಿಡಿಸಲು ಕಾಯಿರಿ (await)
+        let data = await response.json(); 
+        // ಸೂಚನೆ: ಒಂದು ವೇಳೆ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಆಗಿದ್ದರೆ response.text() ಬಳಸುತ್ತಿದ್ದೆವು.
+
+        // ಈಗ ಪಾರ್ಸೆಲ್ ಓದಿದ್ದೇವಾ? ಎಂದು ಮತ್ತೊಮ್ಮೆ ಪರಿಶೀಲನೆ
+        console.log("7. ಪಾರ್ಸೆಲ್ ಓದಿದ್ದೇವಾ? (ನಂತರ): " + response.bodyUsed); // ಈಗ true ಆಗಿರುತ್ತದೆ
+
+        // ಹಂತ 5: ಬಿಡಿಸಿದ ಡೇಟಾವನ್ನು ಪರದೆಯ ಮೇಲೆ ತೋರಿಸುವುದು
+        console.log("--- ಪಾರ್ಸೆಲ್ ಒಳಗಿದ್ದ ಮುಖ್ಯ ಮಾಹಿತಿ ---");
+        console.log("ವಿದ್ಯಾರ್ಥಿಯ ಹೆಸರು: " + data.name);
+        console.log("ವಿದ್ಯಾರ್ಥಿಯ ಊರು: " + data.city);
+
+    } 
+    // 'catch' ಬ್ಲಾಕ್: ದಾರಿಯಲ್ಲಿ ಇಂಟರ್ನೆಟ್ ಹೋದರೆ ಅಥವಾ ಫೈಲ್ ಇಲ್ಲದಿದ್ದರೆ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ
+    catch (functionError) {
+        console.log("ಏನೋ ತಪ್ಪಾಗಿದೆ, ದಯವಿಟ್ಟು ಗಮನಿಸಿ: " + functionError.message);
+    }
+}
+
+// 2. ಬರೆದ ಫಂಕ್ಷನ್ ಅನ್ನು ಕೆಲಸ ಮಾಡಲು ಆದೇಶಿಸುವುದು (Call ಮಾಡುವುದು)
+getStudentInformation();</code></pre>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-800/80 rounded-xl p-6 mt-8 border border-gray-200 dark:border-gray-700">
+                        <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            ಈ ಕೋಡ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ? (ಹಂತ-ಹಂತವಾಗಿ)
+                        </h3>
+                        <ol class="space-y-4 list-decimal list-inside text-gray-700 dark:text-gray-300 leading-relaxed marker:text-brand marker:font-bold">
+                            <li><strong class="text-gray-900 dark:text-white">async function:</strong> ಈ ಫಂಕ್ಷನ್ ಒಳಗೆ ನಾವು ಇಂಟರ್ನೆಟ್ ಕೆಲಸಗಳಿಗೆ ಕಾಯಬೇಕಾಗುತ್ತದೆ (Time takes) ಎಂದು ಬ್ರೌಸರ್‌ಗೆ ಮೊದಲೇ ತಿಳಿಸುತ್ತದೆ.</li>
+                            <li><strong class="text-gray-900 dark:text-white">await fetch:</strong> ಡೇಟಾ ಬರುವವರೆಗೆ ಮುಂದಿನ ಲೈನ್ ಕೋಡ್ ಓಡಬಾರದು ಎಂದು ತಡೆದು ನಿಲ್ಲಿಸುತ್ತದೆ.</li>
+                            <li><strong class="text-gray-900 dark:text-white">Properties ಚೆಕ್ಕಿಂಗ್:</strong> ಡೇಟಾ ಬಂದ ತಕ್ಷಣವೇ ಅದರ status, url, ಮತ್ತು ok ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡಿ, ಫೈಲ್ ಸುರಕ್ಷಿತವಾಗಿ ಬಂದಿದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳುತ್ತೇವೆ.</li>
+                            <li><strong class="text-gray-900 dark:text-white">await response.json():</strong> ಬಾಕ್ಸ್ ಅನ್ನು ಒಡೆದು, JSON ಡೇಟಾವನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಓದುವ ಭಾಷೆಗೆ ಬದಲಾಯಿಸಲು ಕಾಯುತ್ತದೆ. (ಈ ಹಂತದಲ್ಲಿ bodyUsed property false ನಿಂದ true ಗೆ ಬದಲಾಗುತ್ತದೆ).</li>
+                            <li><strong class="text-gray-900 dark:text-white">Try / Catch:</strong> ಇಂಟರ್ನೆಟ್ ಕಟ್ ಆದರೆ ಅಥವಾ ನಾವು ತಪ್ಪು ಫೈಲ್ ಹೆಸರು ಕೊಟ್ಟರೆ, ಕೋಡ್ ಕ್ರಾಶ್ ಆಗುವುದಿಲ್ಲ. ಬದಲಾಗಿ catch ಬ್ಲಾಕ್ ಒಳಗೆ ಹೋಗಿ ನಮಗೆ ಸುಂದರವಾದ Error ಮೆಸೇಜ್ ನೀಡುತ್ತದೆ.</li>
+                        </ol>
+                    </div>
+                </section>
+                
+                <footer class="pt-8 pb-16 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-200 dark:border-gray-800">
+                    <p>Designed for professional reading and learning. JavaScript Fetch API Notes.</p>
+                </footer>
+            </article>
+        </main>
+    </div>
+
+    <!-- Scripts for Functionality -->
+    <script>
+        // 1. Initialize Syntax Highlighting
+        hljs.highlightAll();
+
+        // 2. Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Check local storage or system preference on load
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+        });
+
+        // 3. Copy Code Button Logic
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.nextElementSibling.querySelector('code');
+                const textToCopy = codeBlock.innerText;
+
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.innerText;
+                    button.innerText = 'Copied!';
+                    button.classList.add('bg-green-600', 'hover:bg-green-500');
+                    button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                    
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.classList.remove('bg-green-600', 'hover:bg-green-500');
+                        button.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            });
+        });
+
+        // 4. Scroll Animation (Fade-in)
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Stop observing once visible if you want it to happen only once
+                    // observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        fadeElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // 5. Active TOC Highlight Logic
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+        
+        const tocObserverOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px', // Adjust depending on header height
+            threshold: 0
+        };
+
+        const tocObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, tocObserverOptions);
+
+        sections.forEach(section => {
+            tocObserver.observe(section);
+        });
+    </script>
+</body>
+</html>

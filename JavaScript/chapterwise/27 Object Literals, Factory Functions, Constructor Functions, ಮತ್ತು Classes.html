@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Creation Methods in JavaScript</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        kannada: ['"Noto Sans Kannada"', 'sans-serif'],
+                        code: ['"Fira Code"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            scroll-behavior: smooth;
+        }
+        pre {
+            font-family: 'Fira Code', monospace;
+            border-radius: 0.5rem;
+            position: relative;
+        }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300">
+
+    <!-- Header & Theme Toggle -->
+    <header class="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600 dark:text-blue-400">
+                <i class="fa-brands fa-js text-yellow-500 mr-2"></i>JS Objects Guide
+            </h1>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                <i id="theme-icon" class="fa-solid fa-moon text-slate-600 dark:text-yellow-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex max-w-7xl mx-auto pt-16">
+        
+        <!-- Sticky Sidebar (Table of Contents) -->
+        <aside class="hidden lg:block w-72 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto border-r border-slate-200 dark:border-slate-800 p-6">
+            <h2 class="font-bold text-lg mb-4 text-slate-900 dark:text-white uppercase tracking-wider text-sm"><i class="fa-solid fa-list-ul mr-2"></i>ಪರಿವಿಡಿ (TOC)</h2>
+            <nav class="space-y-3 text-sm flex flex-col">
+                <a href="#intro" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">ಪೀಠಿಕೆ</a>
+                <a href="#object-literals" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">1. Object Literals</a>
+                <a href="#factory-function" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">2. Factory Function</a>
+                <a href="#constructor-function" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">3. Constructor Function</a>
+                <a href="#class" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">4. Class</a>
+                <a href="#summary-table" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">ಸಂಕ್ಷಿಪ್ತ ಹೋಲಿಕೆ (Summary)</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-12 overflow-x-hidden">
+            <div class="max-w-4xl mx-auto space-y-12">
+
+                <!-- Section: Intro -->
+                <section id="intro" class="fade-in-section scroll-mt-20">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-xl shadow-lg border border-blue-500">
+                        <h1 class="text-2xl md:text-3xl font-extrabold mb-4 flex items-center">
+                            <i class="fa-solid fa-cubes mr-3"></i> ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವ ವಿಧಾನಗಳು
+                        </h1>
+                        <p class="text-lg leading-relaxed">
+                            ಹೌದು, <strong>Object Literals, Factory Functions, Constructor Functions,</strong> ಮತ್ತು <strong>Classes</strong> — ಈ ನಾಲ್ಕೂ ವಿಧಾನಗಳ ಮೂಲ ಉದ್ದೇಶ ಒಂದೇ: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಆಬ್ಜೆಕ್ಟ್ (Object) ಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು.
+                        </p>
+                        <p class="mt-4 text-blue-100 leading-relaxed">
+                            ಆದರೆ, ನಿಮಗೆ ಕೇವಲ ಒಂದೇ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಬೇಕೇ ಅಥವಾ ಸಾವಿರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳು ಬೇಕೇ? ನಿಮ್ಮ ಕೋಡ್‌ನ ಗಾತ್ರವೆಷ್ಟು? ಎಂಬ ಆಧಾರದ ಮೇಲೆ ಇವುಗಳ ಬಳಕೆ ಬದಲಾಗುತ್ತದೆ. ಇದನ್ನು ಒಬ್ಬ ಸಾಮಾನ್ಯ ವ್ಯಕ್ತಿಯಿಂದ (Non-IT) ಹಿಡಿದು ಒಬ್ಬ ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್ (Pro) ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ರೀತಿಯಲ್ಲಿ ಹಂತ-ಹಂತವಾಗಿ ನೋಡೋಣ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 1 -->
+                <section id="object-literals" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">1</span> 
+                        Object Literals (ಆಬ್ಜೆಕ್ಟ್ ಲಿಟರಲ್ಸ್)
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-lg border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-emerald-800 dark:text-emerald-400 mb-2"><i class="fa-solid fa-user-tag mr-2"></i>ಸಾಮಾನ್ಯ ವಿವರಣೆ (Non-IT):</h3>
+                            <p class="text-sm">ನಿಮಗೆ ಕೂರಲು ಕೇವಲ ಒಂದೇ ಒಂದು ಮರದ ಕುರ್ಚಿ ಬೇಕಾಗಿದೆ. ನೀವೇ ಮರ ತಂದು, ನಿಮ್ಮ ಕೈಯಾರೆ ಒಂದು ಕುರ್ಚಿ ಮಾಡಿಟ್ಟುಕೊಳ್ಳುತ್ತೀರಿ. ನಾಳೆ ಇನ್ನೊಂದು ಕುರ್ಚಿ ಬೇಕಾದರೆ, ಮತ್ತೆ ಮೊದಲಿನಿಂದ ಮರ ತಂದು ಕೆತ್ತಬೇಕು.</p>
+                            <div class="mt-3 text-center opacity-70"><i class="fa-solid fa-chair text-3xl text-emerald-600"></i></div>
+                        </div>
+                        
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 dark:text-purple-400 mb-2"><i class="fa-solid fa-laptop-code mr-2"></i>ಪ್ರೊ ಲೆವೆಲ್ ವಿವರಣೆ (Technical):</h3>
+                            <p class="text-sm">ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವ ಅತ್ಯಂತ ಸರಳ ಮತ್ತು ನೇರ ವಿಧಾನ. ಗುಂಗುರು ಆವರಣ <code>{}</code> (Curly braces) ಬಳಸಿ ನೇರವಾಗಿ ಡೇಟಾ ಮತ್ತು ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಬರೆಯುವುದು.</p>
+                        </div>
+                    </div>
+
+                    <ul class="list-none space-y-2 mb-6 ml-2">
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>ಎಲ್ಲಿ ಬಳಸಬೇಕು?</strong> ಕೇವಲ ಒಮ್ಮೆ ಮಾತ್ರ ಬಳಸುವ ಡೇಟಾ, ಕಾನ್ಫಿಗರೇಶನ್ ಫೈಲ್‌ಗಳು (Configurations), ಅಥವಾ ಪ್ರಾಜೆಕ್ಟ್‌ನ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬರೆಯಲು.
+                        </li>
+                        <li class="relative pl-6"><i class="fa-solid fa-xmark text-red-500 absolute left-0 top-1"></i>
+                            <strong>ಅನನುಕೂಲ:</strong> ನೀವು 100 ಕಾರುಗಳ ಮಾಹಿತಿಯನ್ನು ಬರೆಯಬೇಕಾದರೆ, 100 ಬಾರಿ ಕೋಡ್ ಅನ್ನು ಕಾಪಿ-ಪೇಸ್ಟ್ ಮಾಡಬೇಕಾಗುತ್ತದೆ. ಇದು Reusable (ಮರುಬಳಕೆ) ಅಲ್ಲ.
+                        </li>
+                    </ul>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+const myCar = {
+  brand: "Tata",
+  color: "Red",
+  start: function() {
+    console.log("ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!");
+  }
+};
+
+myCar.start();
+                        </code></pre>
+                    </div>
+                    <div class="bg-black text-green-400 font-code p-3 rounded-lg text-sm shadow-inner border border-gray-700">
+                        <i class="fa-solid fa-terminal mr-2"></i> ಔಟ್‌ಪುಟ್:<br>
+                        > ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!
+                    </div>
+                </section>
+
+                <!-- Section 2 -->
+                <section id="factory-function" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">2</span> 
+                        Factory Function (ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್)
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-lg border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-emerald-800 dark:text-emerald-400 mb-2"><i class="fa-solid fa-user-tag mr-2"></i>ಸಾಮಾನ್ಯ ವಿವರಣೆ (Non-IT):</h3>
+                            <p class="text-sm">ನೀವು ಕೈಯಾರೆ ಕುರ್ಚಿ ಮಾಡುವ ಬದಲು, ಒಂದು ಸಣ್ಣ 'ಕುರ್ಚಿ ಮಾಡುವ ಮಷಿನ್' (Factory) ತರುತ್ತೀರಿ. ಆ ಮಷಿನ್‌ಗೆ ಬಣ್ಣ ಮತ್ತು ಮರವನ್ನು ಹಾಕಿದರೆ ಸಾಕು, ಅದು ತಾನಾಗಿಯೇ ಒಂದು ಹೊಸ ಕುರ್ಚಿಯನ್ನು ಹೊರಹಾಕುತ್ತದೆ.</p>
+                            <div class="mt-3 text-center opacity-70"><i class="fa-solid fa-industry text-3xl text-emerald-600"></i></div>
+                        </div>
+                        
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 dark:text-purple-400 mb-2"><i class="fa-solid fa-laptop-code mr-2"></i>ಪ್ರೊ ಲೆವೆಲ್ ವಿವರಣೆ (Technical):</h3>
+                            <p class="text-sm">ಇದು ಕೇವಲ ಒಂದು ಸಾಧಾರಣ ಫಂಕ್ಷನ್. ಆದರೆ, ಈ ಫಂಕ್ಷನ್ ತನ್ನ ಒಳಗಡೆ ಒಂದು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಕೊನೆಯಲ್ಲಿ ಆ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು <code>return</code> ಮಾಡುತ್ತದೆ. ಇಲ್ಲಿ <code>this</code> ಅಥವಾ <code>new</code> ಕೀವರ್ಡ್‌ನ ಗೊಂದಲ ಇರುವುದಿಲ್ಲ.</p>
+                        </div>
+                    </div>
+
+                    <ul class="list-none space-y-2 mb-6 ml-2">
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>ಎಲ್ಲಿ ಬಳಸಬೇಕು?</strong> ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಪದೇ ಪದೇ ಸೃಷ್ಟಿಸಬೇಕಾದಾಗ ಮತ್ತು ಖಾಸಗಿ ಡೇಟಾವನ್ನು (Private variables - Closures ಮೂಲಕ) ಕಾಪಾಡಿಕೊಳ್ಳಬೇಕಾದಾಗ.
+                        </li>
+                        <li class="relative pl-6"><i class="fa-solid fa-xmark text-red-500 absolute left-0 top-1"></i>
+                            <strong>ಅನನುಕೂಲ:</strong> ಈ ವಿಧಾನದಲ್ಲಿ ಸೃಷ್ಟಿಯಾಗುವ ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್ ಕೂಡ ತನ್ನದೇ ಆದ ಪ್ರತ್ಯೇಕ ಮೆಮೊರಿಯನ್ನು (Functions ಗಳಿಗೆ) ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. ಇದು ಮೆಮೊರಿ ದೃಷ್ಟಿಯಿಂದ ದೊಡ್ಡ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಿಗೆ ಒಳ್ಳೆಯದಲ್ಲ.
+                        </li>
+                    </ul>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+function createCar(brandName, carColor) {
+  return {
+    brand: brandName,
+    color: carColor,
+    start: function() {
+      console.log(`${brandName} ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!`);
+    }
+  };
+}
+
+const car1 = createCar("Tata", "Red");
+const car2 = createCar("Maruti", "White");
+                        </code></pre>
+                    </div>
+                </section>
+
+                <!-- Section 3 -->
+                <section id="constructor-function" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">3</span> 
+                        Constructor Function (ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್)
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-lg border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-emerald-800 dark:text-emerald-400 mb-2"><i class="fa-solid fa-user-tag mr-2"></i>ಸಾಮಾನ್ಯ ವಿವರಣೆ (Non-IT):</h3>
+                            <p class="text-sm">ನೀವು ಒಬ್ಬ ಪ್ರೊಫೆಷನಲ್ ಕಾಂಟ್ರಾಕ್ಟರ್ ಅನ್ನು (Constructor) ನೇಮಿಸುತ್ತೀರಿ. ಆ ಕಾಂಟ್ರಾಕ್ಟರ್ ಬಳಿ ಒಂದು ಮಾಸ್ಟರ್ ಪ್ಲಾನ್ ಇರುತ್ತದೆ. ನೀವು ಹೊಸ ಮನೆ ಕಟ್ಟಬೇಕಾದರೆ ಕಡ್ಡಾಯವಾಗಿ ಅವನಿಗೆ ಆಫೀಶಿಯಲ್ ಆಗಿ ಆರ್ಡರ್ (<code>new</code> ಕೀವರ್ಡ್) ಕೊಡಲೇಬೇಕು. ಅವನು ಕಡಿಮೆ ಸಂಪನ್ಮೂಲ (Memory) ಬಳಸಿ ಮನೆ ಕಟ್ಟಿಕೊಡುತ್ತಾನೆ.</p>
+                            <div class="mt-3 text-center opacity-70"><i class="fa-solid fa-hard-hat text-3xl text-emerald-600"></i></div>
+                        </div>
+                        
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 dark:text-purple-400 mb-2"><i class="fa-solid fa-laptop-code mr-2"></i>ಪ್ರೊ ಲೆವೆಲ್ ವಿವರಣೆ (Technical):</h3>
+                            <p class="text-sm">ES6 (Classes) ಬರುವ ಮುನ್ನ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಆಬ್ಜೆಕ್ಟ್-ಓರಿಯೆಂಟೆಡ್ ಪ್ರೋಗ್ರಾಮಿಂಗ್ (OOP) ಮಾಡಲು ಇದನ್ನೇ ಬಳಸಲಾಗುತ್ತಿತ್ತು. ಇಲ್ಲಿ ಫಂಕ್ಷನ್‌ನ ಮೊದಲ ಅಕ್ಷರವನ್ನು ಕ್ಯಾಪಿಟಲ್ (Capital) ನಲ್ಲಿ ಬರೆಯಲಾಗುತ್ತದೆ. ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವಾಗ ಕಡ್ಡಾಯವಾಗಿ <code>new</code> ಕೀವರ್ಡ್ ಬಳಸಬೇಕು.<br><br>ಇದು Prototype (ಪ್ರೋಟೋಟೈಪ್) ಎಂಬ ಕಾನ್ಸೆಪ್ಟ್ ಅನ್ನು ಬಳಸುತ್ತದೆ. ಅಂದರೆ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ಗೂ ಪ್ರತ್ಯೇಕವಾಗಿ ಸೇರಿಸುವ ಬದಲು, ಒಂದೇ ಕಡೆ ಸ್ಟೋರ್ ಮಾಡಿ ಮೆಮೊರಿ ಉಳಿಸುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+
+                    <ul class="list-none space-y-2 mb-6 ml-2">
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>ಎಲ್ಲಿ ಬಳಸಬೇಕು?</strong> ಹಳೆಯ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೋಡ್‌ಬೇಸ್‌ಗಳಲ್ಲಿ (Legacy Code) ಮೆಮೊರಿ ನಿರ್ವಹಣೆಗಾಗಿ. (ಆದರೆ ಪ್ರಸ್ತುತ ಇದರ ಬದಲಿಗೆ Classes ಬಳಸಲಾಗುತ್ತದೆ).
+                        </li>
+                    </ul>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+function Car(brandName, carColor) {
+  // 'this' ಎಂದರೆ ಹೊಸದಾಗಿ ಸೃಷ್ಟಿಯಾಗುತ್ತಿರುವ ಆಬ್ಜೆಕ್ಟ್
+  this.brand = brandName;
+  this.color = carColor;
+}
+
+// ಮೆಮೊರಿ ಉಳಿಸಲು Prototype ಬಳಕೆ
+Car.prototype.start = function() {
+  console.log(`${this.brand} ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!`);
+};
+
+// 'new' ಕೀವರ್ಡ್ ಕಡ್ಡಾಯ
+const myCar1 = new Car("Tata", "Red");
+myCar1.start();
+                        </code></pre>
+                    </div>
+                    <div class="bg-black text-green-400 font-code p-3 rounded-lg text-sm shadow-inner border border-gray-700">
+                        <i class="fa-solid fa-terminal mr-2"></i> ಔಟ್‌ಪುಟ್:<br>
+                        > Tata ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!
+                    </div>
+                </section>
+
+                <!-- Section 4 -->
+                <section id="class" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">4</span> 
+                        Class (ಕ್ಲಾಸ್)
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-lg border-l-4 border-emerald-500">
+                            <h3 class="font-bold text-emerald-800 dark:text-emerald-400 mb-2"><i class="fa-solid fa-user-tag mr-2"></i>ಸಾಮಾನ್ಯ ವಿವರಣೆ (Non-IT):</h3>
+                            <p class="text-sm">ಇದು ಕಾಂಟ್ರಾಕ್ಟರ್‌ನ ಅತ್ಯಾಧುನಿಕ ರೂಪ. ಒಂದು ಸ್ಮಾರ್ಟ್ ಕಾರ್ಖಾನೆ ಇದ್ದಂತೆ. ಇಲ್ಲಿ ಎಲ್ಲವೂ ಅತ್ಯಂತ ವ್ಯವಸ್ಥಿತವಾಗಿ ಬರೆಯಲ್ಪಟ್ಟಿರುತ್ತದೆ. ನೋಡಲು ಮತ್ತು ಓದಲು ಬಹಳ ಸುಲಭ.</p>
+                            <div class="mt-3 text-center opacity-70"><i class="fa-solid fa-city text-3xl text-emerald-600"></i></div>
+                        </div>
+                        
+                        <div class="bg-purple-50 dark:bg-purple-900/20 p-5 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="font-bold text-purple-800 dark:text-purple-400 mb-2"><i class="fa-solid fa-laptop-code mr-2"></i>ಪ್ರೊ ಲೆವೆಲ್ ವಿವರಣೆ (Technical):</h3>
+                            <p class="text-sm">ಇದು 2015 ರಲ್ಲಿ (ES6) ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ಗೆ ಪರಿಚಯಿಸಲಾದ ಹೊಸ ವಿಧಾನ. ತಾಂತ್ರಿಕವಾಗಿ ಹೇಳಬೇಕೆಂದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Class ಎಂಬುದು ವಾಸ್ತವದಲ್ಲಿ 'Constructor Function' ನ ಇನ್ನೊಂದು ಸುಂದರವಾದ ಮುಖವಾಡ (Syntactic Sugar). ಒಳಗಡೆ ಕೆಲಸ ಮಾಡುವುದು ಹಳೆಯ Prototype ವಿಧಾನವೇ, ಆದರೆ ಡೆವಲಪರ್‌ಗಳಿಗೆ ಕೋಡ್ ಬರೆಯಲು (OOPs ಕಾನ್ಸೆಪ್ಟ್ - Inheritance, Encapsulation) ಇದು ಅತ್ಯಂತ ಸುಲಭ ಮತ್ತು ಕ್ಲೀನ್ ಆಗಿದೆ.</p>
+                        </div>
+                    </div>
+
+                    <ul class="list-none space-y-2 mb-6 ml-2">
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>ಎಲ್ಲಿ ಬಳಸಬೇಕು?</strong> ಆಧುನಿಕ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ (React, Node.js, Angular). ದೊಡ್ಡ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ನಿರ್ಮಿಸುವಾಗ ಆಬ್ಜೆಕ್ಟ್-ಓರಿಯೆಂಟೆಡ್ ಶೈಲಿಯನ್ನು ಅಚ್ಚುಕಟ್ಟಾಗಿ ಅಳವಡಿಸಲು.
+                        </li>
+                    </ul>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class Car {
+  constructor(brandName, carColor) {
+    this.brand = brandName;
+    this.color = carColor;
+  }
+
+  // ಮೆಥಡ್‌ಗಳು ತಾನಾಗಿಯೇ Prototype ಗೆ ಸೇರಿಕೊಳ್ಳುತ್ತವೆ (ಮೆಮೊರಿ ಉಳಿತಾಯ)
+  start() {
+    console.log(`${this.brand} ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!`);
+  }
+}
+
+const modernCar = new Car("Tata", "Red");
+modernCar.start();
+                        </code></pre>
+                    </div>
+                    <div class="bg-black text-green-400 font-code p-3 rounded-lg text-sm shadow-inner border border-gray-700">
+                        <i class="fa-solid fa-terminal mr-2"></i> ಔಟ್‌ಪುಟ್:<br>
+                        > Tata ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!
+                    </div>
+                </section>
+
+                <!-- Summary Table -->
+                <section id="summary-table" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <i class="fa-solid fa-table-list mr-3 text-blue-500"></i> ಸಂಕ್ಷಿಪ್ತ ಹೋಲಿಕೆ (Summary Table)
+                    </h2>
+
+                    <div class="overflow-x-auto bg-white dark:bg-slate-850 rounded-xl shadow border border-slate-200 dark:border-slate-700">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                                    <th class="p-4 border-b border-slate-200 dark:border-slate-700 font-bold">ವಿಧಾನ (Method)</th>
+                                    <th class="p-4 border-b border-slate-200 dark:border-slate-700 font-bold">ಮರುಬಳಕೆ (Reusability)</th>
+                                    <th class="p-4 border-b border-slate-200 dark:border-slate-700 font-bold">ಮೆಮೊರಿ ಉಳಿತಾಯ (Memory Efficiency)</th>
+                                    <th class="p-4 border-b border-slate-200 dark:border-slate-700 font-bold">ಯಾವಾಗ ಬಳಸಬೇಕು? (Use Case)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm md:text-base">
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white">Object Literal</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700"><span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">ಇಲ್ಲ (No)</span></td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700">ಕಡಿಮೆ (ಪ್ರತಿ ಬಾರಿ ಹೊಸ ಡೇಟಾ)</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">ಒಂದೇ ಆಬ್ಜೆಕ್ಟ್ ಬೇಕಿದ್ದಾಗ, ಸೆಟ್ಟಿಂಗ್ಸ್/ಕಾನ್ಫಿಗರೇಶನ್.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white">Factory Function</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">ಹೌದು (Yes)</span></td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700">ಕಡಿಮೆ (ಮೆಥಡ್‌ಗಳು ರಿಪೀಟ್ ಆಗುತ್ತವೆ)</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"><code>new</code> ಕೀವರ್ಡ್ ಬೇಡವಾದಾಗ, ಚಿಕ್ಕ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಿಗೆ.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white">Constructor Fn</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">ಹೌದು (Yes)</span></td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700">ಹೆಚ್ಚು (Prototype ಬಳಸುವುದರಿಂದ)</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">ಹಳೆಯ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೋಡ್ (ES5) ಬರೆಯುವಾಗ.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white">ES6 Class</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">ಹೌದು (Yes)</span></td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700">ಹೆಚ್ಚು (Prototype ಆಧರಿತ)</td>
+                                    <td class="p-4 border-b border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400">ಆಧುನಿಕ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ, ದೊಡ್ಡ ಲೆವೆಲ್ ಕೋಡಿಂಗ್ (Pro level) ಮಾಡುವಾಗ.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Syntax Highlighting Initialization
+        hljs.highlightAll();
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon', 'text-yellow-400');
+                themeIcon.classList.add('fa-sun', 'text-amber-500');
+            } else {
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-sun', 'text-amber-500');
+                themeIcon.classList.add('fa-moon', 'text-yellow-400');
+            }
+        });
+
+        // Sticky TOC Dynamic Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-600', 'dark:text-blue-400', 'font-bold', 'translate-x-2');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('text-blue-600', 'dark:text-blue-400', 'font-bold', 'translate-x-2');
+                }
+            });
+        });
+
+        // Copy Code Functionality
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeElement = button.nextElementSibling.querySelector('code');
+                navigator.clipboard.writeText(codeElement.innerText).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Copied!';
+                    button.classList.add('bg-green-600');
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('bg-green-600');
+                    }, 2000);
+                });
+            });
+        });
+
+        // Fade-in Animation on Scroll (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

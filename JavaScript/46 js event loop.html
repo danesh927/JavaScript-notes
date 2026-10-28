@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Event Loop Notes</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Kannada', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        accent: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+    <style>
+        /* Smooth Scrolling & Base Styles */
+        html { scroll-behavior: smooth; }
+        body { transition: background-color 0.3s, color 0.3s; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sidebar Active Link Indicator */
+        .toc-link { transition: all 0.3s ease; border-left: 2px solid transparent; }
+        .toc-link.active {
+            color: #3b82f6; /* Tailwind Blue-500 */
+            border-left-color: #3b82f6;
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Code Block Container & Copy Button */
+        .code-wrapper { position: relative; margin-top: 1rem; margin-bottom: 1rem; }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+        .copy-btn:active { transform: scale(0.95); }
+        pre[class*="language-"] { border-radius: 0.75rem; padding: 1.5rem; background: #1e293b !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 antialiased selection:bg-accent selection:text-white">
+
+    <!-- Top Navigation -->
+    <header class="fixed top-0 w-full backdrop-blur-md bg-white/70 dark:bg-darkBg/80 border-b border-gray-200 dark:border-gray-800 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fab fa-js text-yellow-400 text-3xl drop-shadow-md"></i>
+                <h1 class="text-xl font-bold tracking-wide">JavaScript Notes</h1>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-accent">
+                <i id="theme-icon" class="fas fa-sun text-yellow-500"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-16 flex flex-col lg:flex-row gap-10">
+        
+        <!-- Sticky Sidebar / Table of Contents -->
+        <aside class="hidden lg:block w-1/4 flex-shrink-0">
+            <div class="sticky top-28 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800 dark:text-white">
+                    <i class="fas fa-list-ul text-accent"></i> ಪರಿವಿಡಿ (TOC)
+                </h2>
+                <nav class="flex flex-col space-y-2 text-sm">
+                    <a href="#intro" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">ಪೀಠಿಕೆ</a>
+                    <a href="#heartbeat" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹೃದಯ</a>
+                    <a href="#call-stack" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">1. ಕಾಲ್ ಸ್ಟ್ಯಾಕ್</a>
+                    <a href="#web-apis" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">2. ವೆಬ್ ಎಪಿಐಗಳು</a>
+                    <a href="#queue" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">3. ಕ್ಯೂ (Queue)</a>
+                    <a href="#event-loop" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">4. ಇವೆಂಟ್ ಲೂಪ್</a>
+                    <a href="#challenge" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">ದಿ ಅಲ್ಟಿಮೇಟ್ ಕೋಡ್ ಸವಾಲು</a>
+                    <a href="#importance" class="toc-link block px-3 py-2 rounded-r-md text-gray-600 dark:text-gray-400 hover:text-accent dark:hover:text-accent">ಡೆವಲಪರ್‌ಗಳಿಗೆ ಏಕೆ ಅತಿ ಮುಖ್ಯ?</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Notes Content -->
+        <main class="w-full lg:w-3/4 space-y-16 leading-relaxed">
+            
+            <!-- Intro Section -->
+            <section id="intro" class="fade-in bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-2xl shadow-sm">
+                <p class="italic text-gray-700 dark:text-gray-300">
+                    ಖಂಡಿತ, ನೀವು ಕೇಳಿದಂತೆ ಈ ಹಿಂದೆ ಚರ್ಚಿಸಿದ ಎಲ್ಲಾ ಮಾಹಿತಿಯನ್ನು (ಯಾವುದನ್ನೂ ಕೈಬಿಡದೆ) ಒಳಗೊಂಡು, ಪ್ರತಿಯೊಂದು ಹಂತಕ್ಕೂ ಕೋಡಿಂಗ್ ಉದಾಹರಣೆ ಮತ್ತು ಅದರ ವಿವರಣೆಯೊಂದಿಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ "ಇವೆಂಟ್ ಲೂಪ್" (Event Loop) ಪ್ರಕ್ರಿಯೆಯನ್ನು ಇಲ್ಲಿ ಮರು-ತಯಾರಿಸಲಾಗಿದೆ. ನಾನ್-ಐಟಿ (Non-IT) ಹಿನ್ನೆಲೆಯವರಿಗೂ ತಾಂತ್ರಿಕವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ ಹೋಟೆಲ್ ಉದಾಹರಣೆಯೊಂದಿಗೆ ಇದನ್ನು ವಿವರಿಸಲಾಗಿದೆ.
+                </p>
+            </section>
+
+            <!-- JS Heartbeat -->
+            <section id="heartbeat" class="fade-in scroll-mt-24">
+                <h2 class="text-3xl font-extrabold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                    <i class="fas fa-heartbeat text-red-500 animate-pulse"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಹೃದಯ (Heartbeat of JavaScript)
+                </h2>
+                <p class="mb-4 text-lg">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಮ್ಮೆಗೆ ಒಂದೇ ಕೆಲಸ ಮಾಡುವ (Single-threaded) ಭಾಷೆಯಾಗಿದ್ದರೂ, ಮಲ್ಟಿ-ಟಾಸ್ಕಿಂಗ್ ಅನ್ನು ಯಾವುದೇ ಅಡೆತಡೆಯಿಲ್ಲದೆ ನಿಭಾಯಿಸುತ್ತದೆ. ಒಂದು ದೊಡ್ಡ ವಿಡಿಯೋ ಡೌನ್‌ಲೋಡ್ ಆಗುವವರೆಗೂ ಇಡೀ ವೆಬ್‌ಸೈಟ್ ಹ್ಯಾಂಗ್ ಆಗದೆ, ನಾವು ಬೇರೆ ಬಟನ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗುವುದರ ಹಿಂದಿನ ಸಂಪೂರ್ಣ ರಹಸ್ಯ ಅಡಗಿರುವುದೇ <strong>Web APIs</strong> ಮತ್ತು <strong>Event Loop</strong> ನಲ್ಲಿ.
+                </p>
+                <p class="mb-8 text-lg">
+                    ಇದನ್ನು ಸರಿಯಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ 4 ಮುಖ್ಯ ಆಧಾರಸ್ತಂಭಗಳನ್ನು ಕೋಡ್ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ನೋಡೋಣ:
+                </p>
+
+                <!-- Conceptual SVG Diagram -->
+                <div class="my-10 p-6 bg-white dark:bg-darkCard rounded-2xl shadow-lg border border-gray-100 dark:border-gray-800 flex justify-center items-center overflow-x-auto">
+                    <svg viewBox="0 0 800 350" class="w-full max-w-3xl drop-shadow-md">
+                        <!-- Definitions -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                            </marker>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Call Stack Box -->
+                        <rect x="50" y="50" width="160" height="200" rx="10" fill="#f8fafc" stroke="#3b82f6" stroke-width="3" />
+                        <text x="130" y="80" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="18">Call Stack</text>
+                        <text x="130" y="105" text-anchor="middle" fill="#64748b" font-size="14">(ವೇಟರ್)</text>
+                        <rect x="70" y="130" width="120" height="25" rx="4" fill="#e2e8f0" />
+                        <rect x="70" y="165" width="120" height="25" rx="4" fill="#cbd5e1" />
+                        
+                        <!-- Web APIs Box -->
+                        <rect x="300" y="50" width="180" height="120" rx="10" fill="#f8fafc" stroke="#f59e0b" stroke-width="3" />
+                        <text x="390" y="80" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="18">Web APIs</text>
+                        <text x="390" y="105" text-anchor="middle" fill="#64748b" font-size="14">(ಅಡುಗೆಮನೆ)</text>
+                        <text x="390" y="140" text-anchor="middle" fill="#334155" font-size="14">DOM, fetch, setTimeout</text>
+
+                        <!-- Queues Box -->
+                        <rect x="560" y="50" width="200" height="200" rx="10" fill="#f8fafc" stroke="#10b981" stroke-width="3" />
+                        <text x="660" y="80" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="18">Queues (ಕೌಂಟರ್)</text>
+                        <rect x="580" y="110" width="160" height="40" rx="5" fill="#d1fae5" stroke="#10b981" stroke-dasharray="4" />
+                        <text x="660" y="135" text-anchor="middle" font-weight="bold" fill="#065f46" font-size="13">Microtask Queue (VIP)</text>
+                        <rect x="580" y="170" width="160" height="40" rx="5" fill="#e0e7ff" stroke="#6366f1" stroke-dasharray="4" />
+                        <text x="660" y="195" text-anchor="middle" font-weight="bold" fill="#3730a3" font-size="13">Task Queue (ಸಾಮಾನ್ಯ)</text>
+
+                        <!-- Event Loop -->
+                        <circle cx="390" cy="270" r="40" fill="none" stroke="url(#grad1)" stroke-width="6" stroke-dasharray="250" />
+                        <path d="M 420 240 Q 450 200 560 200" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <path d="M 210 150 Q 250 110 300 110" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <path d="M 480 110 Q 520 110 560 110" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <path d="M 560 270 Q 440 270 430 270" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <path d="M 350 270 Q 250 270 210 230" fill="none" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead)"/>
+
+                        <text x="390" y="275" text-anchor="middle" font-weight="bold" fill="#64748b" font-size="14">Event Loop</text>
+                        <text x="390" y="295" text-anchor="middle" fill="#94a3b8" font-size="12">(ಮ್ಯಾನೇಜರ್)</text>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Section 1 -->
+            <section id="call-stack" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-layer-group mr-2"></i> 1. ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ (Call Stack) - ಕೆಲಸದ ಮೇಜು = ಹೋಟೆಲ್ ವೇಟರ್
+                </h3>
+                <p class="mb-4">ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಮುಖ್ಯ ಕೆಲಸಗಾರ. ನೀವು ಬರೆಯುವ ಸಾಮಾನ್ಯ (ಸಿಂಕ್ರೋನಸ್) ಕೋಡ್‌ಗಳು ಇಲ್ಲಿಯೇ ರನ್ ಆಗುತ್ತವೆ.</p>
+                <ul class="list-none space-y-3 mb-6">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-cogs mt-1 text-gray-500"></i>
+                        <span><strong>ತಾಂತ್ರಿಕ ನಿಯಮ:</strong> "ಏಕಕಾಲದಲ್ಲಿ ಒಂದೇ ಕೆಲಸ." ಒಂದು ಸಾಲಿನ ಕೋಡ್ ರನ್ ಆಗಿ ಮುಗಿಯುವವರೆಗೂ ಇದು ಮುಂದಿನ ಸಾಲಿಗೆ ಹೋಗುವುದಿಲ್ಲ.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-utensils mt-1 text-gray-500"></i>
+                        <span><strong>ಹೋಟೆಲ್ ಉದಾಹರಣೆ:</strong> ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಎಂದರೆ ಹೋಟೆಲ್‌ನಲ್ಲಿರುವ ಏಕೈಕ ವೇಟರ್. ಇವನು ಒಮ್ಮೆಗೆ ಒಬ್ಬ ಗ್ರಾಹಕನಿಗೆ ಮಾತ್ರ ಸೇವೆ ಸಲ್ಲಿಸುತ್ತಾನೆ. ನೀರು ಕೊಡುವುದು, ಮೆನು ಕಾರ್ಡ್ ಕೊಡುವಂತಹ ದಿಢೀರ್ ಕೆಲಸಗಳನ್ನು ಇವನೇ ಮುಗಿಸುತ್ತಾನೆ.</span>
+                    </li>
+                </ul>
+                <p class="font-semibold mb-2 text-gray-700 dark:text-gray-300">ಕೋಡಿಂಗ್ ಉದಾಹರಣೆ:</p>
+                
+                <div class="code-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                    <pre><code class="language-javascript">console.log("1. ಗ್ರಾಹಕ ಬಂದರು");
+console.log("2. ನೀರು ಕೊಟ್ಟೆ");
+console.log("3. ಆರ್ಡರ್ ತೆಗೆದುಕೊಂಡೆ");</code></pre>
+                </div>
+                
+                <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border-l-4 border-gray-400">
+                    <strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ ಯಾವುದೇ ತಡವಾಗುವ ಕೆಲಸವಿಲ್ಲ. ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ (ವೇಟರ್) ಮೊದಲ ಸಾಲನ್ನು ಓದುತ್ತದೆ, ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ. ನಂತರ ಎರಡನೇ ಸಾಲು, ಆಮೇಲೆ ಮೂರನೇ ಸಾಲು. ಇದು ಒಂದರ ಹಿಂದೊಂದು ತಕ್ಷಣವೇ ಮುಗಿದುಹೋಗುತ್ತದೆ.
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="web-apis" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-orange-500 dark:text-orange-400">
+                    <i class="fas fa-server mr-2"></i> 2. ವೆಬ್ ಎಪಿಐಗಳು (Web APIs) - ಹಿನ್ನೆಲೆಯ ಸಹಾಯಕರು = ಅಡುಗೆಮನೆ
+                </h3>
+                <p class="mb-4">ಇವು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಸ್ವಂತ ಭಾಗವಲ್ಲ, ಬದಲಾಗಿ ಬ್ರೌಸರ್ (Chrome, Edge ಇತ್ಯಾದಿ) ಒದಗಿಸುವ ಸೂಪರ್ ಪವರ್‌ಗಳು.</p>
+                <ul class="list-none space-y-3 mb-6">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-cogs mt-1 text-gray-500"></i>
+                        <span><strong>ತಾಂತ್ರಿಕ ನಿಯಮ:</strong> ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸಗಳಾದ <code>setTimeout</code> (ಟೈಮರ್‌ಗಳು) ಬಂದರೆ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ನಿಲ್ಲುವುದಿಲ್ಲ, ಅದನ್ನು ಬ್ರೌಸರ್‌ಗೆ ವಹಿಸುತ್ತದೆ.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-utensils mt-1 text-gray-500"></i>
+                        <span><strong>ಹೋಟೆಲ್ ಉದಾಹರಣೆ:</strong> ವೇಟರ್‌ಗೆ ದೋಸೆ ಮಾಡಲು ಬರುವುದಿಲ್ಲ (ಅದಕ್ಕೆ ಸಮಯ ಹಿಡಿಯುತ್ತದೆ). ಆದ್ದರಿಂದ ಆ ಆರ್ಡರ್ ಅನ್ನು ಅಡುಗೆಮನೆಗೆ (Web APIs) ಕೊಟ್ಟು, ವೇಟರ್ ತಾನು ಬೇರೆ ಕೆಲಸ ನೋಡಿಕೊಳ್ಳಲು ಹೋಗುತ್ತಾನೆ.</span>
+                    </li>
+                </ul>
+                <p class="font-semibold mb-2 text-gray-700 dark:text-gray-300">ಕೋಡಿಂಗ್ ಉದಾಹರಣೆ:</p>
+                
+                <div class="code-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                    <pre><code class="language-javascript">console.log("1. ದೋಸೆ ಆರ್ಡರ್ ತಗೊಂಡೆ");
+
+setTimeout(() => {
+    console.log("2. ದೋಸೆ ರೆಡಿಯಾಯಿತು (3 ಸೆಕೆಂಡ್ ನಂತರ)");
+}, 3000); 
+
+console.log("3. ಬೇರೆ ಟೇಬಲ್‌ಗೆ ಹೋದೆ");</code></pre>
+                </div>
+
+                <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border-l-4 border-orange-400">
+                    <strong>ವಿವರಣೆ:</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೊದಲು "1" ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ. ನಂತರ <code>setTimeout</code> ಬಂದಾಗ ಅದು 3 ಸೆಕೆಂಡ್ ಸುಮ್ಮನೆ ನಿಂತು ಕಾಯುವುದಿಲ್ಲ. ಆ ಟೈಮರ್ ಓಡಿಸುವ ಕೆಲಸವನ್ನು Web API (ಅಡುಗೆಮನೆ) ಗೆ ಒಪ್ಪಿಸಿ, ತಕ್ಷಣ "3. ಬೇರೆ ಟೇಬಲ್‌ಗೆ ಹೋದೆ" ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ. 3 ಸೆಕೆಂಡ್ ಆದಮೇಲೆ "2" ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="queue" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-green-600 dark:text-green-400">
+                    <i class="fas fa-list-ol mr-2"></i> 3. ಕ್ಯೂ (Queue) - ಕಾಯುವ ಸಾಲು = ಪಾರ್ಸೆಲ್ ಕೌಂಟರ್
+                </h3>
+                <p class="mb-4">Web API ತನ್ನ ಹಿನ್ನೆಲೆ ಕೆಲಸವನ್ನು ಮುಗಿಸಿದ ನಂತರ, ಆ ಫಲಿತಾಂಶವನ್ನು ನೇರವಾಗಿ ಮತ್ತೆ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ಎಸೆಯುವುದಿಲ್ಲ. ಬದಲಾಗಿ, ಅದನ್ನು ಒಂದು ಸಾಲಿನಲ್ಲಿ (Queue) ನಿಲ್ಲಿಸುತ್ತದೆ. ಇಲ್ಲಿ ಎರಡು ಸಾಲುಗಳಿವೆ:</p>
+                
+                <ul class="list-disc ml-6 space-y-3 mb-6">
+                    <li>
+                        <strong>ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (VIP ಕೌಂಟರ್):</strong> ಇಲ್ಲಿರುವ ಕೆಲಸಗಳಿಗೆ ಯಾವಾಗಲೂ ಮೊದಲ ಆದ್ಯತೆ! <code>Promises</code>, <code>async/await</code> ಮತ್ತು <code>fetch</code> (ಬೇರೆ ಸರ್ವರ್‌ನಿಂದ ತಂದ ಡೇಟಾ) ನಂತಹ ಫಲಿತಾಂಶಗಳು ಈ VIP ಸಾಲಿನಲ್ಲಿ ಬರುತ್ತವೆ.
+                    </li>
+                    <li>
+                        <strong>ಟಾಸ್ಕ್ ಕ್ಯೂ (ಸಾಮಾನ್ಯ ಕೌಂಟರ್):</strong> ಇದು ಸಾಮಾನ್ಯ ಸಾಲು. <code>setTimeout</code> ಮತ್ತು DOM (ಬಟನ್ ಕ್ಲಿಕ್) ನಂತಹ ಕೆಲಸಗಳು ಇಲ್ಲಿ ಕಾಯುತ್ತವೆ.
+                    </li>
+                </ul>
+                
+                <!-- Added expansion context for comprehensiveness -->
+                <div class="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg flex items-start gap-3">
+                    <i class="fas fa-lightbulb text-purple-500 mt-1"></i>
+                    <p class="text-sm">
+                        <em>ಹೆಚ್ಚುವರಿ ತಾಂತ್ರಿಕ ಮಾಹಿತಿ:</em> ನೀವು ಕಲಿಯುತ್ತಿರುವ <code>async/await</code> ಕೂಡ ಹಿನ್ನೆಲೆಯಲ್ಲಿ <code>Promises</code> ರೀತಿಯಲ್ಲೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. <code>await</code> ಕೀವರ್ಡ್ ಎದುರಾದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆ ಫಂಕ್ಷನ್‌ನ ಮುಂದಿನ ಭಾಗವನ್ನು ನೇರವಾಗಿ ಇದೇ 'ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ' (VIP ಸಾಲು) ಗೆ ಸೇರಿಸುತ್ತದೆ.
+                    </p>
+                </div>
+
+                <p class="font-semibold mb-2 text-gray-700 dark:text-gray-300">ಕೋಡಿಂಗ್ ಉದಾಹರಣೆ (fetch ಮತ್ತು DOM ಕ್ಲಿಕ್):</p>
+                
+                <div class="code-wrapper">
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                    <pre><code class="language-javascript">// 1. ಸಾಮಾನ್ಯ ಕೆಲಸ (DOM - Task Queue)
+document.getElementById("myButton").addEventListener("click", () => {
+    console.log("ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ (ಸಾಮಾನ್ಯ ಸಾಲು)");
+});
+
+// 2. VIP ಕೆಲಸ (fetch / Promise - Microtask Queue)
+fetch('https://api.example.com/data')
+    .then(response => {
+        console.log("ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ಬಂತು (VIP ಸಾಲು)");
+    });</code></pre>
+                </div>
+
+                <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border-l-4 border-green-400">
+                    <strong>ವಿವರಣೆ:</strong>
+                    <ul class="list-disc ml-5 mt-2 space-y-2">
+                        <li>ನೀವು ಹೋಟೆಲ್‌ನಲ್ಲಿ ಕೂತು ಆನ್‌ಲೈನ್ ಆಪ್ (fetch) ಮೂಲಕ ಊಟ ಬುಕ್ ಮಾಡಿದರೆ, ಆ ಊಟ ಬಂದ ತಕ್ಷಣ ಅದು VIP ಸಾಲಿಗೆ ಹೋಗುತ್ತದೆ.</li>
+                        <li>ಅದೇ ರೀತಿ ನೀವು ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಬಟನ್ (DOM) ಕ್ಲಿಕ್ ಮಾಡಿದರೆ, ಆ ಕ್ಲಿಕ್ ಆದೇಶವು ನೇರವಾಗಿ ರನ್ ಆಗದೆ ಸಾಮಾನ್ಯ ಸಾಲಿನಲ್ಲಿ ಹೋಗಿ ನಿಲ್ಲುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section id="event-loop" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800 hover:-translate-y-1 transition-transform duration-300">
+                <h3 class="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">
+                    <i class="fas fa-sync-alt mr-2"></i> 4. ಇವೆಂಟ್ ಲೂಪ್ (Event Loop) - ಟ್ರಾಫಿಕ್ ಮ್ಯಾನೇಜರ್ = ಹೋಟೆಲ್ ಮ್ಯಾನೇಜರ್
+                </h3>
+                <p class="mb-4">ಇವೆಂಟ್ ಲೂಪ್‌ನ ಕೆಲಸ ತುಂಬಾ ಸರಳ. ಇದು ಸತತವಾಗಿ ಕೇವಲ ಎರಡು ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿಕೊಳ್ಳುತ್ತಿರುತ್ತದೆ:</p>
+                <ol class="list-decimal ml-6 space-y-2 mb-6 font-medium text-lg">
+                    <li>"ವೇಟರ್ ಫ್ರೀ ಇದ್ದಾನಾ?" (ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಖಾಲಿ ಇದೆಯಾ?)</li>
+                    <li>"ಪಾರ್ಸೆಲ್ ಕೌಂಟರ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಕೊಡಲು ಏನಾದರೂ ರೆಡಿ ಇದೆಯಾ?" (ಕ್ಯೂ ನಲ್ಲಿ ಕೆಲಸ ಇದೆಯಾ?)</li>
+                </ol>
+                <p class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border-l-4 border-purple-500">
+                    ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿಯಾದಾಗ ಮಾತ್ರ, ಇವೆಂಟ್ ಲೂಪ್ ಮೊದಲು VIP ಸಾಲಿನಲ್ಲಿ ಕಾಯುತ್ತಿರುವ ಫಲಿತಾಂಶವನ್ನು ಎತ್ತಿ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ಹಾಕುತ್ತದೆ. ಅದು ಖಾಲಿಯಾದ ಮೇಲೆ ಸಾಮಾನ್ಯ ಸಾಲಿನ ಕಡೆ ಮುಖ ಮಾಡುತ್ತದೆ.
+                </p>
+            </section>
+
+            <!-- Challenge Section -->
+            <section id="challenge" class="fade-in scroll-mt-24 bg-gray-900 text-white p-8 rounded-2xl shadow-xl relative overflow-hidden">
+                <!-- Decorative background icon -->
+                <i class="fas fa-laptop-code absolute -right-10 -bottom-10 text-9xl opacity-10"></i>
+                
+                <h3 class="text-2xl font-bold mb-4 text-yellow-400 relative z-10">
+                    <i class="fas fa-trophy mr-2"></i> ದಿ ಅಲ್ಟಿಮೇಟ್ ಕೋಡ್ ಸವಾಲು (ಇದೆಲ್ಲವೂ ಒಟ್ಟಿಗೆ ಕೆಲಸ ಮಾಡುವ ರೀತಿ)
+                </h3>
+                <p class="mb-6 relative z-10 text-gray-300">ಮೇಲಿನ ಎಲ್ಲವನ್ನೂ ಸೇರಿಸಿ ಡೆವಲಪರ್‌ಗಳ ಇಂಟರ್ವ್ಯೂಗಳಲ್ಲಿ ಕೇಳಲಾಗುವ ಒಂದು ಸವಾಲಿನ ಕೋಡ್ ಇಲ್ಲಿದೆ. ಇದು ಯಾವ ಕ್ರಮದಲ್ಲಿ ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ ಎಂದು ನೋಡಿ:</p>
+                
+                <div class="code-wrapper relative z-10">
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                    <pre><code class="language-javascript">console.log("1. ಪ್ರಾರಂಭ");
+
+// ಸಾಮಾನ್ಯ ಸಾಲಿಗೆ ಹೋಗುವ ಕೆಲಸ (Task Queue)
+setTimeout(() => {
+    console.log("2. ಟೈಮರ್ ಮುಗಿಯಿತು");
+}, 0);
+
+// VIP ಸಾಲಿಗೆ ಹೋಗುವ ಕೆಲಸ (Microtask Queue)
+Promise.resolve().then(() => {
+    console.log("3. ಪ್ರಾಮಿಸ್ ಮುಗಿಯಿತು");
+});
+
+console.log("4. ಅಂತ್ಯ");</code></pre>
+                </div>
+
+                <div class="mt-8 relative z-10">
+                    <h4 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">ಇದು ಹೇಗೆ ರನ್ ಆಗುತ್ತದೆ (ಹಿನ್ನೆಲೆಯ ರಹಸ್ಯದ ವಿವರಣೆ):</h4>
+                    <ol class="space-y-4 text-gray-300">
+                        <li><span class="text-white font-bold">1.</span> ಮೊದಲು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ <code>console.log("1. ಪ್ರಾರಂಭ")</code> ರನ್ ಮಾಡುತ್ತದೆ. <br> <span class="text-green-400">👉 ಔಟ್‌ಪುಟ್: 1</span></li>
+                        <li><span class="text-white font-bold">2.</span> <code>setTimeout</code> ಬರುತ್ತದೆ. ಇದು Web API, ಹಾಗಾಗಿ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಇದನ್ನು ಅಡುಗೆಮನೆಗೆ ಕಳುಹಿಸುತ್ತದೆ. ಇದರ ಟೈಮ್ 0 ಸೆಕೆಂಡ್ (ತಕ್ಷಣವೇ) ಆದರೂ ಸಹ, ನಿಯಮದ ಪ್ರಕಾರ ಇದು ಸಾಮಾನ್ಯ ಸಾಲಿಗೆ (Task Queue) ಹೋಗಿ ಕಾಯಲೇಬೇಕು.</li>
+                        <li><span class="text-white font-bold">3.</span> <code>Promise</code> ಬರುತ್ತದೆ. ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಇದನ್ನು ಕೂಡ Web API ಗೆ ಕಳುಹಿಸುತ್ತದೆ. ಇದು VIP ಕೆಲಸವಾದ್ದರಿಂದ, ರೆಡಿಯಾದ ತಕ್ಷಣ VIP ಸಾಲಿಗೆ (Microtask Queue) ಬಂದು ನಿಲ್ಲುತ್ತದೆ.</li>
+                        <li><span class="text-white font-bold">4.</span> ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ <code>console.log("4. ಅಂತ್ಯ")</code> ರನ್ ಮಾಡುತ್ತದೆ. <br> <span class="text-green-400">👉 ಔಟ್‌ಪುಟ್: 4</span></li>
+                        <li><span class="text-white font-bold">5.</span> <strong>ಇವೆಂಟ್ ಲೂಪ್ (ಮ್ಯಾನೇಜರ್) ಎಂಟ್ರಿ:</strong> ಈಗ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ (ವೇಟರ್) ಸಂಪೂರ್ಣ ಖಾಲಿ! ಇವೆಂಟ್ ಲೂಪ್ ಕೌಂಟರ್ ಕಡೆ ನೋಡುತ್ತದೆ. ಸಾಲಿನಲ್ಲಿ ಇಬ್ಬರು ಕಾಯುತ್ತಿದ್ದಾರೆ (Promise ಮತ್ತು setTimeout).</li>
+                        <li><span class="text-white font-bold">6.</span> VIP ಸಾಲಿಗೆ (Microtask Queue) ಮೊದಲ ಆದ್ಯತೆ! ಹಾಗಾಗಿ ಇವೆಂಟ್ ಲೂಪ್ ಮೊದಲು Promise ಅನ್ನು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ. <br> <span class="text-green-400">👉 ಔಟ್‌ಪುಟ್: 3</span></li>
+                        <li><span class="text-white font-bold">7.</span> VIP ಕೌಂಟರ್ ಖಾಲಿಯಾದ ಮೇಲೆ ಸಾಮಾನ್ಯ ಸಾಲಿನಲ್ಲಿ (Task Queue) ಕಾಯುತ್ತಿದ್ದ setTimeout ಅನ್ನು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ. <br> <span class="text-green-400">👉 ಔಟ್‌ಪುಟ್: 2</span></li>
+                    </ol>
+                    
+                    <div class="mt-6 p-4 bg-black/40 rounded-lg text-center font-mono text-lg border border-gray-700 shadow-inner">
+                        <span class="text-gray-400">ಅಂತಿಮ ಔಟ್‌ಪುಟ್:</span><br>
+                        <span class="text-yellow-400">1. ಪ್ರಾರಂಭ <i class="fas fa-arrow-right text-sm mx-2"></i> 4. ಅಂತ್ಯ <i class="fas fa-arrow-right text-sm mx-2"></i> 3. ಪ್ರಾಮಿಸ್ ಮುಗಿಯಿತು <i class="fas fa-arrow-right text-sm mx-2"></i> 2. ಟೈಮರ್ ಮುಗಿಯಿತು</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Importance Section -->
+            <section id="importance" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-md border border-gray-100 dark:border-gray-800">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3 text-red-500 dark:text-red-400">
+                    <i class="fas fa-bug text-3xl"></i> ಇದು ಡೆವಲಪರ್‌ಗಳಿಗೆ ಏಕೆ ಅತಿ ಮುಖ್ಯ? (Bugs ಪತ್ತೆ ಹಚ್ಚುವಿಕೆ)
+                </h3>
+                <p class="mb-4">ಹೊಸದಾಗಿ ಕೋಡ್ ಕಲಿಯುವವರು "ನಾನು ಮೊದಲು <code>setTimeout</code> (ಟೈಮರ್) ಬರೆದಿದ್ದೇನೆ, ಹಾಗಾಗಿ ಅದು ಪ್ರಾಮಿಸ್‌ಗಿಂತ ಮೊದಲು ಪ್ರಿಂಟ್ ಆಗಬೇಕು" ಎಂದುಕೊಳ್ಳುತ್ತಾರೆ. ಆದರೆ ಈ 'Event Loop' ಮತ್ತು ಕ್ಯೂಗಳ (VIP vs ಸಾಮಾನ್ಯ) ನಿಯಮ ಗೊತ್ತಿಲ್ಲದಿದ್ದರೆ, ಡೆವಲಪರ್‌ಗಳು "ನನ್ನ ಕೋಡ್ ಯಾಕೆ ತಪ್ಪು ತಪ್ಪಾಗಿ ರನ್ ಆಗುತ್ತಿದೆ? ನನ್ನ ಡೇಟಾ ಬರುವ ಮುನ್ನವೇ ಬೇರೆ ಬಟನ್ ಯಾಕೆ ಕ್ಲಿಕ್ ಆಗುತ್ತಿದೆ?" ಎಂದು ತಲೆಕೆಡಿಸಿಕೊಳ್ಳುತ್ತಾರೆ.</p>
+                <p class="text-lg font-semibold p-4 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg border-l-4 border-green-500">
+                    ಈ Call Stack, Web APIs, Microtask / Task Queue ಮತ್ತು Event Loop ಪ್ರಕ್ರಿಯೆಯನ್ನು ಒಮ್ಮೆ ಅರ್ಥಮಾಡಿಕೊಂಡರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಎಂತಹ ಜಟಿಲವಾದ ತಪ್ಪುಗಳನ್ನು (Bugs) ಸಹ ನೀವು ಅತ್ಯಂತ ಸುಲಭವಾಗಿ ಪತ್ತೆಹಚ್ಚಿ ಸರಿಪಡಿಸಬಹುದು!
+                </p>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button onclick="window.scrollTo(0,0)" class="fixed bottom-8 right-8 bg-accent text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors focus:outline-none">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript Logic for Interactivity -->
+    <script>
+        // 1. Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // Note: Starts in Dark Mode by default as requested.
+        function toggleTheme() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.replace('text-yellow-500', 'text-gray-600');
+            } else {
+                html.classList.add('dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-gray-600', 'text-yellow-500');
+            }
+        }
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // 2. Copy Code Functionality
+        function copyCode(button) {
+            const code = button.nextElementSibling.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check text-green-400"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                }, 2000);
+            });
+        }
+
+        // 3. Fade-in Animations on Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 4. Sticky Sidebar TOC Active Link Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

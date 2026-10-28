@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Prototypes - Professional Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --sidebar-bg: #ffffff;
+            --sidebar-border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #f1f5f9;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+            --accent: #f59e0b;
+        }
+
+        body.dark {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --sidebar-bg: #1e293b;
+            --sidebar-border: #334155;
+            --primary: #38bdf8;
+            --primary-hover: #7dd3fc;
+            --secondary: #334155;
+            --code-bg: #000000;
+            --code-text: #e2e8f0;
+            --card-bg: #1e293b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        /* Header (Mobile) */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--sidebar-border);
+            z-index: 50;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .icon-btn:hover { background: var(--secondary); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            padding: 20px;
+            transition: transform 0.3s ease;
+            z-index: 40;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 10px; }
+        .sidebar a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            display: block;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--secondary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 40px;
+            max-width: 900px;
+        }
+
+        /* Typography */
+        h1 { font-size: 2.2rem; margin-bottom: 15px; color: var(--primary); }
+        h2 { font-size: 1.8rem; margin-top: 40px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--sidebar-border); }
+        h3 { font-size: 1.4rem; margin-top: 30px; margin-bottom: 10px; color: var(--accent); }
+        p { margin-bottom: 15px; font-size: 1.05rem; }
+        ul, ol { margin-bottom: 15px; padding-left: 25px; }
+        li { margin-bottom: 8px; }
+        
+        .highlight {
+            background: var(--secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            border-left: 5px solid var(--primary);
+        }
+
+        /* Cards / Steps */
+        .step-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--sidebar-border);
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .code-header {
+            background: #2d2d2d;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ccc;
+            font-size: 0.85rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .copy-btn {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { background: #666; }
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Syntax Highlighting */
+        .kwd { color: #569cd6; } /* keyword */
+        .fnc { color: #dcdcaa; } /* function */
+        .str { color: #ce9178; } /* string */
+        .cmt { color: #6a9955; font-style: italic; } /* comment */
+        .num { color: #b5cea8; } /* number */
+        .obj { color: #4ec9b0; } /* object */
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--sidebar-border);
+        }
+        th {
+            background: var(--secondary);
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* SVG Diagrams */
+        .diagram-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 25px 0;
+            text-align: center;
+            border: 1px dashed var(--sidebar-border);
+        }
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+            border-top: 5px solid var(--accent);
+        }
+        .quiz-question { margin-bottom: 20px; }
+        .quiz-options { list-style: none; padding: 0; }
+        .quiz-options li {
+            background: var(--secondary);
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .quiz-options li:hover { border-color: var(--primary); }
+        .quiz-options li.correct { background: #dcfce7; color: #166534; border-color: #22c55e; }
+        .quiz-options li.wrong { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+        .dark .quiz-options li.correct { background: #064e3b; color: #34d399; border-color: #10b981; }
+        .dark .quiz-options li.wrong { background: #7f1d1d; color: #f87171; border-color: #ef4444; }
+        .quiz-feedback { display: none; margin-top: 10px; font-weight: bold; }
+
+        /* Archive Section */
+        .archive-section {
+            margin-top: 50px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .archive-section summary {
+            background: var(--secondary);
+            padding: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .archive-content {
+            padding: 20px;
+            white-space: pre-wrap;
+            font-family: inherit;
+            background: var(--bg-color);
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 30;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { transform: translateX(-100%); padding-top: 80px; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 80px 20px 40px 20px; }
+            .overlay.show { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <button class="icon-btn" id="menu-btn">☰</button>
+        <span style="font-weight: bold; color: var(--primary);">JS Notes</span>
+        <button class="icon-btn" id="theme-btn-mobile">🌓</button>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <h2>ಪುಟದ ವಿಷಯಗಳು <button class="icon-btn" id="theme-btn" style="display:none;">🌓</button></h2>
+        <input type="text" id="search-box" placeholder="ಹುಡುಕಿ..." style="width:100%; padding:8px; margin-bottom:15px; border-radius:4px; border:1px solid var(--sidebar-border); background:var(--bg-color); color:var(--text-color);">
+        <ul id="toc-list">
+            <li><a href="#intro">ಪರಿಚಯ</a></li>
+            <li><a href="#part1">ಭಾಗ 1: ೪ ಹಂತಗಳಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್</a></li>
+            <li><a href="#step1-beginner">ಹಂತ 1: ಬಿಗಿನರ್ (DNA ಉದಾಹರಣೆ)</a></li>
+            <li><a href="#step2-intermediate">ಹಂತ 2: ಇಂಟರ್ಮೀಡಿಯೇಟ್ (ಮೆಮೊರಿ ಉಳಿತಾಯ)</a></li>
+            <li><a href="#step3-advanced">ಹಂತ 3: ಅಡ್ವಾನ್ಸ್ಡ್ (ಕೋಡ್ ಬಳಕೆ)</a></li>
+            <li><a href="#step4-pro">ಹಂತ 4: ಪ್ರೊ (Prototype Chain)</a></li>
+            <li><a href="#part2">ಭಾಗ 2: Constructor vs Object Prototype</a></li>
+            <li><a href="#part2-step1">ಹಂತ 1: ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ ಉದಾಹರಣೆ</a></li>
+            <li><a href="#part2-step2">ಹಂತ 2: ಕೋಡ್ ಮೂಲಕ ವಿವರಣೆ</a></li>
+            <li><a href="#part2-step3">ಹಂತ 3: The Under the Hood</a></li>
+            <li><a href="#summary">ಸಾರಾಂಶ & ಹೋಲಿಕೆ ಪಟ್ಟಿ</a></li>
+            <li><a href="#practice">ಅಭ್ಯಾಸ (Practice Zone)</a></li>
+            <li><a href="#archive">ಮೂಲ ನೋಟ್ಸ್ (Archive)</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <section id="intro" class="hero">
+            <h1>JavaScript Prototypes (ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪ್ರೋಟೋಟೈಪ್)</h1>
+            <p><strong>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ 'ಪ್ರೋಟೋಟೈಪ್' (Prototype) ಎಂದರೆ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಮತ್ತೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಗುಣಲಕ್ಷಣಗಳನ್ನು ಬಳುವಳಿಯಾಗಿ ಪಡೆಯುವ (Inheritance) ವ್ಯವಸ್ಥೆ.</strong></p>
+            <p>ಐಟಿ ಹಿನ್ನೆಲೆ ಇಲ್ಲದವರಿಗೂ ಅರ್ಥವಾಗುವಂತೆ, ದಿನನಿತ್ಯದ ಉದಾಹರಣೆಗಳಿಂದ ಹಿಡಿದು ವೃತ್ತಿಪರ (Professional) ಮಟ್ಟದವರೆಗೆ ಇದನ್ನು ೪ ಹಂತಗಳಲ್ಲಿ ಕಲಿಯೋಣ.</p>
+        </section>
+
+        <h2 id="part1">ಭಾಗ 1: ಪ್ರೋಟೋಟೈಪ್‌ನ ೪ ಹಂತಗಳು</h2>
+
+        <section id="step1-beginner" class="step-card">
+            <span class="tag">ಹಂತ 1</span>
+            <h3>ಬಿಗಿನರ್ (ನೈಜ ಜೀವನದ ಉದಾಹರಣೆ - DNA ಮತ್ತು ವಂಶಾವಳಿ)</h3>
+            <p>ಒಂದು ಮಗುವಿಗೆ ತಂದೆ-ತಾಯಿಯಿಂದ ಕೆಲವು ಗುಣಗಳು (ಉದಾಹರಣೆಗೆ: ಕಣ್ಣಿನ ಬಣ್ಣ, ಮುಖಚರ್ಯೆ) ಬಳುವಳಿಯಾಗಿ (Inheritance) ಬರುತ್ತವೆ. ತಂದೆಗೆ ಆತನ ತಂದೆಯಿಂದ (ಅಜ್ಜ) ಗುಣಗಳು ಬಂದಿರುತ್ತವೆ.</p>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಕೂಡ ಒಬ್ಬ "ತಂದೆ"ಯನ್ನು (Parent Object) ಹೊಂದಿರುತ್ತದೆ. ಆ ತಂದೆ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನೇ ನಾವು <span class="highlight">Prototype</span> ಎಂದು ಕರೆಯುತ್ತೇವೆ. ಮಗುವಿನ ಬಳಿ ಯಾವುದಾದರೂ ವಸ್ತು ಅಥವಾ ಕೌಶಲ್ಯ ಇಲ್ಲದಿದ್ದರೆ, ಅದು ತಂದೆಯ ಬಳಿ ಕೇಳುತ್ತದೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೂಡ ಇದೇ ರೀತಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</p>
+            
+            <div class="diagram-container">
+                <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="20" width="100" height="40" rx="5" fill="#f59e0b" />
+                    <text x="100" y="45" font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle">ಅಜ್ಜ (Object)</text>
+                    
+                    <path d="M 100 60 L 100 80" stroke="#71717a" stroke-width="2" marker-end="url(#arrow)" />
+                    
+                    <rect x="50" y="90" width="100" height="40" rx="5" fill="#2563eb" />
+                    <text x="100" y="115" font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle">ತಂದೆ (Prototype)</text>
+                    
+                    <path d="M 150 110 L 220 110" stroke="#71717a" stroke-width="2" marker-end="url(#arrow)" />
+                    
+                    <rect x="230" y="90" width="100" height="40" rx="5" fill="#10b981" />
+                    <text x="280" y="115" font-family="sans-serif" font-size="14" fill="#fff" text-anchor="middle">ಮಗು (Object)</text>
+                    
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#71717a" />
+                        </marker>
+                    </defs>
+                </svg>
+                <p style="font-size:0.85rem; color:gray;">ಚಿತ್ರ: ಗುಣಲಕ್ಷಣಗಳು ತಂದೆಯಿಂದ ಮಗುವಿಗೆ ಹರಿಯುವ ರೀತಿ (Inheritance)</p>
+            </div>
+        </section>
+
+        <section id="step2-intermediate" class="step-card">
+            <span class="tag">ಹಂತ 2</span>
+            <h3>ಇಂಟರ್ಮೀಡಿಯೇಟ್ (ಪ್ರೋಟೋಟೈಪ್ ಏಕೆ ಬೇಕು? ಮೆಮೊರಿ ಉಳಿತಾಯ)</h3>
+            <p>ನೀವು ಒಂದು ಕಂಪನಿಗೆ ಸಾಫ್ಟ್‌ವೇರ್ ಮಾಡುತ್ತಿದ್ದೀರಿ. ಅದರಲ್ಲಿ 10,000 ಉದ್ಯೋಗಿಗಳಿದ್ದಾರೆ (Employees). ಪ್ರತಿಯೊಬ್ಬ ಉದ್ಯೋಗಿಗೂ ತಮ್ಮ ಸಂಬಳ ಲೆಕ್ಕಹಾಕಲು <span class="highlight">calculateSalary</span> ಎಂಬ ಫಂಕ್ಷನ್ ಬೇಕು ಎಂದಿಟ್ಟುಕೊಳ್ಳಿ.</p>
+            <p>ನೀವು ಪ್ರತಿ 10,000 ಉದ್ಯೋಗಿಗಳ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೂ ಈ ಫಂಕ್ಷನ್ ಬರೆದರೆ, ಕಂಪ್ಯೂಟರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ 10,000 ಫಂಕ್ಷನ್‌ಗಳು ಸೃಷ್ಟಿಯಾಗಿ ಜಾಗ ತುಂಬಿಹೋಗುತ್ತದೆ. <strong>ಇದಕ್ಕೆ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನ ಪರಿಹಾರವೇ ಪ್ರೋಟೋಟೈಪ್.</strong></p>
+            <p>calculateSalary ಫಂಕ್ಷನ್ ಅನ್ನು ಎಲ್ಲರಿಗೂ ಅನ್ವಯಿಸುವ ಒಂದು 'ಮುಖ್ಯ ಕಚೇರಿಯಲ್ಲಿ' (Prototype) ಇಡುತ್ತೇವೆ. 10,000 ಉದ್ಯೋಗಿಗಳು ತಮಗೆ ಬೇಕಾದಾಗ ಆ ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸಿಕೊಳ್ಳುತ್ತಾರೆ. ಇದರಿಂದ 9,999 ಫಂಕ್ಷನ್‌ಗಳ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ ಮತ್ತು ಪ್ರೋಗ್ರಾಮ್ ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</p>
+            
+            <div class="diagram-container">
+                <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="250" cy="50" r="40" fill="#f59e0b" />
+                    <text x="250" y="55" font-family="sans-serif" font-size="12" fill="#fff" text-anchor="middle">Prototype</text>
+                    <text x="250" y="110" font-family="sans-serif" font-size="12" fill="var(--text-color)" text-anchor="middle">calculateSalary()</text>
+                    
+                    <rect x="80" y="140" width="80" height="30" rx="5" fill="#2563eb" />
+                    <text x="120" y="160" font-family="sans-serif" font-size="12" fill="#fff" text-anchor="middle">ಉದ್ಯೋಗಿ 1</text>
+                    
+                    <rect x="210" y="140" width="80" height="30" rx="5" fill="#2563eb" />
+                    <text x="250" y="160" font-family="sans-serif" font-size="12" fill="#fff" text-anchor="middle">ಉದ್ಯೋಗಿ 2</text>
+                    
+                    <rect x="340" y="140" width="100" height="30" rx="5" fill="#2563eb" />
+                    <text x="390" y="160" font-family="sans-serif" font-size="12" fill="#fff" text-anchor="middle">ಉದ್ಯೋಗಿ 10000</text>
+                    
+                    <path d="M 120 140 L 230 80" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4" />
+                    <path d="M 250 140 L 250 90" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4" />
+                    <path d="M 390 140 L 270 80" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4" />
+                </svg>
+                <p style="font-size:0.85rem; color:gray;">ಚಿತ್ರ: ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು 10,000 ಆಬ್ಜೆಕ್ಟ್‌ಗಳು ಹಂಚಿಕೊಳ್ಳುವ ಮೂಲಕ ಮೆಮೊರಿ ಉಳಿತಾಯ</p>
+            </div>
+        </section>
+
+        <section id="step3-advanced" class="step-card">
+            <span class="tag">ಹಂತ 3</span>
+            <h3>ಅಡ್ವಾನ್ಸ್ಡ್ (ಕೋಡ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್ ಬಳಕೆ)</h3>
+            <p>ಹಿಂದಿನ ವಿಷಯದಲ್ಲಿ ನಾವು ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (Constructor - ಅಚ್ಚು) ಬಗ್ಗೆ ತಿಳಿದಿದ್ದೆವು. ಈಗ ಆ ಅಚ್ಚಿನ ಪ್ರೋಟೋಟೈಪ್‌ಗೆ ಒಂದು ಫಂಕ್ಷನ್ ಸೇರಿಸಿ ನೋಡೋಣ.</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>JavaScript</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code><span class="cmt">// 1. ಉದ್ಯೋಗಿಗಳನ್ನು ಸೃಷ್ಟಿಸುವ ಅಚ್ಚು (Constructor)</span>
+<span class="kwd">function</span> <span class="fnc">Employee</span>(name, age) {
+  <span class="kwd">this</span>.name = name;
+  <span class="kwd">this</span>.age = age;
+}
+
+<span class="cmt">// 2. ಪ್ರೋಟೋಟೈಪ್‌ಗೆ ಫಂಕ್ಷನ್ ಸೇರಿಸುವುದು (ಇದು ಕೇಂದ್ರ ಕಚೇರಿ ಇದ್ದಂತೆ)</span>
+<span class="obj">Employee</span>.<span class="fnc">prototype</span>.<span class="fnc">sayHello</span> = <span class="kwd">function</span>() {
+  <span class="obj">console</span>.<span class="fnc">log</span>(<span class="str">"ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು "</span> + <span class="kwd">this</span>.name);
+};
+
+<span class="cmt">// 3. ಹೊಸ ಉದ್ಯೋಗಿಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು</span>
+<span class="kwd">let</span> emp1 = <span class="kwd">new</span> <span class="fnc">Employee</span>(<span class="str">"ರಮೇಶ್"</span>, <span class="num">30</span>);
+<span class="kwd">let</span> emp2 = <span class="kwd">new</span> <span class="fnc">Employee</span>(<span class="str">"ಸುರೇಶ್"</span>, <span class="num">25</span>);
+
+<span class="cmt">// 4. ಪ್ರೋಟೋಟೈಪ್‌ನಲ್ಲಿರುವ ಫಂಕ್ಷನ್ ಬಳಸುವುದು</span>
+emp1.<span class="fnc">sayHello</span>(); <span class="cmt">// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ರಮೇಶ್</span>
+emp2.<span class="fnc">sayHello</span>(); <span class="cmt">// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ಸುರೇಶ್</span></code></pre>
+            </div>
+            <p><strong>ಇಲ್ಲಿ ಗಮನಿಸಿ:</strong> <span class="highlight">sayHello</span> ಎಂಬ ಫಂಕ್ಷನ್ emp1 ಅಥವಾ emp2 ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗಿಲ್ಲ. ಬದಲಿಗೆ ಅವರ "ತಂದೆ"ಯ ಬಳಿ (Employee.prototype) ಇದೆ. emp1 ಗೆ ಆ ಫಂಕ್ಷನ್ ಬೇಕಾದಾಗ ಅದು ತನ್ನ ಪ್ರೋಟೋಟೈಪ್‌ನಿಂದ ಎರವಲು ಪಡೆಯುತ್ತದೆ. ಹಿಂದಿನ ಪಾಠದಲ್ಲಿ ಕಲಿತಂತೆ, ಇಲ್ಲಿರುವ <span class="highlight">this</span> ಕೀವರ್ಡ್ ಆಯಾ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು (ರಮೇಶ್ ಅಥವಾ ಸುರೇಶ್) ಸೂಚಿಸುತ್ತದೆ.</p>
+        </section>
+
+        <section id="step4-pro" class="step-card">
+            <span class="tag">ಹಂತ 4</span>
+            <h3>ಪ್ರೊ (ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ - Prototype Chain)</h3>
+            <p>ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ ನೀವು ಯಾವುದಾದರೂ ಫಂಕ್ಷನ್ ಅಥವಾ ಗುಣವನ್ನು ಹುಡುಕಿದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದನ್ನು ಹೇಗೆ ಹುಡುಕುತ್ತದೆ ಎಂಬುದೇ 'ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್'. ಉದಾಹರಣೆಗೆ, ನೀವು <span class="highlight">emp1.toString()</span> ಎಂದು ಟೈಪ್ ಮಾಡಿದರೆ ಏನಾಗುತ್ತದೆ?</p>
+            
+            <ol>
+                <li><strong>ಸ್ವಂತ ಆಬ್ಜೆಕ್ಟ್:</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೊದಲು emp1 ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ toString ಇದೆಯೇ ಎಂದು ಹುಡುಕುತ್ತದೆ (ಇಲ್ಲಿ ಇಲ್ಲ).</li>
+                <li><strong>ತಂದೆ (Prototype):</strong> ನಂತರ, ಅದರ ತಂದೆಯ ಬಳಿ ಅಂದರೆ Employee.prototype ಒಳಗೆ ಹುಡುಕುತ್ತದೆ (ಇಲ್ಲೂ ಇಲ್ಲ).</li>
+                <li><strong>ಅಜ್ಜ (Grandparent):</strong> ನಂತರ, ತಂದೆಯ ತಂದೆಯ ಬಳಿ ಅಂದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಅತಿ ದೊಡ್ಡ ಯಜಮಾನನಾದ Object.prototype ಬಳಿ ಹುಡುಕುತ್ತದೆ. toString ಎಂಬುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಮೂಲ ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ (ಅಜ್ಜ) ಮೊದಲೇ ಬರೆದಿಡಲ್ಪಟ್ಟಿರುತ್ತದೆ. ಅಲ್ಲಿಂದ ಅದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.</li>
+                <li><strong>ಅಂತ್ಯ (null):</strong> ಅಲ್ಲಿಯೂ ಸಿಗದಿದ್ದರೆ ಕೊನೆಗೆ ತುತ್ತತುದಿಗೆ ಹೋಗಿ null (ಏನೂ ಇಲ್ಲ / ದೋಷ) ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+            </ol>
+            
+            <p>ಈ ಹುಡುಕಾಟದ ಸರಪಳಿಯನ್ನೇ <strong>Prototype Chain</strong> ಎನ್ನುತ್ತಾರೆ. ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (ES6) ಇದೇ ಕೆಲಸವನ್ನು ಸುಲಭವಾಗಿ ಮಾಡಲು <span class="highlight">class</span> ಮತ್ತು <span class="highlight">extends</span> ಕೀವರ್ಡ್ ಬಳಸುತ್ತಾರೆ. ಆದರೆ ಅದರ ಹಿಂದಿರುವ ಅಸಲಿ ಯಂತ್ರವೇ (Engine) ಈ 'ಪ್ರೋಟೋಟೈಪ್'.</p>
+            <p><em>(ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ: ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್ ಬದಲಿಗೆ ಬಳಸುವ class (ಕ್ಲಾಸ್) ಕಾನ್ಸೆಪ್ಟ್ ಅನ್ನು ಇದೇ ರೀತಿ ಉದಾಹರಣೆಯೊಂದಿಗೆ ವಿವರಿಸಬೇಕೇ? ಎಂದು ಮೂಲ ನೋಟ್ಸ್‌ನಲ್ಲಿ ಕೇಳಲಾಗಿದೆ - ಕ್ಲಾಸ್‌ಗಳು ಪ್ರೋಟೋಟೈಪ್‌ನ ಮೇಲಿರುವ ಕೇವಲ Syntax Sugar ಮಾತ್ರ!).</em></p>
+        </section>
+
+        <h2 id="part2">ಭಾಗ 2: Constructor Prototype ಮತ್ತು Object Prototype</h2>
+        
+        <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>Constructor Prototype</strong> ಮತ್ತು <strong>Object Prototype</strong> ಎರಡೂ ಒಂದೇ ವ್ಯವಸ್ಥೆಯ ಎರಡು ವಿಭಿನ್ನ ಭಾಗಗಳಾಗಿವೆ. ಇವೆರಡರ ನಡುವಿನ ವ್ಯತ್ಯಾಸ ಮತ್ತು ಸಂಬಂಧವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ "ಪ್ರೊ" (Pro) ಮಟ್ಟಕ್ಕೇರಲು ಅತಿ ಮುಖ್ಯ ಹೆಜ್ಜೆಯಾಗಿದೆ.</p>
+        <p>ಪ್ರೋಟೋಟೈಪ್ (Prototype) ಎನ್ನುವುದು ಮೆಮೊರಿಯನ್ನು (RAM) ಉಳಿಸಲು ಮತ್ತು ಕೋಡ್ ಅನ್ನು ಮರುಬಳಕೆ ಮಾಡಲು ಇರುವ ಒಂದು ಅತ್ಯದ್ಭುತ ವ್ಯವಸ್ಥೆ. ಯಾವುದೇ ಹಿನ್ನೆಲೆಯ ವ್ಯಕ್ತಿಗೂ ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ "ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ಅದರ ಕೇಂದ್ರ ಕಚೇರಿ"ಯ ಉದಾಹರಣೆಯನ್ನು ತೆಗೆದುಕೊಂಡು ಇದನ್ನು 3 ಹಂತಗಳಲ್ಲಿ ವಿಂಗಡಿಸಿ ನೋಡೋಣ.</p>
+
+        <section id="part2-step1" class="step-card">
+            <span class="tag">ಹಂತ 1</span>
+            <h3>ನಾನ್-ಐಟಿ (Non-IT) ಹಿನ್ನೆಲೆಯವರಿಗಾಗಿ - "ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ" ಉದಾಹರಣೆ</h3>
+            <p>ನೀವು 'ಟಾಟಾ' ಕಂಪನಿಯ ಮಾಲೀಕರು ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ನೀವು ಪ್ರತಿದಿನ 10,000 ಕಾರುಗಳನ್ನು ತಯಾರಿಸುತ್ತೀರಿ. ಪ್ರತಿ ಕಾರಿಗೆ ಎರಡು ಮುಖ್ಯ ವಸ್ತುಗಳು ಬೇಕು:</p>
+            <ul>
+                <li><strong>ಭೌತಿಕ ವಸ್ತುಗಳು:</strong> ಕಾರಿನ ಮಾಡೆಲ್, ಬಣ್ಣ, ಟೈರ್ (ಇವು ಪ್ರತಿ ಕಾರಿಗೂ ಬೇರೆ ಬೇರೆ ಇರಬಹುದು).</li>
+                <li><strong>ಸಾಫ್ಟ್‌ವೇರ್:</strong> "ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್" ಮತ್ತು "ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್" (ಇದು ಎಲ್ಲಾ 10,000 ಕಾರುಗಳಿಗೂ ಒಂದೇ ಆಗಿರುತ್ತದೆ).</li>
+            </ul>
+            <p>ನೀವು ಈ ಮ್ಯಾಪ್ ಸಾಫ್ಟ್‌ವೇರ್ ಅನ್ನು ಪ್ರತಿಯೊಂದು ಕಾರಿನ ಮೆಮೊರಿ ಚಿಪ್‌ನಲ್ಲೂ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತಾ ಹೋದರೆ, ಕಾರಿನ ಮೆಮೊರಿ ಬೇಗ ಭರ್ತಿಯಾಗುತ್ತದೆ ಮತ್ತು ಕಂಪನಿಗೆ ನಷ್ಟವಾಗುತ್ತದೆ. ಇದಕ್ಕೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನೀಡುವ ಪರಿಹಾರವೇ ಪ್ರೋಟೋಟೈಪ್. ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದರೆ:</p>
+            <ul>
+                <li><strong>ಫ್ಯಾಕ್ಟರಿ (Constructor Function):</strong> ಇದು ಕಾರುಗಳನ್ನು ತಯಾರಿಸುವ ಅಚ್ಚು ಅಥವಾ ಫ್ಯಾಕ್ಟರಿ. ಇಲ್ಲಿ ಕಾರಿನ ಬಣ್ಣ ಮತ್ತು ಮಾಡೆಲ್‌ನಂತಹ ಬೇಸಿಕ್ (ಭೌತಿಕ) ವಿಷಯಗಳನ್ನು ಮಾತ್ರ ಫಿಕ್ಸ್ ಮಾಡಲಾಗುತ್ತದೆ.</li>
+                <li><strong>ಕೇಂದ್ರ ಕಚೇರಿ (Constructor Prototype):</strong> ಇದು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ (ಸರ್ವರ್). ಎಲ್ಲಾ ಕಾರುಗಳಿಗೂ ಬೇಕಾಗುವ ಸಾಮಾನ್ಯ ಸಾಫ್ಟ್‌ವೇರ್ (ಮ್ಯಾಪ್, ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್) ಅನ್ನು ಪ್ರತಿಯೊಂದು ಕಾರಿಗೂ ಹಾಕುವ ಬದಲು, ಈ ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿ ಒಂದೇ ಕಡೆ ಸ್ಟೋರ್ ಮಾಡಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಹೊಸ ವೈಶಿಷ್ಟ್ಯ ಸೇರಿಸಿದರೆ, ಫ್ಯಾಕ್ಟರಿಯಿಂದ ಬಂದ ಎಲ್ಲಾ ಕಾರುಗಳಿಗೂ ಅದು ಉಚಿತವಾಗಿ ಅನ್ವಯವಾಗುತ್ತದೆ.</li>
+                <li><strong>ಗುಪ್ತ ಕನೆಕ್ಷನ್ (Object Prototype / __proto__):</strong> ಫ್ಯಾಕ್ಟರಿಯಿಂದ ಸಿದ್ಧವಾಗಿ ಹೊರಬಂದ ಪ್ರತಿ ನಿಜವಾದ ಕಾರಿನ (Object) ಒಳಗೆ ಆ ಮ್ಯಾಪ್ ಸಾಫ್ಟ್‌ವೇರ್ ಇರುವುದಿಲ್ಲ. ಆದರೆ, ಆ ಕಾರಿಗೆ ತನ್ನ ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು (Parent) ಸಂಪರ್ಕಿಸಲು ಒಂದು ಗುಪ್ತ ಇಂಟರ್ನೆಟ್ ಕನೆಕ್ಷನ್ ಅಥವಾ ಹೆಲ್ಪ್‌ಲೈನ್ ನಂಬರ್ ಇರುತ್ತದೆ. ಈ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಹೆಸರೇ <span class="highlight">__proto__</span>. ಕಾರಿಗೆ ಸಹಾಯ ಬೇಕಾದಾಗಲೆಲ್ಲಾ (ಉದಾಹರಣೆಗೆ ಮ್ಯಾಪ್ ಓಪನ್ ಮಾಡಿದಾಗ) ಈ ಕನೆಕ್ಷನ್ ಮೂಲಕ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮ್ಯಾಪ್ ರನ್ ಮಾಡುತ್ತದೆ. ಇದರಿಂದ 10,000 ಕಾರುಗಳ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ!</li>
+            </ul>
+        </section>
+
+        <section id="part2-step2" class="step-card">
+            <span class="tag">ಹಂತ 2</span>
+            <h3>ಬಿಗಿನರ್ಸ್ ಮತ್ತು ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ - ಕೋಡ್ ಮೂಲಕ ವಿವರಣೆ</h3>
+            <p>ಡೆವಲಪರ್‌ಗಳು ಹೊಸ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಎಲ್ಲರಿಗೂ ಹಂಚಲು Constructor.prototype ಒಳಗೆ ಬರೆಯುತ್ತಾರೆ. ಮತ್ತು ಆಬ್ಜೆಕ್ಟ್ ತನಗೆ ಗೊತ್ತಿಲ್ಲದ ಕೆಲಸವನ್ನು ಮಾಡಲು __proto__ ಅನ್ನು ಬಳಸುತ್ತದೆ. ಇದನ್ನು ಕೋಡ್‌ಗೆ ಇಳಿಸೋಣ:</p>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <span>JavaScript</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code><span class="cmt">// 1. Constructor Function (ಇದು ಫ್ಯಾಕ್ಟರಿ)</span>
+<span class="cmt">// ಇದು ಕೇವಲ ಬಣ್ಣ ಮತ್ತು ಮಾಡೆಲ್ ಅನ್ನು ಮಾತ್ರ ಕಾರಿಗೆ (this) ನೀಡುತ್ತದೆ.</span>
+<span class="kwd">function</span> <span class="fnc">CarMaker</span>(modelName, color) {
+  <span class="kwd">this</span>.model = modelName;
+  <span class="kwd">this</span>.color = color;
+}
+
+<span class="cmt">// 2. Constructor Prototype (ಇದು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ)</span>
+<span class="cmt">// .prototype ಬಳಸಿ ನಾವು ಸಾಫ್ಟ್‌ವೇರ್ ಫಂಕ್ಷನ್ ಅನ್ನು ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಕಡೆ ಸೇವ್ ಮಾಡುತ್ತಿದ್ದೇವೆ.</span>
+<span class="obj">CarMaker</span>.<span class="fnc">prototype</span>.<span class="fnc">startEngine</span> = <span class="kwd">function</span>() {
+  <span class="obj">console</span>.<span class="fnc">log</span>(<span class="kwd">this</span>.model + <span class="str">" ಇಂಜಿನ್ ಸ್ಟಾರ್ಟ್ ಆಯಿತು!"</span>);
+};
+
+<span class="obj">CarMaker</span>.<span class="fnc">prototype</span>.<span class="fnc">startMap</span> = <span class="kwd">function</span>() {
+  <span class="obj">console</span>.<span class="fnc">log</span>(<span class="kwd">this</span>.model + <span class="str">" ಕಾರಿನಲ್ಲಿ ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್ ಶುರುವಾಯಿತು!"</span>);
+};
+
+<span class="cmt">// 3. Object (ಇದು ಫ್ಯಾಕ್ಟರಿಯಿಂದ ತಯಾರಾದ ಹೊಸ ಕಾರುಗಳು)</span>
+<span class="kwd">let</span> myCar = <span class="kwd">new</span> <span class="fnc">CarMaker</span>(<span class="str">"Tata Nexon"</span>, <span class="str">"Red"</span>);
+<span class="kwd">let</span> yourCar = <span class="kwd">new</span> <span class="fnc">CarMaker</span>(<span class="str">"Tata Harrier"</span>, <span class="str">"Black"</span>);
+
+<span class="cmt">// 4. ಕಾರುಗಳು ಕೇಂದ್ರ ಕಚೇರಿಯ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸಿಕೊಳ್ಳುವುದು</span>
+<span class="cmt">// ಕಾರಿನ ಒಳಗೆ 'startEngine' ಅಥವಾ 'startMap' ಇಲ್ಲ. </span>
+<span class="cmt">// ಆದರೂ ಅದು ತನ್ನ ಗುಪ್ತ ಕನೆಕ್ಷನ್ (__proto__) ಬಳಸಿ ಕೇಂದ್ರ ಕಚೇರಿಯಿಂದ ಅದನ್ನು ತಂದು ರನ್ ಮಾಡುತ್ತದೆ!</span>
+myCar.<span class="fnc">startEngine</span>(); <span class="cmt">// ಔಟ್‌ಪುಟ್: Tata Nexon ಇಂಜಿನ್ ಸ್ಟಾರ್ಟ್ ಆಯಿತು!</span>
+yourCar.<span class="fnc">startMap</span>();  <span class="cmt">// ಔಟ್‌ಪುಟ್: Tata Harrier ಕಾರಿನಲ್ಲಿ ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್ ಶುರುವಾಯಿತು!</span>
+
+<span class="cmt">// ಆ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಅನ್ನು ನೋಡಬೇಕೆ?</span>
+<span class="obj">console</span>.<span class="fnc">log</span>(myCar.<span class="fnc">__proto__</span>); 
+<span class="cmt">// ಇದು CarMaker.prototype (ಕೇಂದ್ರ ಕಚೇರಿ) ಗೆ ಲಿಂಕ್ ಆಗಿರುವುದನ್ನು ತೋರಿಸುತ್ತದೆ.</span></code></pre>
+            </div>
+            <p><strong>ಪ್ರಮುಖ ಅಂಶ:</strong> <span class="highlight">prototype</span> ಎನ್ನುವ ಪ್ರಾಪರ್ಟಿ ಕೇವಲ Functions ಗಳಿಗೆ (ಇಲ್ಲಿ CarMaker) ಮಾತ್ರ ಇರುತ್ತದೆ. <span class="highlight">__proto__</span> ಎನ್ನುವುದು ಪ್ರತಿಯೊಂದು Object ನ (ಇಲ್ಲಿ myCar) ಒಳಗೂ ಇರುವ ಗುಪ್ತ ಪ್ರಾಪರ್ಟಿ.</p>
+        </section>
+
+        <section id="part2-step3" class="step-card">
+            <span class="tag">ಹಂತ 3</span>
+            <h3>ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳಿಗೆ - "The Under the Hood Mechanics"</h3>
+            <p>ಬಿಗಿನರ್‌ಗಳಿಗೆ ಆಗುವ ಅತಿದೊಡ್ಡ ಗೊಂದಲವೆಂದರೆ "ಇವೆರಡೂ ಬೇರೆ ಬೇರೆಯೇ?" ಎಂಬುದು. ಉತ್ತರ: <strong>ಇಲ್ಲ, ಅವೆರಡೂ ಒಂದೇ ಜಾಗವನ್ನು (ಮೆಮೊರಿ ಲೊಕೇಶನ್) ಸೂಚಿಸುತ್ತವೆ.</strong> ನೋಡುವ ದೃಷ್ಟಿಕೋನ ಮಾತ್ರ ಬೇರೆ. ಪ್ರೊ ಲೆವೆಲ್‌ನಲ್ಲಿ ನೀವು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕಾದ 3 ಮುಖ್ಯ ನಿಯಮಗಳು ಇಲ್ಲಿವೆ:</p>
+
+            <h4>ನಿಯಮ 1: ಮೆಮೊರಿ ಲಿಂಕಿಂಗ್ (The Truth of __proto__)</h4>
+            <p>ಫ್ಯಾಕ್ಟರಿ ಕಡೆಯಿಂದ ನೋಡುವಾಗ ಇರುವ CarMaker.prototype ಮತ್ತು ಕಾರಿನ ಕಡೆಯಿಂದ ನೋಡುವಾಗ ಇರುವ myCar.__proto__ ಎರಡೂ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಅಡ್ರೆಸ್ ಅನ್ನು ಪಾಯಿಂಟ್ (Point) ಮಾಡುತ್ತವೆ.</p>
+            <div class="code-container">
+                <div class="code-header"><span>JavaScript</span></div>
+                <pre><code><span class="cmt">// ಕಾರಿನ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಮತ್ತು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ ಎರಡೂ ಒಂದೇನಾ?</span>
+<span class="obj">console</span>.<span class="fnc">log</span>(myCar.<span class="fnc">__proto__</span> === <span class="obj">CarMaker</span>.<span class="fnc">prototype</span>); 
+<span class="cmt">// ಔಟ್‌ಪುಟ್: true (ಹೌದು, ಎರಡೂ ಒಂದೇ!)</span></code></pre>
+            </div>
+
+            <h4>ನಿಯಮ 2: ರಿಯಲ್ ಟೈಮ್ ಅಪ್‌ಡೇಟ್ಸ್ (Dynamic Nature)</h4>
+            <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್‌ಗಳು ಡೈನಾಮಿಕ್ ಆಗಿರುತ್ತವೆ. ಅಂದರೆ, ನೀವು ಕಾರುಗಳನ್ನು ಮಾರಾಟ ಮಾಡಿದ ನಂತರ (ಆಬ್ಜೆಕ್ಟ್ ಕ್ರಿಯೇಟ್ ಮಾಡಿದ ಮೇಲೆ), ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿ ಹೊಸ ಫಂಕ್ಷನ್ ಸೇರಿಸಿದರೂ, ಹಳೆಯ ಕಾರುಗಳಿಗೂ ಆ ವೈಶಿಷ್ಟ್ಯ ತಕ್ಷಣವೇ ಸಿಗುತ್ತದೆ!</p>
+            <div class="code-container">
+                <div class="code-header"><span>JavaScript</span></div>
+                <pre><code><span class="cmt">// ಹಳೆಯ ಕಾರುಗಳು ಆಲ್ರೆಡಿ ಕ್ರಿಯೇಟ್ ಆಗಿವೆ. ಈಗ ಕೇಂದ್ರ ಕಚೇರಿಗೆ ಹೊಸ ಫೀಚರ್ ಸೇರಿಸೋಣ:</span>
+<span class="obj">CarMaker</span>.<span class="fnc">prototype</span>.<span class="fnc">playMusic</span> = <span class="kwd">function</span>() {
+  <span class="obj">console</span>.<span class="fnc">log</span>(<span class="str">"ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್ ಆನ್ ಆಯಿತು."</span>);
+};
+
+<span class="cmt">// myCar ಮೊದಲೇ ಕ್ರಿಯೇಟ್ ಆಗಿದ್ದರೂ, ಹೊಸ ಫೀಚರ್ ಅದಕ್ಕೆ ತಾನಾಗಿಯೇ ಸಿಗುತ್ತದೆ!</span>
+myCar.<span class="fnc">playMusic</span>(); <span class="cmt">// ಔಟ್‌ಪುಟ್: ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್ ಆನ್ ಆಯಿತು.</span></code></pre>
+            </div>
+
+            <h4>ನಿಯಮ 3: ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ (The Prototype Chain)</h4>
+            <p>ಒಂದು ವೇಳೆ ಕಾರಿನಲ್ಲಿ ಆ ಫಂಕ್ಷನ್ ಇಲ್ಲ, ಮತ್ತು ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲೂ ಇಲ್ಲ ಎಂದಾದರೆ ಏನಾಗುತ್ತದೆ? ಆಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸುಮ್ಮನೆ ಕೂರುವುದಿಲ್ಲ. ಅದು ಕೇಂದ್ರ ಕಚೇರಿಯ ಮೇಲಿರುವ "ಜಾಗತಿಕ ಕಚೇರಿಗೆ" (Global Object Prototype) ಹೋಗುತ್ತದೆ. ಇದರ ಹುಡುಕಾಟದ ದಾರಿ ಹೀಗಿರುತ್ತದೆ:</p>
+            <p><span class="highlight">myCar</span> -> <span class="highlight">myCar.__proto__ (CarMaker.prototype)</span> -> <span class="highlight">Object.prototype</span> -> <span class="highlight">null</span>. ಎಲ್ಲೂ ಸಿಗದಿದ್ದಾಗ ಮಾತ್ರ ಅದು undefined ಅಥವಾ Error ನೀಡುತ್ತದೆ.</p>
+        </section>
+
+        <h2 id="summary">ಒಟ್ಟಾರೆಯಾಗಿ ಸಾರಾಂಶ (Summary)</h2>
+        <div class="step-card">
+            <p>ಈ ಇಡೀ ವ್ಯವಸ್ಥೆ 3 ಹಂತಗಳಲ್ಲಿ ನಡೆಯುತ್ತದೆ:</p>
+            <ol>
+                <li><strong>ಸೃಷ್ಟಿ:</strong> ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ ಬರೆದ ತಕ್ಷಣ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದಕ್ಕೊಂದು prototype ಎಂಬ ಖಾಲಿ ಜಾಗವನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ. ಮೆಮೊರಿ ಉಳಿಸಲು ಹಂಚಿಕೆಯಾಗುವ (Shared) ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಇಲ್ಲಿ ಹಾಕಲಾಗುತ್ತದೆ.</li>
+                <li><strong>ಸಂಪರ್ಕ:</strong> new ಕೀವರ್ಡ್ ಬಳಸಿ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸಿದಾಗ, ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗೆ __proto__ ಎಂಬ ಗುಪ್ತ ಕೊಂಡಿ ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ ಮತ್ತು ಅದು ಕನ್ಸ್ಟ್ರಕ್ಟರ್‌ನ prototype ಗೆ ಬೆಸೆದುಕೊಳ್ಳುತ್ತದೆ.</li>
+                <li><strong>ಹುಡುಕಾಟ:</strong> ಫಂಕ್ಷನ್ ಕರೆದಾಗ, ಆಬ್ಜೆಕ್ಟ್ ಮೊದಲು ತನ್ನೊಳಗೆ ಹುಡುಕುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ, ತನ್ನ __proto__ ಮೂಲಕ ಕನ್ಸ್ಟ್ರಕ್ಟರ್‌ನ prototype (ತನ್ನ Parent) ಗೆ ಹೋಗಿ ಅದನ್ನು ರನ್ ಮಾಡುತ್ತದೆ.</li>
+            </ol>
+        </div>
+
+        <h3>ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸಗಳ ಹೋಲಿಕೆ ಪಟ್ಟಿ</h3>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ಗುಣಲಕ್ಷಣ</th>
+                        <th>Constructor Function / Prototype</th>
+                        <th>Object Prototype (__proto__)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ಉದಾಹರಣೆ ಅರ್ಥ</strong></td>
+                        <td>ಕಾರು ತಯಾರಿಸುವ ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ಅದರ ಕೇಂದ್ರ ಕಚೇರಿ/ಸರ್ವರ್.</td>
+                        <td>ತಯಾರಾಗಿ ಹೊರಬಂದ ಕಾರು ಮತ್ತು ಅದರ ಹೆಲ್ಪ್‌ಲೈನ್ ಕನೆಕ್ಷನ್.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ಯಾರಿಗೆ ಇರುತ್ತದೆ? (ಎಲ್ಲಿರುತ್ತದೆ)</strong></td>
+                        <td>ಕೇವಲ ಫಂಕ್ಷನ್‌ಗಳ (Constructor Functions) ಜೊತೆ ಇರುತ್ತದೆ.</td>
+                        <td>ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ಒಳಗೆ (Instance) ಗುಪ್ತವಾಗಿ ಇರುತ್ತದೆ.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ಮುಖ್ಯ ಕೆಲಸವೇನು?</strong></td>
+                        <td>ಆಬ್ಜೆಕ್ಟ್‌ಗಳಿಗೆ ಹಂಚಲು ಬೇಕಾದ ಸಾಮಾನ್ಯ ಗುಣ/ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಸ್ಟೋರ್ ಮಾಡುವುದು.</td>
+                        <td>ತನ್ನಲ್ಲಿ ಇಲ್ಲದ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ತನ್ನ ಮೂಲದಲ್ಲಿ (Parent) ಹುಡುಕಿಕೊಂಡು ಹೋಗುವುದು.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ಬಳಕೆದಾರರು ಯಾರು?</strong></td>
+                        <td>ಡೆವಲಪರ್‌ಗಳು ಹೊಸ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಬರೆಯಲು/ಸೇರಿಸಲು ಬಳಸುತ್ತಾರೆ.</td>
+                        <td>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಜಿನ್ (ಬ್ರೌಸರ್) ರಹಸ್ಯವಾಗಿ ಇದನ್ನು ಬಳಸಿಕೊಳ್ಳುತ್ತದೆ.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <section id="practice" class="quiz-container">
+            <h2>ಜ್ಞಾನ ಪರೀಕ್ಷೆ (Practice Zone)</h2>
+            <div class="quiz-question">
+                <p><strong>1. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ __proto__ ದ ಮುಖ್ಯ ಕೆಲಸವೇನು?</strong></p>
+                <ul class="quiz-options">
+                    <li onclick="checkAnswer(this, false)">A. ಹೊಸ ವೇರಿಯೇಬಲ್ ಸೃಷ್ಟಿಸುವುದು</li>
+                    <li onclick="checkAnswer(this, true)">B. ತನ್ನಲ್ಲಿ ಇಲ್ಲದ ಗುಣ/ಫಂಕ್ಷನ್‌ಗಳನ್ನು Parent ನಿಂದ ತರುವುದು (Prototype Chain)</li>
+                    <li onclick="checkAnswer(this, false)">C. ಕೋಡ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡುವುದು</li>
+                </ul>
+                <div class="quiz-feedback"></div>
+            </div>
+        </section>
+
+        <section id="archive" class="archive-section">
+            <details>
+                <summary>Original Notes Archive — ಮೂಲ ನೋಟ್ಸ್‌ಗಳ ಸಂಪೂರ್ಣ ರೂಪ (Click to Expand)</summary>
+                <div class="archive-content">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ 'ಪ್ರೋಟೋಟೈಪ್' (Prototype) ಎಂದರೆ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಮತ್ತೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಗುಣಲಕ್ಷಣಗಳನ್ನು ಬಳುವಳಿಯಾಗಿ ಪಡೆಯುವ (Inheritance) ವ್ಯವಸ್ಥೆ.
+
+ಐಟಿ ಹಿನ್ನೆಲೆ ಇಲ್ಲದವರಿಗೂ ಅರ್ಥವಾಗುವಂತೆ, ದಿನನಿತ್ಯದ ಉದಾಹರಣೆಗಳಿಂದ ಹಿಡಿದು ವೃತ್ತಿಪರ (Professional) ಮಟ್ಟದವರೆಗೆ ಇದನ್ನು ೪ ಹಂತಗಳಲ್ಲಿ ಕಲಿಯೋಣ.
+
+ಹಂತ 1: ಬಿಗಿನರ್ (ನೈಜ ಜೀವನದ ಉದಾಹರಣೆ - DNA ಮತ್ತು ವಂಶಾವಳಿ)
+ಒಂದು ಮಗುವಿಗೆ ತಂದೆ-ತಾಯಿಯಿಂದ ಕೆಲವು ಗುಣಗಳು (ಉದಾಹರಣೆಗೆ: ಕಣ್ಣಿನ ಬಣ್ಣ, ಮುಖಚರ್ಯೆ) ಬಳುವಳಿಯಾಗಿ (Inheritance) ಬರುತ್ತವೆ. ತಂದೆಗೆ ಆತನ ತಂದೆಯಿಂದ (ಅಜ್ಜ) ಗುಣಗಳು ಬಂದಿರುತ್ತವೆ.
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಕೂಡ ಒಬ್ಬ "ತಂದೆ"ಯನ್ನು (Parent Object) ಹೊಂದಿರುತ್ತದೆ. ಆ ತಂದೆ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನೇ ನಾವು Prototype ಎಂದು ಕರೆಯುತ್ತೇವೆ. ಮಗುವಿನ ಬಳಿ ಯಾವುದಾದರೂ ವಸ್ತು ಅಥವಾ ಕೌಶಲ್ಯ ಇಲ್ಲದಿದ್ದರೆ, ಅದು ತಂದೆಯ ಬಳಿ ಕೇಳುತ್ತದೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕೂಡ ಇದೇ ರೀತಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+
+ಹಂತ 2: ಇಂಟರ್ಮೀಡಿಯೇಟ್ (ಪ್ರೋಟೋಟೈಪ್ ಏಕೆ ಬೇಕು? ಮೆಮೊರಿ ಉಳಿತಾಯ)
+ನೀವು ಒಂದು ಕಂಪನಿಗೆ ಸಾಫ್ಟ್‌ವೇರ್ ಮಾಡುತ್ತಿದ್ದೀರಿ. ಅದರಲ್ಲಿ 10,000 ಉದ್ಯೋಗಿಗಳಿದ್ದಾರೆ (Employees). ಪ್ರತಿಯೊಬ್ಬ ಉದ್ಯೋಗಿಗೂ ತಮ್ಮ ಸಂಬಳ ಲೆಕ್ಕಹಾಕಲು calculateSalary ಎಂಬ ಫಂಕ್ಷನ್ ಬೇಕು ಎಂದಿಟ್ಟುಕೊಳ್ಳಿ.
+ನೀವು ಪ್ರತಿ 10,000 ಉದ್ಯೋಗಿಗಳ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೂ ಈ ಫಂಕ್ಷನ್ ಬರೆದರೆ, ಕಂಪ್ಯೂಟರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ 10,000 ಫಂಕ್ಷನ್‌ಗಳು ಸೃಷ್ಟಿಯಾಗಿ ಜಾಗ ತುಂಬಿಹೋಗುತ್ತದೆ. ಇದಕ್ಕೆ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನ ಪರಿಹಾರವೇ ಪ್ರೋಟೋಟೈಪ್. calculateSalary ಫಂಕ್ಷನ್ ಅನ್ನು ಎಲ್ಲರಿಗೂ ಅನ್ವಯಿಸುವ ಒಂದು 'ಮುಖ್ಯ ಕಚೇರಿಯಲ್ಲಿ' (Prototype) ಇಡುತ್ತೇವೆ. 10,000 ಉದ್ಯೋಗಿಗಳು ತಮಗೆ ಬೇಕಾದಾಗ ಆ ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸಿಕೊಳ್ಳುತ್ತಾರೆ. ಇದರಿಂದ 9,999 ಫಂಕ್ಷನ್‌ಗಳ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ ಮತ್ತು ಪ್ರೋಗ್ರಾಮ್ ವೇಗವಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+
+ಹಂತ 3: ಅಡ್ವಾನ್ಸ್ಡ್ (ಕೋಡ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್ ಬಳಕೆ)
+ಹಿಂದಿನ ವಿಷಯದಲ್ಲಿ ನಾವು ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (Constructor - ಅಚ್ಚು) ಬಗ್ಗೆ ತಿಳಿದಿದ್ದೆವು. ಈಗ ಆ ಅಚ್ಚಿನ ಪ್ರೋಟೋಟೈಪ್‌ಗೆ ಒಂದು ಫಂಕ್ಷನ್ ಸೇರಿಸಿ ನೋಡೋಣ.
+// 1. ಉದ್ಯೋಗಿಗಳನ್ನು ಸೃಷ್ಟಿಸುವ ಅಚ್ಚು (Constructor)
+function Employee(name, age) {
+  this.name = name;
+  this.age = age;
+}
+// 2. ಪ್ರೋಟೋಟೈಪ್‌ಗೆ ಫಂಕ್ಷನ್ ಸೇರಿಸುವುದು (ಇದು ಕೇಂದ್ರ ಕಚೇರಿ ಇದ್ದಂತೆ)
+Employee.prototype.sayHello = function() {
+  console.log("ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು " + this.name);
+};
+// 3. ಹೊಸ ಉದ್ಯೋಗಿಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು
+let emp1 = new Employee("ರಮೇಶ್", 30);
+let emp2 = new Employee("ಸುರೇಶ್", 25);
+// 4. ಪ್ರೋಟೋಟೈಪ್‌ನಲ್ಲಿರುವ ಫಂಕ್ಷನ್ ಬಳಸುವುದು
+emp1.sayHello(); // ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ರಮೇಶ್
+emp2.sayHello(); // ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ಸುರೇಶ್
+ಇಲ್ಲಿ ಗಮನಿಸಿ: sayHello ಎಂಬ ಫಂಕ್ಷನ್ emp1 ಅಥವಾ emp2 ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗಿಲ್ಲ. ಬದಲಿಗೆ ಅವರ "ತಂದೆ"ಯ ಬಳಿ (Employee.prototype) ಇದೆ. emp1 ಗೆ ಆ ಫಂಕ್ಷನ್ ಬೇಕಾದಾಗ ಅದು ತನ್ನ ಪ್ರೋಟೋಟೈಪ್‌ನಿಂದ ಎರವಲು ಪಡೆಯುತ್ತದೆ. ಹಿಂದಿನ ಪಾಠದಲ್ಲಿ ಕಲಿತಂತೆ, ಇಲ್ಲಿರುವ this ಕೀವರ್ಡ್ ಆಯಾ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು (ರಮೇಶ್ ಅಥವಾ ಸುರೇಶ್) ಸೂಚಿಸುತ್ತದೆ.
+
+ಹಂತ 4: ಪ್ರೊ (ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ - Prototype Chain)
+ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ ನೀವು ಯಾವುದಾದರೂ ಫಂಕ್ಷನ್ ಅಥವಾ ಗುಣವನ್ನು ಹುಡುಕಿದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದನ್ನು ಹೇಗೆ ಹುಡುಕುತ್ತದೆ ಎಂಬುದೇ 'ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್'. ಉದಾಹರಣೆಗೆ, ನೀವು emp1.toString() ಎಂದು ಟೈಪ್ ಮಾಡಿದರೆ ಏನಾಗುತ್ತದೆ?
+1.	ಸ್ವಂತ ಆಬ್ಜೆಕ್ಟ್: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೊದಲು emp1 ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ toString ಇದೆಯೇ ಎಂದು ಹುಡುಕುತ್ತದೆ (ಇಲ್ಲಿ ಇಲ್ಲ).
+2.	ತಂದೆ (Prototype): ನಂತರ, ಅದರ ತಂದೆಯ ಬಳಿ ಅಂದರೆ Employee.prototype ಒಳಗೆ ಹುಡುಕುತ್ತದೆ (ಇಲ್ಲೂ ಇಲ್ಲ).
+3.	ಅಜ್ಜ (Grandparent): ನಂತರ, ತಂದೆಯ ತಂದೆಯ ಬಳಿ ಅಂದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಅತಿ ದೊಡ್ಡ ಯಜಮಾನನಾದ Object.prototype ಬಳಿ ಹುಡುಕುತ್ತದೆ. toString ಎಂಬುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಮೂಲ ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ (ಅಜ್ಜ) ಮೊದಲೇ ಬರೆದಿಡಲ್ಪಟ್ಟಿರುತ್ತದೆ. ಅಲ್ಲಿಂದ ಅದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.
+4.	ಅಂತ್ಯ (null): ಅಲ್ಲಿಯೂ ಸಿಗದಿದ್ದರೆ ಕೊನೆಗೆ ತುತ್ತತುದಿಗೆ ಹೋಗಿ null (ಏನೂ ಇಲ್ಲ / ದೋಷ) ಎಂದು ಹೇಳುತ್ತದೆ.
+ಈ ಹುಡುಕಾಟದ ಸರಪಳಿಯನ್ನೇ Prototype Chain ಎನ್ನುತ್ತಾರೆ. ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (ES6) ಇದೇ ಕೆಲಸವನ್ನು ಸುಲಭವಾಗಿ ಮಾಡಲು class ಮತ್ತು extends ಕೀವರ್ಡ್ ಬಳಸುತ್ತಾರೆ. ಆದರೆ ಅದರ ಹಿಂದಿರುವ ಅಸಲಿ ಯಂತ್ರವೇ (Engine) ಈ 'ಪ್ರೋಟೋಟೈಪ್'.
+ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್ ಬದಲಿಗೆ ಬಳಸುವ class (ಕ್ಲಾಸ್) ಕಾನ್ಸೆಪ್ಟ್ ಅನ್ನು ಇದೇ ರೀತಿ ಉದಾಹರಣೆಯೊಂದಿಗೆ ವಿವರಿಸಬೇಕೇ?
+
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Constructor Prototype ಮತ್ತು Object Prototype ಎರಡೂ ಒಂದೇ ವ್ಯವಸ್ಥೆಯ ಎರಡು ವಿಭಿನ್ನ ಭಾಗಗಳಾಗಿವೆ. ಇವೆರಡರ ನಡುವಿನ ವ್ಯತ್ಯಾಸ ಮತ್ತು ಸಂಬಂಧವನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ "ಪ್ರೊ" (Pro) ಮಟ್ಟಕ್ಕೇರಲು ಅತಿ ಮುಖ್ಯ ಹೆಜ್ಜೆಯಾಗಿದೆ.
+ಪ್ರೋಟೋಟೈಪ್ (Prototype) ಎನ್ನುವುದು ಮೆಮೊರಿಯನ್ನು (RAM) ಉಳಿಸಲು ಮತ್ತು ಕೋಡ್ ಅನ್ನು ಮರುಬಳಕೆ ಮಾಡಲು ಇರುವ ಒಂದು ಅತ್ಯದ್ಭುತ ವ್ಯವಸ್ಥೆ. ಯಾವುದೇ ಹಿನ್ನೆಲೆಯ ವ್ಯಕ್ತಿಗೂ ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ "ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ಅದರ ಕೇಂದ್ರ ಕಚೇರಿ"ಯ ಉದಾಹರಣೆಯನ್ನು ತೆಗೆದುಕೊಂಡು ಇದನ್ನು 3 ಹಂತಗಳಲ್ಲಿ ವಿಂಗಡಿಸಿ ನೋಡೋಣ.
+
+ಹಂತ 1: ನಾನ್-ಐಟಿ (Non-IT) ಹಿನ್ನೆಲೆಯವರಿಗಾಗಿ - "ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ" ಉದಾಹರಣೆ
+ನೀವು 'ಟಾಟಾ' ಕಂಪನಿಯ ಮಾಲೀಕರು ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ನೀವು ಪ್ರತಿದಿನ 10,000 ಕಾರುಗಳನ್ನು ತಯಾರಿಸುತ್ತೀರಿ. ಪ್ರತಿ ಕಾರಿಗೆ ಎರಡು ಮುಖ್ಯ ವಸ್ತುಗಳು ಬೇಕು:
+1.	ಭೌತಿಕ ವಸ್ತುಗಳು: ಕಾರಿನ ಮಾಡೆಲ್, ಬಣ್ಣ, ಟೈರ್ (ಇವು ಪ್ರತಿ ಕಾರಿಗೂ ಬೇರೆ ಬೇರೆ ಇರಬಹುದು).
+2.	ಸಾಫ್ಟ್‌ವೇರ್: "ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್" ಮತ್ತು "ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್" (ಇದು ಎಲ್ಲಾ 10,000 ಕಾರುಗಳಿಗೂ ಒಂದೇ ಆಗಿರುತ್ತದೆ).
+ನೀವು ಈ ಮ್ಯಾಪ್ ಸಾಫ್ಟ್‌ವೇರ್ ಅನ್ನು ಪ್ರತಿಯೊಂದು ಕಾರಿನ ಮೆಮೊರಿ ಚಿಪ್‌ನಲ್ಲೂ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡುತ್ತಾ ಹೋದರೆ, ಕಾರಿನ ಮೆಮೊರಿ ಬೇಗ ಭರ್ತಿಯಾಗುತ್ತದೆ ಮತ್ತು ಕಂಪನಿಗೆ ನಷ್ಟವಾಗುತ್ತದೆ. ಇದಕ್ಕೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನೀಡುವ ಪರಿಹಾರವೇ ಪ್ರೋಟೋಟೈಪ್. ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದರೆ:
+•	ಫ್ಯಾಕ್ಟರಿ (Constructor Function): ಇದು ಕಾರುಗಳನ್ನು ತಯಾರಿಸುವ ಅಚ್ಚು ಅಥವಾ ಫ್ಯಾಕ್ಟರಿ. ಇಲ್ಲಿ ಕಾರಿನ ಬಣ್ಣ ಮತ್ತು ಮಾಡೆಲ್‌ನಂತಹ ಬೇಸಿಕ್ (ಭೌತಿಕ) ವಿಷಯಗಳನ್ನು ಮಾತ್ರ ಫಿಕ್ಸ್ ಮಾಡಲಾಗುತ್ತದೆ.
+•	ಕೇಂದ್ರ ಕಚೇರಿ (Constructor Prototype): ಇದು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ (ಸರ್ವರ್). ಎಲ್ಲಾ ಕಾರುಗಳಿಗೂ ಬೇಕಾಗುವ ಸಾಮಾನ್ಯ ಸಾಫ್ಟ್‌ವೇರ್ (ಮ್ಯಾಪ್, ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್) ಅನ್ನು ಪ್ರತಿಯೊಂದು ಕಾರಿಗೂ ಹಾಕುವ ಬದಲು, ಈ ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿ ಒಂದೇ ಕಡೆ ಸ್ಟೋರ್ ಮಾಡಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಹೊಸ ವೈಶಿಷ್ಟ್ಯ ಸೇರಿಸಿದರೆ, ಫ್ಯಾಕ್ಟರಿಯಿಂದ ಬಂದ ಎಲ್ಲಾ ಕಾರುಗಳಿಗೂ ಅದು ಉಚಿತವಾಗಿ ಅನ್ವಯವಾಗುತ್ತದೆ.
+•	ಗುಪ್ತ ಕನೆಕ್ಷನ್ (Object Prototype / __proto__): ಫ್ಯಾಕ್ಟರಿಯಿಂದ ಸಿದ್ಧವಾಗಿ ಹೊರಬಂದ ಪ್ರತಿ ನಿಜವಾದ ಕಾರಿನ (Object) ಒಳಗೆ ಆ ಮ್ಯಾಪ್ ಸಾಫ್ಟ್‌ವೇರ್ ಇರುವುದಿಲ್ಲ. ಆದರೆ, ಆ ಕಾರಿಗೆ ತನ್ನ ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು (Parent) ಸಂಪರ್ಕಿಸಲು ಒಂದು ಗುಪ್ತ ಇಂಟರ್ನೆಟ್ ಕನೆಕ್ಷನ್ ಅಥವಾ ಹೆಲ್ಪ್‌ಲೈನ್ ನಂಬರ್ ಇರುತ್ತದೆ. ಈ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಹೆಸರೇ __proto__. ಕಾರಿಗೆ ಸಹಾಯ ಬೇಕಾದಾಗಲೆಲ್ಲಾ (ಉದಾಹರಣೆಗೆ ಮ್ಯಾಪ್ ಓಪನ್ ಮಾಡಿದಾಗ) ಈ ಕನೆಕ್ಷನ್ ಮೂಲಕ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮ್ಯಾಪ್ ರನ್ ಮಾಡುತ್ತದೆ. ಇದರಿಂದ 10,000 ಕಾರುಗಳ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ!
+
+ಹಂತ 2: ಬಿಗಿನರ್ಸ್ ಮತ್ತು ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ - ಕೋಡ್ ಮೂಲಕ ವಿವರಣೆ
+ಡೆವಲಪರ್‌ಗಳು ಹೊಸ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಎಲ್ಲರಿಗೂ ಹಂಚಲು Constructor.prototype ಒಳಗೆ ಬರೆಯುತ್ತಾರೆ. ಮತ್ತು ಆಬ್ಜೆಕ್ಟ್ ತನಗೆ ಗೊತ್ತಿಲ್ಲದ ಕೆಲಸವನ್ನು ಮಾಡಲು __proto__ ಅನ್ನು ಬಳಸುತ್ತದೆ. ಇದನ್ನು ಕೋಡ್‌ಗೆ ಇಳಿಸೋಣ:
+// 1. Constructor Function (ಇದು ಫ್ಯಾಕ್ಟರಿ)
+// ಇದು ಕೇವಲ ಬಣ್ಣ ಮತ್ತು ಮಾಡೆಲ್ ಅನ್ನು ಮಾತ್ರ ಕಾರಿಗೆ (this) ನೀಡುತ್ತದೆ.
+function CarMaker(modelName, color) {
+  this.model = modelName;
+  this.color = color;
+}
+// 2. Constructor Prototype (ಇದು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ)
+// .prototype ಬಳಸಿ ನಾವು ಸಾಫ್ಟ್‌ವೇರ್ ಫಂಕ್ಷನ್ ಅನ್ನು ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಕಡೆ ಸೇವ್ ಮಾಡುತ್ತಿದ್ದೇವೆ.
+CarMaker.prototype.startEngine = function() {
+  console.log(this.model + " ಇಂಜಿನ್ ಸ್ಟಾರ್ಟ್ ಆಯಿತು!");
+};
+CarMaker.prototype.startMap = function() {
+  console.log(this.model + " ಕಾರಿನಲ್ಲಿ ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್ ಶುರುವಾಯಿತು!");
+};
+// 3. Object (ಇದು ಫ್ಯಾಕ್ಟರಿಯಿಂದ ತಯಾರಾದ ಹೊಸ ಕಾರುಗಳು)
+let myCar = new CarMaker("Tata Nexon", "Red");
+let yourCar = new CarMaker("Tata Harrier", "Black");
+// 4. ಕಾರುಗಳು ಕೇಂದ್ರ ಕಚೇರಿಯ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸಿಕೊಳ್ಳುವುದು
+// ಕಾರಿನ ಒಳಗೆ 'startEngine' ಅಥವಾ 'startMap' ಇಲ್ಲ. 
+// ಆದರೂ ಅದು ತನ್ನ ಗುಪ್ತ ಕನೆಕ್ಷನ್ (__proto__) ಬಳಸಿ ಕೇಂದ್ರ ಕಚೇರಿಯಿಂದ ಅದನ್ನು ತಂದು ರನ್ ಮಾಡುತ್ತದೆ!
+myCar.startEngine(); // ಔಟ್‌ಪುಟ್: Tata Nexon ಇಂಜಿನ್ ಸ್ಟಾರ್ಟ್ ಆಯಿತು!
+yourCar.startMap();  // ಔಟ್‌ಪುಟ್: Tata Harrier ಕಾರಿನಲ್ಲಿ ಜಿಪಿಎಸ್ ಮ್ಯಾಪ್ ಶುರುವಾಯಿತು!
+// ಆ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಅನ್ನು ನೋಡಬೇಕೆ?
+console.log(myCar.__proto__); 
+// ಇದು CarMaker.prototype (ಕೇಂದ್ರ ಕಚೇರಿ) ಗೆ ಲಿಂಕ್ ಆಗಿರುವುದನ್ನು ತೋರಿಸುತ್ತದೆ.
+ಪ್ರಮುಖ ಅಂಶ: prototype ಎನ್ನುವ ಪ್ರಾಪರ್ಟಿ ಕೇವಲ Functions ಗಳಿಗೆ (ಇಲ್ಲಿ CarMaker) ಮಾತ್ರ ಇರುತ್ತದೆ. __proto__ ಎನ್ನುವುದು ಪ್ರತಿಯೊಂದು Object ನ (ಇಲ್ಲಿ myCar) ಒಳಗೂ ಇರುವ ಗುಪ್ತ ಪ್ರಾಪರ್ಟಿ.
+
+ಹಂತ 3: ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳಿಗೆ - "The Under the Hood Mechanics"
+ಬಿಗಿನರ್‌ಗಳಿಗೆ ಆಗುವ ಅತಿದೊಡ್ಡ ಗೊಂದಲವೆಂದರೆ "ಇವೆರಡೂ ಬೇರೆ ಬೇರೆಯೇ?" ಎಂಬುದು. ಉತ್ತರ: ಇಲ್ಲ, ಅವೆರಡೂ ಒಂದೇ ಜಾಗವನ್ನು (ಮೆಮೊರಿ ಲೊಕೇಶನ್) ಸೂಚಿಸುತ್ತವೆ. ನೋಡುವ ದೃಷ್ಟಿಕೋನ ಮಾತ್ರ ಬೇರೆ. ಪ್ರೊ ಲೆವೆಲ್‌ನಲ್ಲಿ ನೀವು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕಾದ 3 ಮುಖ್ಯ ನಿಯಮಗಳು ಇಲ್ಲಿವೆ:
+ನಿಯಮ 1: ಮೆಮೊರಿ ಲಿಂಕಿಂಗ್ (The Truth of __proto__)
+ಫ್ಯಾಕ್ಟರಿ ಕಡೆಯಿಂದ ನೋಡುವಾಗ ಇರುವ CarMaker.prototype ಮತ್ತು ಕಾರಿನ ಕಡೆಯಿಂದ ನೋಡುವಾಗ ಇರುವ myCar.__proto__ ಎರಡೂ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಅಡ್ರೆಸ್ ಅನ್ನು ಪಾಯಿಂಟ್ (Point) ಮಾಡುತ್ತವೆ.
+// ಕಾರಿನ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಮತ್ತು ಫ್ಯಾಕ್ಟರಿಯ ಕೇಂದ್ರ ಕಚೇರಿ ಎರಡೂ ಒಂದೇನಾ?
+console.log(myCar.__proto__ === CarMaker.prototype); 
+// ಔಟ್‌ಪುಟ್: true (ಹೌದು, ಎರಡೂ ಒಂದೇ!)
+
+ನಿಯಮ 2: ರಿಯಲ್ ಟೈಮ್ ಅಪ್‌ಡೇಟ್ಸ್ (Dynamic Nature)
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಪ್ರೋಟೋಟೈಪ್‌ಗಳು ಡೈನಾಮಿಕ್ ಆಗಿರುತ್ತವೆ. ಅಂದರೆ, ನೀವು ಕಾರುಗಳನ್ನು ಮಾರಾಟ ಮಾಡಿದ ನಂತರ (ಆಬ್ಜೆಕ್ಟ್ ಕ್ರಿಯೇಟ್ ಮಾಡಿದ ಮೇಲೆ), ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿ ಹೊಸ ಫಂಕ್ಷನ್ ಸೇರಿಸಿದರೂ, ಹಳೆಯ ಕಾರುಗಳಿಗೂ ಆ ವೈಶಿಷ್ಟ್ಯ ತಕ್ಷಣವೇ ಸಿಗುತ್ತದೆ!
+// ಹಳೆಯ ಕಾರುಗಳು ಆಲ್ರೆಡಿ ಕ್ರಿಯೇಟ್ ಆಗಿವೆ. ಈಗ ಕೇಂದ್ರ ಕಚೇರಿಗೆ ಹೊಸ ಫೀಚರ್ ಸೇರಿಸೋಣ:
+CarMaker.prototype.playMusic = function() {
+  console.log("ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್ ಆನ್ ಆಯಿತು.");
+};
+// myCar ಮೊದಲೇ ಕ್ರಿಯೇಟ್ ಆಗಿದ್ದರೂ, ಹೊಸ ಫೀಚರ್ ಅದಕ್ಕೆ ತಾನಾಗಿಯೇ ಸಿಗುತ್ತದೆ!
+myCar.playMusic(); // ಔಟ್‌ಪುಟ್: ಮ್ಯೂಸಿಕ್ ಪ್ಲೇಯರ್ ಆನ್ ಆಯಿತು.
+
+ನಿಯಮ 3: ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ (The Prototype Chain)
+ಒಂದು ವೇಳೆ ಕಾರಿನಲ್ಲಿ ಆ ಫಂಕ್ಷನ್ ಇಲ್ಲ, ಮತ್ತು ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲೂ ಇಲ್ಲ ಎಂದಾದರೆ ಏನಾಗುತ್ತದೆ? ಆಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸುಮ್ಮನೆ ಕೂರುವುದಿಲ್ಲ. ಅದು ಕೇಂದ್ರ ಕಚೇರಿಯ ಮೇಲಿರುವ "ಜಾಗತಿಕ ಕಚೇರಿಗೆ" (Global Object Prototype) ಹೋಗುತ್ತದೆ. ಇದರ ಹುಡುಕಾಟದ ದಾರಿ ಹೀಗಿರುತ್ತದೆ:myCar -> myCar.__proto__ (CarMaker.prototype) -> Object.prototype -> null. ಎಲ್ಲೂ ಸಿಗದಿದ್ದಾಗ ಮಾತ್ರ ಅದು undefined ಅಥವಾ Error ನೀಡುತ್ತದೆ.
+
+ಒಟ್ಟಾರೆಯಾಗಿ ಸಾರಾಂಶ (Summary)
+ಈ ಇಡೀ ವ್ಯವಸ್ಥೆ 3 ಹಂತಗಳಲ್ಲಿ ನಡೆಯುತ್ತದೆ:
+1.	ಸೃಷ್ಟಿ: ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ ಬರೆದ ತಕ್ಷಣ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದಕ್ಕೊಂದು prototype ಎಂಬ ಖಾಲಿ ಜಾಗವನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ. ಮೆಮೊರಿ ಉಳಿಸಲು ಹಂಚಿಕೆಯಾಗುವ (Shared) ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಇಲ್ಲಿ ಹಾಕಲಾಗುತ್ತದೆ.
+2.	ಸಂಪರ್ಕ: new ಕೀವರ್ಡ್ ಬಳಸಿ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸಿದಾಗ, ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗೆ __proto__ ಎಂಬ ಗುಪ್ತ ಕೊಂಡಿ ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ ಮತ್ತು ಅದು ಕನ್ಸ್ಟ್ರಕ್ಟರ್‌ನ prototype ಗೆ ಬೆಸೆದುಕೊಳ್ಳುತ್ತದೆ.
+3.	ಹುಡುಕಾಟ: ಫಂಕ್ಷನ್ ಕರೆದಾಗ, ಆಬ್ಜೆಕ್ಟ್ ಮೊದಲು ತನ್ನೊಳಗೆ ಹುಡುಕುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ, ತನ್ನ __proto__ ಮೂಲಕ ಕನ್ಸ್ಟ್ರಕ್ಟರ್‌ನ prototype (ತನ್ನ Parent) ಗೆ ಹೋಗಿ ಅದನ್ನು ರನ್ ಮಾಡುತ್ತದೆ.
+
+ಪ್ರಮುಖ ವ್ಯತ್ಯಾಸಗಳ ಹೋಲಿಕೆ ಪಟ್ಟಿ
+ಗುಣಲಕ್ಷಣ	Constructor Function / Prototype	Object Prototype (__proto__)
+ಉದಾಹರಣೆ ಅರ್ಥ	ಕಾರು ತಯಾರಿಸುವ ಫ್ಯಾಕ್ಟರಿ ಮತ್ತು ಅದರ ಕೇಂದ್ರ ಕಚೇರಿ/ಸರ್ವರ್.	ತಯಾರಾಗಿ ಹೊರಬಂದ ಕಾರು ಮತ್ತು ಅದರ ಹೆಲ್ಪ್‌ಲೈನ್ ಕನೆಕ್ಷನ್.
+ಯಾರಿಗೆ ಇರುತ್ತದೆ? (ಎಲ್ಲಿರುತ್ತದೆ)	ಕೇವಲ ಫಂಕ್ಷನ್‌ಗಳ (Constructor Functions) ಜೊತೆ ಇರುತ್ತದೆ.	ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ಒಳಗೆ (Instance) ಗುಪ್ತವಾಗಿ ಇರುತ್ತದೆ.
+ಮುಖ್ಯ ಕೆಲಸವೇನು?	ಆಬ್ಜೆಕ್ಟ್‌ಗಳಿಗೆ ಹಂಚಲು ಬೇಕಾದ ಸಾಮಾನ್ಯ ಗುಣ/ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಸ್ಟೋರ್ ಮಾಡುವುದು.	ತನ್ನಲ್ಲಿ ಇಲ್ಲದ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ತನ್ನ ಮೂಲದಲ್ಲಿ (Parent) ಹುಡುಕಿಕೊಂಡು ಹೋಗುವುದು.
+ಬಳಕೆದಾರರು ಯಾರು?	ಡೆವಲಪರ್‌ಗಳು ಹೊಸ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಬರೆಯಲು/ಸೇರಿಸಲು ಬಳಸುತ್ತಾರೆ.	ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಜಿನ್ (ಬ್ರೌಸರ್) ರಹಸ್ಯವಾಗಿ ಇದನ್ನು ಬಳಸಿಕೊಳ್ಳುತ್ತದೆ.</div>
+            </details>
+        </section>
+        
+        <br><br><br>
+    </main>
+
+    <script>
+        // Sidebar Mobile Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        });
+
+        // Theme Toggle (Desktop & Mobile)
+        const themeBtn = document.getElementById('theme-btn');
+        const themeBtnMobile = document.getElementById('theme-btn-mobile');
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        themeBtn.addEventListener('click', toggleTheme);
+        themeBtnMobile.addEventListener('click', toggleTheme);
+
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+
+        // Copy Code Functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const pre = e.target.parentElement.nextElementSibling;
+                const code = pre.innerText;
+                navigator.clipboard.writeText(code);
+                e.target.innerText = 'Copied!';
+                setTimeout(() => { e.target.innerText = 'Copy'; }, 2000);
+            });
+        });
+
+        // Search Filter in Sidebar
+        const searchBox = document.getElementById('search-box');
+        const tocList = document.querySelectorAll('#toc-list li');
+        searchBox.addEventListener('input', (e) => {
+            const text = e.target.value.toLowerCase();
+            tocList.forEach(li => {
+                if(li.innerText.toLowerCase().includes(text)) {
+                    li.style.display = 'block';
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+        });
+
+        // Active Link Highlighting on Scroll
+        const sections = document.querySelectorAll('section, h2');
+        const navLinks = document.querySelectorAll('#toc-list a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if(pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(li => {
+                li.classList.remove('active');
+                if(li.getAttribute('href').substring(1) === current) {
+                    li.classList.add('active');
+                }
+            });
+        });
+
+        // Quiz Logic
+        function checkAnswer(element, isCorrect) {
+            const parent = element.parentElement;
+            const options = parent.querySelectorAll('li');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            const feedback = parent.nextElementSibling;
+            feedback.style.display = 'block';
+
+            if(isCorrect) {
+                element.classList.add('correct');
+                feedback.style.color = 'var(--primary)';
+                feedback.innerText = '✅ ಸರಿಯಾದ ಉತ್ತರ! __proto__ ಆಬ್ಜೆಕ್ಟ್‌ನ ಮೂಲವನ್ನು (Parent) ಸಂಪರ್ಕಿಸುತ್ತದೆ.';
+            } else {
+                element.classList.add('wrong');
+                feedback.style.color = '#ef4444';
+                feedback.innerText = '❌ ತಪ್ಪಾದ ಉತ್ತರ. ಸರಿಯಾದ ಉತ್ತರ B.';
+            }
+        }
+    </script>
+</body>
+</html>

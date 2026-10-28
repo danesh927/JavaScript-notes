@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Callbacks to Promises - Expert Guide</title>
+    
+    <!-- Google Fonts for English and Kannada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Kannada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js for Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkSurface: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Animations, TOC, and Styling -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sidebar TOC Active state */
+        .toc-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 2px solid transparent;
+        }
+        .toc-link:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .toc-link.active {
+            color: #3b82f6;
+            font-weight: 700;
+            border-left: 4px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Code Block Container styling */
+        .code-wrapper {
+            position: relative;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 0.3rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Diagram Animations */
+        .diagram-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.5)); }
+            50% { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.9)); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darkBg dark:text-gray-100 font-sans antialiased leading-relaxed">
+
+    <!-- Top Navigation Navbar -->
+    <nav class="fixed w-full z-50 top-0 left-0 bg-white/80 dark:bg-darkBg/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-brands fa-js text-yellow-400 text-3xl"></i>
+                    <span class="font-bold text-xl tracking-wide text-gray-800 dark:text-white">JS Mastery Notes</span>
+                </div>
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i id="theme-icon" class="fa-solid fa-moon text-gray-800 dark:text-yellow-300 text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="w-full md:w-1/4 lg:w-1/5 hidden md:block">
+            <div class="sticky top-28 bg-white dark:bg-darkSurface p-5 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">ಪರಿವಿಡಿ (TOC)</h3>
+                <nav class="flex flex-col space-y-1">
+                    <a href="#intro" class="toc-link block px-3 py-2 rounded-r-md text-sm">ಪ್ರಸ್ತಾವನೆ</a>
+                    <a href="#section-1" class="toc-link block px-3 py-2 rounded-r-md text-sm">1. ತಳಮಟ್ಟದ ಪರಿಕಲ್ಪನೆ</a>
+                    <a href="#concept-diagram" class="toc-link block px-3 py-2 rounded-r-md text-sm">ದೃಶ್ಯ ವಿವರಣೆ (Diagram)</a>
+                    <a href="#section-2" class="toc-link block px-3 py-2 rounded-r-md text-sm">2. ಉದಾಹರಣೆಗಳು</a>
+                    <a href="#ex-1" class="toc-link block px-3 py-2 rounded-r-md text-sm ml-4 text-xs">ಉದಾ: ಟೈಮರ್</a>
+                    <a href="#ex-2" class="toc-link block px-3 py-2 rounded-r-md text-sm ml-4 text-xs">ಉದಾ: ಪಾಸ್ / ಫೇಲ್</a>
+                    <a href="#ex-3" class="toc-link block px-3 py-2 rounded-r-md text-sm ml-4 text-xs">ಉದಾ: ಸರಪಳಿ ವಿಧಾನ</a>
+                    <a href="#ex-4" class="toc-link block px-3 py-2 rounded-r-md text-sm ml-4 text-xs">ಉದಾ: Async / Await</a>
+                    <a href="#bonus" class="toc-link block px-3 py-2 rounded-r-md text-sm text-blue-500"><i class="fa-solid fa-star text-yellow-400"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ</a>
+                    <a href="#summary" class="toc-link block px-3 py-2 rounded-r-md text-sm">ಸಾರಾಂಶ</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Notes Area -->
+        <main class="w-full md:w-3/4 lg:w-4/5">
+            
+            <!-- Note Header -->
+            <section id="intro" class="fade-in mb-10">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg shadow-sm">
+                    <p class="text-lg md:text-xl font-medium">
+                        ಖಂಡಿತ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (JavaScript) ಕಾಲ್‌ಬ್ಯಾಕ್ (Callback) ಗಳನ್ನು ಪ್ರಾಮಿಸ್ (Promise) ಗಳಾಗಿ ಹೇಗೆ ಬದಲಾಯಿಸುವುದು ಎಂಬುದನ್ನು ಚಿಕ್ಕ ಮಕ್ಕಳಿಗೂ ಅರ್ಥವಾಗುವಂತಹ ಸುಲಭವಾದ ಕಥೆಯ ಮೂಲಕ, ತಳಮಟ್ಟದಿಂದ ವೃತ್ತಿಪರ ಮಟ್ಟದವರೆಗೆ ಹಂತ ಹಂತವಾಗಿ ಕಲಿಯೋಣ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 1 -->
+            <section id="section-1" class="fade-in mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-blue-600 dark:text-blue-400">
+                    <i class="fa-solid fa-book-open"></i>
+                    1. ತಳಮಟ್ಟದ ಪರಿಕಲ್ಪನೆ: ಕಥೆಯ ಮೂಲಕ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ!
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Callback Card -->
+                    <div class="bg-white dark:bg-darkSurface p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold mb-3 text-red-500"><i class="fa-solid fa-clock-rotate-left mr-2"></i>ಕಾಲ್‌ಬ್ಯಾಕ್ (Callback) ಎಂದರೆ ಏನು?</h3>
+                        <p class="mb-4">ನೀವು ಒಂದು ಹೋಟೆಲ್‌ಗೆ ಹೋಗಿ ಮಸಾಲೆ ದೋಸೆ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ ಎಂದುಕೊಳ್ಳಿ. ವೇಟರ್ ನಿಮ್ಮ ಬಳಿ ಬಂದು, "ಸರ್, ದೋಸೆ ರೆಡಿಯಾದ ತಕ್ಷಣ ನಾನೇ ಬಂದು ನಿಮಗೆ ಕರೆಯುತ್ತೇನೆ, ಅಲ್ಲಿಯವರೆಗೆ ಕಾಯಿರಿ" ಎನ್ನುತ್ತಾರೆ.</p>
+                        <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded border-l-2 border-red-500 text-sm">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i>
+                            ಇಲ್ಲಿ ವೇಟರ್ ನಿಮಗೆ ದೋಸೆ ತಂದುಕೊಡುವುದು ಒಂದು Callback. ಆದರೆ ಇಲ್ಲಿ ಒಂದು ಸಮಸ್ಯೆಯಿದೆ: ನೀವು ಆ ವೇಟರ್ ಮೇಲೆಯೇ ಸಂಪೂರ್ಣವಾಗಿ ಅವಲಂಬಿತರಾಗಿರುತ್ತೀರಿ.
+                        </div>
+                    </div>
+
+                    <!-- Promise Card -->
+                    <div class="bg-white dark:bg-darkSurface p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-xl font-semibold mb-3 text-green-500"><i class="fa-solid fa-ticket mr-2"></i>ಪ್ರಾಮಿಸ್ (Promise) ಎಂದರೆ ಏನು?</h3>
+                        <p class="mb-4">ಈಗ ನೀವು ಅದೇ ಮಸಾಲೆ ದೋಸೆಯನ್ನು ಕೆಎಫ್‌ಸಿ (KFC) ಅಥವಾ ಮೆಕ್‌ಡೊನಾಲ್ಡ್ಸ್‌ನಂತಹ ಫಾಸ್ಟ್ ಫುಡ್ ಅಂಗಡಿಯಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಅವರು ನಿಮಗೆ ಒಂದು 'ಬಿಲ್ ರಶೀದಿ ಅಥವಾ ಟೋಕನ್ ನಂಬರ್' ಕೊಡುತ್ತಾರೆ.</p>
+                        <p>ಈ ಟೋಕನ್ ನಿಮಗೆ ನೀಡಿದ ಭರವಸೆ (Promise).</p>
+                    </div>
+                </div>
+
+                <!-- Conceptual Visual Diagram (Added for visual enhancement) -->
+                <div id="concept-diagram" class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl shadow-inner mb-8 text-center flex flex-col items-center border border-gray-200 dark:border-gray-700 fade-in">
+                    <h4 class="font-bold mb-6 text-gray-700 dark:text-gray-300">ದೃಶ್ಯ ವಿವರಣೆ: Callback vs Promise</h4>
+                    <div class="flex flex-col md:flex-row w-full justify-between items-center gap-6">
+                        <!-- Left: Callback -->
+                        <div class="flex flex-col items-center opacity-70">
+                            <h5 class="text-red-500 font-bold mb-2">Callback</h5>
+                            <div class="flex items-center space-x-3 text-2xl">
+                                <i class="fa-solid fa-user text-gray-500"></i>
+                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                                <i class="fa-solid fa-bell-concierge text-red-500"></i>
+                                <i class="fa-solid fa-lock text-sm text-red-500" title="Blocked"></i>
+                            </div>
+                            <span class="text-xs mt-2 text-gray-500">ವೇಟರ್ ಮೇಲೆ ಅವಲಂಬಿತ (Blocked)</span>
+                        </div>
+                        
+                        <div class="hidden md:block w-px h-16 bg-gray-300 dark:bg-gray-600"></div>
+
+                        <!-- Right: Promise -->
+                        <div class="flex flex-col items-center">
+                            <h5 class="text-green-500 font-bold mb-2">Promise</h5>
+                            <div class="flex items-center space-x-3 text-2xl">
+                                <i class="fa-solid fa-user text-blue-500"></i>
+                                <i class="fa-solid fa-arrow-right text-sm text-green-500"></i>
+                                <div class="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded shadow diagram-pulse font-mono text-sm font-bold">
+                                    TOKEN #42
+                                </div>
+                                <i class="fa-solid fa-arrow-right text-sm text-green-500"></i>
+                                <i class="fa-solid fa-burger text-yellow-500"></i>
+                            </div>
+                            <span class="text-xs mt-2 text-gray-500">ಸ್ವತಂತ್ರ - ಕೆಲಸ ಮುಗಿದಾಗ ಸೂಚನೆ (Async)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 p-5 bg-white dark:bg-darkSurface rounded-lg shadow-sm">
+                    <h3 class="font-semibold text-lg mb-3">ಈ ಪ್ರಾಮಿಸ್‌ಗೆ 3 ಹಂತಗಳಿವೆ:</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-0.5 rounded mr-3 mt-0.5 min-w-[80px] text-center">Pending</span>
+                            <span>(ಕಾಯುವಿಕೆ): ದೋಸೆ ಇನ್ನೂ ತಯಾರಾಗುತ್ತಿದೆ.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded mr-3 mt-0.5 min-w-[80px] text-center">Resolved</span>
+                            <span>/ Fulfilled (ಯಶಸ್ಸು): ನಿಮ್ಮ ಟೋಕನ್ ನಂಬರ್ ಬಂತು, ದೋಸೆ ಸಿದ್ಧವಾಗಿದೆ!</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-100 text-red-800 text-xs font-bold px-2.5 py-0.5 rounded mr-3 mt-0.5 min-w-[80px] text-center">Rejected</span>
+                            <span>(ವೈಫಲ್ಯ): ದೋಸೆ ಹಿಟ್ಟು ಖಾಲಿಯಾಗಿದೆ, ನಿಮಗೆ ದೋಸೆ ಸಿಗುವುದಿಲ್ಲ ಎಂದು ಅವರು ಹೇಳುವುದು.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <h3 class="text-xl font-bold mb-3 text-purple-600 dark:text-purple-400">ನಾವು ಕಾಲ್‌ಬ್ಯಾಕ್ ಅನ್ನು ಪ್ರಾಮಿಸ್ ಆಗಿ ಏಕೆ ಬದಲಾಯಿಸಬೇಕು?</h3>
+                <p class="mb-6 bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border-l-4 border-purple-500">
+                    ಬಹಳಷ್ಟು ಕಾಲ್‌ಬ್ಯಾಕ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಬಳಸಿದಾಗ, ಕೋಡ್ ನೋಡಲು ಬೆಟ್ಟದಂತೆ (Pyramid of Doom / Callback Hell) ಗೊಂದಲಮಯವಾಗುತ್ತದೆ. ಪ್ರಾಮಿಸ್ ಬಳಸಿದರೆ ಕೋಡ್ ತುಂಬಾ ಸ್ವಚ್ಛವಾಗಿ ಮತ್ತು ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುತ್ತದೆ.
+                </p>
+
+                <div class="bg-white dark:bg-darkSurface p-6 rounded-xl shadow border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-list-check text-blue-500"></i> ಕಾಲ್‌ಬ್ಯಾಕ್ ಅನ್ನು ಪ್ರಾಮಿಸ್ ಆಗಿ ಬದಲಾಯಿಸುವ 4 ಪ್ರಮುಖ ಹಂತಗಳು:</h3>
+                    <ol class="list-decimal list-inside space-y-2 marker:text-blue-500 font-medium">
+                        <li>ಫಂಕ್ಷನ್ ಒಳಗಡೆ <code class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded text-sm text-pink-600 dark:text-pink-400">return new Promise((resolve, reject) => { ... })</code> ಎಂದು ಬರೆಯಿರಿ.</li>
+                        <li>ನಿಮ್ಮ ಹಳೆಯ ಕೆಲಸವನ್ನು (ಅಸಿಂಕ್ರೊನಸ್ ಕೆಲಸ) ಇದರ ಒಳಗೆ ಹಾಕಿ.</li>
+                        <li>ಕೆಲಸ ಯಶಸ್ವಿಯಾದರೆ ಕಾಲ್‌ಬ್ಯಾಕ್ ಬದಲಿಗೆ <code class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded text-sm text-green-600 dark:text-green-400">resolve(data)</code> ಬಳಸಿ.</li>
+                        <li>ಕೆಲಸ ವಿಫಲವಾದರೆ <code class="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded text-sm text-red-600 dark:text-red-400">reject(error)</code> ಬಳಸಿ.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="section-2" class="fade-in mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-blue-600 dark:text-blue-400">
+                    <i class="fa-solid fa-laptop-code"></i>
+                    2. ಉದಾಹರಣೆಗಳು ಮತ್ತು ಹಂತ-ಹಂತದ ವಿವರಣೆ
+                </h2>
+                <p class="mb-8">ಈಗ 4 ವಿಭಿನ್ನ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ ಇದನ್ನು ಕಲಿಯೋಣ.</p>
+
+                <!-- Example 1 -->
+                <div id="ex-1" class="mb-12 fade-in">
+                    <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                        <i class="fa-solid fa-stopwatch mr-2 text-blue-500"></i> ಉದಾಹರಣೆ 1: ಅತಿ ಸರಳವಾದ ಟೈಮರ್ (Basic Timer)
+                    </h3>
+                    <p class="mb-4">ಒಂದು ಕೆಲಸ 2 ಸೆಕೆಂಡುಗಳ ನಂತರ ಆಗಬೇಕು ಎಂದುಕೊಳ್ಳೋಣ.</p>
+                    
+                    <h4 class="font-bold text-red-500 mb-2">❌ ಹಳೆಯ ಕಾಲ್‌ಬ್ಯಾಕ್ ವಿಧಾನ:</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">function waitAndSpeakCallback(callback) {
+    setTimeout(() => {
+        callback("2 ಸೆಕೆಂಡ್ ಮುಗಿಯಿತು!");
+    }, 2000);
+}
+
+waitAndSpeakCallback((message) => {
+    console.log(message);
+});</code></pre>
+                    </div>
+
+                    <h4 class="font-bold text-green-500 mt-6 mb-2">✅ ಹೊಸ ಪ್ರಾಮಿಸ್ ವಿಧಾನ:</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">function waitAndSpeakPromise() {
+    // ಹಂತ 1: ಪ್ರಾಮಿಸ್ ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡುವುದು
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // ಹಂತ 2: ಕಾಲ್‌ಬ್ಯಾಕ್ ಬದಲು resolve ಬಳಸುವುದು
+            resolve("2 ಸೆಕೆಂಡ್ ಮುಗಿಯಿತು!"); 
+        }, 2000);
+    });
+}
+
+// ಹಂತ 3: ಭರವಸೆ ಈಡೇರಿದಾಗ .then() ಬಳಸುವುದು
+waitAndSpeakPromise().then((message) => {
+    console.log(message);
+});</code></pre>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mt-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p><strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ ನಾವು callback ಕಳುಹಿಸುವ ಬದಲು, ಒಂದು Promise ಅನ್ನು ಹಿಂದಿರುಗಿಸುತ್ತೇವೆ. ಅದು ಯಶಸ್ವಿಯಾದಾಗ <code>resolve</code> ಅನ್ನು ಕರೆಯುತ್ತದೆ. ನಂತರ ನಾವು <code>.then()</code> ಬಳಸಿ ಉತ್ತರ ಪಡೆಯುತ್ತೇವೆ.</p>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div id="ex-2" class="mb-12 fade-in">
+                    <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                        <i class="fa-solid fa-graduation-cap mr-2 text-blue-500"></i> ಉದಾಹರಣೆ 2: ಯಶಸ್ಸು ಮತ್ತು ವೈಫಲ್ಯದ ಪರೀಕ್ಷೆ (Success and Failure)
+                    </h3>
+                    <p class="mb-4">ವಿದ್ಯಾರ್ಥಿ 35ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಂಕ ಪಡೆದರೆ 'ಪಾಸ್' (Success), ಇಲ್ಲದಿದ್ದರೆ 'ಫೇಲ್' (Failure).</p>
+                    
+                    <h4 class="font-bold text-red-500 mb-2">❌ ಹಳೆಯ ಕಾಲ್‌ಬ್ಯಾಕ್ ವಿಧಾನ:</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">function checkMarksCallback(marks, successCallback, errorCallback) {
+    if (marks >= 35) {
+        successCallback("ನೀವು ಪಾಸ್ ಆಗಿದ್ದೀರಿ! 🎉");
+    } else {
+        errorCallback("ನೀವು ಫೇಲ್ ಆಗಿದ್ದೀರಿ. 😢");
+    }
+}
+
+checkMarksCallback(40, 
+    (msg) => console.log(msg), 
+    (err) => console.log(err)
+);</code></pre>
+                    </div>
+
+                    <h4 class="font-bold text-green-500 mt-6 mb-2">✅ ಹೊಸ ಪ್ರಾಮಿಸ್ ವಿಧಾನ:</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">function checkMarksPromise(marks) {
+    return new Promise((resolve, reject) => {
+        if (marks >= 35) {
+            resolve("ನೀವು ಪಾಸ್ ಆಗಿದ್ದೀರಿ! 🎉"); // ಯಶಸ್ಸು
+        } else {
+            reject("ನೀವು ಫೇಲ್ ಆಗಿದ್ದೀರಿ. 😢"); // ವೈಫಲ್ಯ
+        }
+    });
+}
+
+checkMarksPromise(30)
+    .then((msg) => console.log(msg))    // resolve ಆದಾಗ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ
+    .catch((err) => console.log(err));  // reject ಆದಾಗ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ</code></pre>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mt-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p><strong>ವಿವರಣೆ:</strong> ಪ್ರಾಮಿಸ್‌ನಲ್ಲಿ ಯಶಸ್ಸಾದರೆ <code>.then()</code> ಮತ್ತು ವಿಫಲವಾದರೆ ಹಿಡಿಯಲು <code>.catch()</code> ಬಳಸಲಾಗುತ್ತದೆ. ಇದು ತುಂಬಾ ಶಿಸ್ತುಬದ್ಧವಾದ ವಿಧಾನ.</p>
+                    </div>
+                </div>
+
+                <!-- Example 3 -->
+                <div id="ex-3" class="mb-12 fade-in">
+                    <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                        <i class="fa-solid fa-link mr-2 text-blue-500"></i> ಉದಾಹರಣೆ 3: ಕಾಲ್‌ಬ್ಯಾಕ್ ನರಕದಿಂದ (Callback Hell) ಮುಕ್ತಿ - ಸರಪಳಿ ವಿಧಾನ
+                    </h3>
+                    <p class="mb-4">ಆರ್ಡರ್ ಮಾಡುವುದು -> ಅಡುಗೆ ಮಾಡುವುದು -> ಬಡಿಸುವುದು. ಇವು ಒಂದಾದ ಮೇಲೊಂದು ಆಗಬೇಕು.</p>
+                    
+                    <h4 class="font-bold text-red-500 mb-2">❌ ಹಳೆಯ ಕಾಲ್‌ಬ್ಯಾಕ್ ವಿಧಾನ (ನೋಡಲು ಗೊಂದಲ):</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">orderFood(function(order) {
+    cookFood(order, function(cookedFood) {
+        serveFood(cookedFood, function(served) {
+            console.log("ಊಟ ಮುಗಿಯಿತು!");
+        });
+    });
+});</code></pre>
+                    </div>
+
+                    <h4 class="font-bold text-green-500 mt-6 mb-2">✅ ಹೊಸ ಪ್ರಾಮಿಸ್ ವಿಧಾನ (ಚೈನಿಂಗ್ - Chaining):</h4>
+                    <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">ನೋಡಲು ಒಂದೇ ನೇರ ಸಾಲಿನಲ್ಲಿ ಬರುತ್ತದೆ.</p>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">orderFoodPromise()
+    .then((order) => {
+        return cookFoodPromise(order);
+    })
+    .then((cookedFood) => {
+        return serveFoodPromise(cookedFood);
+    })
+    .then((served) => {
+        console.log("ಊಟ ಮುಗಿಯಿತು!");
+    })
+    .catch((error) => {
+        console.log("ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ:", error);
+    });</code></pre>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mt-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p><strong>ವಿವರಣೆ:</strong> ಪ್ರತಿಯೊಂದು ಕೆಲಸ ಮುಗಿದ ನಂತರ ಮುಂದಿನ ಕೆಲಸಕ್ಕೆ ಕಳುಹಿಸಲು ನಾವು <code>.then()</code> ಅನ್ನು ಸರಪಳಿಯಂತೆ (Chain) ಜೋಡಿಸುತ್ತೇವೆ. ಎಲ್ಲಾದರೂ ತೊಂದರೆಯಾದರೆ ಕೊನೆಯಲ್ಲಿರುವ ಒಂದೇ ಒಂದು <code>.catch()</code> ಅದನ್ನು ಹಿಡಿಯುತ್ತದೆ.</p>
+                    </div>
+                </div>
+
+                <!-- Example 4 -->
+                <div id="ex-4" class="mb-12 fade-in">
+                    <h3 class="text-xl font-bold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+                        <i class="fa-solid fa-user-tie mr-2 text-blue-500"></i> ಉದಾಹರಣೆ 4: ವೃತ್ತಿಪರ ಮಟ್ಟ - Async / Await (Modern JavaScript)
+                    </h3>
+                    <p class="mb-4">ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು ಇನ್ನೂ ಸುಲಭವಾಗಿ ಮತ್ತು ನೋಡಲು ಸಾಧಾರಣ (Synchronous) ಕೋಡ್‌ನಂತೆ ಬರೆಯಲು ವೃತ್ತಿಪರ ಡೆವಲಪರ್‌ಗಳು <code>async</code> ಮತ್ತು <code>await</code> ಅನ್ನು ಬಳಸುತ್ತಾರೆ.</p>
+                    <p class="mb-4">ಮೇಲಿನ 3ನೇ ಉದಾಹರಣೆಯನ್ನು ವೃತ್ತಿಪರರು ಹೇಗೆ ಬರೆಯುತ್ತಾರೆ ನೋಡಿ:</p>
+
+                    <h4 class="font-bold text-green-500 mb-2">✅ ವೃತ್ತಿಪರ Async/Await ವಿಧಾನ:</h4>
+                    <div class="code-wrapper">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">async function haveDinner() {
+    try {
+        // await ಎಂದರೆ ಆ ಕೆಲಸ ಮುಗಿಯುವವರೆಗೂ 'ಕಾಯಿರಿ' ಎಂದರ್ಥ
+        const order = await orderFoodPromise();
+        const cookedFood = await cookFoodPromise(order);
+        const served = await serveFoodPromise(cookedFood);
+        
+        console.log("ಊಟ ಮುಗಿಯಿತು!");
+    } catch (error) {
+        // ಏನಾದರೂ ತಪ್ಪಾದರೆ ಇಲ್ಲಿಗೆ ಬರುತ್ತದೆ
+        console.log("ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ:", error);
+    }
+}
+
+haveDinner(); // ಫಂಕ್ಷನ್ ಕರೆಯುವುದು</code></pre>
+                    </div>
+                    
+                    <div class="bg-gray-100 dark:bg-gray-800 p-5 rounded-lg mt-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p class="font-bold mb-3">ವಿವರಣೆ:</p>
+                        <ul class="list-disc list-inside space-y-2 marker:text-blue-500">
+                            <li><code class="text-pink-600 dark:text-pink-400">async</code> ಎಂಬ ಪದವನ್ನು ಫಂಕ್ಷನ್ ಹಿಂದೆ ಬರೆಯುವುದರಿಂದ ಅದು ಪ್ರಾಮಿಸ್ ಅನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.</li>
+                            <li><code class="text-pink-600 dark:text-pink-400">await</code> ಎಂಬ ಪದ ಪ್ರತಿಯೊಂದು ಕೆಲಸ ಮುಗಿಯುವವರೆಗೂ ಕಾಯುವಂತೆ ಮಾಡುತ್ತದೆ.</li>
+                            <li>ಇಲ್ಲಿ <code>.then()</code> ಅಥವಾ <code>.catch()</code> ಬರೆಯುವ ಕಿರಿಕಿರಿ ಇರುವುದಿಲ್ಲ. <code>try { } catch { }</code> ಬಳಸಿ ಸುಲಭವಾಗಿ ತಪ್ಪುಗಳನ್ನು ಹಿಡಿಯಬಹುದು.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Expansion: Added Expert Concept to fulfill rules -->
+                <div id="bonus" class="mb-12 fade-in">
+                    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-6 rounded-xl shadow-lg border border-blue-700 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-20">
+                            <i class="fa-solid fa-crown text-8xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4 relative z-10 flex items-center">
+                            <i class="fa-solid fa-star text-yellow-400 mr-2"></i> 
+                            ವೃತ್ತಿಪರ ವಿಸ್ತರಣೆ (Expert Expansion): Fetch & Promise.all()
+                        </h3>
+                        <p class="mb-4 relative z-10 text-blue-100">ನೈಜ ಪ್ರಪಂಚದ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ, ನಾವು ಬಹುತೇಕ Promises ಗಳನ್ನು API ಗಳಿಂದ ಡೇಟಾ ತರಲು ಬಳಸುತ್ತೇವೆ. ಇದಕ್ಕಾಗಿ <code>fetch()</code> ಉಪಯೋಗಿಸಲಾಗುತ್ತದೆ.</p>
+                        
+                        <div class="code-wrapper mt-4 z-10 relative shadow-2xl">
+                            <button class="copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">// ಒಂದು API ನಿಂದ ಡೇಟಾ ತರುವ ವೃತ್ತಿಪರ ವಿಧಾನ
+async function getUserData() {
+    try {
+        // fetch() ತಾನಾಗಿಯೇ ಒಂದು Promise!
+        const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+        const user = await response.json(); 
+        console.log(`ನಮಸ್ಕಾರ, ${user.name}!`);
+    } catch (error) {
+        console.log("ಡೇಟಾ ತರಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ!", error);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Summary -->
+            <section id="summary" class="fade-in mb-16">
+                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-6 rounded-r-lg shadow-sm">
+                    <h3 class="text-xl font-bold mb-3 text-green-700 dark:text-green-400 flex items-center">
+                        <i class="fa-solid fa-flag-checkered mr-2"></i> ಸಾರಾಂಶ:
+                    </h3>
+                    <p class="text-lg font-medium leading-relaxed">
+                        ಕಾಲ್‌ಬ್ಯಾಕ್ ಎಂಬುದು ಹಳೆಯ ಕಾಲದ ಟೆಲಿಗ್ರಾಮ್ ಇದ್ದಂತೆ. ಪ್ರಾಮಿಸ್ ಮತ್ತು Async/Await ಎಂಬುದು ಈಗಿನ ಸ್ಮಾರ್ಟ್‌ಫೋನ್ ಇದ್ದಂತೆ! ಕೋಡ್ ಬರೆಯಲು ಮತ್ತು ಓದಲು ತುಂಬಾ ಸುಲಭವಾಗಿರುತ್ತದೆ.
+                    </p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    
+    <script>
+        // Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // On Load, check preference. (Default is dark per prompt instructions)
+        if (localStorage.getItem('color-theme') === 'light') {
+            html.classList.remove('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+            themeIcon.classList.replace('text-yellow-300', 'text-yellow-500');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-yellow-300', 'text-yellow-500');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.replace('text-yellow-500', 'text-yellow-300');
+            }
+        });
+
+        // Copy Code Functionality
+        function copyCode(button) {
+            const codeElement = button.nextElementSibling.querySelector('code');
+            const codeText = codeElement.innerText;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Copied!';
+                button.classList.add('border-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                    button.classList.remove('border-green-400');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // Intersection Observer for Fade-in Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(element => {
+            observer.observe(element);
+        });
+
+        // Intersection Observer for TOC Highlighting
+        const sections = document.querySelectorAll('section[id], div[id^="ex-"], div[id="bonus"]');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        const tocObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    
+                    // Remove active class from all links
+                    tocLinks.forEach(link => link.classList.remove('active'));
+                    
+                    // Add active class to corresponding link
+                    const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            });
+        }, { rootMargin: '-20% 0px -80% 0px' }); // Trigger when section is near top
+
+        sections.forEach(section => {
+            tocObserver.observe(section);
+        });
+    </script>
+</body>
+</html>

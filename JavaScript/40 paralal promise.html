@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Parallel Promises - Study Notes</title>
+    
+    <!-- Google Fonts for Kannada and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0f1115',
+                        darkCard: '#1a1d24',
+                        primary: '#3b82f6',
+                        accent: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #374151; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* TOC Active State */
+        .toc-link.active {
+            color: #3b82f6;
+            font-weight: 600;
+            border-left-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        .dark .toc-link.active {
+            color: #60a5fa;
+            border-left-color: #60a5fa;
+        }
+
+        /* SVG Animation */
+        .progress-bar {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: loadBar 3s infinite ease-in-out;
+        }
+        .delay-task2 { animation-delay: 0.5s; }
+        .delay-task3 { animation-delay: 1s; }
+        @keyframes loadBar {
+            0% { stroke-dashoffset: 100; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* Callout Box */
+        .callout {
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-left: 4px solid #8b5cf6;
+        }
+        .dark .callout {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+        }
+
+        /* Code block adjustments */
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: #1e1e1e !important;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300 antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full bg-white/80 dark:bg-darkBg/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-brands fa-js text-yellow-400 text-3xl"></i>
+                    <h1 class="font-bold text-xl tracking-tight">JS Promises</h1>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors" aria-label="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon text-xl text-gray-600 dark:text-gray-300"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sticky Sidebar (TOC) -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <div class="sticky top-24 bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="font-bold text-lg mb-4 text-gray-900 dark:text-white"><i class="fa-solid fa-list-ul mr-2 text-primary"></i> ಪರಿವಿಡಿ</h3>
+                <nav id="toc" class="flex flex-col space-y-1 border-l-2 border-gray-100 dark:border-gray-700">
+                    <a href="#intro" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">ಪೀಠಿಕೆ</a>
+                    <a href="#setup" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">ಉದಾಹರಣೆ ಫಂಕ್ಷನ್</a>
+                    <a href="#promise-all" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">1. Promise.all()</a>
+                    <a href="#promise-allsettled" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">2. Promise.allSettled()</a>
+                    <a href="#promise-race" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">3. Promise.race()</a>
+                    <a href="#promise-any" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">4. Promise.any()</a>
+                    <a href="#summary" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors border-l-2 border-transparent -ml-[2px]">ಸಾರಾಂಶ</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 max-w-4xl space-y-12">
+            
+            <section id="intro" class="fade-in scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <p class="mb-6 leading-relaxed">ಖಂಡಿತ, ನೀವು ನೀಡಿದ ಮಾಹಿತಿಯು ಅತ್ಯಂತ ಸುಂದರವಾಗಿದೆ ಮತ್ತು ಉದಾಹರಣೆಗಳು ತುಂಬಾ ಸರಳವಾಗಿವೆ. ನಿಮ್ಮ ಕೋರಿಕೆಯಂತೆ, ನೀವು ನೀಡಿದ <strong class="text-gray-900 dark:text-white">ಒಂದೇ ಒಂದು ಅಕ್ಷರವನ್ನೂ ಬಿಡದೆ</strong>, ಪ್ರತಿಯೊಂದು ವಿಷಯ ಮತ್ತು ಕೋಡ್‌ ಅನ್ನು ಮತ್ತಷ್ಟು ಆಳವಾಗಿ, ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಅರ್ಥವಾಗುವಂತೆ <strong class="text-gray-900 dark:text-white">ಹೆಚ್ಚುವರಿ ವಿವರಣೆಯೊಂದಿಗೆ</strong> ಕೆಳಗೆ ನೀಡುತ್ತಿದ್ದೇನೆ:</p>
+                
+                <hr class="my-6 border-gray-200 dark:border-gray-700">
+
+                <p class="mb-4 leading-relaxed"><i class="fa-solid fa-handshake mr-2 text-primary"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ 'ಪ್ರಾಮಿಸ್' (Promise) ಎಂದರೆ ಒಂದು ಭರವಸೆ. ನೀವೊಂದು ಕೆಲಸ ಕೊಟ್ಟಾಗ, ಅದು "ನಾನು ಕೆಲಸ ಮುಗಿಸಿ ಫಲಿತಾಂಶ ಕೊಡುತ್ತೇನೆ" ಎಂದು ಹೇಳುತ್ತದೆ.</p>
+                <p class="mb-4 leading-relaxed"><i class="fa-solid fa-arrows-split-up-and-left mr-2 text-accent"></i> 'Parallel' (ಸಮಾನಾಂತರ) ಎಂದರೆ ಒಂದೇ ಬಾರಿಗೆ ಹಲವು ಕೆಲಸಗಳನ್ನು ಒಟ್ಟಿಗೆ ಮಾಡುವುದು.</p>
+
+                <h3 class="text-xl font-bold mt-8 mb-4 flex items-center"><i class="fa-solid fa-book-open text-primary mr-3"></i> ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಒಂದು ಸುಲಭವಾದ ಕಥೆ ನೋಡೋಣ:</h3>
+                <p class="mb-4">ನಿಮ್ಮ ಮನೆಯಲ್ಲಿ ಒಂದು ಪಾರ್ಟಿ ಇದೆ. ನಿಮಗೆ 3 ವಸ್ತುಗಳು ಬೇಕು:</p>
+                
+                <ul class="space-y-3 mb-6 bg-gray-50 dark:bg-darkBg p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                    <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">1</span> ಸ್ನೇಹಿತ 1: ಕೇಕ್ ತರಬೇಕು (2 ನಿಮಿಷ ಆಗುತ್ತೆ)</li>
+                    <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">2</span> ಸ್ನೇಹಿತ 2: ಬಲೂನ್ ತರಬೇಕು (3 ನಿಮಿಷ ಆಗುತ್ತೆ)</li>
+                    <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">3</span> ಸ್ನೇಹಿತ 3: ಜ್ಯೂಸ್ ತರಬೇಕು (1 ನಿಮಿಷ ಆಗುತ್ತೆ)</li>
+                </ul>
+
+                <p class="mb-6 leading-relaxed">ನೀವು ಒಬ್ಬೊಬ್ಬರಿಗೇ ಫೋನ್ ಮಾಡಿ, ಅವರು ತಂದ ಮೇಲೆ ಇನ್ನೊಬ್ಬರಿಗೆ ಫೋನ್ ಮಾಡಿದರೆ ಒಟ್ಟು 6 ನಿಮಿಷ (2+3+1) ಬೇಕಾಗುತ್ತದೆ. ಆದರೆ, ನೀವು ಮೂವರಿಗೂ ಒಟ್ಟಿಗೆ (Parallel ಆಗಿ) ಫೋನ್ ಮಾಡಿದರೆ, ಕೇವಲ 3 ನಿಮಿಷದಲ್ಲಿ (ಯಾರು ಹೆಚ್ಚು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುತ್ತಾರೋ ಅಷ್ಟು) ಎಲ್ಲವೂ ಬರುತ್ತದೆ! ಇದನ್ನೇ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Parallel Promises ಎನ್ನುತ್ತಾರೆ. ಇದು ಸಮಯವನ್ನು ಉಳಿಸುತ್ತದೆ.</p>
+
+                <!-- Custom Interactive SVG Animation added for visual clarity -->
+                <div class="my-8 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700 text-center">
+                    <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Visual Concept: Parallel Execution</h4>
+                    <svg viewBox="0 0 400 120" class="w-full max-w-md mx-auto h-auto">
+                        <text x="0" y="20" fill="currentColor" class="text-xs font-semibold dark:text-gray-300">ಸ್ನೇಹಿತ 1 (2 ನಿಮಿಷ)</text>
+                        <rect x="0" y="30" width="100" height="10" rx="5" fill="#3b82f6" opacity="0.2"/>
+                        <line x1="5" y1="35" x2="65" y2="35" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" class="progress-bar"/>
+                        
+                        <text x="0" y="60" fill="currentColor" class="text-xs font-semibold dark:text-gray-300">ಸ್ನೇಹಿತ 2 (3 ನಿಮಿಷ)</text>
+                        <rect x="0" y="70" width="100" height="10" rx="5" fill="#8b5cf6" opacity="0.2"/>
+                        <line x1="5" y1="75" x2="95" y2="75" stroke="#8b5cf6" stroke-width="10" stroke-linecap="round" class="progress-bar delay-task2"/>
+                        
+                        <text x="0" y="100" fill="currentColor" class="text-xs font-semibold dark:text-gray-300">ಸ್ನೇಹಿತ 3 (1 ನಿಮಿಷ)</text>
+                        <rect x="0" y="110" width="100" height="10" rx="5" fill="#10b981" opacity="0.2"/>
+                        <line x1="5" y1="115" x2="35" y2="115" stroke="#10b981" stroke-width="10" stroke-linecap="round" class="progress-bar delay-task3"/>
+                    </svg>
+                </div>
+
+                <div class="callout p-5 rounded-xl mt-6">
+                    <h4 class="font-bold text-lg mb-2 flex items-center"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> ಹೆಚ್ಚುವರಿ ವಿವರಣೆ (ಮೂಲ ಪರಿಕಲ್ಪನೆ):</h4>
+                    <p class="leading-relaxed">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದೇ ಬಾರಿಗೆ ಕೇವಲ ಒಂದು ಕೆಲಸವನ್ನು ಮಾತ್ರ ಮಾಡುವ ಭಾಷೆ (Single-threaded). ಆದರೆ ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ತರುವುದು, ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವುದು ಮುಂತಾದ ಕೆಲಸಗಳಿಗೆ ಹೆಚ್ಚು ಸಮಯ ಬೇಕಾಗುತ್ತದೆ. ಇಂತಹ ಸಮಯದಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸುಮ್ಮನೆ ಕಾಯುತ್ತಾ ಕುಳಿತರೆ ಇಡೀ ವೆಬ್‌ಸೈಟ್ ಹ್ಯಾಂಗ್ ಆದಂತೆ ಆಗುತ್ತದೆ. ಇದನ್ನು ತಡೆಯಲು ಈ ಕೆಲಸಗಳನ್ನು ಹಿನ್ನೆಲೆಯಲ್ಲಿ (Background) ರನ್ ಮಾಡಲು ನಾವು 'Promises' ಅನ್ನು ಬಳಸುತ್ತೇವೆ. ಇದೇ ಕೆಲಸಗಳನ್ನು ಒಂದೇ ಬಾರಿಗೆ ಒಟ್ಟಿಗೆ ಶುರು ಮಾಡಿದರೆ ಅದು 'Parallel Promises' ಆಗುತ್ತದೆ.</p>
+                </div>
+            </section>
+
+            <section id="setup" class="fade-in delay-100 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಸಮಾನಾಂತರವಾಗಿ ಕೆಲಸ ಮಾಡಲು 4 ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ. ಬನ್ನಿ, ಪ್ರತಿಯೊಂದನ್ನು ಉದಾಹರಣೆ ಸಮೇತ ಹಂತ-ಹಂತವಾಗಿ ಕಲಿಯೋಣ.</p>
+                <p class="mb-4">ಉದಾಹರಣೆಗಳಿಗಾಗಿ, ಮೊದಲು ನಾವು ಒಂದು ಚಿಕ್ಕ ಫಂಕ್ಷನ್ (Function) ಬರೆಯೋಣ. ಇದು ನಮ್ಮ ಸ್ನೇಹಿತರ ಕೆಲಸವನ್ನು ಪ್ರತಿನಿಧಿಸುತ್ತದೆ:</p>
+
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg text-xs transition-colors z-10" onclick="copyCode(this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+<pre><code class="language-javascript">// ಇದು ಒಂದು ಕೆಲಸವನ್ನು ಪ್ರತಿನಿಧಿಸುವ ಫಂಕ್ಷನ್
+function doTask(taskName, time, willSuccess = true) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (willSuccess) {
+        resolve(`${taskName} ಯಶಸ್ವಿಯಾಗಿದೆ! ✅`);
+      } else {
+        reject(`${taskName} ವಿಫಲವಾಗಿದೆ! ❌`);
+      }
+    }, time);
+  });
+}</code></pre>
+                </div>
+
+                <div class="callout p-5 rounded-xl mt-6">
+                    <h4 class="font-bold text-lg mb-4 flex items-center"><i class="fa-solid fa-code text-primary mr-2"></i> ಕೋಡ್‌ನ ವಿವರವಾದ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc list-inside space-y-3 marker:text-primary">
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">function doTask(taskName, time, willSuccess = true)</code>: ನಾವು 3 ಮಾಹಿತಿಗಳನ್ನು (Parameters) ತೆಗೆದುಕೊಳ್ಳುವ ಒಂದು ಫಂಕ್ಷನ್ ಬರೆದಿದ್ದೇವೆ. ಯಾವ ಕೆಲಸ (<code class="text-sm">taskName</code>), ಎಷ್ಟು ಸಮಯ ಬೇಕು (<code class="text-sm">time</code>), ಮತ್ತು ಆ ಕೆಲಸ ಯಶಸ್ವಿಯಾಗುತ್ತದೆಯೇ ಅಥವಾ ಇಲ್ಲವೇ (<code class="text-sm">willSuccess = true</code> ಅಂದರೆ ಡೀಫಾಲ್ಟ್ ಆಗಿ ಯಶಸ್ವಿಯಾಗುತ್ತದೆ ಎಂದರ್ಥ).</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">return new Promise((resolve, reject) => { ... })</code>: ಪ್ರತಿಯೊಬ್ಬ ಸ್ನೇಹಿತನಿಗೂ ನಾವು ಕರೆ ಮಾಡಿದಾಗ, ಅವರು ನಮಗೆ ಒಂದು "ಭರವಸೆ" (Promise) ನೀಡುತ್ತಾರೆ. ಈ ಪ್ರಾಮಿಸ್ ಎರಡು ರೀತಿಯಲ್ಲಿ ಅಂತ್ಯವಾಗಬಹುದು: ಒಂದು <code class="text-sm">resolve</code> (ಕೆಲಸ ಯಶಸ್ವಿಯಾದಾಗ ಕೊಡುವ ಉತ್ತರ) ಮತ್ತು ಇನ್ನೊಂದು <code class="text-sm">reject</code> (ಕೆಲಸ ವಿಫಲವಾದಾಗ ಕೊಡುವ ಉತ್ತರ).</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">setTimeout(() => { ... }, time)</code>: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನೈಜ ಸಮಯವನ್ನು (Time delay) ಅನುಕರಿಸಲು (simulate) ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ನೀವು ನೀಡಿದ ಸಮಯದ ನಂತರ ಇದರ ಒಳಗಿರುವ ಕೋಡ್ ರನ್ ಆಗುತ್ತದೆ. 1000 ಎಂದರೆ 1 ಸೆಕೆಂಡ್.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">if (willSuccess)</code>: ನಾವು ಕೆಲಸ ಯಶಸ್ವಿಯಾಗುತ್ತದೆ ಎಂದು ಹೇಳಿದ್ದರೆ, ಅದು <code class="text-sm">resolve()</code> ಮೂಲಕ ಶುಭ ಸಂದೇಶ ಕಳಿಸುತ್ತದೆ. ಇಲ್ಲದಿದ್ದರೆ <code class="text-sm">reject()</code> ಮೂಲಕ ಕೆಲಸ ಆಗಿಲ್ಲ ಎಂಬ ದೋಷದ ಸಂದೇಶ (Error) ಕಳಿಸುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="promise-all" class="fade-in delay-200 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">1. Promise.all() - "ಎಲ್ಲರೂ ಗೆಲ್ಲಬೇಕು" (All or Nothing)</h2>
+                
+                <div class="mb-4 space-y-2">
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-book-open text-primary mr-1"></i> ಕಥೆ:</strong> ಪಾರ್ಟಿಗೆ ಕೇಕ್, ಬಲೂನ್ ಮತ್ತು ಜ್ಯೂಸ್ ಮೂರೂ ಕಡ್ಡಾಯವಾಗಿ ಬೇಕೇ ಬೇಕು. ಮೂವರಲ್ಲಿ ಒಬ್ಬ ಬರದೇ ಇದ್ದರೂ ಪಾರ್ಟಿ ಕ್ಯಾನ್ಸಲ್ (ವಿಫಲ)!</p>
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-briefcase text-primary mr-1"></i> ವೃತ್ತಿಪರ ಅರ್ಥ:</strong> ನೀವು ನೀಡಿದ ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು (ಕೆಲಸಗಳು) ಯಶಸ್ವಿಯಾದರೆ ಮಾತ್ರ ಇದು ಯಶಸ್ವಿಯಾಗುತ್ತದೆ. ಯಾವುದಾದರೂ ಒಂದು ವಿಫಲವಾದರೂ, ಇಡೀ ಪ್ರಕ್ರಿಯೆ ವಿಫಲವಾಗುತ್ತದೆ (Catch ಬ್ಲಾಕ್ ಗೆ ಹೋಗುತ್ತದೆ).</p>
+                </div>
+
+                <p class="mb-2 font-semibold">ಉದಾಹರಣೆ:</p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg text-xs transition-colors z-10" onclick="copyCode(this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+<pre><code class="language-javascript">const task1 = doTask("ಕೇಕ್ 🎂", 2000, true);
+const task2 = doTask("ಬಲೂನ್ 🎈", 3000, true);
+const task3 = doTask("ಜ್ಯೂಸ್ 🧃", 1000, true);
+
+// ಮೂರು ಕೆಲಸಗಳನ್ನು ಒಟ್ಟಿಗೆ ಶುರು ಮಾಡುವುದು
+Promise.all([task1, task2, task3])
+  .then((results) => {
+    console.log("ಪಾರ್ಟಿ ಶುರು! ಎಲ್ಲವೂ ಸಿಕ್ಕಿತು:", results);
+    // ಔಟ್‌ಪುಟ್: ["ಕೇಕ್ 🎂 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅", "ಬಲೂನ್ 🎈 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅", "ಜ್ಯೂಸ್ 🧃 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅"]
+  })
+  .catch((error) => {
+    console.log("ಅಯ್ಯೋ! ಪಾರ್ಟಿ ಕ್ಯಾನ್ಸಲ್. ಕಾರಣ:", error);
+  });</code></pre>
+                </div>
+
+                <p class="mt-4 mb-6 leading-relaxed">ಒಂದು ವೇಳೆ task2 ವಿಫಲವಾದರೆ, ಕೇವಲ catch ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತದೆ ಮತ್ತು "ಬಲೂನ್ 🎈 ವಿಫಲವಾಗಿದೆ!" ಎಂದು ತೋರಿಸುತ್ತದೆ.</p>
+
+                <div class="callout p-5 rounded-xl">
+                    <h4 class="font-bold text-lg mb-4 flex items-center"><i class="fa-solid fa-code text-primary mr-2"></i> ಕೋಡ್‌ನ ವಿವರವಾದ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc list-inside space-y-3 marker:text-primary">
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">const task1, task2, task3</code>: ಇಲ್ಲಿ ನಾವು ನಮ್ಮ ಫಂಕ್ಷನ್ ಬಳಸಿ 3 ಪ್ರತ್ಯೇಕ ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು (ಭರವಸೆಗಳನ್ನು) ಸೃಷ್ಟಿಸಿದ್ದೇವೆ.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">Promise.all([task1, task2, task3])</code>: ಈ ಮೂರೂ ಕೆಲಸಗಳನ್ನು ಒಂದು ಪಟ್ಟಿಯಲ್ಲಿ (Array <code class="text-sm">[]</code>) ಸೇರಿಸಿ <code class="text-sm">Promise.all</code> ಗೆ ನೀಡುತ್ತಿದ್ದೇವೆ. ಇದು ಮೂರೂ ಕೆಲಸಗಳನ್ನು ಏಕಕಾಲದಲ್ಲಿ (ಒಂದೇ ಬಾರಿಗೆ) ಶುರು ಮಾಡುತ್ತದೆ.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">.then((results) => { ... })</code>: ಮೂರೂ ಕೆಲಸಗಳು ಯಶಸ್ವಿಯಾಗಿ ಮುಗಿದ ನಂತರವೇ ಈ ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತದೆ. ಇಲ್ಲಿ <code class="text-sm">results</code> ಎಂಬುದು ಮೂರೂ ಕೆಲಸಗಳ ಫಲಿತಾಂಶಗಳನ್ನು ಒಳಗೊಂಡ ಒಂದು Array ಆಗಿರುತ್ತದೆ. ಇಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವುದು <code class="text-sm">task2</code> (3 ಸೆಕೆಂಡ್). ಹಾಗಾಗಿ 3 ಸೆಕೆಂಡ್‌ಗಳ ನಂತರ ಒಟ್ಟಿಗೆ ಮೂರರ ಫಲಿತಾಂಶ ಬರುತ್ತದೆ.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">.catch((error) => { ... })</code>: ಮೂರರಲ್ಲಿ ಯಾವುದಾದರೂ <strong class="text-gray-900 dark:text-white">ಒಂದು</strong> ಕೆಲಸ ವಿಫಲವಾದರೂ (ಉದಾ: ಬಲೂನ್ ತರುವಲ್ಲಿ ವಿಳಂಬ/ದೋಷ), ಉಳಿದ ಕೆಲಸಗಳು ಮುಗಿಯುವುದನ್ನು ಇದು ಕಾಯುವುದಿಲ್ಲ. ತಕ್ಷಣವೇ (Fail-fast) <code class="text-sm">.catch</code> ಬ್ಲಾಕ್‌ಗೆ ಬಂದು ದೋಷವನ್ನು ತೋರಿಸುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="promise-allsettled" class="fade-in delay-300 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">2. Promise.allSettled() - "ಏನಾಯ್ತು ಅಂತ ಹೇಳಿ" (Wait for all, don't care if pass/fail)</h2>
+                
+                <div class="mb-4 space-y-2">
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-book-open text-primary mr-1"></i> ಕಥೆ:</strong> ಪಾರ್ಟಿಗೆ ಮೂವರೂ ಬರಬೇಕು. ಒಬ್ಬ ತರದೇ ಇದ್ದರೂ ಪರವಾಗಿಲ್ಲ, ಪಾರ್ಟಿ ನಡೆಯುತ್ತದೆ. ಆದರೆ ಕೊನೆಯಲ್ಲಿ ನನಗೆ ಯಾರು ಏನು ತಂದರು, ಯಾರು ತರಲಿಲ್ಲ ಎಂಬ ಪೂರ್ಣ ರಿಪೋರ್ಟ್ ಬೇಕು.</p>
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-briefcase text-primary mr-1"></i> ವೃತ್ತಿಪರ ಅರ್ಥ:</strong> ಇದು ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು ಮುಗಿಯುವವರೆಗೆ ಕಾಯುತ್ತದೆ. ಅವು ಯಶಸ್ವಿಯಾಗಲಿ ಅಥವಾ ವಿಫಲವಾಗಲಿ, ಪ್ರತಿಯೊಂದರ ಸ್ಥಿತಿಯನ್ನು (status) ಒಂದು ಪಟ್ಟಿಯಾಗಿ (Array) ನೀಡುತ್ತದೆ.</p>
+                </div>
+
+                <p class="mb-2 font-semibold">ಉದಾಹರಣೆ:</p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg text-xs transition-colors z-10" onclick="copyCode(this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+<pre><code class="language-javascript">const t1 = doTask("ಕೇಕ್ 🎂", 2000, true); // ಯಶಸ್ಸು
+const t2 = doTask("ಬಲೂನ್ 🎈", 3000, false); // ವಿಫಲ (ಬಲೂನ್ ಒಡೆದುಹೋಯ್ತು!)
+const t3 = doTask("ಜ್ಯೂಸ್ 🧃", 1000, true); // ಯಶಸ್ಸು
+
+Promise.allSettled([t1, t2, t3])
+  .then((results) => {
+    console.log("ಪಾರ್ಟಿಯ ರಿಪೋರ್ಟ್:");
+    console.log(results);
+  });
+
+/* 
+ಔಟ್‌ಪುಟ್:
+[
+  { status: 'fulfilled', value: 'ಕೇಕ್ 🎂 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅' },
+  { status: 'rejected', reason: 'ಬಲೂನ್ 🎈 ವಿಫಲವಾಗಿದೆ! ❌' },
+  { status: 'fulfilled', value: 'ಜ್ಯೂಸ್ 🧃 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅' }
+]
+*/</code></pre>
+                </div>
+
+                <p class="mt-4 mb-6 leading-relaxed">ಯಾವ ಕೆಲಸವೂ ಅರ್ಧಕ್ಕೆ ನಿಲ್ಲುವುದಿಲ್ಲ, ಎಲ್ಲದರ ಪೂರ್ಣ ಮಾಹಿತಿ ಸಿಗುತ್ತದೆ.</p>
+
+                <div class="callout p-5 rounded-xl">
+                    <h4 class="font-bold text-lg mb-4 flex items-center"><i class="fa-solid fa-code text-primary mr-2"></i> ಕೋಡ್‌ನ ವಿವರವಾದ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc list-inside space-y-3 marker:text-primary">
+                        <li>ಇಲ್ಲಿ <code class="text-sm">t2</code> (ಬಲೂನ್) ಕೆಲಸವನ್ನು ಬೇಕೆಂತಲೇ <code class="text-sm">false</code> (ವಿಫಲ) ಎಂದು ನೀಡಿದ್ದೇವೆ.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">Promise.allSettled([...])</code>: <code class="text-sm">Promise.all</code> ನಂತೆ ಇದು ಯಾವುದಾದರೂ ಒಂದು ವಿಫಲವಾದ ತಕ್ಷಣವೇ ಓಡಿಹೋಗುವುದಿಲ್ಲ. ಬದಲಾಗಿ, ಕೊಟ್ಟಿರುವ <strong class="text-gray-900 dark:text-white">ಎಲ್ಲಾ ಕೆಲಸಗಳು ಮುಗಿಯುವವರೆಗೂ</strong> (ಅದು ಯಶಸ್ಸಾಗಲಿ, ವಿಫಲವಾಗಲಿ) ಕಾಯುತ್ತದೆ.</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">.then((results) => { ... })</code>: ಇಲ್ಲಿ <code class="text-sm">catch</code> ಬ್ಲಾಕ್‌ನ ಅವಶ್ಯಕತೆಯೇ ಬರುವುದಿಲ್ಲ, ಏಕೆಂದರೆ ವಿಫಲವಾದರೂ ಅದು <code class="text-sm">.then</code> ನಲ್ಲೇ ರಿಪೋರ್ಟ್ ನೀಡುತ್ತದೆ!</li>
+                        <li><code class="text-sm">results</code> ನಲ್ಲಿ ಬರುವ ರಿಪೋರ್ಟ್ ಹೀಗಿರುತ್ತದೆ:
+                            <ul class="list-circle list-inside ml-6 mt-2 space-y-2">
+                                <li>ಯಶಸ್ವಿಯಾದ ಪ್ರಾಮಿಸ್‌ಗಳಿಗೆ: <code class="text-sm">status: 'fulfilled'</code> ಮತ್ತು <code class="text-sm">value: '...'</code> ಎಂದು ಬರುತ್ತದೆ.</li>
+                                <li>ವಿಫಲವಾದ ಪ್ರಾಮಿಸ್‌ಗಳಿಗೆ: <code class="text-sm">status: 'rejected'</code> ಮತ್ತು <code class="text-sm">reason: '...'</code> (ಏಕೆ ವಿಫಲವಾಯ್ತು ಎಂಬ ಕಾರಣ) ಎಂದು ಬರುತ್ತದೆ. ಇದನ್ನು ನೀವು ಪ್ರತ್ಯೇಕವಾಗಿ ಪರಿಶೀಲಿಸಿ ಮುಂದಿನ ಕ್ರಮ ಕೈಗೊಳ್ಳಬಹುದು.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="promise-race" class="fade-in delay-300 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-4 text-orange-500 dark:text-orange-400">3. Promise.race() - "ಯಾರು ಮೊದಲು ಬರ್ತಾರೋ ಅವರು" (First to finish wins)</h2>
+                
+                <div class="mb-4 space-y-2">
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-book-open text-primary mr-1"></i> ಕಥೆ:</strong> ನಿಮಗೆ ತುಂಬಾ ಹಸಿವಾಗಿದೆ. ನೀವು 3 ಬೇರೆ ಬೇರೆ ಅಂಗಡಿಗಳಿಗೆ ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಯಾವ ಅಂಗಡಿಯ ಡೆಲಿವರಿ ಬಾಯ್ ಮೊದಲು ಬರುತ್ತಾನೋ, ಅವನಿಂದ ಪಿಜ್ಜಾ ತೆಗೆದುಕೊಳ್ಳುತ್ತೀರಿ (ಉಳಿದವರನ್ನು ವಾಪಸ್ ಕಳಿಸುತ್ತೀರಿ). ಆ ಮೊದಲು ಬಂದವನು ಪಿಜ್ಜಾ ತಂದರೂ ಸರಿ, ಅಥವಾ "ಪಿಜ್ಜಾ ಇಲ್ಲ" ಅಂತ ಹೇಳಿದರೂ ಸರಿ, ಅವನದೇ ಅಂತಿಮ.</p>
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-briefcase text-primary mr-1"></i> ವೃತ್ತಿಪರ ಅರ್ಥ:</strong> ಕೊಟ್ಟಿರುವ ಪ್ರಾಮಿಸ್‌ಗಳಲ್ಲಿ ಯಾವುದು ಮೊದಲು ಮುಗಿಯುತ್ತದೆಯೋ (ಅದು ಯಶಸ್ಸಾಗಲಿ ಅಥವಾ ವಿಫಲವಾಗಲಿ), ಅದರ ಫಲಿತಾಂಶವನ್ನು ಮಾತ್ರ ಇದು ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ.</p>
+                </div>
+
+                <p class="mb-2 font-semibold">ಉದಾಹರಣೆ:</p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg text-xs transition-colors z-10" onclick="copyCode(this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+<pre><code class="language-javascript">const shop1 = doTask("ಅಂಗಡಿ 1", 3000, true);
+const shop2 = doTask("ಅಂಗಡಿ 2", 1000, false); // ಇದು ಬೇಗ ಬರುತ್ತೆ, ಆದರೆ ವಿಫಲ
+const shop3 = doTask("ಅಂಗಡಿ 3", 2000, true);
+
+Promise.race([shop1, shop2, shop3])
+  .then((result) => {
+    console.log("ಮೊದಲು ಬಂದದ್ದು:", result);
+  })
+  .catch((error) => {
+    console.log("ಮೊದಲು ಬಂದದ್ದು ವಿಫಲವಾಯ್ತು:", error); 
+    // ಔಟ್‌ಪುಟ್: "ಮೊದಲು ಬಂದದ್ದು ವಿಫಲವಾಯ್ತು: ಅಂಗಡಿ 2 ವಿಫಲವಾಗಿದೆ! ❌"
+  });</code></pre>
+                </div>
+
+                <p class="mt-4 mb-6 leading-relaxed">ಇಲ್ಲಿ 'ಅಂಗಡಿ 2' ಕೇವಲ 1 ಸೆಕೆಂಡಿನಲ್ಲಿ ಬಂದಿದ್ದರಿಂದ, ಅದು ವಿಫಲವಾದರೂ ಅದನ್ನೇ ಪರಿಗಣಿಸಲಾಗುತ್ತದೆ.</p>
+
+                <div class="callout p-5 rounded-xl">
+                    <h4 class="font-bold text-lg mb-4 flex items-center"><i class="fa-solid fa-code text-primary mr-2"></i> ಕೋಡ್‌ನ ವಿವರವಾದ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc list-inside space-y-3 marker:text-primary">
+                        <li>ಇಲ್ಲಿ ಮೂರು ಅಂಗಡಿಗಳಿವೆ. ಸಮಯ ಗಮನಿಸಿ: <code class="text-sm">shop1</code> (3 ಸೆಕೆಂಡ್), <code class="text-sm">shop2</code> (1 ಸೆಕೆಂಡ್), <code class="text-sm">shop3</code> (2 ಸೆಕೆಂಡ್).</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">Promise.race([...])</code>: ರೇಸ್ (ಓಟದ ಸ್ಪರ್ಧೆ) ಇದ್ದಂತೆ. ಯಾರು ಫಿನಿಶ್ ಲೈನ್ ಅನ್ನು ಮೊದಲು ಮುಟ್ಟುತ್ತಾರೋ ಅವರೇ ಇಲ್ಲಿ ವಿನ್ನರ್.</li>
+                        <li>ಇಲ್ಲಿ <code class="text-sm">shop2</code> ಕೇವಲ 1 ಸೆಕೆಂಡಿನಲ್ಲಿ ಸ್ಪಂದಿಸುತ್ತದೆ. ಆದರೆ ಅದು <code class="text-sm">false</code> (ವಿಫಲ) ಆಗಿದೆ. ಆದರೂ ಇದು <code class="text-sm">Promise.race</code> ಆಗಿರುವುದರಿಂದ, ಮೊದಲು ಬಂದ ಉತ್ತರ ವಿಫಲವಾದ ಕಾರಣ ನೇರವಾಗಿ <code class="text-sm">.catch()</code> ಬ್ಲಾಕ್‌ಗೆ ಹೋಗಿ ದೋಷವನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                        <li>ಒಂದು ವೇಳೆ <code class="text-sm">shop2</code> ಯಶಸ್ವಿಯಾಗಿದ್ದರೆ, ನೇರವಾಗಿ <code class="text-sm">.then()</code> ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತಿತ್ತು. ಉಳಿದ <code class="text-sm">shop1</code> ಮತ್ತು <code class="text-sm">shop3</code> ಏನಾಯಿತು ಎಂಬುದನ್ನು ಇದು ಸಂಪೂರ್ಣವಾಗಿ ನಿರ್ಲಕ್ಷಿಸುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="promise-any" class="fade-in delay-300 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-4 text-green-600 dark:text-green-500">4. Promise.any() - "ಯಾರು ಮೊದಲು ಯಶಸ್ವಿಯಾಗ್ತಾರೋ ಅವರು" (First success wins)</h2>
+                
+                <div class="mb-4 space-y-2">
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-book-open text-primary mr-1"></i> ಕಥೆ:</strong> ನೀವು ಆಸ್ಪತ್ರೆಗೆ ಹೋಗಲು 3 ಟ್ಯಾಕ್ಸಿಗಳಿಗೆ ಕರೆ ಮಾಡುತ್ತೀರಿ. ಮೊದಲು ಬಂದ ಟ್ಯಾಕ್ಸಿಯವನು "ನಾನು ಬರಲ್ಲ" (ವಿಫಲ) ಎಂದರೆ ನೀವು ಸುಮ್ಮನಾಗುವುದಿಲ್ಲ, ಮುಂದಿನ ಟ್ಯಾಕ್ಸಿಗಾಗಿ ಕಾಯುತ್ತೀರಿ. ಯಾವ ಟ್ಯಾಕ್ಸಿ ಮೊದಲು "ಬರುತ್ತೇನೆ" (ಯಶಸ್ಸು) ಎಂದು ನಿಮ್ಮ ಬಳಿ ಬರುತ್ತದೆಯೋ ಅದರಲ್ಲಿ ಹೋಗುತ್ತೀರಿ.</p>
+                    <p><strong class="text-gray-900 dark:text-white"><i class="fa-solid fa-briefcase text-primary mr-1"></i> ವೃತ್ತಿಪರ ಅರ್ಥ:</strong> ಇದು ಮೊದಲ ಯಶಸ್ವಿ ಪ್ರಾಮಿಸ್‌ಗಾಗಿ ಕಾಯುತ್ತದೆ. ಮೊದಲು ಮುಗಿದ ಕೆಲಸ ವಿಫಲವಾದರೆ, ಅದು ಮುಂದಿನ ಕೆಲಸಕ್ಕಾಗಿ ಕಾಯುತ್ತದೆ. ಎಲ್ಲಾ ಕೆಲಸಗಳೂ ವಿಫಲವಾದರೆ ಮಾತ್ರ ಇದು ವಿಫಲವಾಗುತ್ತದೆ.</p>
+                </div>
+
+                <p class="mb-2 font-semibold">ಉದಾಹರಣೆ:</p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg text-xs transition-colors z-10" onclick="copyCode(this)">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+<pre><code class="language-javascript">const taxi1 = doTask("ಟ್ಯಾಕ್ಸಿ 1", 1000, false); // ಬೇಗ ಬಂತು, ಆದ್ರೆ ಬರಲ್ಲ ಅಂದ!
+const taxi2 = doTask("ಟ್ಯಾಕ್ಸಿ 2", 2000, true);  // 2 ಸೆಕೆಂಡ್‌ಗೆ ಬಂತು, ಯಶಸ್ಸು!
+const taxi3 = doTask("ಟ್ಯಾಕ್ಸಿ 3", 3000, true);
+
+Promise.any([taxi1, taxi2, taxi3])
+  .then((result) => {
+    console.log("ನಮಗೆ ಸಿಕ್ಕ ಟ್ಯಾಕ್ಸಿ:", result);
+    // ಔಟ್‌ಪುಟ್: "ನಮಗೆ ಸಿಕ್ಕ ಟ್ಯಾಕ್ಸಿ: ಟ್ಯಾಕ್ಸಿ 2 ಯಶಸ್ವಿಯಾಗಿದೆ! ✅"
+  })
+  .catch((error) => {
+    console.log("ಯಾವ ಟ್ಯಾಕ್ಸಿಯೂ ಸಿಗಲಿಲ್ಲ!", error);
+  });</code></pre>
+                </div>
+
+                <p class="mt-4 mb-6 leading-relaxed">ಇಲ್ಲಿ 'ಟ್ಯಾಕ್ಸಿ 1' ಮೊದಲು ಬಂದರೂ ವಿಫಲವಾದ ಕಾರಣ, ಪ್ರೋಗ್ರಾಮ್ 'ಟ್ಯಾಕ್ಸಿ 2' ಗಾಗಿ ಕಾಯುತ್ತದೆ ಮತ್ತು ಅದನ್ನು ಸ್ವೀಕರಿಸುತ್ತದೆ.</p>
+
+                <div class="callout p-5 rounded-xl">
+                    <h4 class="font-bold text-lg mb-4 flex items-center"><i class="fa-solid fa-code text-primary mr-2"></i> ಕೋಡ್‌ನ ವಿವರವಾದ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc list-inside space-y-3 marker:text-primary">
+                        <li>ಇಲ್ಲಿ <code class="text-sm">taxi1</code> (1 ಸೆಕೆಂಡ್) ಮೊದಲು ಬರುತ್ತದೆ, ಆದರೆ ಅದು ವಿಫಲ (<code class="text-sm">false</code>).</li>
+                        <li><code class="px-1 py-0.5 bg-gray-200 dark:bg-gray-800 rounded text-sm text-pink-600 dark:text-pink-400">Promise.any([...])</code>: ಇದು ಕೇವಲ "ರೇಸ್" ಅಲ್ಲ, ಬದಲಾಗಿ "ಯಶಸ್ಸಿನ ರೇಸ್". ಮೊದಲು ಬಂದ ಉತ್ತರ ವಿಫಲವಾದರೂ ಇದು ಸುಮ್ಮನಾಗುವುದಿಲ್ಲ. ಇದು ಮೊದಲ <strong class="text-gray-900 dark:text-white">ಯಶಸ್ಸಿಗಾಗಿ</strong> (Success) ಹುಡುಕುತ್ತಾ ಕಾಯುತ್ತದೆ.</li>
+                        <li><code class="text-sm">taxi1</code> ವಿಫಲವಾದರೂ, ಅದು ಪಕ್ಕಕ್ಕಿಟ್ಟು, ಮುಂದಿನ ಟ್ಯಾಕ್ಸಿಗಾಗಿ ಕಾಯುತ್ತದೆ. 2ನೇ ಸೆಕೆಂಡಿನಲ್ಲಿ <code class="text-sm">taxi2</code> ಬಂದು ಯಶಸ್ವಿಯಾಗುತ್ತದೆ (<code class="text-sm">true</code>). ತಕ್ಷಣವೇ ಅದು <code class="text-sm">.then()</code> ಬ್ಲಾಕ್ ಅನ್ನು ರನ್ ಮಾಡಿ "ನಮಗೆ ಸಿಕ್ಕ ಟ್ಯಾಕ್ಸಿ: ಟ್ಯಾಕ್ಸಿ 2" ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                        <li>ಒಂದು ವೇಳೆ ಮೂರೂ ಟ್ಯಾಕ್ಸಿಗಳು ವಿಫಲವಾದರೆ ಮಾತ್ರ ಇದು <code class="text-sm">.catch()</code> ಬ್ಲಾಕ್‌ಗೆ ಹೋಗುತ್ತದೆ (ಆಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ <code class="text-sm">AggregateError: All promises were rejected</code> ಎಂಬ ವಿಶೇಷ ದೋಷವನ್ನು ನೀಡುತ್ತದೆ).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="summary" class="fade-in delay-300 scroll-mt-24 bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-6 flex items-center"><i class="fa-solid fa-table-list text-primary mr-3"></i> ಸಾರಾಂಶ (ನೆನಪಿಡಲು ಸುಲಭವಾದ ಟಿಪ್ಸ್)</h2>
+                
+                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 dark:bg-gray-800/50">
+                                <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 font-bold">ಮೆಥಡ್</th>
+                                <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 font-bold">ನಿಯಮ (Rule)</th>
+                                <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 font-bold">ಯಾವಾಗ ಬಳಸಬೇಕು?</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                <td class="px-6 py-4 font-mono text-blue-600 dark:text-blue-400">Promise.all</td>
+                                <td class="px-6 py-4">ಎಲ್ಲರೂ ಪಾಸ್ ಆಗಬೇಕು.</td>
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">ಎಲ್ಲಾ ಡೇಟಾ ಕಡ್ಡಾಯವಾಗಿ ಬೇಕಿದ್ದಾಗ.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                <td class="px-6 py-4 font-mono text-purple-600 dark:text-purple-400">Promise.allSettled</td>
+                                <td class="px-6 py-4">ಪಾಸ್/ಫೇಲ್ ಏನೇ ಆದರೂ ರಿಪೋರ್ಟ್ ಕೊಡು.</td>
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">ಯಾರು ಏನೇ ಮಾಡಿದರೂ ಪೂರ್ಣ ಲೆಕ್ಕ ಬೇಕಿದ್ದಾಗ.</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                <td class="px-6 py-4 font-mono text-orange-500 dark:text-orange-400">Promise.race</td>
+                                <td class="px-6 py-4">ಯಾರು ಮೊದಲು ಬರ್ತಾರೋ ಅವರೇ ವಿನ್ನರ್ (ಪಾಸ್ ಅಥವಾ ಫೇಲ್).</td>
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">ಯಾರು ಅತಿ ವೇಗವಾಗಿ ಪ್ರತಿಕ್ರಿಯಿಸುತ್ತಾರೆ ಎಂದು ನೋಡಲು (ಉದಾ: Timeout).</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                                <td class="px-6 py-4 font-mono text-green-600 dark:text-green-500">Promise.any</td>
+                                <td class="px-6 py-4">ಯಾರು ಮೊದಲು ಪಾಸ್ ಆಗ್ತಾರೋ ಅವರೇ ವಿನ್ನರ್.</td>
+                                <td class="px-6 py-4 text-gray-600 dark:text-gray-400">ಯಾವುದಾದರೂ ಒಂದು ಯಶಸ್ವಿಯಾದರೂ ಸಾಕು ಎಂದಾಗ.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="callout p-5 rounded-xl mt-8">
+                    <h4 class="font-bold text-lg mb-2 flex items-center"><i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> ಕೊನೆಯ ಮಾತು:</h4>
+                    <p class="leading-relaxed">ಒಂದೇ ಬಾರಿಗೆ (Parallel) ಕೆಲಸಗಳನ್ನು ಮಾಡಿದಾಗ ಪ್ರೋಗ್ರಾಮ್‌ನ ವೇಗ (Performance) ಅಗಾಧವಾಗಿ ಹೆಚ್ಚಾಗುತ್ತದೆ. ನಿಮ್ಮ ಅಗತ್ಯಕ್ಕೆ ತಕ್ಕಂತೆ ಈ ನಾಲ್ಕರಲ್ಲಿ ಸೂಕ್ತವಾದದ್ದನ್ನು ಆರಿಸಿಕೊಳ್ಳುವುದು ಉತ್ತಮ ಡೆವಲಪರ್‌ನ ಲಕ್ಷಣ.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <script>
+        // Theme Toggle Logic
+        const htmlObj = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Check local storage or default to dark
+        if (localStorage.getItem('theme') === 'light') {
+            htmlObj.classList.remove('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            htmlObj.classList.add('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlObj.classList.toggle('dark');
+            if (htmlObj.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+
+        // Copy Code Functionality
+        function copyCode(btn) {
+            // Find the pre > code element relative to the button
+            const codeEl = btn.parentElement.querySelector('code');
+            const textToCopy = codeEl.innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Copied!';
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // Scrollspy for TOC highlighting
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.toc-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${entry.target.id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

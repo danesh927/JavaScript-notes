@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Advanced Notes & Concepts</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        accent: '#3b82f6',
+                        accentHover: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PrismJS for Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- AOS for Scroll Animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        
+        /* Code Block Enhancements */
+        pre {
+            border-radius: 0.5rem !important;
+            margin: 1.5rem 0 !important;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Typography Polish */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+        }
+        
+        /* Active Sidebar Link */
+        .nav-link.active {
+            color: #60a5fa !important;
+            font-weight: 700;
+            border-left: 4px solid #60a5fa;
+            padding-left: 0.75rem;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .copy-btn {
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-slate-300 transition-colors duration-300">
+
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="fixed top-4 right-4 z-50 p-3 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300 shadow-lg hover:scale-110 transition-transform focus:outline-none">
+        <i class="fas fa-sun dark:hidden"></i>
+        <i class="fas fa-moon hidden dark:block"></i>
+    </button>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-72 bg-white dark:bg-darkCard shadow-xl md:fixed h-auto md:h-screen overflow-y-auto border-r border-gray-200 dark:border-slate-700 transition-colors duration-300 z-40">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 mb-6">
+                    <i class="fab fa-js text-yellow-400 mr-2"></i>JS Master Notes
+                </h2>
+                <nav class="flex flex-col space-y-2">
+                    <a href="#intro" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-book-open w-6"></i> ಪೀಠಿಕೆ</a>
+                    <a href="#level1" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-seedling w-6"></i> ಹಂತ 1: ನಾನ್-ಐಟಿ</a>
+                    <a href="#level2" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-link w-6"></i> ಹಂತ 2: __proto__</a>
+                    <a href="#level3" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-tools w-6"></i> ಹಂತ 3: Object.create</a>
+                    <a href="#level4" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-project-diagram w-6"></i> ಹಂತ 4: Prototype Chain</a>
+                    <a href="#level5" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-star w-6"></i> ಹಂತ 5: ES6 Classes</a>
+                    <a href="#memory" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-memory w-6"></i> ಮೆಮೊರಿ ಮ್ಯಾನೇಜ್ಮೆಂಟ್</a>
+                    <a href="#this-bind" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-hand-pointer w-6"></i> this, call & bind</a>
+                    <div class="my-4 border-t border-gray-200 dark:border-slate-700"></div>
+                    <span class="text-xs uppercase font-bold text-gray-400 tracking-wider px-3">Expanded Core API Notes</span>
+                    <a href="#dom" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-sitemap w-6"></i> DOM & Selection</a>
+                    <a href="#events" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-mouse-pointer w-6"></i> Event Handling</a>
+                    <a href="#storage" class="nav-link text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-blue-400 transition-colors py-2 px-3 rounded block"><i class="fas fa-database w-6"></i> Storage APIs</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-72 p-6 md:p-12 lg:px-24">
+            
+            <!-- ORIGINAL NOTES PRESERVATION START -->
+            <div class="max-w-4xl mx-auto">
+                <section id="intro" class="mb-16 pt-8" data-aos="fade-up">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg mb-8 shadow-sm">
+                        <p class="italic text-lg">ನೀವು ಒದಗಿಸಿದ ಮಾಹಿತಿಯು Prototypal Inheritance ಅನ್ನು ವಿವರಿಸಲು ಅತ್ಯುತ್ತಮವಾಗಿದೆ. ನಾನ್-ಐಟಿ ಹಂತದಿಂದ ಪ್ರೊಫೆಷನಲ್ ಹಂತದವರೆಗಿನ ನಿಮ್ಮ ಉದಾಹರಣೆಗಳು ಕಲಿಯುವವರಿಗೆ ವಿಷಯವನ್ನು ಬಹಳ ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಸುತ್ತವೆ. ನೀವು ನೀಡಿದ ಪ್ರತಿಯೊಂದು ಅಂಶವನ್ನೂ ಉಳಿಸಿಕೊಂಡು, ಕೋಡ್ ಅನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಫಾರ್ಮ್ಯಾಟ್ ಮಾಡಿ, ತಾಂತ್ರಿಕವಾಗಿ ಇನ್ನಷ್ಟು ನಿಖರವಾಗಿಸಲು ಕೆಲವು ಪ್ರಮುಖ ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿಗಳನ್ನು (ಉದಾಹರಣೆಗೆ: Object.prototype ಮತ್ತು ಆಧುನಿಕ getPrototypeOf ವಿಧಾನ) ಸೇರಿಸಿ ಈ ಕೆಳಗೆ ಕ್ರಮಬದ್ಧವಾಗಿ ತಯಾರಿಸಲಾಗಿದೆ.</p>
+                    </div>
+
+                    <h1 class="text-4xl font-extrabold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fab fa-js-square text-yellow-500 mr-4 text-5xl"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Prototypal Inheritance (ಪ್ರೋಟೋಟೈಪಲ್ ಇನ್ಹೆರಿಟೆನ್ಸ್)
+                    </h1>
+                    
+                    <p class="text-lg mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Prototypal Inheritance ಎನ್ನುವುದು ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನ ಒಂದು ಅತಿ ಮುಖ್ಯವಾದ ಪರಿಕಲ್ಪನೆ. ಒಂದು ಆಬ್ಜೆಕ್ಟ್ (Object) ಮತ್ತೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಗಳನ್ನು (Properties) ಮತ್ತು ಕೆಲಸಗಳನ್ನು (Functions/Methods) ಎರವಲು ಪಡೆಯುವ ಅಥವಾ ವಂಶಪಾರಂಪರ್ಯವಾಗಿ ಪಡೆಯುವ ಪ್ರಕ್ರಿಯೆಯನ್ನೇ Inheritance ಎನ್ನುತ್ತಾರೆ.</p>
+                    
+                    <p class="text-lg">ಇದನ್ನು ಯಾವುದೇ ಹಿನ್ನೆಲೆಯ ವ್ಯಕ್ತಿಗೂ ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ "ನಾನ್-ಐಟಿ" ಹಂತದಿಂದ ಆರಂಭಿಸಿ, "ಪ್ರೊಫೆಷನಲ್" ಹಂತದವರೆಗೆ 4 ಹಂತಗಳಲ್ಲಿ ಸವಿವರವಾಗಿ ನೋಡೋಣ.</p>
+                </section>
+
+                <section id="level1" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 border-b border-gray-200 dark:border-slate-700 pb-2">
+                        <i class="fas fa-users mr-2"></i> ಹಂತ 1: ನಾನ್-ಐಟಿ (Non-IT) ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ - "ತಲೆಮಾರುಗಳ ಆಸ್ತಿ" ಉದಾಹರಣೆ
+                    </h2>
+                    <p class="mb-4">Inheritance (ಇನ್ಹೆರಿಟೆನ್ಸ್) ಎಂದರೆ "ಆನುವಂಶಿಕತೆ" ಅಥವಾ ತಲೆಮಾರುಗಳಿಂದ ಬಂದ ಆಸ್ತಿ. ಒಂದು ಕುಟುಂಬವನ್ನು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ:</p>
+                    <ul class="list-none space-y-3 mb-6 bg-white dark:bg-darkCard p-6 rounded-lg shadow-md border border-gray-100 dark:border-slate-700">
+                        <li class="flex items-center"><i class="fas fa-user-tie text-blue-500 text-xl w-8"></i> <span><strong>1. ತಾತ (Grandfather):</strong> ಇವರ ಬಳಿ "10 ಎಕರೆ ಜಮೀನು" ಇದೆ.</span></li>
+                        <li class="flex items-center"><i class="fas fa-user text-green-500 text-xl w-8"></i> <span><strong>2. ಅಪ್ಪ (Father):</strong> ಇವರ ಬಳಿ ಸ್ವಂತ "1 ಮನೆ" ಇದೆ. ಜೊತೆಗೆ ತಾತನ 10 ಎಕರೆ ಜಮೀನಿನ ಹಕ್ಕೂ ಇದೆ.</span></li>
+                        <li class="flex items-center"><i class="fas fa-child text-purple-500 text-xl w-8"></i> <span><strong>3. ಮಗ (Son):</strong> ಇವನ ಬಳಿ ಸ್ವಂತ "1 ಕಾರು" ಇದೆ.</span></li>
+                    </ul>
+                    <p class="mb-4">ಈಗ ಮಗನ ಬಳಿ ಜಮೀನು ಇದೆಯಾ ಎಂದು ಕೇಳಿದರೆ, "ಹೌದು" ಎನ್ನುತ್ತೇವೆ. ಏಕೆಂದರೆ ಮಗನಿಗೆ ತನ್ನ ತಂದೆಯ ಮನೆ ಮತ್ತು ತಾತನ ಜಮೀನು ಎರಡನ್ನೂ ಬಳಸುವ ಹಕ್ಕಿರುತ್ತದೆ. ಅಂದರೆ, ಮಗ ತಾನು ಕಷ್ಟಪಟ್ಟು ಜಮೀನು ಖರೀದಿಸುವ ಬದಲು, ತನ್ನ ಮೂಲದಿಂದ (Parent/Grandparent) ಅದನ್ನು ಉಚಿತವಾಗಿ ಪಡೆದಿದ್ದಾನೆ (Inherit ಮಾಡಿದ್ದಾನೆ).</p>
+                    <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-r text-green-900 dark:text-green-200 font-medium">
+                        <i class="fas fa-lightbulb mr-2 text-green-500"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲೂ ಆಬ್ಜೆಕ್ಟ್‌ಗಳು ಇದೇ ರೀತಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ! ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ತನ್ನ ಬಳಿ ಇಲ್ಲದ ಗುಣವನ್ನು, ತನ್ನ ಮೇಲಿರುವ Parent ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಪಡೆದುಕೊಳ್ಳುತ್ತದೆ.
+                    </div>
+                </section>
+
+                <section id="level2" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 border-b border-gray-200 dark:border-slate-700 pb-2">
+                        <i class="fas fa-code-branch mr-2"></i> ಹಂತ 2: ಬಿಗಿನರ್ಸ್ ಲೆವೆಲ್ - ಆಬ್ಜೆಕ್ಟ್‌ಗಳ ನಡುವೆ ನೇರ ಸಂಪರ್ಕ (__proto__)
+                    </h2>
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಆಸ್ತಿಯನ್ನು (ಗುಣಗಳನ್ನು) ಹಸ್ತಾಂತರಿಸಲು ನಾವು <code>__proto__</code> ಎಂಬ ಗುಪ್ತ ಕೊಂಡಿಯನ್ನು (Hidden Link) ಬಳಸುತ್ತೇವೆ.</p>
+                    <p class="font-semibold mb-2">ಉದಾಹರಣೆ 1: ಪ್ರಾಣಿ ಮತ್ತು ನಾಯಿ</p>
+                    
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// 1. ಇದು "parent" ಆಬ್ಜೆಕ್ಟ್ (ತಾತನ ಹಾಗೆ)
+let animal = {
+  eats: true,
+  sleeps: true
+};
+
+// 2. ಇದು "child" ಆಬ್ಜೆಕ್ಟ್ (ಮಗನ ಹಾಗೆ)
+let dog = {
+  barks: true
+};
+
+// 3. ಈಗ 'dog' ಗೆ 'animal' ನ ಗುಣಗಳನ್ನು ವರ್ಗಾಯಿಸೋಣ (Inheritance)
+dog.__proto__ = animal; 
+
+// ಪರೀಕ್ಷೆ ಮಾಡೋಣ:
+console.log(dog.barks); // true (ಇದು ನಾಯಿಯ ಸ್ವಂತ ಗುಣ)
+console.log(dog.eats);  // true (ಇದು 'animal' ನಿಂದ Inherit ಆದ ಗುಣ!)</code></pre>
+                    </div>
+                    
+                    <p class="mb-4"><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> ಇಲ್ಲಿ <code>dog</code> ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗೆ <code>eats</code> ಎಂಬ ಗುಣವಿರಲಿಲ್ಲ. ಆದರೆ ನಾವು <code>dog.__proto__ = animal</code> ಎಂದು ಹೇಳಿದಾಗ, ನಾಯಿಗೆ ಪ್ರಾಣಿಯ ಆಸ್ತಿಯೆಲ್ಲಾ ಸಿಕ್ಕಿತು. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೊದಲು <code>dog</code> ಒಳಗೆ <code>eats</code> ಇದೆಯಾ ಎಂದು ಹುಡುಕುತ್ತದೆ, ಇಲ್ಲದಿದ್ದಾಗ ಗುಪ್ತ ಕನೆಕ್ಷನ್ ಮೂಲಕ <code>animal</code> ನ ಬಳಿ ಹೋಗಿ ಅದನ್ನು ತರುತ್ತದೆ.</p>
+                    
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded-r mb-4">
+                        <strong><i class="fas fa-info-circle text-yellow-500 mr-2"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ (Best Practice):</strong> ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನೇರವಾಗಿ <code>__proto__</code> ಅನ್ನು ಬಳಸುವುದು ಅಥವಾ ಬದಲಾಯಿಸುವುದು ಒಳ್ಳೆಯ ಅಭ್ಯಾಸವಲ್ಲ (ಇದು ಪರ್ಫಾರ್ಮೆನ್ಸ್ ಅನ್ನು ನಿಧಾನಗೊಳಿಸುತ್ತದೆ). ಇದರ ಬದಲಿಗೆ ಗುಣಗಳನ್ನು ಓದಲು <code>Object.getPrototypeOf(dog)</code> ಮತ್ತು ಸೆಟ್ ಮಾಡಲು <code>Object.setPrototypeOf(dog, animal)</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಆದರೂ ಕಲಿಯುವ ಉದ್ದೇಶಕ್ಕೆ <code>__proto__</code> ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಅತ್ಯುತ್ತಮವಾಗಿದೆ.
+                    </div>
+                </section>
+
+                <section id="level3" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 border-b border-gray-200 dark:border-slate-700 pb-2">
+                        <i class="fas fa-layer-group mr-2"></i> ಹಂತ 3: ಇಂಟರ್ಮೀಡಿಯೇಟ್ ಲೆವೆಲ್ - ಸರಿಯಾದ ವಿಧಾನ (Object.create)
+                    </h2>
+                    <p class="mb-4">ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ <code>__proto__</code> ಅನ್ನು ನೇರವಾಗಿ ಬರೆಯುವ ಬದಲು, ಆಸ್ತಿಯನ್ನು ಹಂಚಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನಮಗೆ <code>Object.create()</code> ಎಂಬ ಹೊಸ ದಾರಿಯನ್ನು ನೀಡಿದೆ.</p>
+                    <p class="font-semibold mb-2">ಉದಾಹರಣೆ 2: ಉದ್ಯೋಗಿ ಮತ್ತು ಮ್ಯಾನೇಜರ್</p>
+
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// 1. ಮೂಲ ಆಬ್ಜೆಕ್ಟ್ (Parent)
+const employee = {
+  company: "Tech Corp",
+  work: function() {
+    console.log("ಕೆಲಸ ಮಾಡುತ್ತಿದ್ದೇನೆ...");
+  }
+};
+
+// 2. Object.create() ಬಳಸಿ 'employee' ನಿಂದ ಹುಟ್ಟಿದ ಹೊಸ 'manager' ಆಬ್ಜೆಕ್ಟ್
+const manager = Object.create(employee);
+
+// ಮ್ಯಾನೇಜರ್‌ನ ಸ್ವಂತ ಗುಣಗಳು
+manager.role = "Team Lead";
+manager.giveOrders = function() {
+  console.log("ಟೀಮ್‌ಗೆ ಸೂಚನೆ ನೀಡುತ್ತಿದ್ದೇನೆ...");
+};
+
+// ಪರೀಕ್ಷೆ:
+manager.giveOrders();         // ಸ್ವಂತ ಕೆಲಸ: "ಟೀಮ್‌ಗೆ ಸೂಚನೆ ನೀಡುತ್ತಿದ್ದೇನೆ..."
+manager.work();               // Inherited ಕೆಲಸ: "ಕೆಲಸ ಮಾಡುತ್ತಿದ್ದೇನೆ..."
+console.log(manager.company); // Inherited ಗುಣ: "Tech Corp"</code></pre>
+                    </div>
+
+                    <p class="mb-4"><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> <code>Object.create(employee)</code> ಎಂದರೆ: "ನನಗೊಂದು ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ (manager) ಕೊಡು, ಆದರೆ ಅದರ ಗುಪ್ತ ಕೊಂಡಿಯನ್ನು (Parent) ರಹಸ್ಯವಾಗಿ <code>employee</code> ಗೆ ಲಿಂಕ್ ಮಾಡು" ಎಂದು ಅರ್ಥ. ಇದರಿಂದ ಕೋಡ್ ಕ್ಲೀನ್ ಆಗಿರುತ್ತದೆ ಮತ್ತು ಸೇಫ್ ಆಗಿರುತ್ತದೆ.</p>
+                </section>
+
+                <section id="level4" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 border-b border-gray-200 dark:border-slate-700 pb-2">
+                        <i class="fas fa-sitemap mr-2"></i> ಹಂತ 4: ಪ್ರೊಫೆಷನಲ್ ಲೆವೆಲ್ - ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಮತ್ತು ಪ್ರೋಟೋಟೈಪ್ ಚೈನ್ (Prototype Chain)
+                    </h2>
+                    <p class="mb-4">ನೈಜ ಜಗತ್ತಿನ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ, ನಾವು ಕೇವಲ ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಇನ್ನೊಂದಕ್ಕೆ ಲಿಂಕ್ ಮಾಡುವುದಿಲ್ಲ. ಬದಲಿಗೆ, ನಾವು Constructor Functions ಬಳಸಿ ಸಾವಿರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸುತ್ತೇವೆ.</p>
+                    <p class="font-semibold mb-2">ಉದಾಹರಣೆ 3: ವಾಹನ ಮತ್ತು ಕಾರು (Classic Prototypal Inheritance)</p>
+
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// 1. Parent Constructor (ವಾಹನ)
+function Vehicle(wheels) {
+  this.wheels = wheels;
+}
+
+// ವಾಹನದ ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿ (Prototype) ಒಂದು ಫಂಕ್ಷನ್ ಸೇರಿಸೋಣ
+Vehicle.prototype.start = function() {
+  console.log("ವಾಹನ ಸ್ಟಾರ್ಟ್ ಆಯಿತು. ಇದಕ್ಕೆ " + this.wheels + " ಗಾಲಿಗಳಿವೆ.");
+};
+
+// 2. Child Constructor (ಕಾರು)
+function Car(brandName, wheels) {
+  // Parent ನ ಗುಣಗಳನ್ನು ಇಲ್ಲಿಗೆ ಕರೆತರುವುದು (super() ಕಾಲ್ ಮಾಡಿದ ಹಾಗೆ)
+  Vehicle.call(this, wheels); 
+  this.brand = brandName;
+}
+
+// *** ಅತಿ ಮುಖ್ಯ ಹೆಜ್ಜೆ: ಇನ್ಹೆರಿಟೆನ್ಸ್ ಮಾಡುವುದು ***
+// ಕಾರಿನ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು, ವಾಹನದ ಕೇಂದ್ರ ಕಚೇರಿಗೆ ಲಿಂಕ್ ಮಾಡುವುದು
+Car.prototype = Object.create(Vehicle.prototype);
+
+// ಕಾರಿನ ಸ್ವಂತ ಫಂಕ್ಷನ್
+Car.prototype.honk = function() {
+  console.log(this.brand + " ಕಾರು ಹಾರ್ನ್ ಮಾಡುತ್ತಿದೆ: ಪಾಮ್ ಪಾಮ್!");
+};
+
+// ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಅಸ್ತಿತ್ವವನ್ನು ಮರಳಿ ಕಾರಿಗೆ ಸೆಟ್ ಮಾಡುವುದು (ಉತ್ತಮ ಅಭ್ಯಾಸ)
+Car.prototype.constructor = Car;
+
+// 3. ಈಗ ಹೊಸ ಕಾರು ಸೃಷ್ಟಿಸೋಣ
+let myNewCar = new Car("Tata Safari", 4);
+
+myNewCar.honk();  // ಔಟ್‌ಪುಟ್: Tata Safari ಕಾರು ಹಾರ್ನ್ ಮಾಡುತ್ತಿದೆ... (ಸ್ವಂತ ಗುಣ)
+myNewCar.start(); // ಔಟ್‌ಪುಟ್: ವಾಹನ ಸ್ಟಾರ್ಟ್ ಆಯಿತು. ಇದಕ್ಕೆ 4 ಗಾಲಿಗಳಿವೆ. (Parent ಗುಣ)</code></pre>
+                    </div>
+
+                    <p class="mb-4"><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ (Prototype Chain ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?):</strong> ನೀವು <code>myNewCar.start()</code> ಎಂದು ಕರೆದಾಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಇಂಜಿನ್ ಮಾಡುವ ಹುಡುಕಾಟದ ಪ್ರಯಾಣವೇ Prototype Chain:</p>
+                    <ol class="list-decimal pl-6 space-y-2 mb-6">
+                        <li>ಮೊದಲು <code>myNewCar</code> ಒಳಗೆ <code>start()</code> ಇದೆಯಾ ನೋಡುತ್ತದೆ -> ಇಲ್ಲ.</li>
+                        <li>ಕಾರಿನ ಕೇಂದ್ರ ಕಚೇರಿಗೆ (<code>Car.prototype</code>) ಹೋಗುತ್ತದೆ -> ಅಲ್ಲಿ ಕೇವಲ <code>honk()</code> ಇದೆ, <code>start()</code> ಇಲ್ಲ.</li>
+                        <li>ಆಗ ಅದು ವಾಹನದ ಕೇಂದ್ರ ಕಚೇರಿಗೆ (<code>Vehicle.prototype</code>) ಹೋಗುತ್ತದೆ -> ಅಲ್ಲಿ <code>start()</code> ಸಿಗುತ್ತದೆ! ಅದನ್ನು ರನ್ ಮಾಡುತ್ತದೆ.</li>
+                    </ol>
+
+                    <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-gray-500 p-4 rounded-r mb-4 shadow-inner">
+                        <strong><i class="fas fa-exclamation-triangle text-gray-500 mr-2"></i> ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ (The End of the Chain):</strong> ಒಂದು ವೇಳೆ <code>start()</code> ವಾಹನದಲ್ಲಿಯೂ ಸಿಗದಿದ್ದರೆ, ಅದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಅಂತಿಮ ಪೋಷಕನಾದ <code>Object.prototype</code> ಗೆ ಹೋಗುತ್ತದೆ. ಅಲ್ಲಿಯೂ ಸಿಗದಿದ್ದರೆ, ಕೊನೆಗೆ <code>null</code> ಅನ್ನು ತಲುಪಿ <code>undefined</code> ಅಥವಾ Error ನೀಡುತ್ತದೆ. ಇದೆ Prototype Chain ನ ಅಂತ್ಯ.
+                    </div>
+                </section>
+
+                <section id="level5" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 border-b border-gray-200 dark:border-slate-700 pb-2">
+                        <i class="fab fa-js mr-2"></i> ಹಂತ 5: ಮಾಡರ್ನ್ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (ES6 Classes) - ದಿ ಸಿಂಟ್ಯಾಕ್ಟಿಕ್ ಶುಗರ್ (Syntactic Sugar)
+                    </h2>
+                    <p class="mb-4">ಹಂತ 4 ರಲ್ಲಿ ನೋಡಿದ ಕೋಡ್ ಬರೆಯಲು ಸ್ವಲ್ಪ ಕಷ್ಟವಲ್ಲವೇ? <code>Vehicle.call(this)</code> ಮತ್ತು <code>Object.create</code> ಇತ್ಯಾದಿ. ಇದನ್ನು ಸುಲಭ ಮಾಡಲು 2015 ರಲ್ಲಿ (ES6) ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ಗೆ <code>class</code> ಮತ್ತು <code>extends</code> ಎಂಬ ಕೀವರ್ಡ್‌ಗಳನ್ನು ತರಲಾಯಿತು.</p>
+                    <p class="mb-4">ಇದು ಕೇವಲ ಮೇಲ್ನೋಟಕ್ಕೆ ಮಾತ್ರ ಹೊಸ ಡಿಸೈನ್ (ಇದನ್ನೇ ಸಿಂಟ್ಯಾಕ್ಟಿಕ್ ಶುಗರ್ ಎನ್ನುತ್ತಾರೆ), ಆದರೆ ಒಳಗೆ (Under the hood) ನಡೆಯುವುದು ಅದೇ ಹಂತ 4 ರ "ಪ್ರೋಟೋಟೈಪಲ್ ಇನ್ಹೆರಿಟೆನ್ಸ್"!</p>
+                    <p class="font-semibold mb-2">ಉದಾಹರಣೆ 4: ES6 ಕ್ಲಾಸ್ ಬಳಸಿ ಇನ್ಹೆರಿಟೆನ್ಸ್</p>
+
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// 1. Parent Class
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  
+  eat() {
+    console.log(this.name + " ಊಟ ಮಾಡುತ್ತಿದೆ.");
+  }
+}
+
+// 2. Child Class (extends ಕೀವರ್ಡ್ ಬಳಸಿ ಆಸ್ತಿ ಪಡೆಯುವುದು)
+class Cat extends Animal {
+  constructor(name, color) {
+    super(name); // Parent (Animal) ನ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಗೆ ಹೆಸರನ್ನು ಕಳುಹಿಸುತ್ತಿದೆ
+    this.color = color;
+  }
+  
+  meow() {
+    console.log(this.name + " ಮಿಯಾವ್ ಎನ್ನುತ್ತಿದೆ.");
+  }
+}
+
+// 3. ಹೊಸ ಬೆಕ್ಕಿನ ಸೃಷ್ಟಿ
+let myCat = new Cat("ಟಾಮ್", "ಬೂದು");
+
+myCat.meow(); // ಔಟ್‌ಪುಟ್: ಟಾಮ್ ಮಿಯಾವ್ ಎನ್ನುತ್ತಿದೆ. (ಸ್ವಂತ ಫಂಕ್ಷನ್)
+myCat.eat();  // ಔಟ್‌ಪುಟ್: ಟಾಮ್ ಊಟ ಮಾಡುತ್ತಿದೆ. (Inherited ಫಂಕ್ಷನ್)</code></pre>
+                    </div>
+
+                    <p class="mb-10"><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> ಇಲ್ಲಿ <code>extends</code> ಎಂಬ ಪದವು <code>Object.create(Parent.prototype)</code> ಕೆಲಸವನ್ನು ತಾನಾಗಿಯೇ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಮಾಡುತ್ತದೆ. <code>super()</code> ಎಂಬುದು <code>Parent.call(this)</code> ನ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇದು ಮಾಡರ್ನ್ ಡೆವಲಪರ್‌ಗಳು ಪ್ರತಿದಿನ ಬಳಸುವ ವಿಧಾನ.</p>
+
+                    <div class="text-center italic text-gray-500 dark:text-gray-400 mb-10 text-lg">
+                        "ಖಂಡಿತ, ನೀವು ನೀಡಿದ ಎರಡೂ ಮಾಹಿತಿಯನ್ನು ಒಟ್ಟುಗೂಡಿಸಿ, ಯಾವುದೇ ಅಂಶವನ್ನು ಬಿಡದೆ, ಅತ್ಯಂತ ಸುಲಭವಾಗಿ ಮತ್ತು ಕ್ರಮಬದ್ಧವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ ಸಂಪೂರ್ಣ ಲೇಖನವನ್ನು ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ."
+                    </div>
+                </section>
+
+                <section id="memory" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-microchip text-blue-500 mr-3"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Prototypal Inheritance ಮತ್ತು Memory Management (Person ಮತ್ತು Customer ಉದಾಹರಣೆ)
+                    </h2>
+                    
+                    <p class="mb-4">ಈ ಕೋಡ್‌ನ ಮುಖ್ಯ ಉದ್ದೇಶ "ಮರುಬಳಕೆ" (Reusability). ಬರೆದ ಕೋಡ್ ಅನ್ನೇ ಮತ್ತೆ ಮತ್ತೆ ಬರೆಯದೆ, ಮೆಮೊರಿಯನ್ನು ಉಳಿಸುತ್ತಾ ಹೇಗೆ ಸಮರ್ಥವಾಗಿ ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಮಾಡಬಹುದು ಎಂಬುದನ್ನು ಇದು ವಿವರಿಸುತ್ತದೆ.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-3 mt-6 text-indigo-600 dark:text-indigo-400">ಸಾಮಾನ್ಯ ಉದಾಹರಣೆ (Analogy):</h3>
+                    <ul class="list-disc pl-6 space-y-2 mb-4">
+                        <li><strong>Person (ಮನುಷ್ಯ):</strong> ಪ್ರಪಂಚದಲ್ಲಿರುವ ಪ್ರತಿಯೊಬ್ಬ ಮನುಷ್ಯನಿಗೂ ಒಂದು 'ಹೆಸರು' ಇರುತ್ತದೆ.</li>
+                        <li><strong>Customer (ಗ್ರಾಹಕ):</strong> ನಿಮ್ಮ ಅಂಗಡಿಗೆ ಬರುವ ಗ್ರಾಹಕನೂ ಒಬ್ಬ ಮನುಷ್ಯನೇ ತಾನೇ? ಅವನಿಗೂ 'ಹೆಸರು' ಇರುತ್ತದೆ. ಆದರೆ ಜೊತೆಗೆ ಫೋನ್ ನಂಬರ್ ಮತ್ತು ಮೆಂಬರ್‌ಶಿಪ್ ಇರುತ್ತದೆ.</li>
+                    </ul>
+                    
+                    <p class="mb-6">ಗ್ರಾಹಕನಿಗೆ ಮತ್ತೆ ಮೊದಲಿನಿಂದ "ನಿನ್ನ ಹೆಸರೇನು?" ಎಂದು ಪ್ರತ್ಯೇಕವಾಗಿ ಕೋಡ್ ಬರೆಯುವ ಬದಲು, ಆ ಕೆಲಸವನ್ನು Person ಗೆ ವಹಿಸುತ್ತೇವೆ. "ಮನುಷ್ಯನಿಗೆ ಏನೇನು ಗುಣಗಳಿವೆಯೋ, ಅದೆಲ್ಲವೂ ಗ್ರಾಹಕನಿಗೂ ಬರಲಿ, ಜೊತೆಗೆ ಗ್ರಾಹಕನಿಗೆ ತನ್ನದೇ ಆದ ಫೋನ್ ನಂಬರ್ ಇರಲಿ" ಎಂದು ಹೇಳುವುದೇ ಈ ಕೋಡ್‌ನ ಅರ್ಥ.</p>
+
+                    <h3 class="text-xl font-semibold mb-3 text-indigo-600 dark:text-indigo-400">ಸಂಪೂರ್ಣ ಕೋಡ್ (The Complete Code)</h3>
+                    
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// 1. ಪೋಷಕ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (Parent)
+function Person(firstName, lastName) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+
+// ಪೋಷಕನ ಪ್ರೋಟೋಟೈಪ್‌ನಲ್ಲಿರುವ ಫಂಕ್ಷನ್ (ಕೇಂದ್ರ ಕಚೇರಿ)
+Person.prototype.getFullName = function () {
+  return `${this.firstName} ${this.lastName}`;
+};
+
+// 2. ಮಗು ಕನ್ಸ್ಟ್ರಕ್ಟರ್ (Child)
+function Customer(firstName, lastName, phone, membership) {
+  // ಹಂತ A: ಗುಣಗಳನ್ನು ಕದಿಯುವುದು (Borrowing Properties)
+  Person.call(this, firstName, lastName);
+  
+  // ಗ್ರಾಹಕನ ಸ್ವಂತ ಗುಣಗಳು
+  this.phone = phone;
+  this.membership = membership;
+}
+
+// ಹಂತ B: ಕೆಲಸಗಳನ್ನು ಎರವಲು ಪಡೆಯುವುದು (Prototypal Linking)
+Customer.prototype = Object.create(Person.prototype);
+
+// ಹಂತ C: ಅಸ್ತಿತ್ವ ಕಾಪಾಡಿಕೊಳ್ಳುವುದು (Fixing the Constructor)
+Customer.prototype.constructor = Customer;
+
+// ಹಂತ D: ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿ (Instantiation)
+const c1 = new Customer("Mani", "nair", 987654321, "Standard");
+console.log(c1.getFullName()); // ಔಟ್‌ಪುಟ್: Mani nair
+console.log(c1);</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mt-10 mb-4 border-b border-gray-200 dark:border-slate-700 pb-2">ಕೋಡ್‌ನ 4 ಪ್ರಮುಖ ಹಂತಗಳ ತಾಂತ್ರಿಕ ವಿಶ್ಲೇಷಣೆ (Deep Dive Analysis)</h3>
+                    <p class="mb-6">ಮೇಲ್ನೋಟಕ್ಕೆ ಇದು ಕೇವಲ 4 ಸಾಲಿನ ಕೋಡ್‌ನಂತೆ ಕಂಡರೂ, ಪ್ರತಿಯೊಂದು ಸಾಲಿನ ಹಿಂದೆಯೂ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ "ಮೆಮೊರಿ ಮ್ಯಾನೇಜ್ಮೆಂಟ್" ಮತ್ತು "ಆಬ್ಜೆಕ್ಟ್ ಲಿಂಕಿಂಗ್" ನ ದೊಡ್ಡ ವಿಜ್ಞಾನವೇ ಅಡಗಿದೆ.</p>
+
+                    <div class="space-y-8">
+                        <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h4 class="text-lg font-bold mb-2 text-blue-600 dark:text-blue-400">ಹಂತ 1: ಗುಣಗಳನ್ನು ಕದಿಯುವುದು (Borrowing Properties) - Person.call(this) ಹಿಂದಿನ ರಹಸ್ಯ</h4>
+                            <p class="mb-2">ನಾವು <code>Customer</code> ಫಂಕ್ಷನ್ ಒಳಗೆ <code>Person(firstName, lastName)</code> ಎಂದು ನೇರವಾಗಿ ಕರೆಯಬಹುದಿತ್ತಲ್ಲವೇ? ಅದೇಕೆ <code>.call(this)</code> ಬಳಸಬೇಕು?</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>ನೇರವಾಗಿ ಕರೆದರೆ ಏನಾಗುತ್ತದೆ? (ತಪ್ಪು ವಿಧಾನ):</strong> ನೀವು <code>new Customer(...)</code> ಅಂದಾಗ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದು ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ <code>{}</code> ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಅದಕ್ಕೆ <code>this</code> ಎಂದು ಹೆಸರಿಡುತ್ತದೆ. ಆದರೆ ನೀವು ಅದರೊಳಗೆ <code>Person(...)</code> ಎಂದು ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್ ತರಹ ಕರೆದರೆ, <code>Person</code> ಒಳಗಿನ <code>this</code> ಗ್ಲೋಬಲ್ ವಿಂಡೋಗೆ (Global window object) ಪಾಯಿಂಟ್ ಆಗುತ್ತದೆ. ಆಗ ಹೆಸರುಗಳು <code>window.firstName = "Mani"</code> ಎಂದು ಸೇವ್ ಆಗಿಬಿಡುತ್ತವೆ!</li>
+                                <li><strong>ಸರಿಯಾದ ವಿಧಾನ (call ಬಳಕೆ):</strong> <code>Person.call(this, firstName, lastName);</code> ಎಂದರೆ "ಹೇ Person ಕನ್ಸ್ಟ್ರಕ್ಟರ್, ಈಗ ತಾನೇ Customer ಗಾಗಿ ಒಂದು ಹೊಸ ಖಾಲಿ this {} ಸೃಷ್ಟಿಯಾಗಿದೆ. ದಯವಿಟ್ಟು ನಿನ್ನ ಒಳಗಿರುವ this ಬದಲು, ನನ್ನ ಈ this ಅನ್ನು ಬಳಸಿಕೊಂಡು ಅದಕ್ಕೆ firstName ಮತ್ತು lastName ಅನ್ನು ಅಂಟಿಸು" ಎಂದು ಕೇಳಿಕೊಂಡಂತೆ.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h4 class="text-lg font-bold mb-2 text-blue-600 dark:text-blue-400">ಹಂತ 2: ಕೆಲಸಗಳನ್ನು ಎರವಲು ಪಡೆಯುವುದು - Object.create() ನ ಮ್ಯಾಜಿಕ್</h4>
+                            <p class="mb-2">ಕೇವಲ ಗುಣಗಳನ್ನು ಪಡೆದರೆ ಸಾಲದು, ನಮಗೆ Person ನ ಕೇಂದ್ರ ಕಚೇರಿಯಲ್ಲಿದ್ದ (Prototype) <code>getFullName</code> ಫಂಕ್ಷನ್ ಕೂಡ ಬೇಕು. ಇಲ್ಲಿ ಬಹಳ ಜನ ಮಾಡುವ ತಪ್ಪು ಎಂದರೆ, ಎರಡೂ ಕಚೇರಿಗಳನ್ನು ಒಂದೇ ಮಾಡುವುದು!</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>ತಪ್ಪು ವಿಧಾನ (Direct Assignment):</strong> <code>Customer.prototype = Person.prototype;</code> ಎಂದು ಮಾಡಿದರೆ Customer ಮತ್ತು Person ಇಬ್ಬರಿಗೂ ಒಂದೇ ಕೇಂದ್ರ ಕಚೇರಿ ಆಗಿಬಿಡುತ್ತದೆ. ನೀವು Customer ಗೆ ಹೊಸದಾಗಿ <code>getMembership</code> ಸೇರಿಸಿದರೆ, ಅದು ಸಾಮಾನ್ಯ Person ಗೂ ಸೇರ್ಪಡೆಯಾಗುತ್ತದೆ. ಇದು ತಪ್ಪು!</li>
+                                <li><strong>ಸರಿಯಾದ ವಿಧಾನ (Object.create):</strong> <code>Customer.prototype = Object.create(Person.prototype);</code> ಇದು ಒಂದು ಹೊಸ, ಖಾಲಿ ಕೇಂದ್ರ ಕಚೇರಿಯನ್ನು (Prototype object) ಸೃಷ್ಟಿಸುತ್ತದೆ. ಆದರೆ ಈ ಹೊಸ ಕಚೇರಿಯು <code>Person.prototype</code> ನೊಂದಿಗೆ ಗುಪ್ತ ಕೊಂಡಿಯನ್ನು (<code>__proto__</code>) ಹೊಂದಿರುತ್ತದೆ. ಇದರಿಂದ Customer ಗೆ ಏನಾದರೂ ಬೇಕಾದಾಗ ಅದು Person ನಿಂದ ಪಡೆದುಕೊಳ್ಳಬಲ್ಲದು, ಆದರೆ Customer ಗೆ ಸೇರಿಸಿದ್ದು Person ಗೆ ಹೋಗುವುದಿಲ್ಲ.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h4 class="text-lg font-bold mb-2 text-blue-600 dark:text-blue-400">ಹಂತ 3: ಅಸ್ತಿತ್ವ ಕಾಪಾಡಿಕೊಳ್ಳುವುದು (Fixing the Constructor)</h4>
+                            <p class="mb-2">ನಾವು Object.create ಬಳಸಿದಾಗ, Customer ನ ಹಳೆಯ ಪ್ರೋಟೋಟೈಪ್ ಸಂಪೂರ್ಣವಾಗಿ ಅಳಿಸಿಹೋಗಿ ಹೊಸದು ಬರುತ್ತದೆ. ಪ್ರತಿಯೊಂದು ಪ್ರೋಟೋಟೈಪ್‌ನಲ್ಲೂ constructor ಎಂಬ ಪ್ರಾಪರ್ಟಿ ಇರುತ್ತದೆ. ನಾವು Person ನ ಪ್ರೋಟೋಟೈಪ್ ಅನ್ನು ಕಾಪಿ ಮಾಡಿದಾಗ, ಆ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಕೂಡ 'Person' ಎಂದೇ ಕಾಪಿ ಆಗಿಬಿಡುತ್ತದೆ.</p>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li><strong>ಸರಿಪಡಿಸದಿದ್ದರೆ:</strong> <code>console.log(c1.constructor.name);</code> ಎಂದು ಚೆಕ್ ಮಾಡಿದರೆ "Person" ಎಂದು ಸುಳ್ಳು ಉತ್ತರ ಬರುತ್ತದೆ.</li>
+                                <li><strong>ಸರಿಪಡಿಸಿದ ನಂತರ:</strong> <code>Customer.prototype.constructor = Customer;</code> ಎಂದು ಬರೆದಾಗ, ತಾನು Person ನಿಂದ ಗುಣಗಳನ್ನು ಪಡೆದಿದ್ದರೂ, ತನ್ನ ಅصلಿ ಅಸ್ತಿತ್ವ (Identity) Customer ಆಗಿಯೇ ಉಳಿಯುವಂತೆ ಇದು ನೋಡಿಕೊಳ್ಳುತ್ತದೆ. ಭವಿಷ್ಯದಲ್ಲಿ ಕೋಡ್ ಬರೆಯುವ ಬೇರೆ ಡೆವಲಪರ್‌ಗಳಿಗೆ ಗೊಂದಲವಾಗುವುದಿಲ್ಲ.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <h4 class="text-lg font-bold mb-2 text-blue-600 dark:text-blue-400">ಹಂತ 4: ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿ ಮತ್ತು ಮೆಮೊರಿ (Instantiation & Memory Management)</h4>
+                            <p class="mb-2">ನೀವು <code>const c1 = new Customer(...)</code> ಸೃಷ್ಟಿಸಿದಾಗ, ಬ್ರೌಸರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ (RAM) ಡೇಟಾ ಬಹಳ ಅಚ್ಚುಕಟ್ಟಾಗಿ ಸೇವ್ ಆಗುತ್ತದೆ. <code>c1</code> ಆಬ್ಜೆಕ್ಟ್‌ನ ಒಳಗೆ ಕೇವಲ ಸ್ವಂತ ಗುಣಗಳು (Properties) ಮಾತ್ರ ಇರುತ್ತವೆ:</p>
+                            
+                            <div class="code-container relative group my-3">
+<pre><code class="language-json">{
+  "firstName": "Mani",
+  "lastName": "nair",
+  "phone": 987654321,
+  "membership": "Standard"
+}</code></pre>
+                            </div>
+                            
+                            <p class="font-bold text-red-500 dark:text-red-400">ಗಮನಿಸಿ: ಇದರೊಳಗೆ getFullName ಫಂಕ್ಷನ್ ಇಲ್ಲ!</p>
+                            <p class="mt-2 font-semibold">ಹಾಗಾದರೆ c1.getFullName() ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</p>
+                            <ol class="list-decimal pl-5 space-y-1 mt-2">
+                                <li>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೊದಲು c1 ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಹುಡುಕುತ್ತದೆ (ಅಲ್ಲಿ ಕೇವಲ ಹೆಸರು, ಫೋನ್ ಇದೆ).</li>
+                                <li>ಅಲ್ಲಿ ಸಿಗದಿದ್ದಾಗ, ಅದು c1 ನ <code>__proto__</code> (Customer.prototype) ಗೆ ಹೋಗುತ್ತದೆ. (ಅಲ್ಲಿ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಮಾತ್ರ ಇದೆ).</li>
+                                <li>ಅಲ್ಲಿಯೂ ಸಿಗದಿದ್ದಾಗ, ಅದು ಅದರ ಮೇಲಿರುವ <code>__proto__</code> (Person.prototype) ಗೆ ಹೋಗುತ್ತದೆ.</li>
+                                <li>ಅಲ್ಲಿ getFullName ಸಿಗುತ್ತದೆ! ಅದನ್ನು ಬಳಸಿಕೊಂಡು "Mani nair" ಎಂದು ರಿಟರ್ನ್ ಮಾಡುತ್ತದೆ.</li>
+                            </ol>
+                            
+                            <div class="mt-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-r">
+                                <strong><i class="fas fa-chart-line text-green-500 mr-2"></i> ಇದರ ಅತಿದೊಡ್ಡ ಲಾಭ (Memory Advantage):</strong> ನಿಮ್ಮ ಬಳಿ 1,00,000 ಗ್ರಾಹಕರು (Customers) ಇದ್ದಾರೆ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ. ಫಂಕ್ಷನ್ ಅನ್ನು ಪ್ರತಿಯೊಬ್ಬ ಗ್ರಾಹಕನ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೂ ಸೇವ್ ಮಾಡಿದ್ದರೆ ಮೆಮೊರಿ ಫುಲ್ ಆಗಿ ಬ್ರೌಸರ್ ಹ್ಯಾಂಗ್ ಆಗುತ್ತಿತ್ತು. ಆದರೆ ಪ್ರೋಟೋಟೈಪ್ ಇನ್ಹೆರಿಟೆನ್ಸ್‌ನಿಂದಾಗಿ getFullName ಫಂಕ್ಷನ್ ಮೆಮೊರಿಯಲ್ಲಿ ಕೇವಲ ಒಂದೇ ಒಂದು ಬಾರಿ ಸೇವ್ ಆಗಿರುತ್ತದೆ, 1 ಲಕ್ಷ ಆಬ್ಜೆಕ್ಟ್‌ಗಳು ಆ ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಕೇವಲ ಲಿಂಕ್ (<code>__proto__</code>) ಮೂಲಕ ಬಳಸಿಕೊಳ್ಳುತ್ತವೆ!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <h3 class="text-xl font-bold mb-3 text-indigo-700 dark:text-indigo-400 flex items-center"><i class="fas fa-clipboard-check mr-2"></i> ಸಾರಾಂಶ (Conclusion)</h3>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><strong>Prototypal Inheritance</strong> ಎಂದರೆ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಮತ್ತೊಂದರಿಂದ ಗುಣಗಳನ್ನು ಮತ್ತು ಕೆಲಸಗಳನ್ನು (Functions) ಎರವಲು ಪಡೆಯುವುದು.</li>
+                            <li><strong>ಮೆಮೊರಿ ಉಳಿತಾಯ:</strong> ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಸಾವಿರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳಿಗೆ ಹಂಚಬಹುದು; ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ಗೂ ಪ್ರತ್ಯೇಕ ಕಾಪಿ ಸೃಷ್ಟಿಸುವ ಅಗತ್ಯವಿಲ್ಲ.</li>
+                            <li><strong>Prototype Chain:</strong> ಬ್ರೌಸರ್ <code>__proto__</code> ಚೈನ್ ಮೂಲಕ ಒಂದು ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಇನ್ನೊಂದಕ್ಕೆ ಲಿಂಕ್ ಆಗುತ್ತಾ ಹೋಗಿ ಡೇಟಾವನ್ನು ಹುಡುಕುತ್ತದೆ. ಎಲ್ಲೂ ಸಿಗದಿದ್ದರೆ ಕೊನೆಯಲ್ಲಿ null ತಲುಪಿ undefined ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="this-bind" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-magic text-purple-500 mr-3"></i> This, Call() ಮತ್ತು Bind() ರಹಸ್ಯಗಳು
+                    </h2>
+                    
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <code>this</code> ಕೀವರ್ಡ್ ಒಂದು "ಚಾಮೆಲಿಯನ್" (ಊಸರವಳ್ಳಿ) ಇದ್ದ ಹಾಗೆ! ಅದು ಎಲ್ಲಿದೆ ಮತ್ತು ಅದನ್ನು ಯಾರು ಕರೆಯುತ್ತಿದ್ದಾರೆ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ಅದರ ಅರ್ಥ (ಬಣ್ಣ) ಬದಲಾಗುತ್ತದೆ.</p>
+                    <p class="mb-8">Prototypal Inheritance ನಲ್ಲಿ <code>this</code> ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಮತ್ತು <code>call()</code> ಹಾಗೂ <code>bind()</code> ನಡುವಿನ ವ್ಯತ್ಯಾಸವೇನು ಎಂಬುದನ್ನು ಸರಳವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.</p>
+
+                    <h3 class="text-xl font-bold mb-3 text-indigo-600 dark:text-indigo-400">1. Prototypal Inheritance ನಲ್ಲಿ this ಕೀವರ್ಡ್</h3>
+                    <p class="mb-4">ನಿಯಮ ಬಹಳ ಸರಳ: ಒಂದು ಫಂಕ್ಷನ್ ಎಲ್ಲಿಯೇ ಬರೆದಿರಲಿ, ಅದನ್ನು ಯಾರು ಕರೆಯುತ್ತಿದ್ದಾರೆಯೋ (Calling Object) <code>this</code> ಕೀವರ್ಡ್ ಅವರನ್ನು ಸೂಚಿಸುತ್ತದೆ.</p>
+                    <p class="mb-4">ಇನ್ಹೆರಿಟೆನ್ಸ್‌ನಲ್ಲಿ, ಪೋಷಕ (Parent) ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ ಬರೆದ ಫಂಕ್ಷನ್ ಅನ್ನು ಮಗು (Child) ಆಬ್ಜೆಕ್ಟ್ ಬಳಸುವಾಗ, <code>this</code> ಕೀವರ್ಡ್ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಮಗುವನ್ನೇ ಸೂಚಿಸುತ್ತದೆ.</p>
+                    <p class="font-semibold mb-2">ಸರಳ ಉದಾಹರಣೆ:</p>
+
+                    <div class="code-container relative group mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// ಪೋಷಕ ಆಬ್ಜೆಕ್ಟ್
+const parent = {
+  name: "ಅಪ್ಪ",
+  introduce: function() {
+    console.log("ನನ್ನ ಹೆಸರು: " + this.name);
+  }
+};
+
+// ಪೋಷಕನಿಂದ ಹುಟ್ಟಿದ ಮಗು
+const child = Object.create(parent);
+child.name = "ಮಗ"; 
+
+// ಪರೀಕ್ಷೆ
+parent.introduce(); // ಔಟ್‌ಪುಟ್: ನನ್ನ ಹೆಸರು: ಅಪ್ಪ
+child.introduce();  // ಔಟ್‌ಪುಟ್: ನನ್ನ ಹೆಸರು: ಮಗ</code></pre>
+                    </div>
+
+                    <p class="mb-8"><strong>ಏನಾಯಿತು ಇಲ್ಲಿ?</strong> <code>introduce</code> ಫಂಕ್ಷನ್ ಇರುವುದು parent ಒಳಗೆ. ಆದರೆ ನಾವು <code>child.introduce()</code> ಎಂದು ಕರೆದಾಗ, <code>this</code> ಕೀವರ್ಡ್ <code>child</code> ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ. ಹಾಗಾಗಿ ಅದು "ಅಪ್ಪ" ಎನ್ನುವ ಬದಲು "ಮಗ" ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</p>
+
+
+                    <h3 class="text-xl font-bold mb-3 text-indigo-600 dark:text-indigo-400">2. call() ಮತ್ತು bind() ನಡುವಿನ ವ್ಯತ್ಯಾಸ</h3>
+                    <p class="mb-4">ಕೆಲವು ಬಾರಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ <code>this</code> ಅನ್ನು ತಪ್ಪಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತದೆ ಅಥವಾ ನಮಗೆ ಬೇಕಾದ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ನಾವೇ ಬಲವಂತವಾಗಿ <code>this</code> ಅನ್ನು ಲಿಂಕ್ ಮಾಡಬೇಕಾಗುತ್ತದೆ. ಅದಕ್ಕಾಗಿ <code>call()</code> ಮತ್ತು <code>bind()</code> ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ. ಇವೆರಡರ ಮುಖ್ಯ ಕೆಲಸ ಒಂದೇ: <code>this</code> ಏನಾಗಿರಬೇಕು ಎಂದು ಫಿಕ್ಸ್ ಮಾಡುವುದು. ಆದರೆ ಅವು ಕೆಲಸ ಮಾಡುವ ಸಮಯದಲ್ಲಿ ವ್ಯತ್ಯಾಸವಿದೆ.</p>
+
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700 mb-6">
+                        <h4 class="text-lg font-bold mb-3 text-blue-600 dark:text-blue-400">A. call() - "ತಕ್ಷಣವೇ ಕೆಲಸ ಮಾಡು"</h4>
+                        <p class="mb-2"><code>call()</code> ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣವೇ ರನ್ ಮಾಡುತ್ತದೆ ಮತ್ತು ಅದೇ ಸಮಯದಲ್ಲಿ <code>this</code> ಅನ್ನು ನಾವು ಹೇಳಿದ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಲಿಂಕ್ ಮಾಡುತ್ತದೆ.</p>
+                        <ul class="list-disc pl-5 mb-4">
+                            <li><strong>ನಾನ್-ಐಟಿ ಉದಾಹರಣೆ:</strong> ನೀವು ಟ್ಯಾಕ್ಸಿ ಬುಕ್ ಮಾಡಿ, "ತಕ್ಷಣವೇ ಪ್ರಯಾಣ ಪ್ರಾರಂಭಿಸಿ" ಎಂದು ಹೇಳಿದ ಹಾಗೆ.</li>
+                        </ul>
+                        <p class="mb-4 text-sm text-gray-600 dark:text-gray-400 italic">ಹಿಂದಿನ ಪಾಠದಲ್ಲಿ ನಾವು Customer ಒಳಗೆ <code>Person.call(this, firstName, lastName)</code> ಎಂದು ಬರೆದಿದ್ದೆವು. ಅಂದರೆ: "Person ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣವೇ ರನ್ ಮಾಡು, ಆದರೆ ಅದರೊಳಗಿರುವ this ಮನುಷ್ಯನದ್ದಲ್ಲ, ಬದಲಿಗೆ ಈಗ ಹುಟ್ಟುತ್ತಿರುವ ಹೊಸ Customer ನದ್ದು" ಎಂದು ಹೇಳಿದಂತೆ.</p>
+                        
+                        <div class="code-container relative group">
+                            <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                                <i class="fas fa-copy mr-1"></i> Copy
+                            </button>
+<pre><code class="language-javascript">const person1 = { name: "ಕಿರಣ್" };
+const person2 = { name: "ರಾಜು" };
+
+function sayHello(greeting) {
+  console.log(greeting + ", " + this.name);
+}
+
+// sayHello ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣ ರನ್ ಮಾಡುತ್ತಿದೆ, this = person1
+sayHello.call(person1, "ನಮಸ್ಕಾರ"); // ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ಕಿರಣ್
+sayHello.call(person2, "ಹಲೋ");    // ಔಟ್‌ಪುಟ್: ಹಲೋ, ರಾಜು</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700 mb-8">
+                        <h4 class="text-lg font-bold mb-3 text-blue-600 dark:text-blue-400">B. bind() - "ಭವಿಷ್ಯದಲ್ಲಿ ಕೆಲಸ ಮಾಡಲು ಸಿದ್ಧವಾಗಿರು"</h4>
+                        <p class="mb-2"><code>bind()</code> ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣ ರನ್ ಮಾಡುವುದಿಲ್ಲ. ಬದಲಿಗೆ, <code>this</code> ಅನ್ನು ಫಿಕ್ಸ್ ಮಾಡಿ, ಹೊಸದೊಂದು ಕಾಪಿ (ಹೊಸ ಫಂಕ್ಷನ್) ಅನ್ನು ನಿಮಗೆ ಹಿಂದಿರುಗಿಸುತ್ತದೆ. ನೀವು ಆ ಹೊಸ ಫಂಕ್ಷನ್ ಅನ್ನು ಭವಿಷ್ಯದಲ್ಲಿ ಯಾವಾಗ ಬೇಕಾದರೂ ಬಳಸಬಹುದು.</p>
+                        <ul class="list-disc pl-5 mb-4">
+                            <li><strong>ನಾನ್-ಐಟಿ ಉದಾಹರಣೆ:</strong> ಮುಂದಿನ ವಾರಕ್ಕೆ ವಿಮಾನದ ಟಿಕೆಟ್ ಬುಕ್ ಮಾಡಿಟ್ಟುಕೊಂಡ ಹಾಗೆ. ನೀವು ಟಿಕೆಟ್ ಈಗಲೇ ಫಿಕ್ಸ್ ಮಾಡಿದ್ದೀರಿ, ಆದರೆ ಪ್ರಯಾಣ ಭವಿಷ್ಯದಲ್ಲಿ ಮಾಡುತ್ತೀರಿ.</li>
+                        </ul>
+                        
+                        <div class="code-container relative group">
+                            <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                                <i class="fas fa-copy mr-1"></i> Copy
+                            </button>
+<pre><code class="language-javascript">const user = {
+  name: "ಸುಮನ್",
+  greet: function() {
+    console.log("ಸ್ವಾಗತ, " + this.name);
+  }
+};
+
+// ಇಲ್ಲಿ ಫಂಕ್ಷನ್ ರನ್ ಆಗುವುದಿಲ್ಲ, ಬದಲಾಗಿ this=user ಎಂದು ಫಿಕ್ಸ್ ಆಗಿ ಹೊಸ ಫಂಕ್ಷನ್ ಬರುತ್ತದೆ
+const boundFunction = user.greet.bind(user); 
+
+// ಭವಿಷ್ಯದಲ್ಲಿ ನಮಗೆ ಯಾವಾಗ ಬೇಕೋ ಆಗ ಕರೆದುಕೊಳ್ಳಬಹುದು
+setTimeout(boundFunction, 2000); // 2 ಸೆಕೆಂಡ್ ಆದ ಮೇಲೆ: ಸ್ವಾಗತ, ಸುಮನ್</code></pre>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold mb-4 text-indigo-600 dark:text-indigo-400">3. ತ್ವರಿತ ಹೋಲಿಕೆ (Quick Comparison)</h3>
+                    <div class="overflow-x-auto mb-6">
+                        <table class="min-w-full bg-white dark:bg-darkCard border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm">
+                            <thead class="bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300">
+                                <tr>
+                                    <th class="py-3 px-4 text-left font-semibold">ವೈಶಿಷ್ಟ್ಯ</th>
+                                    <th class="py-3 px-4 text-left font-semibold text-blue-600 dark:text-blue-400">call()</th>
+                                    <th class="py-3 px-4 text-left font-semibold text-purple-600 dark:text-purple-400">bind()</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+                                <tr>
+                                    <td class="py-3 px-4 font-medium">ಕಾರ್ಯಗತಗೊಳ್ಳುವಿಕೆ (Execution)</td>
+                                    <td class="py-3 px-4">ಫಂಕ್ಷನ್ ಅನ್ನು ತಕ್ಷಣವೇ ರನ್ ಮಾಡುತ್ತದೆ.</td>
+                                    <td class="py-3 px-4">ತಕ್ಷಣ ರನ್ ಆಗುವುದಿಲ್ಲ. ಬದಲಿಗೆ ಹೊಸ ಫಂಕ್ಷನ್ ನೀಡುತ್ತದೆ.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-medium">ರಿಟರ್ನ್ (Returns)</td>
+                                    <td class="py-3 px-4">ಫಂಕ್ಷನ್ ರನ್ ಆದ ಮೇಲೆ ಬರುವ ಔಟ್‌ಪುಟ್.</td>
+                                    <td class="py-3 px-4"><code>this</code> ಫಿಕ್ಸ್ ಆಗಿರುವ ಹೊಸ ಫಂಕ್ಷನ್.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-medium">ಆರ್ಗ್ಯುಮೆಂಟ್ಸ್ ಕಳುಹಿಸುವುದು</td>
+                                    <td class="py-3 px-4"><code>call(this, arg1, arg2)</code> - ಬಿಡಿ ಬಿಡಿಯಾಗಿ ಕಳುಹಿಸಬೇಕು.</td>
+                                    <td class="py-3 px-4"><code>bind(this, arg1, arg2)</code> - ಬಿಡಿ ಬಿಡಿಯಾಗಿ ಕಳುಹಿಸಬಹುದು.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-medium">ಮುಖ್ಯ ಬಳಕೆ</td>
+                                    <td class="py-3 px-4">ಇನ್ಹೆರಿಟೆನ್ಸ್‌ನಲ್ಲಿ ಕನ್ಸ್ಟ್ರಕ್ಟರ್ ಕರೆಯಲು (Borrowing properties).</td>
+                                    <td class="py-3 px-4">Event Listeners ಮತ್ತು setTimeout ಗಳಲ್ಲಿ <code>this</code> ಕಳೆದುಹೋಗದಂತೆ ತಡೆಯಲು.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-gray-100 dark:bg-gray-800 border-l-4 border-gray-500 p-4 rounded-r shadow-inner">
+                        <strong><i class="fas fa-thumbtack text-gray-500 mr-2"></i> ನೆನಪಿರಲಿ:</strong> ಇನ್ನೊಂದು ಮೆಥಡ್ ಇದೆ, ಅದರ ಹೆಸರು <code>apply()</code>. ಇದು ಶೇ. ೧೦೦ ರಷ್ಟು <code>call()</code> ತರಹವೇ ತಕ್ಷಣ ಕೆಲಸ ಮಾಡುತ್ತದೆ, ಆದರೆ ಆರ್ಗ್ಯುಮೆಂಟ್‌ಗಳನ್ನು ಬಿಡಿ ಬಿಡಿಯಾಗಿ ಕೊಡುವ ಬದಲು ಒಂದೇ Array <code>[arg1, arg2]</code> ಒಳಗೆ ಹಾಕಿ ಕೊಡಬೇಕು ಅಷ್ಟೇ.
+                    </div>
+                </section>
+                <!-- ORIGINAL NOTES PRESERVATION END -->
+
+                <!-- EXPANDED CORE CONCEPTS (SEAMLESS ADDITION) -->
+                <div class="relative py-8">
+                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div class="w-full border-t border-gray-300 dark:border-slate-600 border-dashed"></div>
+                    </div>
+                    <div class="relative flex justify-center">
+                        <span class="bg-gray-50 dark:bg-darkBg px-4 text-sm text-gray-500 dark:text-gray-400 uppercase tracking-widest font-bold">
+                            Bonus: Core Front-End Web APIs
+                        </span>
+                    </div>
+                </div>
+
+                <section id="dom" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-sitemap text-teal-500 mr-3"></i> 1. DOM ಮ್ಯಾನಿಪುಲೇಷನ್ ಮತ್ತು ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ (DOM Architecture)
+                    </h2>
+                    
+                    <p class="mb-4">ಬ್ರೌಸರ್ HTML ಕೋಡ್ ಅನ್ನು ಓದಿ, ಅದನ್ನು ಒಂದು 'ಮರ'ದ (Tree structure) ರೂಪದಲ್ಲಿ ಮೆಮೊರಿಯಲ್ಲಿ ಜೋಡಿಸುತ್ತದೆ. ಇದನ್ನೇ <strong>DOM (Document Object Model)</strong> ಎನ್ನುತ್ತಾರೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಬಳಸಿ ಈ ಮರದ ರೆಂಬೆ-ಕೊಂಬೆಗಳನ್ನು (Elements) ಹುಡುಕುವುದು ಮತ್ತು ಬದಲಾಯಿಸುವುದು ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪ್ಮೆಂಟ್‌ನ ಅತಿ ಮುಖ್ಯ ಭಾಗ.</p>
+                    
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700 mb-6">
+                        <h4 class="text-lg font-bold mb-3 text-teal-600 dark:text-teal-400">ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ ಮಾಡುವ ವಿಧಾನಗಳು (Selection Methods):</h4>
+                        <ul class="list-disc pl-5 space-y-2 mb-4">
+                            <li><strong><code>getElementById('id')</code>:</strong> ಅತಿ ವೇಗವಾದ ಆಯ್ಕೆ. ಕೇವಲ ಒಂದು ನಿರ್ದಿಷ್ಟ ID ಯನ್ನು ಹುಡುಕುತ್ತದೆ.</li>
+                            <li><strong><code>querySelector('.class')</code>:</strong> ಆಧುನಿಕ ವಿಧಾನ. CSS ಸೆಲೆಕ್ಟರ್‌ಗಳನ್ನು (class, id, tag) ಬಳಸಿ, ಸಿಗುವ <em>ಮೊದಲ</em> ಎಲಿಮೆಂಟ್ ಅನ್ನು ಮಾತ್ರ ತರುತ್ತದೆ.</li>
+                            <li><strong><code>querySelectorAll('.class')</code>:</strong> ಸಿಗುವ <em>ಎಲ್ಲಾ</em> ಎಲಿಮೆಂಟ್‌ಗಳನ್ನು ಒಂದು NodeList (Array ಥರ) ರೂಪದಲ್ಲಿ ತರುತ್ತದೆ.</li>
+                        </ul>
+                        
+                        <div class="code-container relative group">
+                            <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                                <i class="fas fa-copy mr-1"></i> Copy
+                            </button>
+<pre><code class="language-javascript">// 1. ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ
+const title = document.getElementById('main-title');
+const buttons = document.querySelectorAll('.btn-primary');
+
+// 2. DOM ಮ್ಯಾನಿಪುಲೇಷನ್ (ಬದಲಾಯಿಸುವುದು)
+title.textContent = "ಹೊಸ ಶೀರ್ಷಿಕೆ";
+title.style.color = "blue"; // CSS ಬದಲಾವಣೆ
+
+// 3. ಹೊಸ ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿ ಮತ್ತು ಸೇರ್ಪಡೆ (Node Creation & Appending)
+const newDiv = document.createElement('div');
+newDiv.innerHTML = "<strong>ನಾನು ಹೊಸದಾಗಿ ಬಂದಿದ್ದೇನೆ!</strong>";
+document.body.appendChild(newDiv);</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="events" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-mouse-pointer text-orange-500 mr-3"></i> 2. ಇವೆಂಟ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ ಮತ್ತು ಡೆಲಿಗೇಶನ್ (Event Handling)
+                    </h2>
+                    
+                    <p class="mb-4">ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಯೂಸರ್ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ, ಮೌಸ್ ಮೂವ್ ಮಾಡಿದಾಗ ಅಥವಾ ಕೀಬೋರ್ಡ್ ಟೈಪ್ ಮಾಡಿದಾಗ ಏನು ನಡೆಯಬೇಕು ಎಂದು ನಿರ್ಧರಿಸುವುದೇ Event Handling.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-orange-50 dark:bg-orange-900/20 p-5 rounded-lg border border-orange-200 dark:border-orange-800">
+                            <h4 class="font-bold text-orange-700 dark:text-orange-400 mb-2">Event Bubbling (ಇವೆಂಟ್ ಬಬ್ಲಿಂಗ್)</h4>
+                            <p class="text-sm">ಒಂದು ಮಗುವಿನ ಎಲಿಮೆಂಟ್ (ಉದಾ: ಬಟನ್) ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿದರೆ, ಆ ಕ್ಲಿಕ್ ಇವೆಂಟ್ ನೀರಿನ ಗುಳ್ಳೆಯಂತೆ ಮೇಲಕ್ಕೆ (Parent element ಗಳಿಗೆ) ಹರಿಯುತ್ತದೆ.</p>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                            <h4 class="font-bold text-emerald-700 dark:text-emerald-400 mb-2">Event Delegation (ಇವೆಂಟ್ ಡೆಲಿಗೇಶನ್)</h4>
+                            <p class="text-sm">ಪ್ರತಿಯೊಂದು ಲಿಸ್ಟ್ ಐಟಂಗೂ ಪ್ರತ್ಯೇಕ Event Listener ಹಾಕುವ ಬದಲು, ಅವುಗಳ Parent ಎಲಿಮೆಂಟ್‌ಗೆ ಒಂದೇ Listener ಹಾಕುವುದು. ಇದು ಮೆಮೊರಿಯನ್ನು ಉಳಿಸುತ್ತದೆ!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// Event Delegation ಉದಾಹರಣೆ
+const listParent = document.getElementById('myList');
+
+// ಪ್ರತ್ಯೇಕ <li> ಗಳಿಗೆ ಬರೆಯುವ ಬದಲು, ಒಂದೇ Parent ಗೆ ಬರೆಯುತ್ತಿದ್ದೇವೆ
+listParent.addEventListener('click', function(event) {
+  // ಯೂಸರ್ ಕ್ಲಿಕ್ ಮಾಡಿದ್ದು <li> ಹೌದೋ ಅಲ್ಲವೋ ಎಂದು ಚೆಕ್ ಮಾಡುವುದು
+  if(event.target.tagName === 'LI') {
+    console.log("ನೀವು ಕ್ಲಿಕ್ ಮಾಡಿದ್ದು: " + event.target.innerText);
+  }
+});</code></pre>
+                    </div>
+                </section>
+
+                <section id="storage" class="mb-16 pt-16 -mt-16" data-aos="fade-up">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
+                        <i class="fas fa-database text-rose-500 mr-3"></i> 3. ಕ್ಲೈಂಟ್ ಸೈಡ್ ಸ್ಟೋರೇಜ್ (Client-Side Storage APIs)
+                    </h2>
+                    
+                    <p class="mb-4">ಬ್ರೌಸರ್‌ನಲ್ಲಿ (ಯೂಸರ್‌ನ ಕಂಪ್ಯೂಟರ್‌ನಲ್ಲಿ) ಡೇಟಾವನ್ನು ಉಳಿಸಿಡಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನಮಗೆ ಸುಲಭವಾದ ಸ್ಟೋರೇಜ್ API ಗಳನ್ನು ನೀಡಿದೆ. ಲಾಗ್-ಇನ್ ಸ್ಟೇಟಸ್ ಅಥವಾ ಡಾರ್ಕ್-ಮೋಡ್ ಪ್ರಿಫರೆನ್ಸ್ ಸೇವ್ ಮಾಡಲು ಇದು ಅತ್ಯಗತ್ಯ.</p>
+                    
+                    <ul class="list-none space-y-4 mb-6">
+                        <li class="flex flex-col md:flex-row gap-4 bg-white dark:bg-darkCard p-4 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-300 rounded-full font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg">localStorage (ಶಾಶ್ವತ ಸ್ಟೋರೇಜ್)</h4>
+                                <p class="text-gray-600 dark:text-gray-400">ಬ್ರೌಸರ್ ಮುಚ್ಚಿದರೂ ಡೇಟಾ ಅಳಿಸಿಹೋಗುವುದಿಲ್ಲ. ಯೂಸರ್ ಸ್ವತಃ ಡಿಲೀಟ್ ಮಾಡುವವರೆಗೆ ಡೇಟಾ ಸೇವ್ ಆಗಿರುತ್ತದೆ.</p>
+                            </div>
+                        </li>
+                        <li class="flex flex-col md:flex-row gap-4 bg-white dark:bg-darkCard p-4 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
+                            <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300 rounded-full font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg">sessionStorage (ತಾತ್ಕಾಲಿಕ ಸ್ಟೋರೇಜ್)</h4>
+                                <p class="text-gray-600 dark:text-gray-400">ಆ ಟ್ಯಾಬ್ ಅಥವಾ ಬ್ರೌಸರ್ ಮುಚ್ಚಿದ ತಕ್ಷಣ ಡೇಟಾ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಡಿಲೀಟ್ ಆಗುತ್ತದೆ.</p>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="code-container relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm z-10 transition-colors flex items-center">
+                            <i class="fas fa-copy mr-1"></i> Copy
+                        </button>
+<pre><code class="language-javascript">// ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದು (Key-Value pair)
+localStorage.setItem('theme', 'dark');
+
+// ಸೇವ್ ಆದ ಡೇಟಾವನ್ನು ಓದುವುದು
+const currentTheme = localStorage.getItem('theme');
+console.log(currentTheme); // 'dark'
+
+// ಡೇಟಾ ಡಿಲೀಟ್ ಮಾಡುವುದು
+localStorage.removeItem('theme');
+
+// Note: ಸ್ಟೋರೇಜ್ ಒಳಗೆ ಆಬ್ಜೆಕ್ಟ್ ಸೇವ್ ಮಾಡಬೇಕಾದರೆ JSON ಗೆ ಕನ್ವರ್ಟ್ ಮಾಡಬೇಕು!
+const userSettings = { volume: 80, mode: "dark" };
+localStorage.setItem('settings', JSON.stringify(userSettings));</code></pre>
+                    </div>
+                </section>
+
+                <footer class="mt-20 pt-8 border-t border-gray-200 dark:border-slate-800 text-center text-gray-500 dark:text-gray-400">
+                    <p><i class="fas fa-laptop-code mr-2"></i> Happy Coding! Keep building amazing front-end architectures.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <!-- AOS Animation script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <!-- Custom Interactivity Scripts -->
+    <script>
+        // 1. Initialize Scroll Animations
+        AOS.init({
+            duration: 800,
+            offset: 100,
+            once: true
+        });
+
+        // 2. Dark/Light Theme Toggler
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+        });
+
+        // 3. Sticky Navigation Highlighting (Intersection Observer)
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // 4. Copy Code Functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const codeBlock = this.nextElementSibling.querySelector('code');
+                navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                    this.classList.add('bg-green-600');
+                    this.classList.remove('bg-gray-700');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalHTML;
+                        this.classList.remove('bg-green-600');
+                        this.classList.add('bg-gray-700');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

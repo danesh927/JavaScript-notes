@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Asynchronous Callbacks & Callback Hell</title>
+    
+    <!-- Google Fonts for Kannada and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;600;700&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Highlight.js for Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- Tailwind Config for Dark Mode and Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #475569;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: #334155;
+        }
+
+        /* Fade-in Animation Classes */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Code Block Copy Button Container */
+        .code-container {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        pre {
+            margin: 0 !important;
+            padding: 1.5rem !important;
+            font-size: 0.95rem;
+        }
+
+        /* Sidebar active link style */
+        .toc-link.active {
+            color: #6366f1; /* Indigo 500 */
+            font-weight: 600;
+            border-left-color: #6366f1;
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-200 transition-colors duration-300 font-sans leading-relaxed">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/80 dark:bg-darkbg/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-brands fa-js text-yellow-400 text-3xl drop-shadow-md"></i>
+                <h1 class="text-xl font-bold hidden sm:block">JavaScript Masterclass: Async & Callbacks</h1>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none" aria-label="Toggle Theme">
+                <i id="theme-icon" class="fas fa-sun text-yellow-400 text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar / Table of Contents -->
+        <aside class="lg:w-1/4 shrink-0 hidden lg:block">
+            <div class="sticky top-24 bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-bold mb-4 flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+                    <i class="fas fa-list text-indigo-500"></i> ಪರಿವಿಡಿ (Contents)
+                </h3>
+                <nav class="flex flex-col space-y-1">
+                    <a href="#intro" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್</a>
+                    <a href="#section-1" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">1. ಮಕ್ಕಳಿಗಾಗಿ ಸುಲಭವಾದ ಕಥೆ</a>
+                    <a href="#section-2" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">2. ಕಾಲ್ ಬ್ಯಾಕ್ (Callback) ಎಂದರೇನು?</a>
+                    <a href="#section-3" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">3. ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್</a>
+                    <a href="#section-4" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">4. ವೃತ್ತಿಪರ ಮಟ್ಟ (Error-First)</a>
+                    <a href="#section-5" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">ಕಾಲ್ ಬ್ಯಾಕ್‌ನ ತೊಂದರೆ (Callback Hell)</a>
+                    <a href="#section-6" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">Callback Hell ಉದಾಹರಣೆ</a>
+                    <a href="#section-7" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md transition-colors text-sm">ಕಾಲ್‌ಬ್ಯಾಕ್ ನರಕದಿಂದ ತಪ್ಪಿಸಿಕೊಳ್ಳುವುದು ಹೇಗೆ?</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Notes -->
+        <main class="lg:w-3/4 pb-20">
+            <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-6 md:p-10">
+                
+                <p id="intro" class="text-lg mb-8 leading-relaxed font-medium bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-lg border-l-4 border-indigo-500 fade-in-section">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್ (Asynchronous Callbacks)</strong> ಎಂಬುದು ಬಹಳ ಮುಖ್ಯವಾದ ವಿಷಯ. ಇದನ್ನು ಸಣ್ಣ ಮಕ್ಕಳಿಂದ ಹಿಡಿದು ವೃತ್ತಿಪರರವರೆಗೆ (Professional) ಎಲ್ಲರಿಗೂ ಅರ್ಥವಾಗುವಂತೆ ಹಂತ ಹಂತವಾಗಿ ಕಲಿಯೋಣ.
+                </p>
+
+                <!-- Section 1 -->
+                <section id="section-1" class="mb-12 fade-in-section">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                        <i class="fas fa-child"></i> 1. ಮಕ್ಕಳಿಗಾಗಿ ಒಂದು ಸುಲಭವಾದ ಕಥೆ (ತಳಮಟ್ಟದ ವಿವರಣೆ)
+                    </h2>
+                    <p class="mb-4">ನೀವು ಒಂದು ಹೋಟೆಲ್‌ನಲ್ಲಿ ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡುತ್ತಿದ್ದೀರಾ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ.</p>
+                    
+                    <div class="bg-slate-100 dark:bg-slate-800/50 p-6 rounded-xl mb-6 shadow-inner">
+                        <ul class="space-y-2 list-none">
+                            <li>1. ನೀವು ಕೌಂಟರ್‌ಗೆ ಹೋಗಿ, "ಒಂದು ಪಿಜ್ಜಾ ಕೊಡಿ" ಎಂದು ಹಣ ಕಟ್ಟುತ್ತೀರಿ.</li>
+                            <li>2. </li>
+                            <li>3. ಪಿಜ್ಜಾ ತಯಾರಾಗಲು 15 ನಿಮಿಷ ಬೇಕು.</li>
+                            <li>4. </li>
+                            <li>5. ಆ 15 ನಿಮಿಷ ನೀವು ಕೌಂಟರ್ ಮುಂದೆಯೇ, ಬೇರೆ ಯಾವ ಕೆಲಸವನ್ನೂ ಮಾಡದೆ ಸುಮ್ಮನೆ ನಿಂತುಕೊಳ್ಳುತ್ತೀರಾ? ಇಲ್ಲ!</li>
+                            <li>6. </li>
+                            <li>7. ಬದಲಾಗಿ, ಹೋಟೆಲ್‌ನವರು ನಿಮಗೆ ಒಂದು ಟೋಕನ್ (Token) ಕೊಡುತ್ತಾರೆ ಮತ್ತು "ಪಿಜ್ಜಾ ರೆಡಿಯಾದ ಮೇಲೆ ನಾವು ನಿಮ್ಮನ್ನು ಕರೆಯುತ್ತೇವೆ (Call back)" ಎಂದು ಹೇಳುತ್ತಾರೆ.</li>
+                            <li>8. </li>
+                            <li>9. ಆ ಸಮಯದಲ್ಲಿ ನೀವು ಕುಳಿತುಕೊಂಡು ಮೊಬೈಲ್‌ನಲ್ಲಿ ಗೇಮ್ ಆಡಬಹುದು ಅಥವಾ ಸ್ನೇಹಿತರ ಜೊತೆ ಮಾತನಾಡಬಹುದು.</li>
+                            <li>10. </li>
+                            <li>11. ಪಿಜ್ಜಾ ತಯಾರಾದ ತಕ್ಷಣ ಹೋಟೆಲ್‌ನವರು ನಿಮ್ಮನ್ನು ಕರೆಯುತ್ತಾರೆ. ಆಗ ನೀವು ಹೋಗಿ ಪಿಜ್ಜಾ ತರುತ್ತೀರಿ.</li>
+                            <li>12. </li>
+                        </ul>
+                    </div>
+
+                    <p class="font-bold text-lg mb-4 text-green-600 dark:text-green-400">ಇದೇ ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್!</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>ಅಸಿಂಕ್ರೋನಸ್:</strong> ಒಂದು ಕೆಲಸ ಮುಗಿಯುವವರೆಗೆ ಕಾಯದೆ, ಬೇರೆ ಕೆಲಸ ಮಾಡುವುದು (ಗೇಮ್ ಆಡುವುದು).</li>
+                        <li class="list-none"> </li>
+                        <li><strong>ಕಾಲ್ ಬ್ಯಾಕ್:</strong> ಮೊದಲನೇ ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ, ನಮಗೆ ವಾಪಸ್ ಬಂದು ವಿಷಯ ತಿಳಿಸುವುದು (ಪಿಜ್ಜಾ ರೆಡಿ ಎಂದು ಕರೆಯುವುದು).</li>
+                        <li class="list-none"> </li>
+                    </ul>
+
+                    <!-- Visual Illustration -->
+                    <div class="mt-6 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-around gap-4 shadow-sm">
+                        <div class="text-center"><i class="fas fa-store text-4xl text-blue-500 mb-2"></i><br><span class="text-sm">Order Pizza</span></div>
+                        <i class="fas fa-arrow-right text-slate-400 hidden sm:block"></i>
+                        <div class="text-center"><i class="fas fa-gamepad text-4xl text-purple-500 mb-2"></i><br><span class="text-sm">Play Game (Async)</span></div>
+                        <i class="fas fa-arrow-right text-slate-400 hidden sm:block"></i>
+                        <div class="text-center"><i class="fas fa-pizza-slice text-4xl text-orange-500 mb-2"></i><br><span class="text-sm">Callback: Pizza Ready!</span></div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 2 -->
+                <section id="section-2" class="mb-12 fade-in-section">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                        <i class="fas fa-code"></i> 2. ಕಾಲ್ ಬ್ಯಾಕ್ (Callback) ಎಂದರೇನು?
+                    </h2>
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಫಂಕ್ಷನ್ (Function) ಎಂದರೆ ಒಂದು ನಿರ್ದಿಷ್ಟ ಕೆಲಸ ಮಾಡುವ ಕೋಡ್. ಒಂದು ಫಂಕ್ಷನ್ ಅನ್ನು, ಇನ್ನೊಂದು ಫಂಕ್ಷನ್‌ಗೆ ಇನ್‌ಪುಟ್ (Input) ಆಗಿ ಕಳುಹಿಸಿದರೆ, ಆ ಕಳುಹಿಸಿದ ಫಂಕ್ಷನ್ ಅನ್ನು 'ಕಾಲ್ ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್' ಎನ್ನುತ್ತಾರೆ.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-2 mt-6">ಉದಾಹರಣೆ 1: ಸಾಮಾನ್ಯ ಕಾಲ್ ಬ್ಯಾಕ್ (Synchronous Callback)</h3>
+                    
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">// ಇದು ಕಾಲ್ ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್
+function eatPizza() {
+    console.log("ನಾನು ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತಿದ್ದೇನೆ! 🍕");
+}
+
+// ಇದು ಮುಖ್ಯ ಫಂಕ್ಷನ್
+function orderPizza(callbackFunction) {
+    console.log("ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ...");
+    // ಪಿಜ್ಜಾ ಬಂದ ಮೇಲೆ ಕಾಲ್ ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ ಕರೆಯಲಾಗುತ್ತದೆ
+    callbackFunction(); 
+}
+
+// orderPizza ಫಂಕ್ಷನ್‌ಗೆ, eatPizza ಫಂಕ್ಷನ್ ಅನ್ನು ಇನ್‌ಪುಟ್ ಆಗಿ ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ
+orderPizza(eatPizza);</code></pre>
+                    </div>
+
+                    <div class="bg-black/5 dark:bg-black/40 border-l-4 border-slate-500 p-4 rounded mt-4">
+                        <p class="font-bold mb-1 text-slate-600 dark:text-slate-400">ಔಟ್‌ಪುಟ್ (Output):</p>
+                        <p class="font-mono text-sm">ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ...<br>ನಾನು ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತಿದ್ದೇನೆ! 🍕</p>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 3 -->
+                <section id="section-3" class="mb-12 fade-in-section">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                        <i class="fas fa-stopwatch"></i> 3. ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್ (Asynchronous Callback)
+                    </h2>
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದೇ ಬಾರಿಗೆ ಒಂದೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಸಿನಿಮಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವಂತಹ ದೊಡ್ಡ ಕೆಲಸ ಇದ್ದರೆ, ಅದು ಮುಗಿಯುವವರೆಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸುಮ್ಮನೆ ಕೂರುವುದಿಲ್ಲ. ಆ ಕೆಲಸವನ್ನು ಹಿನ್ನೆಲೆಗೆ (Background) ಹಾಕಿ, ಬೇರೆ ಕೆಲಸಗಳನ್ನು ಮಾಡುತ್ತದೆ.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-2 mt-6">ಉದಾಹರಣೆ 2: ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್ ಬ್ಯಾಕ್ (ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸ)</h3>
+                    <p class="mb-4">ಇಲ್ಲಿ ನಾವು <code>setTimeout</code> ಎಂಬ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಫಂಕ್ಷನ್ ಬಳಸುತ್ತೇವೆ. ಇದು ನಿರ್ದಿಷ್ಟ ಸಮಯದ ನಂತರ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</p>
+                    
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">function playGames() {
+    console.log("ಪಿಜ್ಜಾ ಬಂತು! ಈಗ ಗೇಮ್ ನಿಲ್ಲಿಸಿ ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತೇನೆ. 🍕");
+}
+
+function orderPizzaAsync(callback) {
+    console.log("1. ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಿದೆ.");
+    
+    // ಪಿಜ್ಜಾ ತಯಾರಾಗಲು 3 ಸೆಕೆಂಡ್ ಬೇಕು (3000 milliseconds)
+    setTimeout(function() {
+        console.log("3. ಹೋಟೆಲ್‌ನವರು: ನಿಮ್ಮ ಪಿಜ್ಜಾ ತಯಾರಾಗಿದೆ!");
+        callback(); // 3 ಸೆಕೆಂಡ್ ನಂತರ ಕಾಲ್ ಬ್ಯಾಕ್ ಕರೆಯಲಾಗುತ್ತದೆ
+    }, 3000); 
+}
+
+// ಪ್ರೋಗ್ರಾಮ್ ಇಲ್ಲಿಂದ ಶುರುವಾಗುತ್ತದೆ
+orderPizzaAsync(playGames);
+console.log("2. ನಾನು ಮೊಬೈಲ್‌ನಲ್ಲಿ ಗೇಮ್ ಆಡುತ್ತಾ ಕಾಯುತ್ತಿದ್ದೇನೆ... 📱");</code></pre>
+                    </div>
+
+                    <p class="font-bold mt-6 mb-2">ಔಟ್‌ಪುಟ್ ಬರುವ ಕ್ರಮವನ್ನು ಗಮನಿಸಿ:</p>
+                    <div class="bg-black/5 dark:bg-black/40 border-l-4 border-indigo-500 p-4 rounded">
+                        <ul class="font-mono text-sm space-y-1 list-none">
+                            <li>1. ಕೌಂಟರ್‌ನಲ್ಲಿ ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಿದೆ.</li>
+                            <li>2. </li>
+                            <li>3. ನಾನು ಮೊಬೈಲ್‌ನಲ್ಲಿ ಗೇಮ್ ಆಡುತ್ತಾ ಕಾಯುತ್ತಿದ್ದೇನೆ... 📱 <span class="text-slate-500 dark:text-slate-400">(ಗಮನಿಸಿ: ಇದು ಕಾಯದೆ ಪ್ರಿಂಟ್ ಆಗಿದೆ!)</span></li>
+                            <li>4. (3 ಸೆಕೆಂಡ್ ಕಾದ ನಂತರ)</li>
+                            <li>5. </li>
+                            <li>6. ಹೋಟೆಲ್‌ನವರು: ನಿಮ್ಮ ಪಿಜ್ಜಾ ತಯಾರಾಗಿದೆ!</li>
+                            <li>7. </li>
+                            <li>8. ಪಿಜ್ಜಾ ಬಂತು! ಈಗ ಗೇಮ್ ನಿಲ್ಲಿಸಿ ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತೇನೆ. 🍕</li>
+                            <li>9. </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 4 -->
+                <section id="section-4" class="mb-12 fade-in-section">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                        <i class="fas fa-briefcase"></i> 4. ವೃತ್ತಿಪರ ಮಟ್ಟ (Professional Level)
+                    </h2>
+                    <p class="mb-4">ಸಾಫ್ಟ್‌ವೇರ್ ಕಂಪನಿಗಳಲ್ಲಿ ಕಾಲ್ ಬ್ಯಾಕ್ ಅನ್ನು ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ (Data) ತರಲು ಅಥವಾ ಡೇಟಾಬೇಸ್ (Database) ಓದಲು ಬಳಸುತ್ತಾರೆ. ವೃತ್ತಿಪರರು "Error-First Callback" (ದೋಷ-ಮೊದಲು ಕಾಲ್ ಬ್ಯಾಕ್) ವಿಧಾನವನ್ನು ಬಳಸುತ್ತಾರೆ. ಅಂದರೆ, ಡೇಟಾ ತರುವಾಗ ಏನಾದರೂ ತಪ್ಪಾಗಿದೆಯೇ ಎಂದು ಮೊದಲು ಪರಿಶೀಲಿಸುವುದು.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-2 mt-6">ಉದಾಹರಣೆ 3: Error-First Callback (ವೃತ್ತಿಪರ ಮಟ್ಟ)</h3>
+                    
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">// ಸರ್ವರ್‌ನಿಂದ ಬಳಕೆದಾರನ ಮಾಹಿತಿಯನ್ನು ತರುವ ಫಂಕ್ಷನ್
+function getUserData(userId, callback) {
+    console.log("ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ಹುಡುಕಲಾಗುತ್ತಿದೆ...");
+    
+    setTimeout(() => {
+        let error = false; // ಇದನ್ನು true ಮಾಡಿದರೆ error ಬರುತ್ತದೆ
+        
+        if (error) {
+            // ಏನಾದರೂ ತಪ್ಪಾದರೆ (ಉದಾಹರಣೆಗೆ ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದಿದ್ದರೆ)
+            callback("ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ! ಡೇಟಾ ಸಿಗಲಿಲ್ಲ.", null);
+        } else {
+            // ಡೇಟಾ ಸರಿಯಾಗಿ ಸಿಕ್ಕರೆ
+            let user = { id: userId, name: "ರಾಮು", job: "ಸಾಫ್ಟ್‌ವೇರ್ ಎಂಜಿನಿಯರ್" };
+            callback(null, user); // ಮೊದಲನೇ ಜಾಗದಲ್ಲಿ null (ಯಾವ ದೋಷವಿಲ್ಲ)
+        }
+    }, 2000);
+}
+
+// ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವುದು
+getUserData(101, function(error, data) {
+    if (error) {
+        console.error("❌ ದೋಷ: " + error);
+    } else {
+        console.log("✅ ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಸಿಕ್ಕಿತು:", data);
+    }
+});</code></pre>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 5 -->
+                <section id="section-5" class="mb-12 fade-in-section">
+                    <h2 class="text-3xl font-bold mb-4 text-red-600 dark:text-red-400 flex items-center gap-2">
+                        <i class="fas fa-fire-alt"></i> ಕಾಲ್ ಬ್ಯಾಕ್‌ನ ತೊಂದರೆ (Callback Hell)
+                    </h2>
+                    <p class="mb-4">ಒಂದು ವೇಳೆ ನೀವು ಒಂದಾದ ಮೇಲೆ ಒಂದರಂತೆ 10 ಕೆಲಸಗಳನ್ನು ಕಾಲ್ ಬ್ಯಾಕ್ ಬಳಸಿ ಮಾಡಬೇಕಾದರೆ, ಕೋಡ್ ನೋಡಲು ತ್ರಿಭುಜದ (Pyramid) ಆಕಾರದಲ್ಲಿ ಬೆಳೆಯುತ್ತದೆ. ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ತುಂಬಾ ಕಷ್ಟವಾಗುತ್ತದೆ. ಇದನ್ನು ಸಾಫ್ಟ್‌ವೇರ್ ಭಾಷೆಯಲ್ಲಿ <strong>Callback Hell</strong> (ಕಾಲ್ ಬ್ಯಾಕ್ ನರಕ) ಅಥವಾ <strong>Pyramid of Doom</strong> ಎನ್ನುತ್ತಾರೆ.</p>
+                    
+                    <p class="mb-4">ಇದನ್ನು ಸರಿಪಡಿಸಲು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Promises ಮತ್ತು Async/Await ಎಂಬ ಹೊಸ ವಿಧಾನಗಳನ್ನು ತರಲಾಗಿದೆ.</p>
+
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700/50 p-6 rounded-xl mt-6">
+                        <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>Callback Hell (ಕಾಲ್‌ಬ್ಯಾಕ್ ನರಕ)</strong> ಎಂಬುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಒಂದು ಮೋಜಿನ "ನಿಧಿ ಶೋಧನೆ" (Treasure Hunt) ಕಥೆಯನ್ನು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ:</p>
+                        <p class="mb-2">ನೀವು ಒಂದು ನಿಧಿಯನ್ನು ಹುಡುಕಲು ಹೋಗುತ್ತಿದ್ದೀರಿ. ಆದರೆ ಅದಕ್ಕೆ ಒಂದಾದ ಮೇಲೊಂದು ಕೆಲಸಗಳನ್ನು ಮಾಡಲೇಬೇಕು:</p>
+                        <ol class="list-decimal pl-6 space-y-2 mb-4 font-medium">
+                            <li>ಮೊದಲು ಕಾಡಿಗೆ ಹೋಗಬೇಕು (ಇದಕ್ಕೆ 2 ಸೆಕೆಂಡ್ ಬೇಕು).</li>
+                            <li>ಕಾಡು ಸಿಕ್ಕ ಮೇಲೆ, ಅಲ್ಲಿರುವ ಗುಹೆಯನ್ನು ಹುಡುಕಬೇಕು (ಇದಕ್ಕೆ 2 ಸೆಕೆಂಡ್ ಬೇಕು).</li>
+                            <li>ಗುಹೆ ಸಿಕ್ಕ ಮೇಲೆ, ಒಳಗಿರುವ ಪೆಟ್ಟಿಗೆಯನ್ನು ಒಡೆಯಬೇಕು (ಇದಕ್ಕೆ 2 ಸೆಕೆಂಡ್ ಬೇಕು).</li>
+                            <li>ಪೆಟ್ಟಿಗೆ ಒಡೆದ ಮೇಲೆ, ನಿಧಿಯನ್ನು ಮನೆಗೆ ತರಬೇಕು.</li>
+                        </ol>
+                        <p>ಇಲ್ಲಿ ಒಂದು ಕೆಲಸ ಮುಗಿಯದೆ ಮುಂದಿನ ಕೆಲಸ ಮಾಡುವಂತಿಲ್ಲ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಇದನ್ನು ಕೋಡ್ ಮೂಲಕ ಬರೆದಾಗ ಏನಾಗುತ್ತದೆ ಎಂದು ನೋಡೋಣ.</p>
+                    </div>
+
+                    <h3 class="text-xl font-bold mb-2 mt-8 text-indigo-600 dark:text-indigo-400">1. ತಳಮಟ್ಟದ ಪರಿಕಲ್ಪನೆ (The Basics)</h3>
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದು ಅಸಿಂಕ್ರೋನಸ್ (ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ) ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ ಇನ್ನೊಂದು ಕೆಲಸ ಶುರು ಮಾಡಲು ನಾವು <strong>Callback</strong> ಬಳಸುತ್ತೇವೆ. ಆದರೆ ೪-೫ ಕೆಲಸಗಳನ್ನು ಒಂದಾದ ಮೇಲೊಂದು ಮಾಡಬೇಕಾದಾಗ, ಒಂದರ ಒಳಗೆ ಇನ್ನೊಂದು ಕಾಲ್‌ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ ಬರೆಯುತ್ತಾ ಹೋಗುತ್ತೇವೆ.</p>
+                    
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-4">
+                        <p class="flex-1">ಹೀಗೆ ಒಂದರೊಳಗೊಂದು ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಬರೆಯುತ್ತಾ ಹೋದಾಗ, ಕೋಡ್ ಬಲಭಾಗಕ್ಕೆ ಸರಿಯುತ್ತಾ ಹೋಗಿ <strong>">" (V ಯ ಅಡ್ಡ ರೂಪ)</strong> ಆಕಾರದಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಇದನ್ನು ನೋಡಲು ಮತ್ತು ಓದಲು ತುಂಬಾ ಕಷ್ಟವಾಗುತ್ತದೆ. ಇದನ್ನೇ ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಜಗತ್ತಿನಲ್ಲಿ <strong>Callback Hell</strong> ಅಥವಾ <strong>Pyramid of Doom (ವಿನಾಶದ ಪಿರಮಿಡ್)</strong> ಎಂದು ಕರೆಯುತ್ತಾರೆ.</p>
+                        <!-- Visual representation of Pyramid of Doom -->
+                        <div class="flex-1 w-full flex justify-center">
+                            <svg width="200" height="150" viewBox="0 0 200 150" class="opacity-80">
+                                <rect x="10" y="10" width="180" height="25" rx="4" fill="#ef4444" opacity="0.8"/>
+                                <rect x="30" y="45" width="160" height="25" rx="4" fill="#f97316" opacity="0.8"/>
+                                <rect x="50" y="80" width="140" height="25" rx="4" fill="#f59e0b" opacity="0.8"/>
+                                <rect x="70" y="115" width="120" height="25" rx="4" fill="#eab308" opacity="0.8"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-bold mb-2 mt-8 text-indigo-600 dark:text-indigo-400">2. ಪ್ರಾಥಮಿಕ ಉದಾಹರಣೆ (Callback Hell ಹೇಗಿರುತ್ತದೆ?)</h3>
+                    <p class="mb-4">ಮೇಲೆ ಹೇಳಿದ ನಿಧಿ ಶೋಧನೆಯನ್ನೇ ಕೋಡ್‌ನಲ್ಲಿ ಬರೆಯೋಣ:</p>
+
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">console.log("ನಿಧಿ ಶೋಧನೆ ಶುರುವಾಯಿತು...");
+
+// 1. ಕಾಡಿಗೆ ಹೋಗುವುದು
+setTimeout(function() {
+    console.log("1. ಕಾಡು ಸಿಕ್ಕಿತು!");
+
+    // 2. ಗುಹೆ ಹುಡುಕುವುದು (ಕಾಡು ಸಿಕ್ಕ ಮೇಲಷ್ಟೇ ಇದು ಶುರುವಾಗಬೇಕು)
+    setTimeout(function() {
+        console.log("2. ಗುಹೆ ಸಿಕ್ಕಿತು!");
+
+        // 3. ಪೆಟ್ಟಿಗೆ ಒಡೆಯುವುದು
+        setTimeout(function() {
+            console.log("3. ಪೆಟ್ಟಿಗೆ ಒಡೆದೆವು!");
+
+            // 4. ನಿಧಿ ಪಡೆಯುವುದು
+            setTimeout(function() {
+                console.log("4. ಯೆಸ್! ನಿಧಿ ಸಿಕ್ಕಿತು 💰");
+            }, 1000);
+
+        }, 2000);
+
+    }, 2000);
+
+}, 2000);</code></pre>
+                    </div>
+                    <p class="mb-4 text-red-600 dark:text-red-400 font-semibold"><i class="fas fa-exclamation-triangle"></i> ಮೇಲಿನ ಕೋಡ್ ಅನ್ನು ಗಮನಿಸಿ. ಅದು ಮೆಟ್ಟಿಲುಗಳ ತರಹ ಬಲಕ್ಕೆ ಸರಿಯುತ್ತಾ ಹೋಗಿದೆ. ಸದ್ಯಕ್ಕೆ ಇದು ಕೇವಲ 4 ಕೆಲಸಗಳು. ಆದರೆ 20 ಕೆಲಸಗಳಿದ್ದರೆ? ಕೋಡ್ ಓದಲು ಅಸಾಧ್ಯವಾಗುತ್ತದೆ!</p>
+
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 6 -->
+                <section id="section-6" class="mb-12 fade-in-section">
+                    <h3 class="text-xl font-bold mb-4 text-indigo-600 dark:text-indigo-400">3. ವೃತ್ತಪರ ಮಟ್ಟ (Professional Level)</h3>
+                    <p class="mb-4">ಸಾಫ್ಟ್‌ವೇರ್ ಕಂಪನಿಗಳಲ್ಲಿ, ಡೇಟಾಬೇಸ್‌ನಿಂದ ಮಾಹಿತಿ ತರುವಾಗ Callback Hell ದೊಡ್ಡ ತಲೆನೋವಾಗುತ್ತದೆ. ವೃತ್ತಪರ ಕೋಡಿಂಗ್‌ನಲ್ಲಿ ನಾವು ಕೇವಲ ಯಶಸ್ಸನ್ನು ಮಾತ್ರವಲ್ಲ, ತಪ್ಪುಗಳನ್ನು (Errors) ಕೂಡ ನಿಭಾಯಿಸಬೇಕು.</p>
+                    <p class="mb-4">ಒಂದು ಇ-ಕಾಮರ್ಸ್ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ (ಉದಾಹರಣೆಗೆ: Amazon) ಒಂದು ಆರ್ಡರ್ ಮಾಡಬೇಕಾದರೆ ನಡೆಯುವ ಪ್ರಕ್ರಿಯೆ ನೋಡಿ:</p>
+
+                    <div class="code-container border border-red-500/30">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">// ವೃತ್ತಪರ Callback Hell ಉದಾಹರಣೆ (Error handling ಜೊತೆಗೆ)
+
+getUserData(userId, function(error, user) {
+    if (error) {
+        console.log("ಯೂಸರ್ ಸಿಗಲಿಲ್ಲ");
+    } else {
+        checkBankBalance(user.account, function(error, balance) {
+            if (error) {
+                console.log("ಬ್ಯಾಂಕ್ ಸರ್ವರ್ ಡೌನ್");
+            } else {
+                deductMoney(balance, amount, function(error, paymentInfo) {
+                    if (error) {
+                        console.log("ಹಣ ಕಡಿತಗೊಳಿಸಲು ವಿಫಲವಾಗಿದೆ");
+                    } else {
+                        placeOrder(paymentInfo, function(error, orderId) {
+                            if (error) {
+                                console.log("ಆರ್ಡರ್ ಫೇಲ್ ಆಯಿತು");
+                            } else {
+                                console.log("ಆರ್ಡರ್ ಯಶಸ್ವಿಯಾಗಿದೆ! Order ID: " + orderId);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+});</code></pre>
+                    </div>
+
+                    <div class="bg-red-50 dark:bg-red-900/10 p-6 rounded-xl mt-8 border border-red-100 dark:border-red-800/30">
+                        <h4 class="font-bold text-lg mb-4 text-red-600 dark:text-red-400"><i class="fas fa-bug"></i> Callback Hell ನಿಂದ ಆಗುವ ತೊಂದರೆಗಳೇನು?</h4>
+                        <ol class="list-decimal pl-6 space-y-3">
+                            <li><strong>ಓದಲು ಕಷ್ಟ (Poor Readability):</strong> ಕೋಡ್ ಎಲ್ಲಿ ಶುರುವಾಗುತ್ತದೆ, ಎಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ ಎಂದು ಹುಡುಕುವುದು ಗೊಂದಲಮಯವಾಗುತ್ತದೆ.</li>
+                            <li><strong>ದೋಷ ನಿವಾರಣೆ ಕಷ್ಟ (Hard to Debug):</strong> ಯಾವ ಹಂತದಲ್ಲಿ ತಪ್ಪು (Error) ನಡೆದಿದೆ ಎಂದು ಕಂಡುಹಿಡಿಯುವುದು ತುಂಬಾ ಕಷ್ಟ. ಪ್ರತಿ ಹಂತದಲ್ಲೂ <code>if (error)</code> ಬರೆಯುವುದು ಕಿರಿಕಿರಿಯಾಗುತ್ತದೆ.</li>
+                            <li><strong>ನಿರ್ವಹಣೆ ಕಷ್ಟ (Hard to Maintain):</strong> ಭವಿಷ್ಯದಲ್ಲಿ ಹೊಸದಾಗಿ ಇನ್ನೊಂದು ಕೆಲಸವನ್ನು (ಉದಾಹರಣೆಗೆ: ಮೆಸೇಜ್ ಕಳುಹಿಸುವುದು) ಸೇರಿಸಬೇಕಾದರೆ ಇಡೀ ಕೋಡ್ ಅನ್ನು ಬದಲಾಯಿಸಬೇಕಾಗುತ್ತದೆ.</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700 my-8">
+
+                <!-- Section 7 -->
+                <section id="section-7" class="mb-12 fade-in-section">
+                    <h3 class="text-2xl font-bold mb-4 text-green-600 dark:text-green-400 flex items-center gap-2">
+                        <i class="fas fa-magic"></i> 4. ಕಾಲ್‌ಬ್ಯಾಕ್ ನರಕದಿಂದ ತಪ್ಪಿಸಿಕೊಳ್ಳುವುದು ಹೇಗೆ? (The Solution)
+                    </h3>
+                    <p class="mb-4">ಈ Callback Hell ಸಮಸ್ಯೆಯನ್ನು ಬಗೆಹರಿಸಲು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (ES6 ಮತ್ತು ಮೇಲ್ಪಟ್ಟು) ಎರಡು ಅದ್ಭುತ ಅಸ್ತ್ರಗಳನ್ನು ಪರಿಚಯಿಸಿದೆ:</p>
+                    <ul class="list-disc pl-8 mb-6 space-y-2 text-lg font-medium">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>Promises (ಪ್ರಾಮಿಸ್‌ಗಳು)</strong></li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i><strong>Async / Await (ಅಸಿಂಕ್ / ಅವೇಟ್)</strong></li>
+                    </ul>
+
+                    <!-- Expansion: Added Promise seamlessly as requested to ensure comprehensive learning -->
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 mb-8">
+                        <h4 class="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-400">🔹 Promises ವಿಸ್ತೃತ ವಿವರಣೆ (ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ):</h4>
+                        <p class="mb-4">Promises ಬಳಸುವುದರಿಂದ <code>.then()</code> ಮತ್ತು <code>.catch()</code> ಮೂಲಕ ಮೇಲಿನ ನರಕವನ್ನು ಸರಪಳಿಯಂತೆ (Chain) ಸುಲಭವಾಗಿ ಬರೆಯಬಹುದು:</p>
+                        <div class="code-container mt-2 mb-0">
+<pre><code class="language-javascript">// Promises ಬಳಸಿ ಬರೆದಾಗ ಕೋಡ್ ಹೀಗಿರುತ್ತದೆ
+processOrderPromise(userId, amount)
+    .then(user => checkBankBalance(user.account))
+    .then(balance => deductMoney(balance, amount))
+    .then(paymentInfo => placeOrder(paymentInfo))
+    .then(orderId => console.log("ಆರ್ಡರ್ ಯಶಸ್ವಿಯಾಗಿದೆ! Order ID: " + orderId))
+    .catch(error => console.log("ತೊಂದರೆ ಉಂಟಾಗಿದೆ: " + error));</code></pre>
+                        </div>
+                    </div>
+
+                    <p class="mb-4 text-lg">ಅದೇ ಆರ್ಡರ್ ಮಾಡುವ ಕೋಡ್ ಅನ್ನು <code>Async/Await</code> ಬಳಸಿ ಬರೆದರೆ ಎಷ್ಟೊಂದು ಸುಲಭವಾಗಿ ಕಾಣುತ್ತದೆ ನೋಡಿ:</p>
+
+                    <div class="code-container border border-green-500/40">
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+<pre><code class="language-javascript">// Callback Hell ಇಲ್ಲದ ಆಧುನಿಕ ಮತ್ತು ವೃತ್ತಪರ ವಿಧಾನ
+async function processOrder(userId, amount) {
+    try {
+        const user = await getUserData(userId);
+        const balance = await checkBankBalance(user.account);
+        const paymentInfo = await deductMoney(balance, amount);
+        const orderId = await placeOrder(paymentInfo);
+        
+        console.log("ಆರ್ಡರ್ ಯಶಸ್ವಿಯಾಗಿದೆ! Order ID: " + orderId);
+    } catch (error) {
+        // ಯಾವುದೇ ಹಂತದಲ್ಲಿ ತಪ್ಪಾದರೂ ಈ ಒಂದೇ ಜಾಗದಲ್ಲಿ ಹಿಡಿಯಬಹುದು
+        console.log("ತೊಂದರೆ ಉಂಟಾಗಿದೆ: " + error);
+    }
+}</code></pre>
+                    </div>
+
+                    <p class="mt-6 text-lg bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border-l-4 border-green-500">
+                        ಇದು ಮೇಲಿನಿಂದ ಕೆಳಕ್ಕೆ ಸರಾಗವಾಗಿ ಓದಲು (Synchronous ತರಹ) ಸಾಧ್ಯವಾಗುತ್ತದೆ. ಆದ್ದರಿಂದ ವೃತ್ತಪರರು Callback Hell ಅನ್ನು ತಪ್ಪಿಸಲು ಯಾವಾಗಲೂ Promises ಅಥವಾ Async/Await ಅನ್ನು ಬಳಸುತ್ತಾರೆ.
+                    </p>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 1. Initialize Syntax Highlighting
+        document.addEventListener('DOMContentLoaded', (event) => {
+            hljs.highlightAll();
+        });
+
+        // 2. Theme Toggle Logic (Light / Dark Mode)
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Default to Dark Mode as requested for eye strain
+        if (localStorage.getItem('theme') === 'light') {
+            htmlElement.classList.remove('dark');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+            themeIcon.classList.replace('text-yellow-400', 'text-slate-600');
+        } else {
+            htmlElement.classList.add('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-slate-600', 'text-yellow-400');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.replace('text-yellow-400', 'text-slate-600');
+            }
+        });
+
+        // 3. Copy to Clipboard Functionality
+        function copyCode(button) {
+            // Find the <code> element within the same container
+            const codeBlock = button.parentElement.querySelector('code');
+            const textToCopy = codeBlock.innerText;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // 4. ScrollSpy for Sidebar (Highlight active section)
+        const sections = document.querySelectorAll('section, p#intro');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // 5. Fade-in on Scroll Animation
+        const fadeSections = document.querySelectorAll('.fade-in-section');
+        const fadeObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeSections.forEach(section => {
+            fadeObserver.observe(section);
+        });
+    </script>
+</body>
+</html>

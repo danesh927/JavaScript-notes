@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced JavaScript Notes & Core Concepts</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        darkText: '#cbd5e1',
+                        accent: '#38bdf8'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts for Kannada and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PrismJS for Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        /* Smooth Scroll & Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+        
+        /* Sidebar active link styling */
+        .toc-link.active {
+            color: #38bdf8;
+            font-weight: 600;
+            border-left-color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        /* Code Block Copy Button */
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .code-wrapper:hover .copy-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-darkText transition-colors duration-300 font-sans antialiased selection:bg-accent selection:text-white">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/80 dark:bg-darkBg/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-brands fa-js text-accent text-3xl"></i>
+                    <span class="font-bold text-xl text-gray-900 dark:text-white tracking-tight">JS MasterNotes</span>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-yellow-400 hover:scale-110 transition-transform">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sticky Sidebar / Table of Contents -->
+        <aside class="hidden md:block w-1/4 shrink-0">
+            <div class="sticky top-24 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 transition-colors">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">ಪರಿವಿಡಿ (Contents)</h3>
+                <ul class="space-y-1 text-sm border-l-2 border-gray-200 dark:border-gray-700" id="toc-menu">
+                    <li><a href="#intro" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಪೀಠಿಕೆ (Introduction)</a></li>
+                    <li><a href="#object-create-basics" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">Object.create() ಅಂದರೇನು?</a></li>
+                    <li><a href="#level-1" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೧: ನಾನ್-ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ</a></li>
+                    <li><a href="#level-2" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೨: ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ</a></li>
+                    <li><a href="#level-3" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೩: ವೃತ್ತಿಪರರಿಗೆ</a></li>
+                    <li><a href="#level-4" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೪: Object.create(null)</a></li>
+                    <li><a href="#summary-1" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಸಾರಾಂಶ (Summary)</a></li>
+                    <!-- Seamless Expansions -->
+                    <li class="mt-4 mb-2 pl-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Core Extensions</li>
+                    <li><a href="#level-5-dom" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೫: DOM Manipulation</a></li>
+                    <li><a href="#level-6-events" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೬: Event Handling</a></li>
+                    <li><a href="#level-7-storage" class="toc-link block py-2 pl-4 border-l-2 border-transparent hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-r-md">ಹಂತ ೭: Client-Side Storage</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full md:w-3/4 space-y-12">
+            
+            <!-- ORIGINAL NOTES PRESERVED EXACTLY -->
+            <section id="intro" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <div class="flex items-start gap-4 mb-6 text-gray-700 dark:text-gray-300 italic bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border-l-4 border-accent">
+                    <i class="fa-solid fa-quote-left text-2xl text-accent/50 mt-1"></i>
+                    <p class="leading-relaxed">
+                        [ನಿಮ್ಮ ವಿವರಣೆ ಅತ್ಯುತ್ತಮವಾಗಿದೆ ಮತ್ತು ತಾಂತ್ರಿಕವಾಗಿ ಸಂಪೂರ್ಣವಾಗಿ ಸರಿಯಾಗಿದೆ! ನಾನ್-ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ನೀವು ನೀಡಿದ "ಜೆರಾಕ್ಸ್" ಉದಾಹರಣೆ ಹಾಗೂ ವೃತ್ತಿಪರರಿಗೆ "Property Descriptors" ಬಳಸಿರುವ ರೀತಿ ಅತ್ಯಂತ ಸೂಕ್ತವಾಗಿದೆ.<br><br>
+                        ವೆಬ್ ಡೆವಲಪ್ಮೆಂಟ್ ಮಾಡುವಾಗ ಡೇಟಾ ನಿರ್ವಹಣೆಗೆ ವೃತ್ತಿಪರರು ಬಳಸುವ ಇನ್ನೊಂದು ಪ್ರಮುಖ ವಿಧಾನವಾದ Object.create(null) ಅನ್ನು ಸೇರಿಸಿ, ಈ ಸಂಪೂರ್ಣ ವಿವರಣೆಯನ್ನು ಇನ್ನಷ್ಟು ಪರಿಪೂರ್ಣವಾಗಿ ಕೆಳಗೆ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ:
+                    </p>
+                </div>
+
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                    JavaScript ನಲ್ಲಿ Object.create() ಬಳಸಿ ಆಬ್ಜೆಕ್ಟ್ ರಚಿಸುವುದು
+                </h1>
+            </section>
+
+            <section id="object-create-basics" class="fade-in-section scroll-mt-28">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-cube text-accent"></i> ಆಬ್ಜೆಕ್ಟ್ (Object) ಅಂದರೇನು? (ತುಂಬಾ ಸರಳವಾಗಿ)
+                </h2>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+                    ನಿಜ ಜೀವನದಲ್ಲಿ ಒಂದು 'ಕಾರು' ತೆಗೆದುಕೊಂಡರೆ, ಅದಕ್ಕೆ ಬಣ್ಣ (Color), ಮಾಡೆಲ್ (Model) ಎಂಬ ಗುಣಗಳಿರುತ್ತವೆ ಮತ್ತು ಚಲಿಸುವ (Drive) ಸಾಮರ್ಥ್ಯವಿರುತ್ತದೆ. ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿಯೂ ಡೇಟಾವನ್ನು ಹೀಗೆಯೇ ಶೇಖರಿಸಿಡಲು ನಾವು 'Object' ಅನ್ನು ಬಳಸುತ್ತೇವೆ.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <i class="fa-regular fa-copy text-accent"></i> Object.create() ಅಂದರೇನು?
+                </h2>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-6">
+                    ಇದನ್ನು ಸರಳವಾಗಿ ಹೇಳಬೇಕೆಂದರೆ ಇದು ಒಂದು "ಜೆರಾಕ್ಸ್ ಕಾಪಿ" (Xerox Copy) ಇದ್ದ ಹಾಗೆ. ನಿಮ್ಮ ಬಳಿ ಒಂದು ಒರಿಜಿನಲ್ (ಮೂಲ) ಡಾಕ್ಯುಮೆಂಟ್ ಇದೆ. ನೀವು ಅದರ ಜೆರಾಕ್ಸ್ ತೆಗೆದು, ಆ ಜೆರಾಕ್ಸ್ ಮೇಲೆ ಹೊಸ ವಿಷಯಗಳನ್ನು ಬರೆಯಬಹುದು. ಆದರೆ ಆ ಹೊಸ ಜೆರಾಕ್ಸ್, ಒರಿಜಿನಲ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಗುಣಗಳನ್ನು ತನ್ನೊಳಗೆ ಇಟ್ಟುಕೊಂಡಿರುತ್ತದೆ.<br><br>
+                    ಬನ್ನಿ, ಇದನ್ನು ೪ ಹಂತಗಳಲ್ಲಿ ಕಲಿಯೋಣ:
+                </p>
+                
+                <!-- Conceptual Diagram -->
+                <div class="w-full bg-white dark:bg-gray-800 rounded-xl p-6 flex justify-center items-center shadow-inner my-8">
+                    <svg viewBox="0 0 500 200" class="w-full max-w-lg h-auto">
+                        <rect x="50" y="50" width="120" height="80" rx="10" fill="#334155" stroke="#38bdf8" stroke-width="2"/>
+                        <text x="110" y="95" fill="#f8fafc" text-anchor="middle" font-family="sans-serif" font-weight="bold">Original (ಮೂಲ)</text>
+                        <path d="M 180 90 L 310 90" stroke="#94a3b8" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+                        <rect x="330" y="50" width="130" height="80" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                        <text x="395" y="85" fill="#f8fafc" text-anchor="middle" font-family="sans-serif" font-weight="bold">Xerox Copy</text>
+                        <text x="395" y="110" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="sans-serif">(Object.create)</text>
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+            </section>
+
+            <section id="level-1" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4">ಹಂತ ೧: ನಾನ್-ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ (Beginner Level)</h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ನೀವು ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ಗೆ ಹೊಸಬರಾಗಿದ್ದರೆ, Object.create() ಅನ್ನು ಒಂದು ಮಾದರಿ (Template) ಯಿಂದ ಹೊಸ ವಸ್ತುವನ್ನು ತಯಾರಿಸುವುದು ಎಂದು ತಿಳಿದುಕೊಳ್ಳಿ.<br><br>
+                    ಉದಾಹರಣೆ: ನಮ್ಮ ಬಳಿ animal ಎಂಬ ಒಂದು ಮೂಲ ಆಬ್ಜೆಕ್ಟ್ ಇದೆ. ಅದರಿಂದ ನಾವು dog (ನಾಯಿ) ಎಂಬ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸೋಣ.
+                </p>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+// 1. ಇದು ನಮ್ಮ ಮೂಲ ಮಾದರಿ (Original Template)
+const animal = {
+  isAlive: true,
+  eat: function() {
+    console.log("ನಾನು ಊಟ ಮಾಡುತ್ತೇನೆ!");
+  }
+};
+
+// 2. Object.create() ಬಳಸಿ 'dog' ಎಂಬ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ರಚನೆ
+const dog = Object.create(animal);
+
+// 3. ನಾಯಿಗೆ ಮಾತ್ರ ಸಂಬಂಧಿಸಿದ ಹೊಸ ಗುಣವನ್ನು ಸೇರಿಸುವುದು
+dog.name = "ಟಾಮಿ (Tommy)";
+dog.bark = function() {
+  console.log("ಭೌ ಭೌ!");
+};
+
+// ಔಟ್‌ಪುಟ್ ಪರೀಕ್ಷಿಸೋಣ:
+console.log(dog.name);   // ಔಟ್‌ಪುಟ್: ಟಾಮಿ (Tommy)
+dog.bark();              // ಔಟ್‌ಪುಟ್: ಭೌ ಭೌ!
+
+// ಗಮನಿಸಿ: 'eat' ಎಂಬುದು ನಾಯಿಯ ಒಳಗೆ ಇಲ್ಲದಿದ್ದರೂ, ಅದು ತನ್ನ ಮೂಲ (animal) ದಿಂದ ಅದನ್ನು ಪಡೆದುಕೊಳ್ಳುತ್ತದೆ.
+dog.eat();               // ಔಟ್‌ಪುಟ್: ನಾನು ಊಟ ಮಾಡುತ್ತೇನೆ!
+console.log(dog.isAlive);// ಔಟ್‌ಪುಟ್: true
+                    </code></pre>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <strong class="text-blue-700 dark:text-blue-400">ವಿವರಣೆ:</strong> ಇಲ್ಲಿ dog ಎನ್ನುವುದು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್. ಆದರೆ ಅದು animal ಅನ್ನು ತನ್ನ ತಂದೆ/ಮೂಲ (Parent) ಎಂದು ಪರಿಗಣಿಸುತ್ತದೆ. ತನ್ನ ಬಳಿ ಇಲ್ಲದ ಗುಣಗಳನ್ನು ತನ್ನ ತಂದೆಯಿಂದ ಎರವಲು ಪಡೆಯುತ್ತದೆ.
+                </p>
+            </section>
+
+            <section id="level-2" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4">ಹಂತ ೨: ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ (Intermediate Level)</h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಇದನ್ನು ಪ್ರೊಟೊಟೈಪಲ್ ಇನ್ಹೆರಿಟೆನ್ಸ್ (Prototypal Inheritance) ಎಂದು ಕರೆಯುತ್ತಾರೆ. ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಮತ್ತೊಂದು ಆಬ್ಜೆಕ್ಟ್‌ನ ಗುಣಲಕ್ಷಣಗಳನ್ನು (Properties) ಮತ್ತು ವಿಧಾನಗಳನ್ನು (Methods) ಆನುವಂಶಿಕವಾಗಿ ಪಡೆಯುವುದೇ ಇದರ ಮುಖ್ಯ ಉದ್ದೇಶ.
+                </p>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+const carPrototype = {
+  wheels: 4,
+  startEngine: function() {
+    console.log(`${this.brand} ಕಾರಿನ ಎಂಜಿನ್ ಶುರುವಾಗಿದೆ... ವ್ರೂಮ್!`);
+  }
+};
+
+const myCar = Object.create(carPrototype);
+myCar.brand = "Tata Nexon";
+myCar.color = "Red";
+
+myCar.startEngine(); 
+// ಔಟ್‌ಪುಟ್: Tata Nexon ಕಾರಿನ ಎಂಜಿನ್ ಶುರುವಾಗಿದೆ... ವ್ರೂಮ್!
+
+console.log(myCar.wheels); 
+// ಔಟ್‌ಪುಟ್: 4 (ಇದು carPrototype ನಿಂದ ಬಂದಿದೆ)
+                    </code></pre>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <strong class="text-blue-700 dark:text-blue-400">ವಿವರಣೆ:</strong> ನೀವು myCar ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡಿದರೆ ಕೇವಲ { brand: 'Tata Nexon', color: 'Red' } ಮಾತ್ರ ಕಾಣಿಸುತ್ತದೆ. ಆದರೆ myCar.__proto__ ಒಳಗೆ ನೋಡಿದರೆ carPrototype ನ ಗುಣಗಳು ಸಿಗುತ್ತವೆ. ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಸಾವಿರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳಿಗೆ ನಕಲು ಮಾಡುವ ಬದಲು, ಒಂದೇ ಕಡೆ ಇಟ್ಟು ಎಲ್ಲರೂ ಬಳಸಿಕೊಳ್ಳುವಂತೆ ಮಾಡುವುದರಿಂದ ಮೆಮೊರಿ (Memory) ಉಳಿಸಲು ಇದು ಅತ್ಯುತ್ತಮ ಮಾರ್ಗವಾಗಿದೆ.
+                </p>
+            </section>
+
+            <section id="level-3" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4">ಹಂತ ೩: ವೃತ್ತಿಪರರಿಗೆ (Professional Level)</h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ವೃತ್ತಿಪರ ಮಟ್ಟದಲ್ಲಿ ನಾವು Object.create() ನ ಎರಡನೇ ಆರ್ಗ್ಯುಮೆಂಟ್ (Second Argument) ಅನ್ನು ಬಳಸುತ್ತೇವೆ. ಇದನ್ನು Property Descriptors (ಗುಣಲಕ್ಷಣಗಳ ನಿಯಂತ್ರಣ) ಎಂದು ಕರೆಯಲಾಗುತ್ತದೆ. ಇದರ ಮೂಲಕ ನಾವು ಡೇಟಾಗೆ ಭದ್ರತೆ ಒದಗಿಸಬಹುದು.<br><br>
+                    <span class="font-mono bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-sm text-pink-500 dark:text-pink-400">ಸಿಂಟ್ಯಾಕ್ಸ್ (Syntax): Object.create(prototype, propertiesObject)</span>
+                </p>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+const personPrototype = {
+  greet: function() {
+    console.log(`ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ${this.name} ಮತ್ತು ನಾನು ${this.role}`);
+  }
+};
+
+// ಎರಡನೇ ಆರ್ಗ್ಯುಮೆಂಟ್ ಬಳಸಿ ಅಡ್ವಾನ್ಸ್ಡ್ ಆಬ್ಜೆಕ್ಟ್ ರಚನೆ
+const employee = Object.create(personPrototype, {
+  name: {
+    value: "ಸಂಜಯ್",
+    writable: true,       // ಭವಿಷ್ಯದಲ್ಲಿ ಹೆಸರನ್ನು ಬದಲಾಯಿಸಬಹುದೇ? (ಹೌದು)
+    enumerable: true,     // for...in ಲೂಪ್‌ನಲ್ಲಿ ಈ ಹೆಸರು ಕಾಣಿಸಬೇಕೇ? (ಹೌದು)
+    configurable: false   // ಈ ಗುಣಲಕ್ಷಣವನ್ನು ಡಿಲೀಟ್ (delete) ಮಾಡಬಹುದೇ? (ಇಲ್ಲ)
+  },
+  role: {
+    value: "Software Engineer",
+    writable: false,      // role ಅನ್ನು ಯಾರೂ ಬದಲಾಯಿಸುವಂತಿಲ್ಲ (Read-Only)
+    enumerable: true,
+    configurable: false
+  }
+});
+
+employee.greet(); 
+// ಔಟ್‌ಪುಟ್: ನಮಸ್ಕಾರ, ನನ್ನ ಹೆಸರು ಸಂಜಯ್ ಮತ್ತು ನಾನು Software Engineer
+
+// ಡೇಟಾ ಭದ್ರತೆಯ (Security) ಪರೀಕ್ಷೆ:
+employee.role = "Manager"; // ಇದನ್ನು ಬದಲಾಯಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇವೆ
+console.log(employee.role); 
+// ಔಟ್‌ಪುಟ್: Software Engineer (ಬದಲಾಗಿಲ್ಲ, ಏಕೆಂದರೆ writable: false ಇದೆ)
+
+delete employee.name; // ಹೆಸರನ್ನು ಅಳಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇವೆ
+console.log(employee.name); 
+// ಔಟ್‌ಪುಟ್: ಸಂಜಯ್ (ಅಳಿಸಲು ಸಾಧ್ಯವಾಗಿಲ್ಲ, ಏಕೆಂದರೆ configurable: false ಇದೆ)
+                    </code></pre>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <strong class="text-blue-700 dark:text-blue-400">ವಿವರಣೆ:</strong> ದೊಡ್ಡ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳನ್ನು ಮಾಡುವಾಗ ಬೇರೆ ಡೆವಲಪರ್‌ಗಳು ಆಕಸ್ಮಿಕವಾಗಿ ಪ್ರಮುಖ ಡೇಟಾವನ್ನು ಬದಲಾಯಿಸಬಾರದು ಎಂದು writable: false ಮತ್ತು configurable: false ನಂತಹ ಅಡ್ವಾನ್ಸ್ಡ್ ಫೀಚರ್‌ಗಳನ್ನು Object.create() ಮೂಲಕ ಬಳಸಲಾಗುತ್ತದೆ.
+                </p>
+            </section>
+
+            <section id="level-4" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4">ಹಂತ ೪: ಅಡ್ವಾನ್ಸ್ಡ್ ಡೆವಲಪರ್ಸ್ ಟ್ರಿಕ್ - Object.create(null)</h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ನೀವು ಫ್ರಂಟ್-ಎಂಡ್ ಅಪ್ಲಿಕೇಶನ್‌ಗಳಲ್ಲಿ DOM ಇವೆಂಟ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸುವಾಗ ಅಥವಾ ಬ್ರೌಸರ್ ಡೇಟಾವನ್ನು ಕ್ಯಾಶ್ (Cache) ಮಾಡುವಾಗ, ನಿಮಗೆ 100% ಶುದ್ಧವಾದ (Pure) ಡೇಟಾ ಆಬ್ಜೆಕ್ಟ್ ಬೇಕಾಗಬಹುದು.<br><br>
+                    ಸಾಮಾನ್ಯವಾಗಿ ನಾವು {} ಬಳಸಿ ಆಬ್ಜೆಕ್ಟ್ ರಚಿಸಿದಾಗ, ಅದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಮೂಲ Object ನಿಂದ toString(), hasOwnProperty() ಮುಂತಾದ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಆನುವಂಶಿಕವಾಗಿ ಪಡೆಯುತ್ತದೆ. ಆದರೆ Object.create(null) ಅನ್ನು ಬಳಸಿದರೆ, ಯಾವುದೇ ಹಿನ್ನೆಲೆ ಗುಣಗಳಿಲ್ಲದ ಸಂಪೂರ್ಣ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ.
+                </p>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+// ಸಾಮಾನ್ಯ ಆಬ್ಜೆಕ್ಟ್
+const normalObj = {};
+console.log(normalObj.toString); // ಔಟ್‌ಪುಟ್: [Function: toString] (ಇದು ಹಿನ್ನೆಲೆಯಿಂದ ಬಂದಿದೆ)
+
+// ಶುದ್ಧ ಆಬ್ಜೆಕ್ಟ್ (Pure Dictionary)
+const pureObj = Object.create(null);
+pureObj.theme = "Dark Mode";
+console.log(pureObj.toString); // ಔಟ್‌ಪುಟ್: undefined (ಯಾವುದೇ ಅನಗತ್ಯ ಫಂಕ್ಷನ್‌ಗಳು ಇದರಲ್ಲಿಲ್ಲ)
+                    </code></pre>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <strong class="text-blue-700 dark:text-blue-400">ವಿವರಣೆ:</strong> ಭದ್ರತೆಯ ದೃಷ್ಟಿಯಿಂದ (Prototype Pollution ತಡೆಯಲು) ಮತ್ತು ಕೇವಲ 'Key-Value' ಡೇಟಾವನ್ನು ಮಾತ್ರ ಶೇಖರಿಸಿಡಲು ವೃತ್ತಿಪರರು ಈ ವಿಧಾನವನ್ನು ಬಳಸುತ್ತಾರೆ.
+                </p>
+            </section>
+
+            <section id="summary-1" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-green-500"></i> ಸಾರಾಂಶ (Summary)
+                </h3>
+                <ul class="list-none space-y-4 text-lg text-gray-700 dark:text-gray-300 ml-2">
+                    <li class="flex gap-3">
+                        <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                        <span>ಸಾಧಾರಣ ಆಬ್ಜೆಕ್ಟ್ {} ಬಳಸಿದರೆ ಅದು ಸಂಪೂರ್ಣ ಹೊಸದಾಗಿರುತ್ತದೆ.</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
+                        <span>Object.create(ಮಾದರಿ) ಬಳಸಿದರೆ ಅದು ಹೊಸದಾಗಿದ್ದರೂ, ಹಳೆಯ ಮಾದರಿಯೊಂದಿಗೆ ಆಂತರಿಕ ಸಂಪರ್ಕ (Link) ಹೊಂದಿರುತ್ತದೆ. ಇದನ್ನು ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಭಾಷೆಯಲ್ಲಿ Prototype Chain ಎನ್ನುತ್ತಾರೆ.]</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- EXPANSION SECTIONS (ADDED SEAMLESSLY) -->
+            <!-- ========================================== -->
+
+            <div class="relative py-8 flex items-center justify-center fade-in-section">
+                <hr class="w-full border-gray-300 dark:border-gray-700">
+                <span class="absolute bg-gray-50 dark:bg-darkBg px-4 text-sm font-semibold tracking-widest text-gray-400 uppercase">Core JavaScript Extensions</span>
+            </div>
+
+            <!-- DOM Manipulation -->
+            <section id="level-5-dom" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap"></i> ಹಂತ ೫: DOM ನಿರ್ವಹಣೆ ಮತ್ತು ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ (DOM Manipulation & Selection)
+                </h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಅತಿಮುಖ್ಯವಾದ ಕೆಲಸವೆಂದರೆ ಬ್ರೌಸರ್‌ನಲ್ಲಿರುವ HTML ಎಲಿಮೆಂಟ್‌ಗಳ ಜೊತೆ ಮಾತನಾಡುವುದು. ವೆಬ್ ಪುಟದ ರಚನೆಯನ್ನು Document Object Model (DOM) ಎಂದು ಕರೆಯುತ್ತಾರೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ನಾವು HTML ಅನ್ನು ಬದಲಾಯಿಸಬಹುದು, ಹೊಸ ಅಂಶಗಳನ್ನು ಸೇರಿಸಬಹುದು ಅಥವಾ ಅಳಿಸಬಹುದು.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-2">1. getElementById</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">ಐಡಿ (ID) ಮೂಲಕ ಒಂದು ನಿರ್ದಿಷ್ಟ ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ ಮಾಡಲು ಬಳಸಲಾಗುತ್ತದೆ. ಇದು ಅತ್ಯಂತ ವೇಗವಾದ ವಿಧಾನ.</p>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-2">2. querySelector</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">CSS ಸೆಲೆಕ್ಟರ್‌ಗಳನ್ನು (ಉದಾ: .class, #id) ಬಳಸಿ ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ ಮಾಡುತ್ತದೆ. ಆಧುನಿಕ ಡೆವಲಪರ್‌ಗಳ ಅಚ್ಚುಮೆಚ್ಚು.</p>
+                    </div>
+                </div>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+// 1. ಐಡಿ ಮೂಲಕ ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆಮಾಡುವುದು ಮತ್ತು ಟೆಕ್ಸ್ಟ್ ಬದಲಾಯಿಸುವುದು
+const titleElement = document.getElementById("main-title");
+titleElement.textContent = "ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಲಿಯೋಣ!"; // HTML ಟೆಕ್ಸ್ಟ್ ಬದಲಾವಣೆ
+
+// 2. ಕ್ಲಾಸ್ ಮೂಲಕ ಆಯ್ಕೆಮಾಡಿ ಸ್ಟೈಲ್ (Style) ಬದಲಾಯಿಸುವುದು
+const highlightBox = document.querySelector(".box");
+highlightBox.style.backgroundColor = "yellow"; // ಬಣ್ಣ ಬದಲಾವಣೆ
+
+// 3. ಹೊಸ HTML ಎಲಿಮೆಂಟ್ ಸೃಷ್ಟಿಸುವುದು ಮತ್ತು ಪುಟಕ್ಕೆ ಸೇರಿಸುವುದು
+const newParagraph = document.createElement("p");
+newParagraph.innerText = "ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲಕ ಸೇರಿಸಿದ ಸಾಲು.";
+document.body.appendChild(newParagraph); // ಪುಟದ ಕೊನೆಗೆ ಸೇರ್ಪಡೆ
+                    </code></pre>
+                </div>
+            </section>
+
+            <!-- Event Handling -->
+            <section id="level-6-events" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-hand-pointer"></i> ಹಂತ ೬: ಇವೆಂಟ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ (Event Handling)
+                </h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ಬಳಕೆದಾರರು ವೆಬ್‌ಸೈಟ್ ಜೊತೆ ಸಂವಹನ ನಡೆಸಿದಾಗ (ಉದಾಹರಣೆಗೆ: ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡುವುದು, ಕೀಬೋರ್ಡ್ ಟೈಪ್ ಮಾಡುವುದು, ಸ್ಕ್ರೋಲ್ ಮಾಡುವುದು) ಆ ಕ್ರಿಯೆಗಳನ್ನು "Events" ಎನ್ನುತ್ತಾರೆ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <code>addEventListener()</code> ಬಳಸಿ ಈ ಇವೆಂಟ್‌ಗಳನ್ನು ನಾವು ನಿಯಂತ್ರಿಸಬಹುದು.
+                </p>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+// ಬಟನ್ ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆಮಾಡುವುದು
+const myButton = document.querySelector("#submit-btn");
+
+// ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಏನಾಗಬೇಕು ಎಂದು ಸೂಚಿಸುವುದು
+myButton.addEventListener("click", function(event) {
+  // event.preventDefault(); // ಫಾರ್ಮ್ ರಿಫ್ರೆಶ್ ಆಗುವುದನ್ನು ತಡೆಯಲು ಬಳಸುತ್ತಾರೆ
+  
+  console.log("ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಲಾಗಿದೆ!");
+  alert("ಸ್ವಾಗತ! ನಿಮ್ಮ ಡೇಟಾ ಸಬ್ಮಿಟ್ ಆಗಿದೆ.");
+});
+
+// ಕೀಬೋರ್ಡ್ ಟೈಪ್ ಮಾಡಿದಾಗ ಪ್ರತಿಕ್ರಿಯೆ
+document.addEventListener("keydown", function(event) {
+  console.log(`${event.key} ಕೀಲಿಯನ್ನು ಒತ್ತಲಾಗಿದೆ.`);
+});
+                    </code></pre>
+                </div>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border-l-4 border-yellow-500">
+                    <strong class="text-yellow-700 dark:text-yellow-400"><i class="fa-solid fa-lightbulb"></i> ಪ್ರೊ-ಟಿಪ್ (Pro-Tip):</strong> ಯಾವಾಗಲೂ HTML ನಲ್ಲಿ <code>onclick="..."</code> ಬರೆಯುವ ಬದಲು <code>addEventListener()</code> ಬಳಸುವುದು ಉತ್ತಮ. ಇದರಿಂದ ಒಂದೇ ಬಟನ್‌ಗೆ ಅನೇಕ ಕ್ರಿಯೆಗಳನ್ನು ಸೇರಿಸಬಹುದು ಮತ್ತು ಕೋಡ್ ನಿರ್ವಹಣೆ ಸುಲಭವಾಗುತ್ತದೆ.
+                </p>
+            </section>
+
+            <!-- Client Side Storage -->
+            <section id="level-7-storage" class="fade-in-section scroll-mt-28 bg-white dark:bg-darkCard p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                <h3 class="text-xl font-bold text-accent mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-database"></i> ಹಂತ ೭: ಬ್ರೌಸರ್ ಸ್ಟೋರೇಜ್ (Client-Side Storage APIs)
+                </h3>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
+                    ಬಳಕೆದಾರರ ಕೆಲವು ಡೇಟಾವನ್ನು (ಉದಾಹರಣೆಗೆ: Dark Theme ಸೆಟ್ಟಿಂಗ್, ಲಾಗಿನ್ ಟೋಕನ್) ಬ್ರೌಸರ್‌ನಲ್ಲಿಯೇ ಶೇಖರಿಸಿಡಲು Web Storage API ಬಳಸಲಾಗುತ್ತದೆ. ಇದರಲ್ಲಿ ಎರಡು ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ:
+                </p>
+
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="flex-1 bg-green-50 dark:bg-green-900/20 p-5 rounded-xl border border-green-200 dark:border-green-800">
+                        <h4 class="font-bold text-green-700 dark:text-green-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-hard-drive"></i> LocalStorage
+                        </h4>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">ಬ್ರೌಸರ್ ಮುಚ್ಚಿ ಮತ್ತೆ ತೆರೆದರೂ ಈ ಡೇಟಾ ಅಳಿಸಿಹೋಗುವುದಿಲ್ಲ. ಶಾಶ್ವತವಾಗಿ ಉಳಿಯುತ್ತದೆ (ನೀವು ಅಳಿಸುವವರೆಗೆ).</p>
+                    </div>
+                    <div class="flex-1 bg-purple-50 dark:bg-purple-900/20 p-5 rounded-xl border border-purple-200 dark:border-purple-800">
+                        <h4 class="font-bold text-purple-700 dark:text-purple-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock"></i> SessionStorage
+                        </h4>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">ಪ್ರಸ್ತುತ ಬ್ರೌಸರ್ ಟ್ಯಾಬ್ ಮುಚ್ಚಿದ ತಕ್ಷಣ ಡೇಟಾ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಅಳಿಸಿಹೋಗುತ್ತದೆ. ಇದು ತಾತ್ಕಾಲಿಕ.</p>
+                    </div>
+                </div>
+
+                <div class="relative code-wrapper mt-6 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs px-3 py-1.5 rounded-md transition-colors z-10 flex items-center gap-1" onclick="copyCode(this)">
+                        <i class="fa-regular fa-clipboard"></i> Copy
+                    </button>
+                    <pre class="rounded-xl shadow-lg !m-0 !bg-[#1d1f21]"><code class="language-javascript">
+// --- LOCALSTORAGE ಉದಾಹರಣೆ ---
+
+// 1. ಡೇಟಾವನ್ನು ಸೇರಿಸುವುದು (Save)
+localStorage.setItem("username", "ಸಂಜಯ್");
+localStorage.setItem("theme", "dark");
+
+// 2. ಡೇಟಾವನ್ನು ಓದುವುದು (Read)
+const currentUser = localStorage.getItem("username");
+console.log(`ಮತ್ತೆ ಸ್ವಾಗತ ${currentUser}!`); // ಮತ್ತೆ ಸ್ವಾಗತ ಸಂಜಯ್!
+
+// 3. ಡೇಟಾವನ್ನು ಅಳಿಸುವುದು (Delete)
+localStorage.removeItem("theme"); // ಕೇವಲ theme ಅಳಿಸುತ್ತದೆ
+localStorage.clear();             // ಸಂಪೂರ್ಣ ಸ್ಟೋರೇಜ್ ಖಾಲಿ ಮಾಡುತ್ತದೆ
+
+// --- JSON ಡೇಟಾ ಉಳಿಸಲು ಟ್ರಿಕ್ ---
+// LocalStorage ಕೇವಲ ಟೆಕ್ಸ್ಟ್ (String) ಮಾತ್ರ ಸ್ವೀಕರಿಸುತ್ತದೆ. ಆಬ್ಜೆಕ್ಟ್ ಉಳಿಸಲು JSON.stringify ಬಳಸಿ.
+const userObj = { name: "ರಾಮ್", age: 25 };
+localStorage.setItem("userData", JSON.stringify(userObj));
+
+// ವಾಪಸ್ ಆಬ್ಜೆಕ್ಟ್ ಆಗಿ ಪಡೆಯಲು JSON.parse ಬಳಸಿ
+const retrievedData = JSON.parse(localStorage.getItem("userData"));
+console.log(retrievedData.name); // ಔಟ್‌ಪುಟ್: ರಾಮ್
+                    </code></pre>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- PrismJS Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script>
+        // --- 1. Dark Mode Toggle Logic ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // Check local storage for theme preference, default to dark
+        if (localStorage.getItem('theme') === 'light') {
+            html.classList.remove('dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            html.classList.add('dark');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+
+        // --- 2. Copy Code Functionality ---
+        function copyCode(button) {
+            // Find the closest code block within the relative wrapper
+            const codeBlock = button.nextElementSibling.querySelector('code');
+            const textToCopy = codeBlock.innerText;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // --- 3. Scroll Animations & Scroll Spy (Active TOC) ---
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px', // Trigger area slightly offset
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Handle Fade-in animation
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    
+                    // Handle Sidebar TOC highlighting
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Ensure initially visible sections trigger animation immediately
+        setTimeout(() => {
+            document.querySelectorAll('section').forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if(rect.top < window.innerHeight) {
+                    sec.classList.add('is-visible');
+                }
+            });
+        }, 100);
+
+    </script>
+</body>
+</html>

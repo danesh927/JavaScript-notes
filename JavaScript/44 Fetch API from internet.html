@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript API & Fetch Notes</title>
+    
+    <!-- Fonts: Inter for English, Noto Sans Kannada for Kannada text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Highlight.js for Syntax Highlighting (Dark Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sidebar Active Link */
+        .active-link {
+            color: #3b82f6 !important;
+            font-weight: 600;
+            border-left-color: #3b82f6 !important;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Code Block Styling */
+        .code-container {
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .code-header {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #181a1f;
+        }
+        .copy-btn {
+            background: transparent;
+            color: #abb2bf;
+            border: 1px solid #4b5263;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: #4b5263;
+            color: white;
+        }
+        pre {
+            margin: 0 !important;
+            padding: 1.5rem !important;
+            background-color: #282c34 !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <!-- Sticky Sidebar Navigation -->
+        <aside class="w-full md:w-80 h-auto md:h-screen sticky top-0 bg-white dark:bg-darkCard border-r border-gray-200 dark:border-gray-800 p-6 flex flex-col z-20 shadow-lg md:shadow-none transition-colors duration-300">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center gap-3">
+                    <i class="fa-brands fa-js"></i> JS Notes
+                </h1>
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors" title="Toggle Theme">
+                    <i class="fa-solid fa-moon dark:hidden text-gray-800"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
+                </button>
+            </div>
+            
+            <h2 class="text-sm uppercase tracking-wider text-gray-500 mb-4 font-bold">Table of Contents</h2>
+            <nav class="flex flex-col gap-2 overflow-y-auto">
+                <a href="#intro" class="nav-link border-l-4 border-transparent pl-4 py-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">API ಎಂದರೆ ಏನು?</a>
+                <a href="#origin" class="nav-link border-l-4 border-transparent pl-4 py-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">1. API ಎಲ್ಲಿಂದ ಬರುತ್ತದೆ?</a>
+                <a href="#source" class="nav-link border-l-4 border-transparent pl-4 py-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">2. API ಗಳು ಎಲ್ಲಿ ಸಿಗುತ್ತವೆ?</a>
+                <a href="#usage" class="nav-link border-l-4 border-transparent pl-4 py-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">3. API ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು?</a>
+                <a href="#fetch-api" class="nav-link border-l-4 border-transparent pl-4 py-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Fetch API & Levels</a>
+                <a href="#level1" class="nav-link border-l-4 border-transparent pl-8 py-2 text-sm text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">ಹಂತ 1: Text Data</a>
+                <a href="#level2" class="nav-link border-l-4 border-transparent pl-8 py-2 text-sm text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">ಹಂತ 2: JSON Data</a>
+                <a href="#level3" class="nav-link border-l-4 border-transparent pl-8 py-2 text-sm text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">ಹಂತ 3: Professional (Blob)</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 md:p-12 lg:p-20 overflow-x-hidden">
+            <div class="max-w-4xl mx-auto space-y-16">
+                
+                <!-- Section 1: Intro -->
+                <section id="intro" class="fade-in scroll-mt-20">
+                    <h1 class="text-4xl font-extrabold mb-6 text-gray-900 dark:text-white leading-tight">
+                        <i class="fa-solid fa-server text-blue-500 mr-3"></i> API & Fetch in JavaScript
+                    </h1>
+                    
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
+                        <p class="text-lg leading-relaxed mb-4">
+                            <strong>API (Application Programming Interface)</strong> ಎಂದರೆ ಅಂತರ್ಜಾಲದಲ್ಲಿ ಎರಡು ಬೇರೆ-ಬೇರೆ ಸಾಫ್ಟ್‌ವೇರ್‌ಗಳು ಅಥವಾ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಪರಸ್ಪರ ಮಾತನಾಡಿಕೊಳ್ಳಲು (ಮಾಹಿತಿ ವಿನಿಮಯ ಮಾಡಿಕೊಳ್ಳಲು) ಬಳಸುವ ಒಂದು ಸೇತುವೆ.
+                        </p>
+                        
+                        <h3 class="text-xl font-bold mt-8 mb-4 text-blue-600 dark:text-blue-400">
+                            <i class="fa-solid fa-lightbulb mr-2 text-yellow-500"></i> ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಒಂದು ಅತ್ಯುತ್ತಮ ಉದಾಹರಣೆ ಎಂದರೆ ರೆಸ್ಟೋರೆಂಟ್‌ನ ವೇಟರ್:
+                        </h3>
+                        <ul class="space-y-3 mb-6 list-none">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-user mt-1.5 mr-3 text-green-500 w-5"></i>
+                                <span><strong>ನೀವು (ಕ್ಲೈಂಟ್/ಆಪ್):</strong> ಟೇಬಲ್ ಮೇಲೆ ಕುಳಿತು ಆಹಾರ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ನಿಮಗೆ ಅಡುಗೆಮನೆಯೊಳಗೆ ಹೋಗಿ ಆಹಾರ ತರಲು ಅವಕಾಶವಿಲ್ಲ.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-fire-burner mt-1.5 mr-3 text-red-500 w-5"></i>
+                                <span><strong>ಅಡುಗೆಮನೆ (ಸರ್ವರ್/ಡೇಟಾಬೇಸ್):</strong> ಅಲ್ಲಿ ಆಹಾರ (ಮಾಹಿತಿ/Data) ತಯಾರಾಗುತ್ತದೆ ಮತ್ತು ಶೇಖರಣೆಯಾಗಿರುತ್ತದೆ.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-bell-concierge mt-1.5 mr-3 text-blue-500 w-5"></i>
+                                <span><strong>ವೇಟರ್ (API):</strong> ನಿಮ್ಮ ಆರ್ಡರ್ ಅನ್ನು ತೆಗೆದುಕೊಂಡು ಅಡುಗೆಮನೆಗೆ ತಿಳಿಸುತ್ತಾನೆ, ಅಲ್ಲಿಂದ ತಯಾರಾದ ಆಹಾರವನ್ನು ತಂದು ನಿಮಗೆ ಕೊಡುತ್ತಾನೆ.</span>
+                            </li>
+                        </ul>
+                        
+                        <!-- Interactive Concept Diagram -->
+                        <div class="w-full bg-blue-50 dark:bg-slate-800 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 my-8 border border-blue-100 dark:border-slate-700">
+                            <div class="text-center">
+                                <i class="fa-solid fa-mobile-screen text-4xl text-gray-700 dark:text-gray-300 mb-2"></i>
+                                <p class="font-bold">Client / App</p>
+                                <p class="text-sm text-gray-500">(ನೀವು / ಆಪ್)</p>
+                            </div>
+                            <div class="flex-1 flex items-center justify-center relative w-full h-12">
+                                <div class="absolute w-full border-t-2 border-dashed border-blue-400 dark:border-blue-500"></div>
+                                <div class="bg-blue-500 text-white px-4 py-1 rounded-full z-10 font-bold text-sm shadow-md">
+                                    <i class="fa-solid fa-arrow-right-arrow-left mr-1"></i> API (ವೇಟರ್)
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa-solid fa-database text-4xl text-gray-700 dark:text-gray-300 mb-2"></i>
+                                <p class="font-bold">Server / DB</p>
+                                <p class="text-sm text-gray-500">(ಅಡುಗೆಮನೆ)</p>
+                            </div>
+                        </div>
+
+                        <p class="text-lg leading-relaxed">
+                            ಇದೇ ರೀತಿ, ನಿಮ್ಮ ಮೊಬೈಲ್ ಆಪ್ (ಉದಾ: Swiggy) ನೇರವಾಗಿ Google ನ ಸರ್ವರ್‌ಗೆ ನುಗ್ಗಿ ಮ್ಯಾಪ್ ತರಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬದಲಾಗಿ, ಅದು Google ನ ವೇಟರ್‌ಗೆ (API) ವಿನಂತಿ (Request) ಮಾಡುತ್ತದೆ, ವೇಟರ್ ಮ್ಯಾಪ್ ಅನ್ನು ತಂದು ಆಪ್‌ಗೆ ಕೊಡುತ್ತಾನೆ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 2: Origin -->
+                <section id="origin" class="fade-in scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b-2 border-blue-500 pb-2 inline-block">1. API ಎಲ್ಲಿಂದ ಬರುತ್ತದೆ? (ಯಾರು ಮಾಡುತ್ತಾರೆ?)</h2>
+                    <p class="text-lg leading-relaxed mb-4">
+                        API ಗಳನ್ನು ಆಯಾ ಮಾಹಿತಿಯನ್ನು ಹೊಂದಿರುವ ದೊಡ್ಡ ಕಂಪನಿಗಳು, ಸರ್ಕಾರಿ ಸಂಸ್ಥೆಗಳು ಅಥವಾ ಸಾಫ್ಟ್‌ವೇರ್ ಡೆವಲಪರ್‌ಗಳು ಸ್ವತಃ ನಿರ್ಮಿಸುತ್ತಾರೆ.
+                    </p>
+                    <ul class="list-disc ml-6 space-y-4 text-lg">
+                        <li><strong>ಕಾರಣ:</strong> ತಮ್ಮ ಬಳಿ ಇರುವ ಕೋಟ್ಯಾಂತರ ಡೇಟಾವನ್ನು ಇತರರಿಗೆ ಸುರಕ್ಷಿತವಾಗಿ ನೀಡಲು. ಅವರು ತಮ್ಮ ಇಡೀ ಡೇಟಾಬೇಸ್ ಅನ್ನು ಯಾರಿಗೂ ಕೊಡುವುದಿಲ್ಲ, ಬದಲಾಗಿ ಕೇವಲ ನೀವು ಕೇಳಿದ ಮಾಹಿತಿಯನ್ನು ಮಾತ್ರ API ಮೂಲಕ ಕೊಡುತ್ತಾರೆ.</li>
+                        <li><strong>ಉದಾಹರಣೆ:</strong>
+                            <ul class="list-circle ml-6 mt-2 space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><i class="fa-solid fa-map-location-dot text-green-500 mr-2"></i><strong>Google Maps API:</strong> ಇದನ್ನು ಗೂಗಲ್ ಸೃಷ್ಟಿಸಿದೆ. Uber, Ola, Swiggy ಆಪ್‌ಗಳು ಇದನ್ನು ಬಳಸುತ್ತವೆ.</li>
+                                <li><i class="fa-solid fa-cloud-sun-rain text-blue-400 mr-2"></i><strong>Weather API:</strong> ಹವಾಮಾನ ಇಲಾಖೆಗಳು ಸೃಷ್ಟಿಸುತ್ತವೆ. ನಿಮ್ಮ ಮೊಬೈಲ್‌ನಲ್ಲಿರುವ ಹವಾಮಾನ ಆಪ್ ಈ API ಇಂದ ಡೇಟಾ ಪಡೆಯುತ್ತದೆ.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Section 3: Source -->
+                <section id="source" class="fade-in scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b-2 border-blue-500 pb-2 inline-block">2. API ಗಳು ಎಲ್ಲಿ ಸಿಗುತ್ತವೆ?</h2>
+                    <p class="text-lg leading-relaxed mb-4">
+                        ನಿಮಗೆ ಯಾವುದೇ ರೀತಿಯ ಡೇಟಾ ಬೇಕಿದ್ದರೂ ಅದಕ್ಕೊಂದು API ಅಂತರ್ಜಾಲದಲ್ಲಿ ಸಿಗುತ್ತದೆ.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-2">1. RapidAPI (rapidapi.com)</h4>
+                            <p class="text-sm">ಇದು API ಗಳ ಅತಿದೊಡ್ಡ ಮಾರುಕಟ್ಟೆ. ಇಲ್ಲಿ ಹವಾಮಾನ, ಕ್ರಿಕೆಟ್ ಸ್ಕೋರ್, ಸಿನಿಮಾ ಮಾಹಿತಿ ಸೇರಿದಂತೆ ಲಕ್ಷಾಂತರ API ಗಳು ಸಿಗುತ್ತವೆ.</p>
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-2">2. Public APIs (GitHub)</h4>
+                            <p class="text-sm">ಗಿಟ್‌ಹಬ್‌ನಲ್ಲಿ "Public APIs" ಎಂದು ಹುಡುಕಿದರೆ, ಉಚಿತವಾಗಿ ಸಿಗುವ ಸಾವಿರಾರು API ಗಳ ಪಟ್ಟಿ ಸಿಗುತ್ತದೆ (ಉದಾ: ನಾಯಿಗಳ ಫೋಟೋ, ಜೋಕ್ಸ್, ದೇಶಗಳ ಮಾಹಿತಿ).</p>
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-blue-600 dark:text-blue-400 mb-2">3. ಕಂಪನಿಗಳ ಪೋರ್ಟಲ್</h4>
+                            <p class="text-sm">Twitter API ಬೇಕಿದ್ದರೆ ಟ್ವಿಟರ್‌ನ ಡೆವಲಪರ್ ವೆಬ್‌ಸೈಟ್‌ಗೆ ಹೋಗಬೇಕು, ಗೂಗಲ್ ಸೇವೆಗಳಿಗೆ Google Developer Console ಗೆ ಹೋಗಬೇಕು.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                        <p class="text-yellow-800 dark:text-yellow-200 font-medium">
+                            <i class="fa-solid fa-triangle-exclamation mr-2"></i> <strong>ಸೂಚನೆ:</strong> ಕೆಲವು API ಗಳು ಸಂಪೂರ್ಣ ಉಚಿತ (Free), ಇನ್ನು ಕೆಲವು ಬಳಸಲು ಹಣ ಕಟ್ಟಬೇಕು (Paid), ಮತ್ತು ಹೆಚ್ಚಿನವುಗಳನ್ನು ಬಳಸಲು API Key (ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ಐಡಿ ಕಾರ್ಡ್ ಇದ್ದಂತೆ) ಬೇಕಾಗುತ್ತದೆ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 4: Usage -->
+                <section id="usage" class="fade-in scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b-2 border-blue-500 pb-2 inline-block">3. API ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು? (ಉದಾಹರಣೆಯೊಂದಿಗೆ)</h2>
+                    <p class="text-lg leading-relaxed mb-4">
+                        ಒಂದು API ಅನ್ನು ಬಳಸಲು ನಮಗೆ ಮುಖ್ಯವಾಗಿ ಬೇಕಾಗಿರುವುದು <strong>Endpoint (URL)</strong>. ಎಂಡ್‌ಪಾಯಿಂಟ್ ಎಂದರೆ ಸರ್ವರ್‌ನಲ್ಲಿ ಮಾಹಿತಿ ಇರುವ ನಿರ್ದಿಷ್ಟ ವಿಳಾಸ.
+                    </p>
+                    <p class="text-lg leading-relaxed mb-4">
+                        ಈಗ ನಾವು ಒಂದು ಉಚಿತವಾದ 'Joke API' (ಇದಕ್ಕೆ API Key ಬೇಕಾಗಿಲ್ಲ) ಬಳಸಿ ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಒಂದು ತಮಾಷೆಯ ಸಾಲನ್ನು (Joke) ತರೋಣ.
+                    </p>
+                    <p class="mb-4">
+                        <strong>API Endpoint:</strong> <a href="https://official-joke-api.appspot.com/random_joke" target="_blank" class="text-blue-500 hover:underline break-all">https://official-joke-api.appspot.com/random_joke</a>
+                    </p>
+                    
+                    <p class="font-semibold text-lg">ಉದಾಹರಣೆ ಕೋಡ್ (JavaScript fetch ಬಳಸಿ):</p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span><i class="fa-brands fa-js text-yellow-400 mr-2"></i>JavaScript</span>
+                            <button class="copy-btn"><i class="fa-regular fa-copy mr-1"></i> Copy</button>
+                        </div>
+<pre><code class="language-javascript">// ಒಂದು ಅಸಿಂಕ್ರೋನಸ್ ಫಂಕ್ಷನ್ ರಚಿಸುತ್ತಿದ್ದೇವೆ
+async function getRandomJoke() {
+  try {
+    console.log("ಜೋಕ್ ತರಲು ಸರ್ವರ್‌ಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ... ದಯವಿಟ್ಟು ಕಾಯಿರಿ.");
+
+    // 1. API Endpoint ಗೆ ರಿಕ್ವೆಸ್ಟ್ (ವಿನಂತಿ) ಕಳುಹಿಸುವುದು
+    let response = await fetch('https://official-joke-api.appspot.com/random_joke');
+    
+    // 2. ಸರ್ವರ್‌ನಿಂದ ಸರಿಯಾದ ಉತ್ತರ ಬಂದಿದೆಯೇ ಎಂದು ಪರಿಶೀಲಿಸುವುದು
+    if (!response.ok) {
+      throw new Error("ಸರ್ವರ್‌ನಲ್ಲಿ ಏನೋ ಸಮಸ್ಯೆಯಿದೆ!");
+    }
+    
+    // 3. ಬಂದಂತಹ ಡೇಟಾವನ್ನು JSON ರೂಪಕ್ಕೆ ಬದಲಾಯಿಸುವುದು
+    let jokeData = await response.json();
+    
+    // 4. API ಯಿಂದ ಬಂದ ಡೇಟಾವನ್ನು ಬಳಸುವುದು (ಪ್ರಿಂಟ್ ಮಾಡುವುದು)
+    console.log("ಪ್ರಶ್ನೆ: " + jokeData.setup);
+    console.log("ಉತ್ತರ: " + jokeData.punchline);
+    
+  } catch (error) {
+    // ಏನಾದರೂ ತಪ್ಪಾದರೆ ಅದನ್ನು ಹಿಡಿಯುವುದು
+    console.log("ದೋಷ ಕಂಡುಬಂದಿದೆ: ", error);
+  }
+}
+
+// ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವುದು
+getRandomJoke();</code></pre>
+                    </div>
+
+                    <h3 class="text-xl font-bold mt-8 mb-4 text-blue-600 dark:text-blue-400">ಪ್ರತಿಸಾಲಿನ ಸಂಪೂರ್ಣ ವಿವರಣೆ:</h3>
+                    <ul class="space-y-3 text-lg bg-white dark:bg-darkCard p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800">
+                        <li><strong>1. <code>async function getRandomJoke() {</code>:</strong> ಇದೊಂದು ಅಸಿಂಕ್ರೋನಸ್ ಫಂಕ್ಷನ್. ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ಬರಲು ಸ್ವಲ್ಪ ಸಮಯ ಹಿಡಿಯುವುದರಿಂದ, ಬ್ರೌಸರ್‌ಗೆ ಕಾಯಲು ಸೂಚಿಸುತ್ತದೆ.</li>
+                        <li><strong>2. <code>try {</code>:</strong> ನೆಟ್‌ವರ್ಕ್ ಸಮಸ್ಯೆ ಬಂದರೆ ಪ್ರೋಗ್ರಾಮ್ ಕ್ರಾಶ್ ಆಗದಂತೆ ನೋಡಿಕೊಳ್ಳಲು ಸುರಕ್ಷತಾ ಕವಚ (Error handling).</li>
+                        <li><strong>3. <code>console.log(...)</code>:</strong> ಬಳಕೆದಾರನಿಗೆ ಡೇಟಾ ತರುತ್ತಿರುವುದಾಗಿ ಸಂದೇಶ ತೋರಿಸುವುದು.</li>
+                        <li><strong>4. <code>let response = await fetch('URL');</code>:</strong> ಇಲ್ಲಿ fetch ಎನ್ನುವುದು ನಮ್ಮ ವೇಟರ್. ನಾವು ಕೊಟ್ಟ API URL ಗೆ ಹೋಗಿ, ಡೇಟಾವನ್ನು ತರಲು await (ಕಾಯುತ್ತದೆ). ತಂದ ಡೇಟಾವನ್ನು response ನಲ್ಲಿ ಇಡುತ್ತದೆ.</li>
+                        <li><strong>5. <code>if (!response.ok) { ... }</code>:</strong> ವೇಟರ್ ಬರಿಗೈಯಲ್ಲಿ ಬಂದರೆ (ಉದಾ: ವೆಬ್‌ಸೈಟ್ ಡೌನ್ ಇದ್ದರೆ), ತಪ್ಪು (Error) ಎಂದು ಘೋಷಿಸಲು ಈ ಸಾಲು ಬಳಸುತ್ತೇವೆ.</li>
+                        <li><strong>6. <code>let jokeData = await response.json();</code>:</strong> ಸರ್ವರ್‌ನಿಂದ ಬಂದ ಡೇಟಾ ಕಂಪ್ಯೂಟರ್ ಭಾಷೆಯಲ್ಲಿರುತ್ತದೆ. ಅದನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ಗೆ ಅರ್ಥವಾಗುವ JSON (ಆಬ್ಜೆಕ್ಟ್) ರೂಪಕ್ಕೆ json() ಮೂಲಕ ಬದಲಾಯಿಸುತ್ತೇವೆ.</li>
+                        <li><strong>7. <code>console.log("ಪ್ರಶ್ನೆ: " + jokeData.setup);</code>:</strong> API ಕಳುಹಿಸಿದ JSON ಡೇಟಾದ ಒಳಗೆ setup (ಪ್ರಶ್ನೆ) ಮತ್ತು punchline (ಉತ್ತರ) ಎಂಬ ಎರಡು ಭಾಗಗಳಿರುತ್ತವೆ. ಅದರಲ್ಲಿ ಮೊದಲು setup ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ.</li>
+                        <li><strong>8. <code>console.log("ಉತ್ತರ: " + jokeData.punchline);</code>:</strong> ನಂತರ ಜೋಕ್‌ನ ಅಂತಿಮ ಸಾಲನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ.</li>
+                        <li><strong>9. <code>} catch (error) {</code>:</strong> ಇಂಟರ್ನೆಟ್ ಕಟ್ ಆದರೆ ಅಥವಾ ಲಿಂಕ್ ತಪ್ಪಾಗಿದ್ದರೆ, ಪ್ರೋಗ್ರಾಮ್ ನಿಲ್ಲಿಸದೆ ಇಲ್ಲಿರುವ ಕೋಡ್ ಮೂಲಕ ತಪ್ಪನ್ನು (error) ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                    </ul>
+
+                    <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+                        <h3 class="text-xl font-bold mb-2 text-blue-700 dark:text-blue-300">ಸಾರಾಂಶ:</h3>
+                        <p class="text-lg">
+                            API ಎನ್ನುವುದು ಮಾಹಿತಿಯನ್ನು ಒದಗಿಸುವ ಒಂದು ವ್ಯವಸ್ಥೆ. <code>fetch</code> ಎನ್ನುವುದು ಆ ವ್ಯವಸ್ಥೆಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮಾಹಿತಿಯನ್ನು ನಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ಗೆ ತರುವ ಒಂದು ಸಾಧನ.<br><br>
+                            ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ fetch ಎಂದರೆ ಇಂಟರ್ನೆಟ್‌ನಿಂದ (ಅಥವಾ ಸರ್ವರ್‌ನಿಂದ) ಮಾಹಿತಿಯನ್ನು (Data) ನಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ಗೆ ತರುವ ಒಂದು ಸಾಧನ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 5: Fetch API Overview & Levels -->
+                <section id="fetch-api" class="fade-in scroll-mt-20">
+                    <p class="text-lg leading-relaxed mb-6">
+                        ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಒಂದು ಸರಳ ಉದಾಹರಣೆ: ನೀವು ರೆಸ್ಟೋರೆಂಟ್‌ಗೆ ಹೋಗಿ ವೇಟರ್‌ಗೆ (fetch) ಆರ್ಡರ್ ನೀಡುತ್ತೀರಿ. ವೇಟರ್ ಅಡುಗೆಮನೆಗೆ (Server) ಹೋಗಿ, ನೀವು ಕೇಳಿದ ಆಹಾರವನ್ನು (Data) ತರುತ್ತಾನೆ. ಆ ಆಹಾರವನ್ನು ನೀವು ತಿನ್ನುತ್ತೀರಿ (ನಮ್ಮ ಕೋಡ್‌ನಲ್ಲಿ ಬಳಸುವುದು).
+                    </p>
+                    <p class="text-lg leading-relaxed font-medium bg-gray-200 dark:bg-gray-800 p-4 rounded-lg">
+                        ಒಬ್ಬ Non-IT ವಿದ್ಯಾರ್ಥಿಯಿಂದ ಹಿಡಿದು ವೃತ್ತಿಪರ (Professional) ಡೆವಲಪರ್ ಹಂತದವರೆಗೆ fetch ಅನ್ನು ಹೇಗೆ ಬಳಸಲಾಗುತ್ತದೆ ಮತ್ತು ಬೇರೆ ಬೇರೆ ರೀತಿಯ ಡೇಟಾವನ್ನು (Text, JSON, Image/Blob) ಹೇಗೆ ತರಲಾಗುತ್ತದೆ ಎಂಬುದನ್ನು ಹಂತ-ಹಂತವಾಗಿ ನೋಡೋಣ.
+                    </p>
+                </section>
+
+                <!-- Section 6: Level 1 -->
+                <section id="level1" class="fade-in scroll-mt-20">
+                    <h3 class="text-xl font-bold mb-4 text-green-600 dark:text-green-400">
+                        <i class="fa-solid fa-seedling mr-2"></i> ಹಂತ 1: Text Data ತರುವುದು (Beginner Level)
+                    </h3>
+                    <p class="text-lg mb-4">ಯಾವುದೇ ಒಂದು ಸಾಮಾನ್ಯ ಪಠ್ಯವನ್ನು (Text) ಇಂಟರ್ನೆಟ್‌ನಿಂದ ತರುವ ಮೂಲ ವಿಧಾನ ಇದು.</p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span><i class="fa-brands fa-js text-yellow-400 mr-2"></i>JavaScript</span>
+                            <button class="copy-btn"><i class="fa-regular fa-copy mr-1"></i> Copy</button>
+                        </div>
+<pre><code class="language-javascript">fetch('https://example.com/hello.txt')
+  .then(response => response.text())
+  .then(data => console.log(data));</code></pre>
+                    </div>
+
+                    <h4 class="font-bold mb-2">ಪ್ರತಿಸಾಲಿನ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc ml-6 space-y-2 text-lg">
+                        <li><strong><code>fetch('https://example.com/hello.txt')</code>:</strong> ವೇಟರ್‌ಗೆ ಆರ್ಡರ್ ಕೊಟ್ಟಂತೆ. "ಈ ವಿಳಾಸಕ್ಕೆ ಹೋಗಿ ಅಲ್ಲಿರುವ ಡೇಟಾವನ್ನು ತೆಗೆದುಕೊಂಡು ಬಾ" ಎಂದು ಬ್ರೌಸರ್‌ಗೆ ಆದೇಶ ನೀಡುತ್ತದೆ.</li>
+                        <li><strong><code>.then(response => response.text())</code>:</strong> ಸರ್ವರ್‌ನಿಂದ ಉತ್ತರ (response) ಬಂದ ತಕ್ಷಣ (ವೇಟರ್ ವಾಪಸ್ ಬಂದ ತಕ್ಷಣ), ಆ ಡೇಟಾವನ್ನು 'ಸಾಮಾನ್ಯ ಪಠ್ಯ' (Text) ರೂಪಕ್ಕೆ ಬದಲಾಯಿಸು ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+                        <li><strong><code>.then(data => console.log(data))</code>:</strong> ಆ ಪಠ್ಯ (data) ಸಂಪೂರ್ಣವಾಗಿ ರೆಡಿಯಾದ ಮೇಲೆ, ಅದನ್ನು ನಮ್ಮ ಸ್ಕ್ರೀನ್ ಮೇಲೆ (console ನಲ್ಲಿ) ತೋರಿಸು.</li>
+                    </ul>
+                </section>
+
+                <!-- Section 7: Level 2 -->
+                <section id="level2" class="fade-in scroll-mt-20">
+                    <h3 class="text-xl font-bold mb-4 text-orange-500 dark:text-orange-400">
+                        <i class="fa-solid fa-code mr-2"></i> ಹಂತ 2: JSON Data ತರುವುದು (Intermediate Level)
+                    </h3>
+                    <p class="text-lg mb-4">
+                        ಇಂಟರ್ನೆಟ್‌ನಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಬಳಸುವ ಡೇಟಾ ಫಾರ್ಮ್ಯಾಟ್ ಎಂದರೆ JSON (JavaScript Object Notation). ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್‌ಗಳು <code>.then()</code> ಬದಲಿಗೆ ಆಧುನಿಕವಾದ <code>async / await</code> ಅನ್ನು ಬಳಸುತ್ತಾರೆ.
+                    </p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span><i class="fa-brands fa-js text-yellow-400 mr-2"></i>JavaScript</span>
+                            <button class="copy-btn"><i class="fa-regular fa-copy mr-1"></i> Copy</button>
+                        </div>
+<pre><code class="language-javascript">async function getUserData() {
+  let response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+  let jsonData = await response.json();
+  console.log("ಬಳಕೆದಾರನ ಹೆಸರು: " + jsonData.name);
+}
+
+getUserData();</code></pre>
+                    </div>
+
+                    <h4 class="font-bold mb-2">ಪ್ರತಿಸಾಲಿನ ವಿವರಣೆ:</h4>
+                    <ul class="list-disc ml-6 space-y-2 text-lg">
+                        <li><strong><code>async function getUserData() {</code>:</strong> ಇದೊಂದು ಅಸಿಂಕ್ರೋನಸ್ (Asynchronous) ಫಂಕ್ಷನ್. ಇದರರ್ಥ "ಈ ಫಂಕ್ಷನ್ ಒಳಗೆ ಕೆಲವು ಕೆಲಸಗಳು ಸ್ವಲ್ಪ ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುತ್ತವೆ, ಆದ್ದರಿಂದ ಕಾಯುವ (await) ಅವಕಾಶ ಕೊಡು" ಎಂದು ಬ್ರೌಸರ್‌ಗೆ ತಿಳಿಸುವುದು.</li>
+                        <li><strong><code>let response = await fetch('URL');</code>:</strong> ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ಬರುವವರೆಗೆ ಕೋಡ್ ಅನ್ನು ಇಲ್ಲಿಯೇ ತಡೆದು ಕಾಯಿ (await). ಬಂದ ಡೇಟಾವನ್ನು response ಎಂಬ ಡಬ್ಬದಲ್ಲಿ (variable) ಹಾಕು.</li>
+                        <li><strong><code>let jsonData = await response.json();</code>:</strong> ಬಂದಂತಹ ಉತ್ತರವನ್ನು ಕೇವಲ ಟೆಕ್ಸ್ಟ್ ಮಾಡದೆ, JSON (ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ ಆಬ್ಜೆಕ್ಟ್) ರೂಪಕ್ಕೆ ಪರಿವರ್ತಿಸಲು ಕಾಯಿ (await). ನಂತರ ಅದನ್ನು jsonData ದಲ್ಲಿ ಸೇವ್ ಮಾಡು.</li>
+                        <li><strong><code>console.log("ಬಳಕೆದಾರನ ಹೆಸರು: " + jsonData.name);</code>:</strong> ಆ JSON ಡೇಟಾದಲ್ಲಿರುವ ಬಳಕೆದಾರನ ಹೆಸರನ್ನು (name) ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ಪ್ರಿಂಟ್ ಮಾಡು.</li>
+                        <li><strong><code>}</code>:</strong> ಫಂಕ್ಷನ್ ಮುಕ್ತಾಯ.</li>
+                        <li><strong><code>getUserData();</code>:</strong> ನಾವು ಮೇಲ್ಗಡೆ ಬರೆದ ಫಂಕ್ಷನ್ ಅನ್ನು ರನ್ (execute) ಮಾಡಲು ಕರೆಯುವುದು.</li>
+                    </ul>
+                </section>
+
+                <!-- Section 8: Level 3 -->
+                <section id="level3" class="fade-in scroll-mt-20">
+                    <h3 class="text-xl font-bold mb-4 text-purple-600 dark:text-purple-400">
+                        <i class="fa-solid fa-laptop-code mr-2"></i> ಹಂತ 3: Professional Level (Error Handling & Other Data - Blob)
+                    </h3>
+                    <p class="text-lg mb-4 bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border-l-4 border-purple-500">
+                        ಕೇವಲ ಡೇಟಾ ತರುವುದು ಮಾತ್ರ ಪ್ರೊಫೆಷನಲ್ ಅಲ್ಲ. ಒಂದು ವೇಳೆ ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದಿದ್ದರೆ? ಅಥವಾ ಸರ್ವರ್ ಕೆಟ್ಟಿದ್ದರೆ? ಅದನ್ನು ನಿಭಾಯಿಸುವುದೇ (Error Handling) ಅಸಲಿ ವೃತ್ತಿಪರತೆ. ಜೊತೆಗೆ, ಪಠ್ಯದ ಬದಲು ಇಮೇಜ್, ಆಡಿಯೋ, ಅಥವಾ ಫೈಲ್‌ಗಳನ್ನು (Blob - Binary Large Object) ತರುವುದು ಹೇಗೆ ಎಂದು ನೋಡೋಣ.
+                    </p>
+                    
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span><i class="fa-brands fa-js text-yellow-400 mr-2"></i>JavaScript</span>
+                            <button class="copy-btn"><i class="fa-regular fa-copy mr-1"></i> Copy</button>
+                        </div>
+<pre><code class="language-javascript">async function fetchImageProf() {
+  try {
+    let response = await fetch('https://via.placeholder.com/150');
+    
+    if (!response.ok) {
+      throw new Error("ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ ಸರ್ವರ್ ದೋಷ! Status: " + response.status);
+    }
+    
+    let imageBlob = await response.blob();
+    let imageURL = URL.createObjectURL(imageBlob);
+    console.log("ಚಿತ್ರದ ತಾತ್ಕಾಲಿಕ ಲಿಂಕ್: " + imageURL);
+    
+  } catch (error) {
+    console.error("ಕ್ಷಮಿಸಿ, ಏನೋ ತಪ್ಪಾಗಿದೆ: ", error);
+  }
+}
+
+fetchImageProf();</code></pre>
+                    </div>
+
+                    <h4 class="font-bold mb-4">ಪ್ರತಿಸಾಲಿನ ವಿವರಣೆ:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm lg:text-base">
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>async function fetchImageProf() {</code></strong><br> ಅಸಿಂಕ್ರೋನಸ್ ಫಂಕ್ಷನ್ ಆರಂಭ.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>try {</code></strong><br> ಪ್ರೊಫೆಷನಲ್ ಕೋಡಿಂಗ್‌ನಲ್ಲಿ ತಪ್ಪುಗಳಾಗದಂತೆ ತಡೆಯಲು try-catch ಬಳಸುತ್ತಾರೆ. ಈ try ಬ್ಲಾಕ್ ಒಳಗೆ ಇರುವ ಕೋಡ್ ಸರಿಯಾಗಿ ನಡೆದರೆ ಮಾತ್ರ ರನ್ ಆಗುತ್ತದೆ.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>let response = await fetch('URL');</code></strong><br> ಇಮೇಜ್‌ಗಾಗಿ ಇಂಟರ್ನೆಟ್‌ಗೆ ರಿಕ್ವೆಸ್ಟ್ ಕಳುಹಿಸಿ, ಸರ್ವರ್‌ನಿಂದ ಉತ್ತರ ಬರುವವರೆಗೆ ಕಾಯುವುದು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>if (!response.ok) {</code></strong><br> ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿದೆ, ಆದರೆ ಸರ್ವರ್ ಆ ಇಮೇಜ್ ಅನ್ನು ಡಿಲೀಟ್ ಮಾಡಿದ್ದರೆ ಅಥವಾ ಬೇರೆ ತೊಂದರೆಯಾದರೆ (ಉದಾಹರಣೆಗೆ 404 Error), response.ok ಫಾಲ್ಸ್ ಆಗುತ್ತದೆ. ಅದನ್ನು ಚೆಕ್ ಮಾಡುವ ಸಾಲು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>throw new Error("...");</code></strong><br> ಸರ್ವರ್ ಸರಿಯಾದ ಉತ್ತರ ಕೊಡದಿದ್ದರೆ, ನಾವೇ ಒಂದು ಹೊಸ ಎರರ್ (Error) ಅನ್ನು ಸೃಷ್ಟಿಸಿ ಈ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಇಲ್ಲಿಗೇ ನಿಲ್ಲಿಸುವುದು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>}</code></strong><br> if ಕಂಡೀಶನ್ ಅಂತ್ಯ.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>let imageBlob = await response.blob();</code></strong><br> ಟೆಕ್ಸ್ಟ್ ಅಥವಾ JSON ಬದಲಿಗೆ, ಇಮೇಜ್/ವಿಡಿಯೋದಂತಹ ಡೇಟಾವನ್ನು blob (ಬೈನರಿ ಡೇಟಾ) ರೂಪಕ್ಕೆ ಬದಲಾಯಿಸಲು ಕಾಯುವುದು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>let imageURL = URL.createObjectURL(imageBlob);</code></strong><br> ಬ್ರೌಸರ್ ಮೆಮೊರಿಯಲ್ಲಿರುವ ಆ ಬೈನರಿ ಇಮೇಜ್ ಅನ್ನು ಸ್ಕ್ರೀನ್ ಮೇಲೆ (HTML ನಲ್ಲಿ) ತೋರಿಸಲು ಒಂದು ತಾತ್ಕಾಲಿಕ URL ಲಿಂಕ್ ಅನ್ನು ಸೃಷ್ಟಿಸುವುದು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>console.log("ಚಿತ್ರದ ತಾತ್ಕಾಲಿಕ ಲಿಂಕ್: " + imageURL);</code></strong><br> ಆ ಲಿಂಕ್ ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುವುದು. (ಇದನ್ನು HTML ನ <code>&lt;img src="..."&gt;</code> ಒಳಗೆ ಹಾಕಬಹುದು).
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>} catch (error) {</code></strong><br> ಒಂದು ವೇಳೆ try ಒಳಗೆ ಏನಾದರೂ ತಪ್ಪಾದರೆ (ಉದಾ: ಇಂಟರ್ನೆಟ್ ಕನೆಕ್ಷನ್ ಇಲ್ಲದಿದ್ದರೆ), ಆ ತಪ್ಪನ್ನು ಇಲ್ಲಿ ಹಿಡಿಯಲಾಗುತ್ತದೆ (catch). ಇದರಿಂದ ನಿಮ್ಮ ಇಡೀ ವೆಬ್‌ಸೈಟ್ ಕ್ರಾಶ್ ಆಗುವುದಿಲ್ಲ.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>console.error("...", error);</code></strong><br> ಆ ತಪ್ಪನ್ನು ಕೆಂಪು ಬಣ್ಣದಲ್ಲಿ ಕನ್ಸೋಲ್‌ನಲ್ಲಿ ಡೆವಲಪರ್‌ಗೆ ಅರ್ಥವಾಗುವಂತೆ ತೋರಿಸುವುದು.
+                        </div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded shadow-sm border border-gray-100 dark:border-gray-800">
+                            <strong><code>}</code></strong> / <strong><code>}</code></strong> / <strong><code>fetchImageProf();</code></strong><br> catch ಬ್ಲಾಕ್ ಅಂತ್ಯ, ಫಂಕ್ಷನ್ ಅಂತ್ಯ, ಮತ್ತು ಮೇಲಿನ ಪ್ರೊಫೆಷನಲ್ ಫಂಕ್ಷನ್ ಅನ್ನು ರನ್ ಮಾಡಲು ಕರೆಯುವುದು.
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-xl text-center shadow-lg">
+                        <p class="text-xl font-bold mb-2">
+                            <i class="fa-solid fa-rocket mr-2"></i> ಸಾರಾಂಶ
+                        </p>
+                        <p class="text-lg">
+                            ಹೀಗೆ, ಸಾಮಾನ್ಯ <code>.then()</code> ಬಳಕೆಯಿಂದ ಶುರುವಾಗಿ, <code>async/await</code> ಜೊತೆಗೆ <code>try...catch</code> ಬಳಸಿ ಎರರ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ ಮಾಡುವ ಹಂತವೇ Non-IT ವಿದ್ಯಾರ್ಥಿಯಿಂದ Professional ಡೆವಲಪರ್‌ಗೆ ಇರುವ ಪ್ರಯಾಣ.
+                        </p>
+                    </div>
+                </section>
+                
+                <!-- Footer Spacer -->
+                <div class="h-20"></div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Initialize Syntax Highlighting
+        hljs.highlightAll();
+
+        // 2. Copy Code Functionality
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const codeBlock = btn.parentElement.nextElementSibling.querySelector('code');
+                navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Copied!';
+                    btn.classList.add('text-green-400', 'border-green-400');
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.classList.remove('text-green-400', 'border-green-400');
+                    }, 2000);
+                });
+            });
+        });
+
+        // 3. Theme Toggle Functionality
+        const htmlElement = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            // Save preference to localStorage if desired in future
+        });
+
+        // 4. Scroll Spy & Fade-In Observer
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px', // Trigger active link nicely
+            threshold: 0
+        };
+
+        const scrollSpyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active-link'));
+                    const activeId = entry.target.getAttribute('id');
+                    const activeLink = document.querySelector(`a[href="#${activeId}"]`);
+                    if(activeLink) activeLink.classList.add('active-link');
+                }
+            });
+        }, observerOptions);
+
+        // Fade in observer
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('appear');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            scrollSpyObserver.observe(section);
+            fadeObserver.observe(section);
+        });
+    </script>
+</body>
+</html>

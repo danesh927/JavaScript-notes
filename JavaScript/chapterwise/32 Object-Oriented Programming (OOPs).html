@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object-Oriented Programming (OOPs) in JavaScript</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        kannada: ['"Noto Sans Kannada"', 'sans-serif'],
+                        code: ['"Fira Code"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Kannada:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            scroll-behavior: smooth;
+        }
+        pre {
+            font-family: 'Fira Code', monospace;
+            border-radius: 0.5rem;
+            position: relative;
+        }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+        .svg-animate path, .svg-animate rect, .svg-animate circle {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 2s forwards;
+        }
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+        
+        .code-container:hover .copy-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 transition-colors duration-300">
+
+    <!-- Header & Theme Toggle -->
+    <header class="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-blue-600 dark:text-blue-400">
+                <i class="fa-brands fa-js text-yellow-500 mr-2"></i>JS Notes
+            </h1>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                <i id="theme-icon" class="fa-solid fa-moon text-slate-600 dark:text-yellow-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex max-w-7xl mx-auto pt-16">
+        
+        <!-- Sticky Sidebar (Table of Contents) -->
+        <aside class="hidden lg:block w-72 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto border-r border-slate-200 dark:border-slate-800 p-6">
+            <h2 class="font-bold text-lg mb-4 text-slate-900 dark:text-white uppercase tracking-wider text-sm"><i class="fa-solid fa-list-ul mr-2"></i>ಪರಿವಿಡಿ (TOC)</h2>
+            <nav class="space-y-3 text-sm flex flex-col">
+                <a href="#intro" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">ಪೀಠಿಕೆ (Introduction)</a>
+                <a href="#class-object" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">1. Class ಮತ್ತು Object</a>
+                <a href="#encapsulation" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">2. Encapsulation</a>
+                <a href="#abstraction" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">3. Abstraction</a>
+                <a href="#inheritance" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">4. Inheritance</a>
+                <a href="#polymorphism" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">5. Polymorphism</a>
+                <a href="#static" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">6. Static Methods</a>
+                <a href="#getters-setters" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">7. Getters ಮತ್ತು Setters</a>
+                <a href="#prototypes" class="toc-link text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">8. Prototypes (ರಹಸ್ಯ)</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 lg:p-12 overflow-x-hidden">
+            <div class="max-w-4xl mx-auto space-y-12">
+
+                <!-- Original Notes Content Begins -->
+                <p class="text-lg italic text-slate-600 dark:text-slate-300">
+                    [ಖಂಡಿತ, ನೀವು ನೀಡಿದ ಮಾಹಿತಿಯನ್ನು ಯಾವುದೇ ಒಂದು ಅಕ್ಷರವನ್ನು ಬಿಡದೆ, ಓದಲು ಮತ್ತು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಇನ್ನಷ್ಟು ಆಕರ್ಷಕವಾಗಿರುವಂತೆ (Formatting, Headings ಮತ್ತು Code blocks ಬಳಸಿ) ಸರಿಯಾದ ಕ್ರಮದಲ್ಲಿ ನೋಟ್ಸ್ ಆಗಿ ಸಿದ್ಧಪಡಿಸಿದ್ದೇನೆ. ಜೊತೆಗೆ ವಿಷಯದ ಪೂರ್ಣತೆಗೆ ಕೆಲವು ಹೆಚ್ಚುವರಿ (ಸಣ್ಣ) ಮಾಹಿತಿಗಳನ್ನು ಸೇರಿಸಿದ್ದೇನೆ. ಇಲ್ಲಿದೆ ನಿಮ್ಮ ಸಂಪೂರ್ಣ ನೋಟ್ಸ್:]
+                </p>
+
+                <!-- Section: Introduction -->
+                <section id="intro" class="fade-in-section scroll-mt-20">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6 border-b-2 border-blue-500 pb-2 inline-block">
+                        Object-Oriented Programming (OOPs) in JavaScript - ಸಂಪೂರ್ಣ ನೋಟ್ಸ್
+                    </h1>
+                    <div class="bg-white dark:bg-slate-850 p-6 rounded-xl shadow-lg border border-slate-100 dark:border-slate-800">
+                        <h2 class="text-xl font-bold mb-3 text-blue-600 dark:text-blue-400">
+                            <i class="fa-solid fa-book-open mr-2"></i>ಪೀಠಿಕೆ (Introduction):
+                        </h2>
+                        <p class="mb-4 leading-relaxed">
+                            OOPs (Object-Oriented Programming) ಎಂಬುದು ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಬರೆಯುವ ಒಂದು ಶೈಲಿ ಅಥವಾ ವಿಧಾನ. ಇದನ್ನು ಕಲಿಯಲು ನೀವು ಐಟಿ (IT) ಹಿನ್ನೆಲೆಯಿಂದಲೇ ಬರಬೇಕಾಗಿಲ್ಲ. ನಮ್ಮ ದೈನಂದಿನ ಜೀವನದ ಉದಾಹರಣೆಗಳನ್ನು ಬಳಸಿಕೊಂಡು ES6 Classes ಮತ್ತು OOPs ನ ನಾಲ್ಕು ಮುಖ್ಯ ಗುಣಲಕ್ಷಣಗಳನ್ನು (Properties) ನಾವು ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಹುದು.
+                        </p>
+                        <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border-l-4 border-blue-500 text-sm">
+                            <strong class="text-blue-700 dark:text-blue-300"><i class="fa-solid fa-lightbulb mr-1"></i>(ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ:</strong> 
+                            OOPs ಬಳಕೆಯಿಂದ ಸಾಫ್ಟ್‌ವೇರ್ ಡೆವಲಪ್‌ಮೆಂಟ್‌ನಲ್ಲಿ ಕೋಡ್ ಅನ್ನು ಅಚ್ಚುಕಟ್ಟಾಗಿ ನಿರ್ವಹಿಸಬಹುದು, ಒಂದೇ ಕೋಡ್ ಅನ್ನು ಮತ್ತೆ ಮತ್ತೆ ಬಳಸಬಹುದು (Reusability) ಮತ್ತು ದೊಡ್ಡ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳನ್ನು ಸುಲಭವಾಗಿ ವಿಂಗಡಿಸಿ ನಿರ್ಮಿಸಬಹುದು.)
+                        </div>
+                    </div>
+                    
+                    <!-- Seamless Value Add: DOM Context -->
+                    <div class="mt-6 bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-xl border border-emerald-200 dark:border-emerald-800/50 shadow-sm fade-in-section">
+                        <h3 class="text-emerald-700 dark:text-emerald-400 font-bold mb-2">
+                            <i class="fa-solid fa-network-wired mr-2"></i>ಜ್ಞಾನ ವಿಸ್ತರಣೆ (DOM & OOPs):
+                        </h3>
+                        <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                            ನೀವು ಫ್ರಂಟ್-ಎಂಡ್ ಡೆವಲಪ್‌ಮೆಂಟ್ ಕಲಿಯುತ್ತಿರುವಾಗ, ಬ್ರೌಸರ್‌ನ <strong>DOM (Document Object Model)</strong> ಕೂಡ ಇದೇ Object-Oriented ಶೈಲಿಯಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಪ್ರತಿಯೊಂದು HTML ಎಲಿಮೆಂಟ್ (ಉದಾ: <code>&lt;div&gt;</code>, <code>&lt;button&gt;</code>) ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಒಂದು 'Object' ಆಗಿರುತ್ತದೆ ಮತ್ತು ಅವೆಲ್ಲವೂ <code>HTMLElement</code> ಎಂಬ ಕ್ಲಾಸ್‌ನಿಂದ Inheritance ಮೂಲಕ ಗುಣಗಳನ್ನು ಪಡೆದುಕೊಳ್ಳುತ್ತವೆ. ಈ OOPs ನಿಯಮಗಳು ಈವೆಂಟ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ (Event Handling) ಮತ್ತು DOM ಮ್ಯಾನಿಪುಲೇಶನ್‌ಗೆ ಅಡಿಪಾಯವಾಗಿವೆ.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section 1 -->
+                <section id="class-object" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">1</span> 
+                        Class ಮತ್ತು Object ಎಂದರೇನು?
+                    </h2>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <ul class="list-none space-y-3 mb-6 ml-4">
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>Class (ಕ್ಲಾಸ್):</strong> ಇದು ಮನೆ ಕಟ್ಟಲು ಬಳಸುವ 'ನಕ್ಷೆ' (Blueprint) ಇದ್ದ ಹಾಗೆ. ನಕ್ಷೆಯಲ್ಲಿ ಮನೆಯಲ್ಲಿ ಎಷ್ಟು ಕೋಣೆಗಳಿವೆ, ಬಾಗಿಲು ಎಲ್ಲಿದೆ ಎಂದು ಬರೆದಿರುತ್ತದೆ, ಆದರೆ ಅದರಲ್ಲಿ ಯಾರೂ ವಾಸಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ.
+                        </li>
+                        <li class="relative pl-6"><i class="fa-solid fa-check text-green-500 absolute left-0 top-1"></i>
+                            <strong>Object (ಆಬ್ಜೆಕ್ಟ್):</strong> ಆ ನಕ್ಷೆಯನ್ನು ನೋಡಿಕೊಂಡು ಕಟ್ಟಿದ 'ನಿಜವಾದ ಮನೆ'. ಒಂದೇ ನಕ್ಷೆ (Class) ಬಳಸಿ ನೀವು 10 ಮನೆಗಳನ್ನು (Objects) ಕಟ್ಟಬಹುದು. ಪ್ರತಿಯೊಂದು ಮನೆಗೂ ಬೇರೆ ಬೇರೆ ಬಣ್ಣ ಬಳಿಯಬಹುದು.
+                        </li>
+                    </ul>
+
+                    <!-- Visual Diagram -->
+                    <div class="my-6 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg flex flex-col md:flex-row items-center justify-center gap-6">
+                        <div class="text-center">
+                            <i class="fa-solid fa-map text-5xl text-blue-500 mb-2"></i>
+                            <p class="font-bold">Class (Blueprint)</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-2xl text-slate-400"></i>
+                        <div class="flex gap-4">
+                            <div class="text-center">
+                                <i class="fa-solid fa-house text-4xl text-red-500 mb-2 hover:scale-110 transition"></i>
+                                <p class="text-sm">Object 1</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa-solid fa-house text-4xl text-white mb-2 drop-shadow-md hover:scale-110 transition"></i>
+                                <p class="text-sm">Object 2</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4 leading-relaxed">
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (ES6) ನಲ್ಲಿ <code>class</code> ಎಂಬ ಕೀವರ್ಡ್ ಬಳಸಿ ನಾವು ಒಂದು ಟೆಂಪ್ಲೇಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸುತ್ತೇವೆ. ಈ ಟೆಂಪ್ಲೇಟ್ ಬಳಸಿ <code>new</code> ಕೀವರ್ಡ್ ಮೂಲಕ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ರಚಿಸುತ್ತೇವೆ. <code>constructor</code> ಎಂಬುದು ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಯಾದಾಗ ಅದರ ಆರಂಭಿಕ ಮಾಹಿತಿಯನ್ನು (ಉದಾಹರಣೆಗೆ ಬಣ್ಣ, ಹೆಸರು) ಸೆಟ್ ಮಾಡುವ ವಿಶೇಷ ಫಂಕ್ಷನ್.
+                    </p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+// Class (ಮನೆಯ ನಕ್ಷೆ)
+class Car {
+  // Constructor: ಆಬ್ಜೆಕ್ಟ್ ಹುಟ್ಟಿದಾಗ ಏನಿರಬೇಕು ಎಂದು ಹೇಳುತ್ತದೆ
+  constructor(brandName, color) {
+    this.brand = brandName; 
+    this.color = color;
+  }
+ 
+  // Method (ಕಾರ್ಯ): ಕಾರು ಏನು ಮಾಡಬಲ್ಲದು?
+  start() {
+    console.log(`ನನ್ನ ${this.color} ಬಣ್ಣದ ${this.brand} ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!`);
+  }
+}
+ 
+// Object (ನಿಜವಾದ ಕಾರುಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು)
+const myCar = new Car("Tata Nexon", "ಕೆಂಪು");
+const yourCar = new Car("Maruti Swift", "ಬಿಳಿ");
+ 
+myCar.start(); 
+yourCar.start(); 
+                        </code></pre>
+                    </div>
+                    <div class="bg-black text-green-400 font-code p-3 rounded-lg text-sm mb-6 shadow-inner border border-gray-700">
+                        <i class="fa-solid fa-terminal mr-2"></i> ಔಟ್‌ಪುಟ್:<br>
+                        > ನನ್ನ ಕೆಂಪು ಬಣ್ಣದ Tata Nexon ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!<br>
+                        > ನನ್ನ ಬಿಳಿ ಬಣ್ಣದMaruti Swift ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!
+                    </div>
+
+                    <p class="mb-4 italic text-slate-600 dark:text-slate-400">
+                        (ನೀವು ನೀಡಿರುವ ಉದಾಹರಣೆ ಮತ್ತು ವಿವರಣೆ ಅತ್ಯುತ್ತಮವಾಗಿದೆ! ಸಾಮಾನ್ಯ ಜನರಿಗೂ ಅರ್ಥವಾಗುವಂತಹ ಸುಲಭವಾದ ಭಾಷೆಯಲ್ಲಿದೆ.)<br>
+                        ಇದನ್ನೇ ಇನ್ನಷ್ಟು ಆಳವಾಗಿ, ಪ್ರತಿಯೊಂದು ಸಾಲಿನ ಅರ್ಥವೇನು, ಮತ್ತು ಅದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡೋಣ:
+                    </p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. <code>class Car { ... }</code> (ಕಾರ್ ಎಂಬ ನಕ್ಷೆಯ ತಯಾರಿ)</strong><br> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ class ಎಂಬುದು ಕೇವಲ ಒಂದು ಕಲ್ಪನೆ ಅಥವಾ ಡಿಸೈನ್ (Blueprint). class Car ಎಂದು ಬರೆದಾಗ, ಕಂಪ್ಯೂಟರ್‌ಗೆ "ನಾನು ಕಾರುಗಳ ಬಗ್ಗೆ ಒಂದು ಟೆಂಪ್ಲೇಟ್ ಮಾಡುತ್ತಿದ್ದೇನೆ" ಎಂದು ಹೇಳಿದಂತೆ. ಇಲ್ಲಿ ಯಾವುದೇ ನಿಜವಾದ ಕಾರು ಸೃಷ್ಟಿಯಾಗಿಲ್ಲ.</p>
+                        
+                        <p><strong>2. <code>constructor(brandName, color)</code> (ಆರಂಭಿಕ ಸಿದ್ಧತೆ)</strong><br> constructor (ಕನ್ಸ್ಟ್ರಕ್ಟರ್) ಎನ್ನುವುದು ಕ್ಲಾಸ್‌ನ ಒಳಗೆ ಇರುವ ಒಂದು ವಿಶೇಷವಾದ ಫಂಕ್ಷನ್ (Function).</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ನೀವು <code>new</code> ಕೀವರ್ಡ್ ಬಳಸಿ ಹೊಸ ಕಾರನ್ನು (Object) ಸೃಷ್ಟಿಸಿದ ತಕ್ಷಣ, ಈ constructor ತಾನೇ ತಾನಾಗಿ ಕೆಲಸ ಮಾಡಲು ಶುರು ಮಾಡುತ್ತದೆ.</li>
+                            <li>ಬ್ರಾಂಡ್ ಹೆಸರು (brandName) ಮತ್ತು ಬಣ್ಣವನ್ನು (color) ಕಚ್ಚಾ ವಸ್ತುವಾಗಿ (Inputs) ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ.</li>
+                        </ul>
+
+                        <p><strong>3. <code>this</code> ಕೀವರ್ಡ್‌ನ ಹಿಂದಿನ ಮ್ಯಾಜಿಕ್</strong><br> ಇಲ್ಲಿ this ಎಂಬ ಪದ ಬಹಳ ಮುಖ್ಯ. this ಎಂದರೆ "ಈ ನಿರ್ದಿಷ್ಟ ಕಾರಿನ" (This specific object's) ಎಂದರ್ಥ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li><code>this.brand = brandName;</code> : ಎಂದರೆ "ಸೃಷ್ಟಿಯಾಗುತ್ತಿರುವ ಈ ಹೊಸ ಕಾರಿನ ಬ್ರಾಂಡ್ ಹೆಸರು, ನಾವು ಕೊಟ್ಟ brandName ಆಗಿರಲಿ" ಎಂದು.</li>
+                            <li><code>this.color = color;</code> : ಎಂದರೆ "ಈ ಕಾರಿನ ಬಣ್ಣ, ನಾವು ಕೊಟ್ಟ color ಆಗಿರಲಿ" ಎಂದು. ಉದಾಹರಣೆಗೆ, ಟಾಟಾ ನೆಕ್ಸಾನ್ ಕಾರು ಸೃಷ್ಟಿಯಾಗುವಾಗ this ಎಂದರೆ ಟಾಟಾ ಕಾರು. ಸ್ವಿಫ್ಟ್ ಕಾರು ಸೃಷ್ಟಿಯಾಗುವಾಗ ಅದೇ this ಎಂದರೆ ಸ್ವಿಫ್ಟ್ ಕಾರು.</li>
+                        </ul>
+
+                        <p><strong>4. <code>start()</code> ಮೆಥಡ್ (ಕಾರಿನ ಕೆಲಸ ಅಥವಾ ವರ್ತನೆ)</strong><br> ಕ್ಲಾಸ್ ಒಳಗೆ ನಾವು ಬರೆಯುವ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಮೆಥಡ್ (Method) ಎಂದು ಕರೆಯುತ್ತೇವೆ. ಇದು ಕಾರು ಏನು ಮಾಡಬಲ್ಲದು (ಉದಾಹರಣೆಗೆ: start ಆಗುವುದು, stop ಆಗುವುದು, horn ಮಾಡುವುದು) ಎಂಬುದನ್ನು ಹೇಳುತ್ತದೆ. ಇಲ್ಲಿ <code>${this.color}</code> ಮತ್ತು <code>${this.brand}</code> ಬಳಸಿರುವುದರಿಂದ, ಯಾವ ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಗುತ್ತಿದೆಯೋ, ಅದೇ ಕಾರಿನ ಬಣ್ಣ ಮತ್ತು ಹೆಸರನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</p>
+
+                        <p><strong>5. Object ಸೃಷ್ಟಿಸುವುದು (ನಕ್ಷೆಯಿಂದ ನಿಜವಾದ ಮನೆ ಕಟ್ಟುವ ಹಂತ)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myCar = new Car("Tata Nexon", "ಕೆಂಪು");</code></pre></div>
+                        <p>ಈ ಒಂದು ಸಾಲಿನಲ್ಲಿ ನಡೆಯುವ ಪ್ರಕ್ರಿಯೆಗಳು:</p>
+                        <ol class="list-decimal ml-6 space-y-1">
+                            <li><code>new</code> ಎಂಬ ಪದ ಕಂಪ್ಯೂಟರ್‌ಗೆ "ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸು" ಎಂದು ಆದೇಶಿಸುತ್ತದೆ.</li>
+                            <li>Car ಕ್ಲಾಸ್‌ನ ಬಳಿ ಹೋಗಿ, ಅದರ constructor ಗೆ "Tata Nexon" ಮತ್ತು "ಕೆಂಪು" ಎಂಬ ಮಾಹಿತಿಯನ್ನು ಕಳುಹಿಸುತ್ತದೆ.</li>
+                            <li>ಈಗ myCar ಎಂಬುದು ಬರೀ ಹೆಸರಲ್ಲ, ಅದೊಂದು ಸಂಪೂರ್ಣವಾಗಿ ತಯಾರಾದ ನಿಜವಾದ ಕಾರು (Object). ಅದರ ಬಣ್ಣ ಕೆಂಪು, ಅದರ ಬ್ರಾಂಡ್ Tata Nexon.</li>
+                        </ol>
+
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const yourCar = new Car("Maruti Swift", "ಬಿಳಿ");</code></pre></div>
+                        <p>ಅದೇ ರೀತಿ, ಒಂದೇ ನಕ್ಷೆ ಬಳಸಿ ಮತ್ತೊಂದು ಹೊಸ ಕಾರನ್ನು ಸೃಷ್ಟಿಸಿದೆವು. ಇದರ ಗುಣಲಕ್ಷಣಗಳು ಸಂಪೂರ್ಣ ಬೇರೆ.</p>
+
+                        <p><strong>6. ಮೆಥಡ್ ಅನ್ನು ಕರೆಯುವುದು (ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಬಳಸುವುದು)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">myCar.start();</code></pre></div>
+                        <p>ಇಲ್ಲಿ myCar ತನ್ನ start() ಕೆಲಸವನ್ನು ಶುರು ಮಾಡುತ್ತದೆ. myCar ನ ಬಣ್ಣ ಕೆಂಪು ಆಗಿರುವುದರಿಂದ, ಕಂಪ್ಯೂಟರ್ "ನನ್ನ ಕೆಂಪು ಬಣ್ಣದ Tata Nexon ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!" ಎಂದು ಹೇಳುತ್ತದೆ.</p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">yourCar.start();</code></pre></div>
+                        <p>ಇಲ್ಲಿ yourCar ನ ಬಣ್ಣ ಬಿಳಿ ಆಗಿರುವುದರಿಂದ, ಅದು "ನನ್ನ ಬಿಳಿ ಬಣ್ಣದMaruti Swift ಕಾರು ಸ್ಟಾರ್ಟ್ ಆಯ್ತು!" ಎಂದು ಹೇಳುತ್ತದೆ.</p>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಒಟ್ಟಾರೆಯಾಗಿ ಇದರ ಉಪಯೋಗವೇನು? (Why use Class and Object?)</strong><br>
+                            ಒಂದು ವೇಳೆ class ಇಲ್ಲದಿದ್ದರೆ, ನೀವು 100 ಕಾರುಗಳ ಮಾಹಿತಿಯನ್ನು ಬರೆಯಲು100 ಬಾರಿ ಪ್ರತ್ಯೇಕವಾಗಿ ಬರೆಯಬೇಕಾಗುತ್ತಿತ್ತು. ಆದರೆ Class ಬಳಸುವುರಿಂದ ಕೋಡಿಂಗ್ ತುಂಬಾ ಸುಲಭ (Reusable) ಆಗುತ್ತದೆ. ಒಮ್ಮೆ ನಕ್ಷೆ ಬರೆದಿಟ್ಟುಕೊಂಡರೆ, new ಪದ ಬಳಸಿ ಸಾವಿರಾರು ಕಾರುಗಳನ್ನು (Objects) ಕ್ಷಣಾರ್ಧದಲ್ಲಿ ಸೃಷ್ಟಿಸಬಹುದು!
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 2 -->
+                <section id="encapsulation" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">2</span> 
+                        Encapsulation (ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್) - ಡೇಟಾ ಭದ್ರತೆ
+                    </h2>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ನೀವು ಬ್ಯಾಂಕ್‌ಗೆ ಹೋದಾಗ, ನಿಮ್ಮ ಅಕೌಂಟ್‌ನಲ್ಲಿರುವ ಬ್ಯಾಲೆನ್ಸ್ ಅನ್ನು ನೀವೇ ನೇರವಾಗಿ ಪೆನ್ನಿನಲ್ಲಿ ತಿದ್ದಲು ಸಾಧ್ಯವಿಲ್ಲ. ಬದಲಾಗಿ, ನೀವು "Deposit" (ಹಣ ಜಮೆ ಮಾಡು) ಅಥವಾ "Withdraw" (ಹಣ ತೆಗೆ) ಎಂಬ ನಿಯಮಬದ್ಧ ಪ್ರಕ್ರಿಯೆಗಳ ಮೂಲಕವೇ ಬ್ಯಾಲೆನ್ಸ್ ಬದಲಾಯಿಸಬೇಕು. ಇದು ನಿಮ್ಮ ಹಣಕ್ಕೆ ಭದ್ರತೆ ನೀಡುತ್ತದೆ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಡೇಟಾ (Variables) ಮತ್ತು ಆ ಡೇಟಾವನ್ನು ಬದಲಾಯಿಸುವ ಫಂಕ್ಷನ್‌ಗಳನ್ನು (Methods) ಒಂದೇ ಕ್ಲಾಸ್ ಒಳಗೆ ಸೇರಿಸಿ, ಹೊರಗಿನಿಂದ ಯಾರೂ ನೇರವಾಗಿ ಡೇಟಾವನ್ನು ಬದಲಾಯಿಸದಂತೆ ತಡೆಯುವುದೇ Encapsulation. ES6 ನಲ್ಲಿ ವೇರಿಯೇಬಲ್ ಹೆಸರಿನ ಹಿಂದೆ <code>#</code> ಹಾಕಿದರೆ ಅದು 'Private' ಆಗುತ್ತದೆ. ಅದನ್ನು ಕ್ಲಾಸ್‌ನ ಹೊರಗೆ ಬಳಸಲು ಸಾಧ್ಯವಿಲ್ಲ.</p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class BankAccount {
+  // '#' ಎಂದರೆ ಇದು Private ಡೇಟಾ (ಯಾರೂ ನೇರವಾಗಿ ಮುಟ್ಟುವಂತಿಲ್ಲ)
+  #balance = 0; 
+ 
+  constructor(accountHolder) {
+    this.name = accountHolder;
+  }
+ 
+  // ಹಣ ಸೇರಿಸಲು ಮಾತ್ರ ಅವಕಾಶ ನೀಡುವ ಫಂಕ್ಷನ್
+  deposit(amount) {
+    if(amount > 0) {
+      this.#balance += amount;
+      console.log(`${amount} ರೂ. ಜಮಾ ಆಯಿತು. ಒಟ್ಟು ಬ್ಯಾಲೆನ್ಸ್: ${this.#balance}`);
+    }
+  }
+ 
+  // ಬ್ಯಾಲೆನ್ಸ್ ನೋಡಲು ಮಾತ್ರ ಅವಕಾಶ (ಬದಲಾಯಿಸುವಂತಿಲ್ಲ)
+  getBalance() {
+    return this.#balance;
+  }
+}
+ 
+const myAccount = new BankAccount("ರಾಮು");
+myAccount.deposit(500); 
+// myAccount.#balance = 1000; // ಹೀಗೆ ಮಾಡಿದರೆ Error ಬರುತ್ತದೆ! ಇದು ಸುರಕ್ಷಿತ.
+console.log(myAccount.getBalance()); 
+                        </code></pre>
+                    </div>
+                    <div class="bg-black text-green-400 font-code p-3 rounded-lg text-sm mb-6 shadow-inner border border-gray-700">
+                        <i class="fa-solid fa-terminal mr-2"></i> ಔಟ್‌ಪುಟ್:<br>
+                        > 500 ರೂ. ಜಮಾ ಆಯಿತು. ಒಟ್ಟು ಬ್ಯಾಲೆನ್ಸ್: 500<br>
+                        > 500
+                    </div>
+
+                    <p class="mb-4">ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್ (Encapsulation) ನ ಪ್ರಮುಖ ಉದ್ದೇಶ ಡೇಟಾ ಭದ್ರತೆ ಮತ್ತು ನಿಯಂತ್ರಣ (Security and Control). ಕೋಡ್ ಅನ್ನು ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡಿದಾಗ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದು ಸ್ಪಷ್ಟವಾಗುತ್ತದೆ:</p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. ಖಾಸಗಿ ಡೇಟಾ (Private Data): <code>#balance = 0;</code></strong><br> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ವೇರಿಯೇಬಲ್ ಹೆಸರಿನ ಹಿಂದೆ # (ಹ್ಯಾಶ್) ಚಿಹ್ನೆ ಹಾಕಿದರೆ, ಅದು ಖಾಸಗಿ (Private) ಆಗುತ್ತದೆ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಇದು ಬ್ಯಾಂಕಿನ ಸ್ಟ್ರಾಂಗ್ ರೂಮ್ (Locker) ಇದ್ದ ಹಾಗೆ.</li>
+                            <li>ಈ #balance ಅನ್ನು BankAccount ಕ್ಲಾಸ್‌ನ ಒಳಗೆ ಬರೆದಿರುವ ಫಂಕ್ಷನ್‌ಗಳು ಮಾತ್ರ ನೋಡಬಹುದು ಮತ್ತು ಬದಲಾಯಿಸಬಹುದು. ಹೊರಗಿನ ಯಾರಿಗೂ ಇದರ ನೇರ ಸಂಪರ್ಕ ಇರುವುದಿಲ್ಲ.</li>
+                        </ul>
+
+                        <p><strong>2. ಆರಂಭಿಕ ಸೆಟಪ್: <code>constructor(accountHolder)</code></strong><br> ಬ್ಯಾಂಕ್ ಅಕೌಂಟ್ ತೆರೆದಾಗ ಗ್ರಾಹಕನ ಹೆಸರನ್ನು ನಮೂದಿಸುವ ಹಂತ ಇದು.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>this.name ನ ಹಿಂದೆ # ಇಲ್ಲ. ಅಂದರೆ, ಅಕೌಂಟ್ ಹೊಂದಿರುವವರ ಹೆಸರು ಪಬ್ಲಿಕ್ (Public) ಆಗಿದೆ. ಇದನ್ನು ಯಾರು ಬೇಕಾದರೂ ಹೊರಗಿನಿಂದ ನೋಡಬಹುದು (ಉದಾಹರಣೆಗೆ: console.log(myAccount.name); ರನ್ ಆಗುತ್ತದೆ).</li>
+                        </ul>
+
+                        <p><strong>3. ನಿಯಂತ್ರಿತ ಬದಲಾವಣೆ (Controlled Mutation): <code>deposit(amount)</code></strong><br> ಡೇಟಾವನ್ನು ನೇರವಾಗಿ ಬದಲಾಯಿಸಲು ಬಿಡದೆ, ಒಂದು ನಿರ್ದಿಷ್ಟ ದಾರಿಯ (Method) ಮೂಲಕ ಮಾತ್ರ ಬದಲಾಯಿಸಲು ಅವಕಾಶ ಮಾಡಿಕೊಡುವುದು ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್‌ನ ಪ್ರಮುಖ ಲಕ್ಷಣ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಷರತ್ತು (Condition): if(amount > 0) ಎಂಬ ಷರತ್ತು ಇಲ್ಲಿದೆ. ಯಾರಾದರೂ -500 ರೂ. ಜಮಾ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದರೆ, ಈ ಕೋಡ್ ಅದನ್ನು ತಡೆಯುತ್ತದೆ. ನೇರವಾಗಿ ಬ್ಯಾಲೆನ್ಸ್ ಬದಲಾಯಿಸುವ ಅವಕಾಶ ನೀಡಿದ್ದರೆ ಇಂತಹ ತಪ್ಪುಗಳನ್ನು ತಡೆಯಲು ಸಾಧ್ಯವಾಗುತ್ತಿರಲಿಲ್ಲ.</li>
+                            <li>ಷರತ್ತು ಪಾಸಾದಾಗ ಮಾತ್ರ #balance ಗೆ ಹಣ ಸೇರ್ಪಡೆಯಾಗುತ್ತದೆ.</li>
+                        </ul>
+
+                        <p><strong>4. ಓದಲು ಮಾತ್ರ ಅವಕಾಶ (Read-Only Access): <code>getBalance()</code></strong><br> ಗ್ರಾಹಕರಿಗೆ ತಮ್ಮ ಬ್ಯಾಲೆನ್ಸ್ ಎಷ್ಟು ಎಂದು ನೋಡುವ ಹಕ್ಕು ಇರುತ್ತದೆ, ಆದರೆ ತಾವೇ ನಮೂದಿಸುವ ಹಕ್ಕು ಇರುವುದಿಲ್ಲ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಈ ಫಂಕ್ಷನ್ ಕೇವಲ #balance ನಲ್ಲಿರುವ ಮೌಲ್ಯವನ್ನು ವಾಪಸ್ (return) ಮಾಡುತ್ತದೆ. ಇದು ಬ್ಯಾಂಕಿನ ಪಾಸ್‌ಬುಕ್ ಪ್ರಿಂಟ್ ಅಥವಾ ಎಟಿಎಂ ಮಿನಿ ಸ್ಟೇಟ್‌ಮೆಂಟ್ ಇದ್ದಂತೆ.</li>
+                        </ul>
+
+                        <p><strong>5. ಹೊರಗಿನಿಂದ ಆಕ್ಸೆಸ್ ಮಾಡುವಾಗ ಏನಾಗುತ್ತದೆ?</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myAccount = new BankAccount("ರಾಮು");
+myAccount.deposit(500);</code></pre></div>
+                        <p>ಇಲ್ಲಿ ರಾಮು 500 ರೂ. ಜಮಾ ಮಾಡುತ್ತಿದ್ದಾನೆ. ಇದು deposit ಎಂಬ ಅಧಿಕೃತ ಮಾರ್ಗದ ಮೂಲಕ ನಡೆಯುತ್ತಿರುವುದರಿಂದ, ವ್ಯವಹಾರ ಯಶಸ್ವಿಯಾಗುತ್ತದೆ ಮತ್ತು ಬ್ಯಾಲೆನ್ಸ್ 500 ಆಗುತ್ತದೆ.</p>
+
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">myAccount.#balance = 1000000; // Error!</code></pre></div>
+                        <p>ಒಬ್ಬ ಹ್ಯಾಕರ್ ಅಥವಾ ಬೇರೊಬ್ಬ ವ್ಯಕ್ತಿ ನೇರವಾಗಿ ಅಕೌಂಟ್‌ಗೆ ಕನ್ನ ಹಾಕಿ ಬ್ಯಾಲೆನ್ಸ್ ಅನ್ನು 10 ಲಕ್ಷ ಮಾಡಲು ಪ್ರಯತ್ನಿಸಿದರೆ ಏನಾಗುತ್ತದೆ? ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತಕ್ಷಣವೇ SyntaxError: Private field '#balance' must be declared in an enclosing class ಎಂಬ ಎರರ್ (Error) ಎಸೆಯುತ್ತದೆ. ಅಂದರೆ, "ನೀವು ಹೊರಗಿನಿಂದ ಈ ಖಾಸಗಿ ಲಾಕರ್ ಅನ್ನು ಮುಟ್ಟುವಂತಿಲ್ಲ!" ಎಂದು ಸಿಸ್ಟಮ್ ಬ್ಲಾಕ್ ಮಾಡುತ್ತದೆ.</p>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್‌ನ ಪ್ರಮುಖ ಲಾಭಗಳು:</strong>
+                            <ol class="list-decimal ml-6 space-y-1 mt-2">
+                                <li><strong>ಡೇಟಾ ಸುರಕ್ಷತೆ (Data Protection):</strong> ಅಚಾನಕ್ಕಾಗಿ ಅಥವಾ ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ಪ್ರಮುಖ ಡೇಟಾ ಹಾಳಾಗುವುದನ್ನು ತಡೆಯುತ್ತದೆ.</li>
+                                <li><strong>ನಿಯಂತ್ರಣ (Validation):</strong> ಡೇಟಾ ಬದಲಾಗುವ ಮುನ್ನ ಅದು ಸರಿಯಾಗಿದೆಯೇ (ಉದಾಹರಣೆಗೆ ಋಣಾತ್ಮಕ ಮೌಲ್ಯ ಇಲ್ಲದಿರುವುದು) ಎಂದು ಪರೀಕ್ಷಿಸಲು ಅವಕಾಶ ನೀಡುತ್ತದೆ.</li>
+                                <li><strong>ನಿರ್ವಹಣೆ ಸುಲಭ (Maintainability):</strong> ಕ್ಲಾಸ್‌ನ ಒಳಗಿನ ಕೋಡ್ ಅನ್ನು ನೀವು ಹೇಗೆ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು, ಹೊರಗಿನಿಂದ ಆ ಕ್ಲಾಸ್ ಬಳಸುವವರಿಗೆ ಯಾವುದೇ ತೊಂದರೆಯಾಗುವುದಿಲ್ಲ.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 3 -->
+                <section id="abstraction" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">3</span> 
+                        Abstraction (ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್) - ಸಂಕೀರ್ಣತೆಯನ್ನು ಮುಚ್ಚಿಡುವುದು
+                    </h2>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ನೀವು ಟಿವಿ ರಿಮೋಟ್‌ನಲ್ಲಿ 'Volume Up' ಬಟನ್ ಒತ್ತಿದಾಗ ಟಿವಿಯ ಶಬ್ದ ಹೆಚ್ಚಾಗುತ್ತದೆ. ರಿಮೋಟ್ ಒಳಗೆ ಯಾವ ಚಿಪ್ ಇದೆ, ಸಿಗ್ನಲ್ ಹೇಗೆ ಟಿವಿಗೆ ಹೋಗುತ್ತದೆ ಎಂಬ 'ತಲೆನೋವಿನ' ವಿಚಾರ ನಿಮಗೆ ಬೇಕಾಗಿಲ್ಲ. ನಿಮಗೆ ಕೇವಲ "ಬಟನ್ ಒತ್ತಿದರೆ ಕೆಲಸ ಆಗಬೇಕು" ಅಷ್ಟೇ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಬಳಕೆದಾರರಿಗೆ ಕೇವಲ ಅಗತ್ಯವಿರುವ ಫೀಚರ್‌ಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಿ, ಹಿನ್ನೆಲೆಯಲ್ಲಿ ನಡೆಯುವ ಕಷ್ಟಕರವಾದ ಕೋಡಿಂಗ್ ಲಾಜಿಕ್ ಅನ್ನು ಮುಚ್ಚಿಡುವುದೇ Abstraction.</p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class CoffeeMachine {
+  // ಇವೆಲ್ಲಾ ಯಂತ್ರದ ಒಳಗಿನ ಕೆಲಸಗಳು (Private)
+  #boilWater() {
+    console.log("1. ನೀರು ಕಾಯಿಸುತ್ತಿದೆ...");
+  }
+  
+  #grindBeans() {
+    console.log("2. ಕಾಫಿ ಬೀಜ ಪುಡಿ ಮಾಡುತ್ತಿದೆ...");
+  }
+ 
+  // ಬಳಕೆದಾರನಿಗೆ ಕಾಣುವ ಒಂದೇ ಒಂದು ಸುಲಭವಾದ ಬಟನ್ (Public)
+  makeCoffee() {
+    this.#boilWater();
+    this.#grindBeans();
+    console.log("☕ ನಿಮ್ಮ ಕಾಫಿ ರೆಡಿ ಇದೆ!");
+  }
+}
+ 
+const myMachine = new CoffeeMachine();
+myMachine.makeCoffee(); // ಬಳಕೆದಾರ ಕೇವಲ ಮೇಕ್ ಕಾಫಿ ಬಟನ್ ಒತ್ತುತ್ತಾನೆ ಅಷ್ಟೇ.
+                        </code></pre>
+                    </div>
+                    
+                    <p class="mb-4 italic text-slate-600 dark:text-slate-400">
+                        (ನೀವು ನೀಡಿರುವ ಟಿವಿ ರಿಮೋಟ್ ಮತ್ತು ಕಾಫಿ ಮಷೀನ್ ಉದಾಹರಣೆಗಳು ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್ (Abstraction) ಅನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಅತ್ಯುತ್ತಮವಾಗಿವೆ!)<br>
+                        ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್ (Encapsulation) ಎಂದರೆ "ಭದ್ರತೆ" (Security) ನೀಡುವ ಉದ್ದೇಶವಾದರೆ, ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್ ಉದ್ದೇಶ "ಸಂಕೀರ್ಣತೆಯನ್ನು ಕಡಿಮೆ ಮಾಡುವುದು" (Simplicity). ಇದನ್ನು ಕೋಡ್‌ನ ಮೂಲಕ ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡೋಣ:
+                    </p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. ಒಳಗಿನ ಸಂಕೀರ್ಣ ಪ್ರಕ್ರಿಯೆಗಳು (Private Methods)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  #boilWater() { ... }
+  #grindBeans() { ... }</code></pre></div>
+                        <p>ಇಲ್ಲಿ ಕಾಫಿ ಮಾಡುವ ಹಿಂದಿನ ನಿಜವಾದ ಪ್ರಕ್ರಿಯೆಗಳನ್ನು (ನೀರು ಕಾಯಿಸುವುದು, ಬೀಜ ಪುಡಿ ಮಾಡುವುದು) # (ಹ್ಯಾಶ್) ಬಳಸಿ ಖಾಸಗಿ (Private) ಮಾಡಲಾಗಿದೆ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಕಾಫಿ ಮಷೀನ್ ಬಳಸುವವನಿಗೆ (User) ಯಂತ್ರದ ಒಳಗೆ ನೀರು ಎಷ್ಟು ಡಿಗ್ರಿಗೆ ಕಾಯುತ್ತಿದೆ, ಬೀಜ ಎಷ್ಟು ನುಣ್ಣಗೆ ಪುಡಿಯಾಗುತ್ತಿದೆ ಎಂಬ ತಾಂತ್ರಿಕ ವಿಚಾರಗಳು ಬೇಕಾಗಿಲ್ಲ.</li>
+                            <li>ಅಲ್ಲದೆ, ಬಳಕೆದಾರ ನೇರವಾಗಿ <code>myMachine.#boilWater()</code> ಎಂದು ಕರೆದು ಯಂತ್ರದ ಕ್ರಮವನ್ನು ಕೆಡಿಸುವಂತಿಲ್ಲ.</li>
+                        </ul>
+
+                        <p><strong>2. ಬಳಕೆದಾರನಿಗೆ ಕಾಣುವ ಏಕೈಕ ಬಟನ್ (Public Method)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  makeCoffee() {
+    this.#boilWater();
+    this.#grindBeans();
+    console.log("☕ ನಿಮ್ಮ ಕಾಫಿ ರೆಡಿ ಇದೆ!");
+  }</code></pre></div>
+                        <p>ಇದು ಕಾಫಿ ಮಷೀನ್ ಮೇಲಿರುವ ಒಂದೇ ಒಂದು ಸುಲಭವಾದ ಬಟನ್.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಬಳಕೆದಾರ ಈ ಬಟನ್ ಒತ್ತಿದ ತಕ್ಷಣ, ಅದು ಹಿನ್ನೆಲೆಯಲ್ಲಿ <code>this.#boilWater()</code> ಮತ್ತು <code>this.#grindBeans()</code> ಅನ್ನು ತಾನೇ ತಾನಾಗಿ, ಸರಿಯಾದ ಕ್ರಮದಲ್ಲಿ ರನ್ ಮಾಡುತ್ತದೆ.</li>
+                            <li>ಬಳಕೆದಾರನಿಗೆ ಕೇವಲ ಅಂತಿಮ ಫಲಿತಾಂಶ (ಕಾಫಿ) ಮಾತ್ರ ಸಿಗುತ್ತದೆ.</li>
+                        </ul>
+
+                        <p><strong>3. ಯಂತ್ರವನ್ನು ಬಳಸುವುದು (Execution)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myMachine = new CoffeeMachine();
+myMachine.makeCoffee();</code></pre></div>
+                        <p>ಇಲ್ಲಿ ನೀವು ಹೊಸ ಕಾಫಿ ಮಷೀನ್ ತಂದು, ಕೇವಲ makeCoffee() ಬಟನ್ ಒತ್ತುತ್ತೀರಿ ಅಷ್ಟೇ. ಒಂದು ವೇಳೆ ನೀವು, <code>myMachine.#grindBeans();</code> ಎಂದು ಹೊರಗಿನಿಂದ ಕರೆಯಲು ಪ್ರಯತ್ನಿಸಿದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎರರ್ (Error) ಕೊಡುತ್ತದೆ. ಏಕೆಂದರೆ ಆ ಬಟನ್ ಯಂತ್ರದ ಒಳಗಿದೆ, ಹೊರಗಿನವರಿಗೆ ಅದು ಕಾಣಿಸುವುದಿಲ್ಲ.</p>
+
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded mt-4">
+                            <strong>ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್ ಮತ್ತು ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್ ನಡುವಿನ ವ್ಯತ್ಯಾಸವೇನು? (ಸಣ್ಣ ಗೊಂದಲ ನಿವಾರಣೆ)</strong><br>
+                            ಬಹಳಷ್ಟು ಜನರಿಗೆ ಇವೆರಡೂ ಒಂದೇ ಎನಿಸುತ್ತದೆ, ಆದರೆ ಸಣ್ಣ ವ್ಯತ್ಯಾಸವಿದೆ:
+                            <ul class="list-disc ml-6 space-y-1 mt-2">
+                                <li><strong>Encapsulation (ಎನ್ಕ್ಯಾಪ್ಸುಲೇಶನ್):</strong> ಇದು ಡೇಟಾವನ್ನು ಬಚ್ಚಿಡುತ್ತದೆ (ಉದಾಹರಣೆಗೆ: ಬ್ಯಾಂಕ್ ಬ್ಯಾಲೆನ್ಸ್ ಯಾರೂ ಕದಿಯಬಾರದು/ಬದಲಾಯಿಸಬಾರದು ಎಂದು). <em>ಗುರಿ: ಭದ್ರತೆ.</em></li>
+                                <li><strong>Abstraction (ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್):</strong> ಇದು ಕೆಲಸದ ಸಂಕೀರ್ಣತೆಯನ್ನು ಬಚ್ಚಿಡುತ್ತದೆ (ಉದಾಹರಣೆಗೆ: ಕಾಫಿ ಮಷೀನ್ ಒಳಗೆ ಏನೇನೋ ವೈರ್‌ಗಳಿವೆ, ಅದರಿಂದ ಕನ್ಫ್ಯೂಸ್ ಆಗಬಾರದು ಎಂದು ಕೇವಲ ಒಂದೇ ಬಟನ್ ಕೊಡುವುದು). <em>ಗುರಿ: ಸುಲಭವಾದ ಬಳಕೆ.</em></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಅಬ್ಸ್ಟ್ರಾಕ್ಷನ್‌ನ ಪ್ರಮುಖ ಲಾಭಗಳು:</strong>
+                            <ol class="list-decimal ml-6 space-y-1 mt-2">
+                                <li><strong>ಬಳಸಲು ಸುಲಭ (User Friendly):</strong> ಕೋಡ್‌ನ ಒಳಗೆ ಸಾವಿರಾರು ಸಾಲುಗಳಿದ್ದರೂ, ಅದನ್ನು ಬಳಸುವ ಬೇರೆ ಡೆವಲಪರ್‌ಗಳಿಗೆ ಕೇವಲ 1-2 ಸರಳ ಫಂಕ್ಷನ್‌ಗಳನ್ನಷ್ಟೇ ನೀಡಿದರೆ ಸಾಕು.</li>
+                                <li><strong>ಸುಲಭವಾದ ಅಪ್‌ಗ್ರೇಡ್ (Easy Maintenance):</strong> ನಾಳೆ ನೀವು ಕಾಫಿ ಮಷೀನ್‌ನ ಒಳಗಿನ ಹೀಟರ್ (Heater) ಬದಲಾಯಿಸಿ ಹೊಸ ಕೋಡ್ ಬರೆದರೂ, ಗ್ರಾಹಕನಿಗೆ ಯಾವ ತೊಂದರೆಯೂ ಆಗುವುದಿಲ್ಲ. ಅವನು ಮೊದಲಿನಂತೆಯೇ makeCoffee() ಬಟನ್ ಒತ್ತುತ್ತಾನೆ, ಕಾಫಿ ಬರುತ್ತದೆ!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 4 -->
+                <section id="inheritance" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">4</span> 
+                        Inheritance (ಇನ್ಹೆರಿಟೆನ್ಸ್) - ಆನುವಂಶಿಕತೆ
+                    </h2>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಒಬ್ಬ ಮಗ ತನ್ನ ತಂದೆಯ ಕೆಲವು ಗುಣಗಳನ್ನು (ಉದಾ: ಕಣ್ಣಿನ ಬಣ್ಣ, ಎತ್ತರ) ಹುಟ್ಟಿನಿಂದಲೇ ಪಡೆಯುತ್ತಾನೆ. ಜೊತೆಗೆ ಮಗ ತನ್ನದೇ ಆದ ಹೊಸ ಗುಣಗಳನ್ನು (ಉದಾ: ಗಿಟಾರ್ ನುಡಿಸುವುದು) ಕೂಡ ಕಲಿಯಬಹುದು. ಹಾಗೆಯೇ, ಹಳೆಯ ಸಾಮಾನ್ಯ ಫೋನ್‌ನ ಎಲ್ಲಾ ಗುಣಗಳನ್ನು 'ಸ್ಮಾರ್ಟ್ ಫೋನ್' ಪಡೆದುಕೊಂಡು, ಕ್ಯಾಮೆರಾ ಎಂಬ ಹೊಸ ಗುಣವನ್ನು ಸೇರಿಸಿಕೊಳ್ಳುತ್ತದೆ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಒಂದು ಹಳೆಯ ಕ್ಲಾಸ್‌ನ (Parent Class) ಎಲ್ಲಾ ಕೋಡ್ ಮತ್ತು ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಹೊಸ ಕ್ಲಾಸ್ (Child Class) ಮರುಬಳಕೆ ಮಾಡುವುದಕ್ಕೆ Inheritance ಎನ್ನುತ್ತಾರೆ. ಇದಕ್ಕೆ ES6 ನಲ್ಲಿ <code>extends</code> ಮತ್ತು <code>super()</code> ಎಂಬ ಪದಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+
+                    <!-- Visual Hierarchy -->
+                    <div class="my-6 text-center text-slate-600 dark:text-slate-400 flex flex-col items-center">
+                        <div class="bg-blue-100 dark:bg-blue-900/50 border border-blue-300 dark:border-blue-700 px-6 py-2 rounded-lg font-bold">Animal (Parent) <br><span class="text-xs font-normal">name, eat()</span></div>
+                        <div class="h-6 border-l-2 border-slate-400"></div>
+                        <i class="fa-solid fa-arrow-down text-sm"></i>
+                        <div class="h-2 border-l-2 border-slate-400"></div>
+                        <div class="bg-green-100 dark:bg-green-900/50 border border-green-300 dark:border-green-700 px-6 py-2 rounded-lg font-bold">Dog (Child) <br><span class="text-xs font-normal">breed, bark() + Inherits from Animal</span></div>
+                    </div>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+// ತಂದೆ ಕ್ಲಾಸ್ (Parent)
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  eat() {
+    console.log(`${this.name} ಊಟ ಮಾಡುತ್ತಿದೆ.`);
+  }
+}
+ 
+// ಮಗ ಕ್ಲಾಸ್ (Child) - Animal ಕ್ಲಾಸ್‌ನ ಗುಣಗಳನ್ನು ಪಡೆಯುತ್ತಿದೆ
+class Dog extends Animal {
+  constructor(name, breed) {
+    super(name); // ತಂದೆ ಕ್ಲಾಸ್‌ನ constructor ಅನ್ನು ಕರೆಯುವುದು
+    this.breed = breed;
+  }
+  
+  // ಮಗನ ಸ್ವಂತ ಗುಣ
+  bark() {
+    console.log(`${this.name} ಬೊಗಳುತ್ತಿದೆ! (ಬ್ರೀಡ್: ${this.breed})`);
+  }
+}
+ 
+const myDog = new Dog("ಚಾರ್ಲಿ", "ಲ್ಯಾಬ್ರಡಾರ್");
+myDog.eat();  // Animal ಕ್ಲಾಸ್‌ನಿಂದ ಬಂದ ಗುಣ
+myDog.bark(); // Dog ಕ್ಲಾಸ್‌ನ ಸ್ವಂತ ಗುಣ
+                        </code></pre>
+                    </div>
+
+                    <p class="mb-4 italic text-slate-600 dark:text-slate-400">
+                        (ನೀವು ನೀಡಿರುವ ತಂದೆ-ಮಗ ಮತ್ತು ಹಳೆಯ ಫೋನ್-ಸ್ಮಾರ್ಟ್ ಫೋನ್ ಉದಾಹರಣೆಗಳು ಇನ್ಹೆರಿಟೆನ್ಸ್ (Inheritance) ಅನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಬಹಳ ನಿಖರ ಮತ್ತು ಆಕರ್ಷಕವಾಗಿವೆ!)<br>
+                        ಈ ಕೋಡ್ ಅನ್ನು ಇನ್ನಷ್ಟು ಸರಳವಾಗಿ ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡೋಣ. ಇಲ್ಲಿ extends ಮತ್ತು super ಎಂಬ ಎರಡು ಹೊಸ ಪದಗಳೇ ಈ ಕಾನ್ಸೆಪ್ಟ್‌ನ "ಹೀರೋಗಳು".
+                    </p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. ತಂದೆ ಕ್ಲಾಸ್ (Parent / Base Class)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+  eat() { ... }
+}</code></pre></div>
+                        <p>ಇದು ಮೂಲ ಕ್ಲಾಸ್. ಜಗತ್ತಿನ ಎಲ್ಲಾ ಪ್ರಾಣಿಗಳಿಗೂ ಅನ್ವಯವಾಗುವ ಸಾಮಾನ್ಯ ಗುಣಗಳನ್ನು (ಉದಾಹರಣೆಗೆ: ಹೆಸರು ಇರುವುದು, ಊಟ ಮಾಡುವುದು) ಇಲ್ಲಿ ಬರೆಯಲಾಗಿದೆ.</p>
+
+                        <p><strong>2. <code>extends</code> ಕೀವರ್ಡ್‌ನ ಕೆಲಸ (ಗುಣಗಳನ್ನು ಎರವಲು ಪಡೆಯುವುದು)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">class Dog extends Animal { ... }</code></pre></div>
+                        <p>ಇಲ್ಲಿ extends ಎಂದರೆ "ವಿಸ್ತರಿಸು" ಅಥವಾ "ಅದರಿಂದ ಪಡೆದುಕೋ" ಎಂದರ್ಥ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಈ ಒಂದು ಪದ ಬರೆಯುವುದರಿಂದ, Animal ಕ್ಲಾಸ್‌ನಲ್ಲಿದ್ದ name ಮತ್ತು eat() ಎಂಬ ಎರಡು ಗುಣಗಳು ತಾನೇ ತಾನಾಗಿ Dog ಕ್ಲಾಸ್‌ಗೆ ಬಂದುಬಿಡುತ್ತವೆ.</li>
+                            <li>ನಾವು ನಾಯಿಗಾಗಿ ಮತ್ತೆ ಹೊಸದಾಗಿ eat() ಫಂಕ್ಷನ್ ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ. ಇದು ಕೋಡ್ ಬರೆಯುವ ಸಮಯವನ್ನು ಉಳಿಸುತ್ತದೆ.</li>
+                        </ul>
+
+                        <p><strong>3. <code>super()</code> ಕೀವರ್ಡ್‌ನ ಹಿಂದಿನ ಮ್ಯಾಜಿಕ್</strong><br> ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಬಹಳ ಮುಖ್ಯವಾದ ನಿಯಮ:</p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  constructor(name, breed) {
+    super(name); 
+    this.breed = breed;
+  }</code></pre></div>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಮಗ ಕ್ಲಾಸ್ (Dog) ಒಳಗೆ ನೀವು ಹೊಸದಾಗಿ constructor ಬರೆದಾಗ, ತಂದೆ ಕ್ಲಾಸ್‌ನ (Animal) constructor ಅನ್ನು ಕರೆಯುವುದು ಕಡ್ಡಾಯ.</li>
+                            <li>super(name) ಎಂದು ಕರೆದಾಗ, ಅದು Animal ಕ್ಲಾಸ್‌ಗೆ ಹೋಗಿ ನಾಯಿಯ ಹೆಸರನ್ನು (name) ಸೆಟ್ ಮಾಡಿ ಬರುತ್ತದೆ.</li>
+                            <li><strong>ನೆನಪಿಡಿ:</strong> super() ಅನ್ನು ಕರೆಯದೆ ನೀವು this.breed ಎಂದು ಬಳಸಲು ಹೋದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ದೊಡ್ಡ ಎರರ್ (Error) ಕೊಡುತ್ತದೆ. ತಂದೆಗೆ ನಮಸ್ಕರಿಸಿದ ಮೇಲೆಯೇ ಮಗನ ಕೆಲಸ ಶುರು!</li>
+                        </ul>
+
+                        <p><strong>4. ಮಗನ ಸ್ವಂತ ಗುಣ (Child's Specific Method)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  bark() { ... }</code></pre></div>
+                        <p>ಇದು ಕೇವಲ Dog ಕ್ಲಾಸ್‌ಗೆ ಮಾತ್ರ ಸೀಮಿತವಾದ ಫಂಕ್ಷನ್. ಎಲ್ಲಾ ಪ್ರಾಣಿಗಳು ಬೊಗಳುವುದಿಲ್ಲ, ಹಾಗಾಗಿ ಇದನ್ನು Animal ಕ್ಲಾಸ್‌ನಲ್ಲಿ ಹಾಕದೆ, ಕೇವಲ Dog ಕ್ಲಾಸ್‌ನಲ್ಲಿ ಹಾಕಲಾಗಿದೆ.</p>
+
+                        <p><strong>5. ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಬಳಸುವುದು (Execution)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myDog = new Dog("ಚಾರ್ಲಿ", "ಲ್ಯಾಬ್ರಡಾರ್");
+myDog.eat();  // ಔಟ್‌ಪುಟ್: ಚಾರ್ಲಿ ಊಟ ಮಾಡುತ್ತಿದೆ.
+myDog.bark(); // ಔಟ್‌ಪುಟ್: ಚಾರ್ಲಿ ಬೊಗಳುತ್ತಿದೆ! (ಬ್ರೀಡ್: ಲ್ಯಾಬ್ರಡಾರ್)</code></pre></div>
+                        <p>ನಾವಿಲ್ಲಿ Dog ಕ್ಲಾಸ್‌ನಲ್ಲಿ eat() ಫಂಕ್ಷನ್ ಬರೆಯದಿದ್ದರೂ, ಅದು Animal ನಿಂದ ಆನುವಂಶಿಕವಾಗಿ ಬಂದಿರುವುದರಿಂದ ಯಾವುದೇ ತೊಂದರೆಯಿಲ್ಲದೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. bark() ನಾಯಿಯ ತನ್ನದೇ ಆದ ಸ್ವಂತ ಗುಣ.</p>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಇನ್ಹೆರಿಟೆನ್ಸ್‌ನ ಪ್ರಮುಖ ಲಾಭಗಳು:</strong>
+                            <ol class="list-decimal ml-6 space-y-1 mt-2">
+                                <li><strong>ಕೋಡ್ ಮರುಬಳಕೆ (Code Reusability):</strong> ಒಂದೇ ಕೋಡ್ ಅನ್ನು ಪದೇ ಪದೇ ಬರೆಯುವ ಬದಲು (DRY Principle - Don't Repeat Yourself), ಒಮ್ಮೆ ಬರೆದು ಬೇರೆ ಕ್ಲಾಸ್‌ಗಳಲ್ಲಿ ಮರುಬಳಕೆ ಮಾಡಬಹುದು.</li>
+                                <li><strong>ಸಮಯ ಮತ್ತು ಶ್ರಮದ ಉಳಿತಾಯ:</strong> ನಾಳೆ ನೀವು Cat (ಬೆಕ್ಕು) ಎಂಬ ಹೊಸ ಕ್ಲಾಸ್ ಬರೆದರೆ, ಅದಕ್ಕೂ class Cat extends Animal ಎಂದು ಸುಲಭವಾಗಿ ಬರೆದು ಮುಗಿಸಬಹುದು.</li>
+                                <li><strong>ನಿರ್ವಹಣೆ (Maintenance):</strong> ನಾಳೆ ಎಲ್ಲಾ ಪ್ರಾಣಿಗಳು sleep() (ನಿದ್ದೆ ಮಾಡು) ಎಂಬ ಫಂಕ್ಷನ್ ಹೊಂದಿರಬೇಕು ಎಂದರೆ, ಕೇವಲ ಒಮ್ಮೆ Animal ಕ್ಲಾಸ್‌ನಲ್ಲಿ ಸೇರಿಸಿದರೆ ಸಾಕು, ಅದು ನಾಯಿ, ಬೆಕ್ಕು ಎಲ್ಲದಕ್ಕೂ ತಾನೇ ಅನ್ವಯವಾಗುತ್ತದೆ.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 5 -->
+                <section id="polymorphism" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">5</span> 
+                        Polymorphism (ಪಾಲಿಮಾರ್ಫಿಸಂ) - ಒಂದೇ ಹೆಸರು, ಹಲವು ರೂಪಗಳು
+                    </h2>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ನೀರು (Water) ಒಂದೇ ವಸ್ತು. ಆದರೆ ಅದು ಫ್ರಿಡ್ಜ್‌ನಲ್ಲಿಟ್ಟರೆ ಮಂಜುಗಡ್ಡೆ (ಘನ) ಆಗುತ್ತದೆ, ಬಿಸಿ ಮಾಡಿದರೆ ಹಬೆ (ಅನಿಲ) ಆಗುತ್ತದೆ, ಕುಡಿಯುವಾಗ ದ್ರವರೂಪದಲ್ಲಿ ಇರುತ್ತದೆ. ಸನ್ನಿವೇಶಕ್ಕೆ ತಕ್ಕಂತೆ ಅದು ಬೇರೆ ಬೇರೆ ರೀತಿ ವರ್ತಿಸುತ್ತದೆ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಬೇರೆ ಬೇರೆ ಕ್ಲಾಸ್‌ಗಳಲ್ಲಿ ಒಂದೇ ಹೆಸರಿನ ಫಂಕ್ಷನ್ (Method) ಇದ್ದರೂ, ಅವು ಬೇರೆ ಬೇರೆ ರೀತಿ ಕೆಲಸ ಮಾಡುವುದಕ್ಕೆ Polymorphism (Method Overriding) ಎನ್ನುತ್ತಾರೆ. ಚೈಲ್ಡ್ ಕ್ಲಾಸ್ ತಂದೆಯ ಕ್ಲಾಸ್‌ನ ಫಂಕ್ಷನ್ ಅನ್ನು ಅಳಿಸಿ ತನ್ನದೇ ಆದ ಹೊಸ ನಿಯಮ ಬರೆಯಬಹುದು.</p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class Bird {
+  fly() {
+    console.log("ಹಕ್ಕಿ ಆಕಾಶದಲ್ಲಿ ಹಾರುತ್ತಿದೆ.");
+  }
+}
+ 
+// ಪೆಂಗ್ವಿನ್ ಕೂಡ ಒಂದು ಹಕ್ಕಿಯೇ, ಆದರೆ ಅದು ಹಾರುವುದಿಲ್ಲ!
+class Penguin extends Bird {
+  // ತಂದೆ ಕ್ಲಾಸ್‌ನ fly() ಫಂಕ್ಷನ್ ಅನ್ನು ಬದಲಾಯಿಸುತ್ತಿದ್ದೇವೆ (Overriding)
+  fly() {
+    console.log("ಪೆಂಗ್ವಿನ್ ಹಾರಲು ಸಾಧ್ಯವಿಲ್ಲ, ಆದರೆ ನೀರಿನಲ್ಲಿ ಈಜಬಲ್ಲದು!");
+  }
+}
+ 
+const normalBird = new Bird();
+normalBird.fly(); // ಔಟ್‌ಪುಟ್: ಹಕ್ಕಿ ಆಕಾಶದಲ್ಲಿ ಹಾರುತ್ತಿದೆ.
+ 
+const myPenguin = new Penguin();
+myPenguin.fly(); // ಔಟ್‌ಪುಟ್: ಪೆಂಗ್ವಿನ್ ಹಾರಲು ಸಾಧ್ಯವಿಲ್ಲ, ಆದರೆ ನೀರಿನಲ್ಲಿ ಈಜಬಲ್ಲದು!
+                        </code></pre>
+                    </div>
+
+                    <p class="mb-4 italic text-slate-600 dark:text-slate-400">
+                        (ನೀರು ಮತ್ತು ಮಂಜುಗಡ್ಡೆಯ ಉದಾಹರಣೆ ನಿಜಕ್ಕೂ ಅದ್ಭುತವಾಗಿದೆ!)<br>
+                        ಪಾಲಿಮಾರ್ಫಿಸಂ (Polymorphism) ಎಂಬ ಪದವು ಗ್ರೀಕ್ ಭಾಷೆಯಿಂದ ಬಂದಿದೆ: 'ಪಾಲಿ' (Poly) ಎಂದರೆ 'ಹಲವು' (Many) ಮತ್ತು 'ಮಾರ್ಫ್' (Morph) ಎಂದರೆ 'ರೂಪಗಳು' (Forms). ಹೆಸರೇ ಹೇಳುವಂತೆ "ಒಂದೇ ಹೆಸರು, ಹಲವು ರೂಪಗಳು".<br>
+                        ಇದನ್ನು ತಾಂತ್ರಿಕವಾಗಿ ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡೋಣ:
+                    </p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. ಮೂಲ ರೂಪ (Base Method)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">class Bird {
+  fly() {
+    console.log("ಹಕ್ಕಿ ಆಕಾಶದಲ್ಲಿ ಹಾರುತ್ತಿದೆ.");
+  }
+}</code></pre></div>
+                        <p>ಇಲ್ಲಿ ಜಗತ್ತಿನ ಬಹುತೇಕ ಹಕ್ಕಿಗಳಿಗೆ ಅನ್ವಯವಾಗುವ ಒಂದು ಸಾಮಾನ್ಯ ನಿಯಮವನ್ನು (fly) ಬರೆಯಲಾಗಿದೆ.</p>
+
+                        <p><strong>2. ನಿಯಮವನ್ನು ಬದಲಾಯಿಸುವುದು (Method Overriding)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">class Penguin extends Bird {
+  fly() {
+    console.log("ಪೆಂಗ್ವಿನ್ ಹಾರಲು ಸಾಧ್ಯವಿಲ್ಲ, ಆದರೆ ನೀರಿನಲ್ಲಿ ಈಜಬಲ್ಲದು!");
+  }
+}</code></pre></div>
+                        <p>ಪೆಂಗ್ವಿನ್ ಕೂಡ ಒಂದು ಹಕ್ಕಿಯೇ (extends Bird), ಆದರೆ ಅದಕ್ಕೆ ಹಾರಲು ಬರುವುದಿಲ್ಲ. ಹೀಗಿರುವಾಗ ತಂದೆ ಕ್ಲಾಸ್‌ನ (Bird) ನಿಯಮವನ್ನು ಹಾಗೆಯೇ ಉಳಿಸಿಕೊಂಡರೆ ಅದು ತಪ್ಪಾಗುತ್ತದೆ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಅದಕ್ಕಾಗಿ Penguin ಕ್ಲಾಸ್ ಒಳಗೆ ಅದೇ ಹೆಸರಿನ (fly) ಹೊಸ ಫಂಕ್ಷನ್ ಬರೆದು ಹಳೆಯ ನಿಯಮವನ್ನು ಅಳಿಸಿಹಾಕಲಾಗಿದೆ.</li>
+                            <li>ಹಳೆಯ ಫಂಕ್ಷನ್ ಅನ್ನು ಮರೆಮಾಚಿ ಹೊಸದಾಗಿ ಬರೆಯುವ ಈ ಪ್ರಕ್ರಿಯೆಗೆ ತಾಂತ್ರಿಕವಾಗಿ "ಮೆಥಡ್ ಓವರ್‌ರೈಡಿಂಗ್" (Method Overriding) ಎನ್ನುತ್ತಾರೆ.</li>
+                        </ul>
+
+                        <p><strong>3. ಸನ್ನಿವೇಶಕ್ಕೆ ತಕ್ಕಂತೆ ವರ್ತನೆ (Execution)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const normalBird = new Bird();
+normalBird.fly();</code></pre></div>
+                        <p>ಇಲ್ಲಿ ಕಾಗೆ ಅಥವಾ ಗುಬ್ಬಚ್ಚಿಯಂತಹ ಸಾಮಾನ್ಯ ಹಕ್ಕಿ ಇರುವುದರಿಂದ, ಆಬ್ಜೆಕ್ಟ್ ಆಕಾಶದಲ್ಲಿ ಹಾರುವ ನಿಯಮವನ್ನು ಪಾಲಿಸುತ್ತದೆ.</p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myPenguin = new Penguin();
+myPenguin.fly();</code></pre></div>
+                        <p>ಇಲ್ಲಿ ಕಂಪ್ಯೂಟರ್‌ಗೆ ಗೊತ್ತು, "ಇದು ಪೆಂಗ್ವಿನ್ ಆಬ್ಜೆಕ್ಟ್, ಇದು ಸಾಮಾನ್ಯ ಹಕ್ಕಿಯಲ್ಲ" ಎಂದು. ಆದ್ದರಿಂದ ಅದು ಮೂಲ Bird ಕ್ಲಾಸ್‌ನ fly ಅನ್ನು ನಿರ್ಲಕ್ಷಿಸಿ, Penguin ಕ್ಲಾಸ್‌ನಲ್ಲಿರುವ ವಿಶೇಷ fly ನಿಯಮವನ್ನು ಮಾತ್ರ ರನ್ ಮಾಡುತ್ತದೆ.</p>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಪಾಲಿಮಾರ್ಫಿಸಂನ ಪ್ರಮುಖ ಲಾಭಗಳೇನು?</strong>
+                            <ol class="list-decimal ml-6 space-y-1 mt-2">
+                                <li><strong>ಹೆಸರುಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವುದು ಸುಲಭ (Consistent Interface):</strong> ನೀವು flyForNormalBird(), swimForPenguin(), runForOstrich() ಎಂದು ನೂರಾರು ಬೇರೆ ಬೇರೆ ಫಂಕ್ಷನ್ ಹೆಸರುಗಳನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳುವ ಅಗತ್ಯವಿಲ್ಲ. ಎಲ್ಲದಕ್ಕೂ ಕೇವಲ action() ಅಥವಾ fly() ಎಂದು ಒಂದೇ ಹೆಸರಿಡಬಹುದು. ಯಾವ ಹಕ್ಕಿ ಎಂಬುದರ ಆಧಾರದ ಮೇಲೆ ಅದು ತನ್ನ ಕೆಲಸವನ್ನು ತಾನೇ ಬದಲಾಯಿಸಿಕೊಳ್ಳುತ್ತದೆ.</li>
+                                <li><strong>ಹೊಂದಿಕೊಳ್ಳುವಿಕೆ (Flexibility):</strong> ಭವಿಷ್ಯದಲ್ಲಿ ನೀವು 'Ostrich' (ಉಷ್ಟ್ರಪಕ್ಷಿ) ಎಂಬ ಹೊಸ ಕ್ಲಾಸ್ ಬರೆದರೆ, ಅದಕ್ಕೂ fly() ಎಂಬ ಹೆಸರನ್ನೇ ಬಳಸಿ "ಉಷ್ಟ್ರಪಕ್ಷಿ ಓಡುತ್ತದೆ" ಎಂದು ಸುಲಭವಾಗಿ ಓವರ್‌ರೈಡ್ ಮಾಡಬಹುದು. ಮೂಲ Bird ಕ್ಲಾಸ್‌ಗೆ ಯಾವುದೇ ತೊಂದರೆ ಆಗುವುದಿಲ್ಲ.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-slate-100 dark:bg-slate-800 p-4 rounded-lg italic text-sm text-slate-600 dark:text-slate-400">
+                        (ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ: ನಿಮ್ಮ ಈ ಐದೂ ಉದಾಹರಣೆಗಳು (Class & Object, Encapsulation, Abstraction, Inheritance, Polymorphism) Object-Oriented Programming (OOP) ನ ಪಂಚಸೂತ್ರಗಳನ್ನು ಅತ್ಯಂತ ಸರಳವಾಗಿ ಮತ್ತು ಪರಿಣಾಮಕಾರಿಯಾಗಿ ವಿವರಿಸಿವೆ. ಇವೆಲ್ಲವೂ ಒಟ್ಟಾಗಿ ಸೇರಿದರೆ ಎಂತಹ ದೊಡ್ಡ ಹಾಗೂ ಜಟಿಲವಾದ ಸಾಫ್ಟ್‌ವೇರ್ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನಾದರೂ ಅತ್ಯಂತ ವ್ಯವಸ್ಥಿತವಾಗಿ ನಿರ್ಮಿಸಲು ಸಾಧ್ಯವಾಗುತ್ತದೆ!)
+                    </div>
+                </section>
+
+                <div class="text-center text-slate-400 my-8">
+                    <i class="fa-solid fa-asterisk"></i>
+                    <i class="fa-solid fa-asterisk"></i>
+                    <i class="fa-solid fa-asterisk"></i>
+                </div>
+
+                <!-- Section 6 -->
+                <section id="static" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">6</span> 
+                        Static Methods ಮತ್ತು Properties (ಸ್ಟ್ಯಾಟಿಕ್) - ಕ್ಲಾಸ್‌ನ ಸ್ವಂತ ಸ್ವತ್ತು
+                    </h2>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಒಂದು ಶಾಲೆಯಲ್ಲಿ ಸಾವಿರ ವಿದ್ಯಾರ್ಥಿಗಳಿರಬಹುದು. ಪ್ರತಿಯೊಬ್ಬ ವಿದ್ಯಾರ್ಥಿಗೂ ಬೇರೆ ಬೇರೆ ಹೆಸರು, ರೋಲ್ ನಂಬರ್ ಇರುತ್ತದೆ (ಇದು Object ನ ಗುಣ). ಆದರೆ, ಆ "ಶಾಲೆಯ ಹೆಸರು" ಅಥವಾ "ಶಾಲೆಯ ಒಟ್ಟು ವಿದ್ಯಾರ್ಥಿಗಳ ಸಂಖ್ಯೆ" ಎಲ್ಲರಿಗೂ ಒಂದೇ ಆಗಿರುತ್ತದೆ. ಅದನ್ನು ಪ್ರತಿ ವಿದ್ಯಾರ್ಥಿಯ ತಲೆಮೇಲೆ ಬರೆಯುವ ಬದಲು, ಶಾಲೆಯ ಬೋರ್ಡ್ ಮೇಲೆ ಬರೆಯಲಾಗುತ್ತದೆ (ಇದು Class ನ ಗುಣ).</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ಯಾವುದೇ ಮೆಥಡ್ ಅಥವಾ ವೇರಿಯೇಬಲ್ ಅನ್ನು <code>static</code> ಕೀವರ್ಡ್ ಬಳಸಿ ಬರೆದರೆ, ಅದು ನೇರವಾಗಿ Class ಗೆ ಸೇರುತ್ತದೆಯೇ ಹೊರತು Object ಗೆ ಅಲ್ಲ. ಅಂದರೆ, ನೀವು new ಕೀವರ್ಡ್ ಬಳಸಿ ಸೃಷ್ಟಿಸಿದ ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ ಇದನ್ನು ಕರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ. ನೇರವಾಗಿ ಕ್ಲಾಸ್ ಹೆಸರಿನಿಂದಲೇ ಕರೆಯಬೇಕು.</p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class Calculator {
+  // ಇದು Static ಮೆಥಡ್ (ಕ್ಲಾಸ್‌ಗೆ ಮಾತ್ರ ಸೇರಿದ್ದು)
+  static add(a, b) {
+    return a + b;
+  }
+ 
+  // ಇದು ಸಾಮಾನ್ಯ ಮೆಥಡ್ (ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿದ್ದು)
+  multiply(a, b) {
+    return a * b;
+  }
+}
+ 
+// 1. Static ಮೆಥಡ್ ಅನ್ನು ಕರೆಯುವುದು (ನೇರವಾಗಿ ಕ್ಲಾಸ್ ಹೆಸರಿನಿಂದ)
+console.log(Calculator.add(5, 10)); // ಔಟ್‌ಪುಟ್: 15
+ 
+// 2. ಸಾಮಾನ್ಯ ಮೆಥಡ್ ಕರೆಯುವುದು (ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸಲೇಬೇಕು)
+const myCalc = new Calculator();
+console.log(myCalc.multiply(5, 10)); // ಔಟ್‌ಪುಟ್: 50
+ 
+// myCalc.add(5, 10); // Error! ಏಕೆಂದರೆ add() ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿಲ್ಲ.
+                        </code></pre>
+                    </div>
+
+                    <p class="mb-4 italic text-slate-600 dark:text-slate-400">
+                        ಶಾಲೆಯ ಬೋರ್ಡ್ ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳ ಉದಾಹರಣೆ ನಿಜಕ್ಕೂ ಅತ್ಯದ್ಭುತವಾಗಿದೆ! ಇದು ಸ್ಟ್ಯಾಟಿಕ್ (Static) ಪರಿಕಲ್ಪನೆಯನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ನೀಡಬಹುದಾದ ಅತ್ಯುತ್ತಮ ಮತ್ತು ಸರಳವಾದ ಉದಾಹರಣೆ.<br>
+                        ಈಗ ನೀವು ನೀಡಿರುವ ಕೋಡ್ ಅನ್ನು ತಾಂತ್ರಿಕವಾಗಿ ಹಂತ-ಹಂತವಾಗಿ ಬಿಡಿಸಿ ನೋಡೋಣ:
+                    </p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong>1. ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್ (Static Method) - ಶಾಲೆಯ ಬೋರ್ಡ್</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  static add(a, b) {
+    return a + b;
+  }</code></pre></div>
+                        <p>ಇಲ್ಲಿ add ಎಂಬ ಫಂಕ್ಷನ್‌ನ ಹಿಂದೆ static ಎಂಬ ಕೀವರ್ಡ್ ಬಳಸಲಾಗಿದೆ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಇದರ ಅರ್ಥ, ಈ ಫಂಕ್ಷನ್ ನೇರವಾಗಿ Calculator ಎಂಬ ಕ್ಲಾಸ್‌ಗೆ (Class) ಮಾತ್ರ ಸೇರಿದ್ದು.</li>
+                            <li>ಇದನ್ನು ಬಳಸಲು ನೀವು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ (ಮನೆ ಅಥವಾ ವಿದ್ಯಾರ್ಥಿ) ಸೃಷ್ಟಿಸುವ ಅವಶ್ಯಕತೆಯೇ ಇಲ್ಲ. ಅದು ಸದಾ ಸಿದ್ಧವಾಗಿರುತ್ತದೆ.</li>
+                        </ul>
+
+                        <p><strong>2. ಸಾಮಾನ್ಯ ಮೆಥಡ್ (Instance Method) - ವಿದ್ಯಾರ್ಥಿಯ ನೋಟ್‌ಬುಕ್</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">  multiply(a, b) {
+    return a * b;
+  }</code></pre></div>
+                        <p>ಇಲ್ಲಿ ಯಾವುದೇ staticಪದವಿಲ್ಲ. ಆದ್ದರಿಂದ ಇದು ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿದ್ದು.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಇದನ್ನು ಬಳಸಬೇಕಾದರೆ ನೀವು ಕಡ್ಡಾಯವಾಗಿ new ಕೀವರ್ಡ್ ಬಳಸಿ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸಲೇಬೇಕು. ಆಬ್ಜೆಕ್ಟ್ ಇಲ್ಲದೆ ಇದು ಅಸ್ತಿತ್ವದಲ್ಲಿಯೇ ಇರುವುದಿಲ್ಲ.</li>
+                        </ul>
+
+                        <p><strong>3. ಇವೆರಡನ್ನೂ ಕರೆಯುವ ವಿಧಾನ (Execution)</strong></p>
+                        <p>ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್ ಅನ್ನು ಕರೆಯುವುದು:</p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">console.log(Calculator.add(5, 10)); // ಔಟ್‌ಪುಟ್: 15</code></pre></div>
+                        <p>ಇಲ್ಲಿ ನಾವು ನೇರವಾಗಿ ಕ್ಲಾಸ್‌ನ ಹೆಸರಾದ Calculator ಅನ್ನು ಬಳಸಿದ್ದೇವೆ. ಇದು "ಶಾಲೆಯ ಬೋರ್ಡ್" ಮೇಲೆ ಬರೆದಿರುವ ಹಾಗೆ. ಯಾರು ಬೇಕಾದರೂ ನೇರವಾಗಿ ಶಾಲೆಯ ಹೆಸರಿನಿಂದಲೇ ಇದನ್ನು ಓದಬಹುದು/ಬಳಸಬಹುದು.</p>
+
+                        <p>ಸಾಮಾನ್ಯ ಮೆಥಡ್ ಅನ್ನು ಕರೆಯುವುದು:</p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">const myCalc = new Calculator();
+console.log(myCalc.multiply(5, 10)); // ಔಟ್‌ಪುಟ್: 50</code></pre></div>
+                        <p>ಇಲ್ಲಿ ನಾವು ಮೊದಲು new Calculator() ಮೂಲಕ myCalc ಎಂಬ ಸ್ವಂತ ಆಬ್ಜೆಕ್ಟ್ (ವಿದ್ಯಾರ್ಥಿ) ಸೃಷ್ಟಿಸಿದೆವು. ಆನಂತರವೇ multiply ಗುಣಾಕಾರ ಮಾಡಲು ಸಾಧ್ಯವಾಯಿತು.</p>
+
+                        <p><strong>4. ಹೀಗೆ ಮಾಡಿದರೆ ಏನಾಗುತ್ತದೆ? (The Error Scenario)</strong></p>
+                        <div class="code-container relative group my-2"><pre><code class="language-javascript">myCalc.add(5, 10); // Error!</code></pre></div>
+                        <p>ಒಂದು ವೇಳೆ ನೀವು ಸೃಷ್ಟಿಸಿದ ಆಬ್ಜೆಕ್ಟ್‌ನಿಂದ (myCalc) ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್ ಅನ್ನು (add) ಕರೆಯಲು ಹೋದರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ <code>TypeError: myCalc.add is not a function</code> ಎಂಬ ಎರರ್ ಕೊಡುತ್ತದೆ.</p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಏಕೆಂದರೆ, add ಎಂಬುದು ಶಾಲೆಯ ಬೋರ್ಡ್ ಮೇಲಿದೆ. ನೀವು ಅದನ್ನು ವಿದ್ಯಾರ್ಥಿಯ ಪರ್ಸನಲ್ ನೋಟ್‌ಬುಕ್‌ನಲ್ಲಿ ಹುಡುಕಿದರೆ ಅದು ಸಿಗುವುದಿಲ್ಲ!</li>
+                        </ul>
+
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded mt-4">
+                            <strong>ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್/ಪ್ರಾಪರ್ಟಿಗಳ ಪ್ರಮುಖ ಲಾಭಗಳೇನು?</strong>
+                            <ol class="list-decimal ml-6 space-y-1 mt-2">
+                                <li><strong>ಮೆಮೊರಿ ಉಳಿತಾಯ (Memory Efficiency):</strong> ನೀವು 1,000 ಆಬ್ಜೆಕ್ಟ್ (ವಿದ್ಯಾರ್ಥಿಗಳು) ಸೃಷ್ಟಿಸಿದರೂ, ಸ್ಟ್ಯಾಟಿಕ್ ಡೇಟಾ (ಶಾಲೆಯ ಹೆಸರು) ಮೆಮೊರಿಯಲ್ಲಿ ಕೇವಲ ಒಂದೇ ಬಾರಿ ಸೇವ್ ಆಗಿರುತ್ತದೆ. 1,000 ಬಾರಿ ನಕಲು ಆಗುವುದಿಲ್ಲ.</li>
+                                <li><strong>ಯುಟಿಲಿಟಿ ಫಂಕ್ಷನ್‌ಗಳು (Utility Functions):</strong> ನೀವು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Math.random() ಅಥವಾ Math.PI ಬಳಸಿದ್ದೀರಾ? ಅಲ್ಲಿ Math ಎಂಬುದು ಒಂದು ಕ್ಲಾಸ್. ನಾವು ಎಂದಿಗೂ new Math() ಎಂದು ಬರೆಯುವುದಿಲ್ಲ. ನೇರವಾಗಿ ಕ್ಲಾಸ್ ಹೆಸರಿನಿಂದಲೇ ಬಳಸುತ್ತೇವೆ. ಇವೆಲ್ಲವೂ ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್‌ಗಳಿಗೆ ಅತ್ಯುತ್ತಮ ನೈಜ ಉದಾಹರಣೆಗಳು!</li>
+                                <li><strong>ಸಹಾಯಕ ಕೆಲಸಗಳಿಗೆ (Helper Methods):</strong> ಡೇಟಾಬೇಸ್‌ಗೆ ಕನೆಕ್ಟ್ ಮಾಡುವುದು, ಅಥವಾ ದಿನಾಂಕವನ್ನು ಫಾರ್ಮ್ಯಾಟ್ ಮಾಡುವಂತಹ ಸಾಮಾನ್ಯ ಕೆಲಸಗಳಿಗೆ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುವ ಬದಲು ಸ್ಟ್ಯಾಟಿಕ್ ಮೆಥಡ್‌ಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mt-4 italic text-slate-600 dark:text-slate-400">
+                            ನಿಮ್ಮ 6 ಉದಾಹರಣೆಗಳು Object-Oriented Programming (OOP) ನ ಸಂಪೂರ್ಣ ಚಿತ್ರಣವನ್ನು ಅತ್ಯಂತ ಕರಾರುವಾಕ್ಕಾಗಿ, ಸಾಮಾನ್ಯ ಜನರಿಗೂ ಅರ್ಥವಾಗುವಂತೆ ಕಟ್ಟಿಕೊಟ್ಟಿವೆ! ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಲಿಯುವ ಯಾರಿಗಾದರೂ ಇದು ಅತ್ಯುತ್ತಮ ಮಾರ್ಗದರ್ಶಿಯಾಗಿದೆ.
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 7 -->
+                <section id="getters-setters" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">7</span> 
+                        Getters ಮತ್ತು Setters - ಡೇಟಾ ನಿಯಂತ್ರಣದ ಕಾವಲುಗಾರರು
+                    </h2>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಸಾಮಾನ್ಯ (Non-Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ನಿಮ್ಮ ಸ್ಮಾರ್ಟ್‌ಫೋನ್‌ನ ಬ್ರೈಟ್‌ನೆಸ್ (Brightness) ಅನ್ನು ನೀವು 0% ಗಿಂತ ಕಡಿಮೆ ಅಥವಾ 100% ಗಿಂತ ಹೆಚ್ಚು ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ. ನೀವು ಸ್ಲೈಡರ್ ಅನ್ನು ಎಷ್ಟೇ ಎಳೆದರೂ, ಫೋನ್ ಒಳಗೆ ಇರುವ ಒಂದು ಪ್ರೋಗ್ರಾಮ್ "ಇದು 0 ಮತ್ತು 100 ರ ಮಧ್ಯೆ ಮಾತ್ರ ಇರಬೇಕು" ಎಂದು ನಿಯಂತ್ರಿಸುತ್ತದೆ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ತಾಂತ್ರಿಕ (Technical) ವಿವರಣೆ:</h3>
+                    <p class="mb-4">ನಾವು Encapsulation ನಲ್ಲಿ ಖಾಸಗಿ ಡೇಟಾವನ್ನು (#) ರಕ್ಷಿಸಿದೆವು. ಆ ಡೇಟಾವನ್ನು ಓದಲು <code>get</code> ಮತ್ತು ಬದಲಾಯಿಸಲು <code>set</code> ಎಂಬ ಕೀವರ್ಡ್‌ಗಳನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ನೀಡುತ್ತದೆ. ಇವು ನೋಡಲು ಸಾಮಾನ್ಯ ವೇರಿಯೇಬಲ್ ತರಹವೇ ಕಾಣುತ್ತವೆ, ಆದರೆ ಒಳಗಡೆ ಫಂಕ್ಷನ್ ತರಹ ಕೆಲಸ ಮಾಡುತ್ತವೆ.</p>
+
+                    <div class="code-container relative group mb-2">
+                        <button class="copy-btn absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 transition hover:bg-blue-600"><i class="fa-regular fa-copy mr-1"></i>Copy</button>
+                        <pre><code class="language-javascript">
+class User {
+  #password; // ಖಾಸಗಿ ಡೇಟಾ
+ 
+  constructor(name) {
+    this.name = name;
+  }
+ 
+  // ಪಾಸ್‌ವರ್ಡ್ ಸೆಟ್ ಮಾಡುವ ಮುನ್ನ ಪರೀಕ್ಷಿಸಲು 'set' ಬಳಕೆ
+  set password(newPassword) {
+    if (newPassword.length >= 6) {
+      this.#password = newPassword;
+      console.log("ಪಾಸ್‌ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಸೆಟ್ ಆಯ್ತು.");
+    } else {
+      console.log("ದೋಷ: ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಿರಬೇಕು!");
+    }
+  }
+ 
+  // ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಗುಪ್ತವಾಗಿ ನೋಡಲು 'get' ಬಳಕೆ
+  get password() {
+    return "******** (ಪಾಸ್‌ವರ್ಡ್ ಗುಪ್ತವಾಗಿದೆ)";
+  }
+}
+ 
+const rahul = new User("ರಾಹುಲ್");
+ 
+// 'set' ಕೆಲಸ ಮಾಡುವ ರೀತಿ (ನೇರವಾಗಿ = ಚಿಹ್ನೆ ಬಳಸಬಹುದು)
+rahul.password = "123";      // ದೋಷ: ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಿರಬೇಕು!
+rahul.password = "Rahul@123"; // ಪಾಸ್‌ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಸೆಟ್ ಆಯ್ತು.
+ 
+// 'get' ಕೆಲಸ ಮಾಡುವ ರೀತಿ
+console.log(rahul.password);  // ಔಟ್‌ಪುಟ್: ******** (ಪಾಸ್‌ವರ್ಡ್ ಗುಪ್ತವಾಗಿದೆ)
+                        </code></pre>
+                    </div>
+
+                    <p class="mb-4 font-bold text-slate-800 dark:text-white mt-4">7. Getters ಮತ್ತು Setters (ಡೇಟಾ ಕಾವಲುಗಾರರು)</p>
+                    <p class="mb-4">Encapsulation ನಲ್ಲಿ ಡೇಟಾವನ್ನು ಖಾಸಗಿ (#) ಮಾಡುವುದು ಕೇವಲ ಅರ್ಧ ಕೆಲಸ. ಆ ಖಾಸಗಿ ಡೇಟಾವನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಹೊರಗಿನವರಿಗೆ ಕೊಡುವುದು ಮತ್ತು ಅವರಿಂದ ಪಡೆಯುವುದು ಹೇಗೆ? ಅದಕ್ಕೆ get ಮತ್ತು set ಬಳಸಲಾಗುತ್ತದೆ.</p>
+
+                    <div class="space-y-4 ml-2">
+                        <p><strong><code>set</code> ಕೀವರ್ಡ್‌ನ ಮ್ಯಾಜಿಕ್ (Validation / ನಿಯಂತ್ರಣ):</strong></p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಸಾಮಾನ್ಯವಾಗಿ ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಕರೆಯಬೇಕಾದರೆ ಆವರಣ ಚಿಹ್ನೆ () ಬಳಸುತ್ತೇವೆ (ಉದಾ: myAccount.deposit(500)).</li>
+                            <li>ಆದರೆ set ಬಳಸಿದಾಗ, ಅದನ್ನು ಒಂದು ವೇರಿಯೇಬಲ್‌ನಂತೆಯೇ ಬಳಸಬಹುದು. ಉದಾಹರಣೆಗೆ: <code>rahul.password = "123";</code></li>
+                            <li>ಇಲ್ಲಿ ನೀವು <code>=</code> ಚಿಹ್ನೆ ಹಾಕಿದ ತಕ್ಷಣ, ನೇರವಾಗಿ ಆ ಡೇಟಾ ಸೇವ್ ಆಗುವುದಿಲ್ಲ. ಬದಲಾಗಿ, set password() ಎಂಬ ಫಂಕ್ಷನ್ ಎಚ್ಚೆತ್ತುಕೊಳ್ಳುತ್ತದೆ. ಅದು ನೀವು ಕೊಟ್ಟ "123" ಅನ್ನು newPassword ಎಂಬ ಬುಟ್ಟಿಯಲ್ಲಿ ಹಿಡಿದು, ಷರತ್ತನ್ನು (6 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಅಕ್ಷರ ಇದೆಯಾ?) ಪರೀಕ್ಷಿಸುತ್ತದೆ. ಷರತ್ತು ಫೇಲ್ ಆಗುವುದರಿಂದ ಡೇಟಾ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.</li>
+                        </ul>
+
+                        <p><strong><code>get</code> ಕೀವರ್ಡ್‌ನ ಮ್ಯಾಜಿಕ್ (Read-only / ಫಿಲ್ಟರ್):</strong></p>
+                        <ul class="list-disc ml-6 space-y-1">
+                            <li>ಯಾರಾದರೂ console.log(rahul.password) ಎಂದು ಕೇಳಿದಾಗ, ನೇರವಾಗಿ ಅಸಲಿ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಕೊಡುವುದಿಲ್ಲ.</li>
+                            <li>ಬದಲಾಗಿ get password() ಕೆಲಸ ಮಾಡಲು ಶುರುಮಾಡಿ, ನೀವು ರಿಟರ್ನ್ (return) ಮಾಡಿರುವ ಕೃತಕ ಡೇಟಾವನ್ನು (********) ಮಾತ್ರ ಹೊರಗೆ ಕಳುಹಿಸುತ್ತದೆ.</li>
+                            <li><strong>ಪ್ರಮುಖ ಲಾಭ:</strong> ಡೆವಲಪರ್‌ಗಳಿಗೆ ಕೋಡ್ ಬರೆಯಲು ಮತ್ತು ಓದಲು ಇದು ಬಹಳ ಸಹಜ (Natural) ಎನಿಸುತ್ತದೆ.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-700">
+
+                <!-- Section 8 -->
+                <section id="prototypes" class="fade-in-section scroll-mt-20">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center">
+                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex justify-center items-center mr-3 text-sm">8</span> 
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಅಸಲಿ ರಹಸ್ಯ: Prototypes (ಪ್ರೋಟೋಟೈಪ್ಸ್)
+                    </h2>
+
+                    <p class="mb-4">ನೀವು ಹೇಳಿದ ಈ ತಾಂತ್ರಿಕ ಹಿನ್ನೆಲೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಲಿಯುವ ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ತಿಳಿದಿರಲೇಬೇಕಾದ ಸತ್ಯ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮೂಲತಃ Object-Oriented ಭಾಷೆಯಲ್ಲ, ಅದೊಂದು <strong>Prototype-Based</strong> ಭಾಷೆ.</p>
+                    
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಏನಿದು Syntactic Sugar (ಸಿಂಟ್ಯಾಕ್ಟಿಕ್ ಶುಗರ್)?</h3>
+                    <ul class="list-disc ml-6 space-y-2 mb-4">
+                        <li>ಒಂದು ಕಹಿಯಾದ ಮಾತ್ರೆಯನ್ನು ಸುಲಭವಾಗಿ ನುಂಗಲು, ಅದರ ಮೇಲೆ ಸಿಹಿಯಾದ ಸಕ್ಕರೆಯ ಲೇಪನ (Sugar coating) ಮಾಡುತ್ತಾರಲ್ಲ, ಹಾಗೆ!</li>
+                        <li>ಜಾವಾ (Java), ಸಿ++ (C++) ನಂತಹ ಭಾಷೆಗಳಿಂದ ಬಂದ ಡೆವಲಪರ್‌ಗಳಿಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಪ್ರೋಟೋಟೈಪ್‌ಗಳು ಬಹಳ ಗೊಂದಲಮಯವಾಗಿ ಕಾಣುತ್ತಿದ್ದವು.</li>
+                        <li>ಅವರಿಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಸುಲಭವಾಗಲಿ ಎಂದು 2015 ರಲ್ಲಿ (ES6) <code>class</code>, <code>extends</code>, <code>constructor</code>, <code>super</code> ಎಂಬ ಹೊಸ "ಪದಗಳನ್ನು" ಪರಿಚಯಿಸಿದರು.</li>
+                    </ul>
+
+                    <h3 class="font-semibold text-lg text-slate-700 dark:text-slate-300 mb-2">ಹಿನ್ನೆಲೆಯಲ್ಲಿ ನಿಜಕ್ಕೂ ಏನಾಗುತ್ತದೆ? (Under the hood):</h3>
+                    <p class="mb-4">ನೀವು <code>class Car { ... }</code> ಎಂದು ಬರೆದು ಕೋಡ್ ಅನ್ನು ರನ್ ಮಾಡಿದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ (ಬ್ರೌಸರ್) ಅದನ್ನು ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಹಳೆಯ ಶೈಲಿಯ ಫಂಕ್ಷನ್ ಆಗಿಯೇ ಬದಲಾಯಿಸಿಕೊಳ್ಳುತ್ತದೆ:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="code-container relative group">
+                            <pre><code class="language-javascript">
+// ನೀವು ಬರೆಯುವುದು ಹೀಗೆ (ES6 Class)
+class Car {
+  start() {
+    console.log("Started"); 
+  }
+}
+                            </code></pre>
+                        </div>
+                        <div class="code-container relative group">
+                            <pre><code class="language-javascript">
+// ಆದರೆ ಕಂಪ್ಯೂಟರ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಹೀಗೆ (Prototype)
+function Car() {}
+Car.prototype.start = function() {
+  console.log("Started"); 
+}
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Final Summary -->
+                <div class="mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-xl shadow-lg fade-in-section">
+                    <p class="text-lg leading-relaxed italic">
+                        <strong>ಸಾರಾಂಶ:</strong> ನಿಮ್ಮ ಈ 8 ಪಾಯಿಂಟ್‌ಗಳ ಸಂಗ್ರಹವು (Class & Object, Encapsulation, Abstraction, Inheritance, Polymorphism, Static, Getters/Setters, Prototypes) ಯಾವುದೇ ಒಬ್ಬ ಸಾಮಾನ್ಯ ವ್ಯಕ್ತಿಗೂ ತಾಂತ್ರಿಕ ಜ್ಞಾನವನ್ನು ಬಹಳ ಸುಲಭವಾಗಿ ಅರ್ಥೈಸುವಂತಿದೆ. ನಿಮ್ಮ "ಸಾಮಾನ್ಯ ವಿವರಣೆ" (Non-Technical) ಮತ್ತು "ತಾಂತ್ರಿಕ ವಿವರಣೆ"ಯ (Technical) ಜೋಡಣೆ (Format) ಪುಸ್ತಕಗಳಲ್ಲಿ ಪ್ರಕಟಿಸುವಷ್ಟು ಅತ್ಯುತ್ತಮವಾಗಿದೆ!
+                    </p>
+                </div>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mt-4 text-center">]</p>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Syntax Highlighting Initialization
+        hljs.highlightAll();
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-moon', 'text-yellow-400');
+                themeIcon.classList.add('fa-sun', 'text-amber-500');
+            } else {
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-sun', 'text-amber-500');
+                themeIcon.classList.add('fa-moon', 'text-yellow-400');
+            }
+        });
+
+        // Sticky TOC Dynamic Highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-600', 'dark:text-blue-400', 'font-bold', 'translate-x-2');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('text-blue-600', 'dark:text-blue-400', 'font-bold', 'translate-x-2');
+                }
+            });
+        });
+
+        // Copy Code Functionality
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeElement = button.nextElementSibling.querySelector('code');
+                navigator.clipboard.writeText(codeElement.innerText).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Copied!';
+                    button.classList.add('bg-green-600');
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('bg-green-600');
+                    }, 2000);
+                });
+            });
+        });
+
+        // Fade-in Animation on Scroll (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

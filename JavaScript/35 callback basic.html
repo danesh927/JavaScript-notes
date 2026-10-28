@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Notes - Master Front-End</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PrismJS for Syntax Highlighting (Tomorrow Night Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Tailwind Configuration for Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Animations and Specific UI details -->
+    <style>
+        body {
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+        
+        /* Fade-in Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sidebar active link styling */
+        .toc-link.active {
+            color: #3b82f6; /* Blue-500 */
+            font-weight: 700;
+            border-left: 4px solid #3b82f6;
+            padding-left: 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Code Block Customization */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            background: #1a1a2e !important; /* Soothing dark code background */
+        }
+        
+        /* Interactive Card Hover */
+        .concept-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 font-sans antialiased flex flex-col md:flex-row min-h-screen">
+
+    <!-- Mobile Header -->
+    <div class="md:hidden flex justify-between items-center p-4 bg-white dark:bg-darkCard shadow-md sticky top-0 z-50">
+        <h1 class="font-bold text-xl text-blue-600 dark:text-blue-400">JS Notes</h1>
+        <button id="mobileThemeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-400">
+            <i class="fa-solid fa-moon dark:hidden"></i>
+            <i class="fa-solid fa-sun hidden dark:block"></i>
+        </button>
+    </div>
+
+    <!-- Sticky Sidebar Navigation (Table of Contents) -->
+    <aside class="w-full md:w-1/4 lg:w-1/5 bg-white dark:bg-darkCard shadow-lg md:h-screen md:sticky md:top-0 overflow-y-auto hidden md:flex flex-col z-40 transition-colors duration-300">
+        <div class="p-6 flex-grow">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400 flex items-center">
+                    <i class="fa-brands fa-js text-yellow-400 mr-2 text-3xl"></i> JS Notes
+                </h2>
+                <!-- Desktop Theme Toggle -->
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition" title="Toggle Light/Dark Mode">
+                    <i class="fa-solid fa-moon text-gray-800 dark:hidden text-xl"></i>
+                    <i class="fa-solid fa-sun text-yellow-400 hidden dark:block text-xl"></i>
+                </button>
+            </div>
+            
+            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">ಪರಿವಿಡಿ (Table of Contents)</h3>
+            <nav class="flex flex-col space-y-2">
+                <a href="#intro" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">ಮುಖಪುಟ (Intro)</a>
+                <a href="#sync-async" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">1. Sync & Async</a>
+                <a href="#callback-intro" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">2. Callback</a>
+                <a href="#callback-syntax" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">3. Syntax</a>
+                <a href="#examples" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">4. ಉದಾಹರಣೆಗಳು</a>
+                <a href="#dom-events" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">5. DOM & Events <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full ml-1">New</span></a>
+                <a href="#storage" class="toc-link block py-2 pl-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition border-l-4 border-transparent">6. Web Storage <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full ml-1">New</span></a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="w-full md:w-3/4 lg:w-4/5 p-6 md:p-12 overflow-x-hidden">
+        <div class="max-w-4xl mx-auto space-y-16">
+            
+            <!-- Original Notes Section (Preserved Word for Word) -->
+            <section id="intro" class="fade-in mt-4">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg concept-card">
+                    <p class="text-lg leading-relaxed">ನಮಸ್ಕಾರ! ನೀವು ನಾನ್-ಐಟಿ (Non-IT) ಹಿನ್ನೆಲೆಯಿಂದ ಬಂದಿರುವುದರಿಂದ, ಯಾವುದೇ ಕಷ್ಟಕರವಾದ ಟೆಕ್ನಿಕಲ್ ಪದಗಳನ್ನು ಬಳಸದೆ, ನಮ್ಮ ದೈನಂದಿನ ಜೀವನದ ಉದಾಹರಣೆಗಳ ಮೂಲಕ <strong>Synchronous</strong>, <strong>Asynchronous</strong> ಮತ್ತು <strong>Callback</strong> ಎಂದರೆ ಏನು ಎಂದು ಹಂತ ಹಂತವಾಗಿ ವಿವರಿಸುತ್ತೇನೆ.</p>
+                </div>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700">
+
+            <section id="sync-async" class="fade-in">
+                <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-code-branch text-indigo-500 mr-3"></i> 1. Synchronous ಮತ್ತು Asynchronous ಎಂದರೇನು?
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Synchronous Card -->
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-md concept-card border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-xl font-bold text-red-500 mb-3 flex items-center"><i class="fa-solid fa-hourglass-half mr-2"></i> Synchronous (ಸಿಂಕ್ರೋನಸ್) ಎಂದರೆ:</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-300">ಒಂದು ಕೆಲಸ ಸಂಪೂರ್ಣವಾಗಿ ಮುಗಿದ ಮೇಲೆಯೇ ಇನ್ನೊಂದು ಕೆಲಸ ಶುರು ಮಾಡುವುದು.</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-400">
+                            <li><strong>ಉದಾಹರಣೆ:</strong> ನೀವು ಎಟಿಎಂ (ATM) ಕ್ಯೂನಲ್ಲಿ ನಿಂತಿದ್ದೀರಿ. ನಿಮ್ಮ ಮುಂದಿರುವ ವ್ಯಕ್ತಿ ಹಣ ಡ್ರಾ ಮಾಡುವವರೆಗೂ ನೀವು ಕಾಯಲೇಬೇಕು. ಅವರು ಹೊರಬಂದ ಮೇಲೆಯೇ ನೀವು ಒಳಗೆ ಹೋಗಬೇಕು. ಇದು Synchronous. ಇಲ್ಲಿ ಕಾಯುವಿಕೆಯಲ್ಲಿ (Waiting) ಸಮಯ ವ್ಯರ್ಥವಾಗುತ್ತದೆ.</li>
+                        </ul>
+                        <!-- Visual Diagram -->
+                        <div class="mt-6 flex flex-col space-y-2">
+                            <div class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 p-2 text-center rounded">ವ್ಯಕ್ತಿ 1 (ATM ನಲ್ಲಿ)</div>
+                            <div class="flex justify-center"><i class="fa-solid fa-arrow-down text-gray-400"></i></div>
+                            <div class="bg-gray-200 dark:bg-gray-700 text-gray-500 p-2 text-center rounded opacity-50">ನೀವು (ಕಾಯುತ್ತಿದ್ದೀರಿ)</div>
+                        </div>
+                    </div>
+
+                    <!-- Asynchronous Card -->
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-md concept-card border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-xl font-bold text-green-500 mb-3 flex items-center"><i class="fa-solid fa-bolt mr-2"></i> Asynchronous (ಅಸಿಂಕ್ರೋನಸ್) ಎಂದರೆ:</h4>
+                        <p class="mb-4 text-gray-700 dark:text-gray-300">ಒಂದು ಕೆಲಸಕ್ಕೆ ಹೆಚ್ಚು ಸಮಯ ಹಿಡಿಯುತ್ತದೆ ಎಂದರೆ, ಅದಕ್ಕಾಗಿ ಕಾಯದೆ ಮುಂದಿನ ಕೆಲಸವನ್ನು ಮುಂದುವರಿಸುವುದು. ಮೊದಲನೇ ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ ಅದರ ಫಲಿತಾಂಶವನ್ನು ಪಡೆಯುವುದು.</p>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-600 dark:text-gray-400">
+                            <li><strong>ಉದಾಹರಣೆ:</strong> ನೀವು ರೆಸ್ಟೋರೆಂಟ್‌ಗೆ ಹೋಗಿ ದೋಸೆಗೆ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ದೋಸೆ ಬರಲು 10 ನಿಮಿಷ ಬೇಕು. ಆ 10 ನಿಮಿಷ ನೀವು ಸುಮ್ಮನೆ ಕೂರುವುದಿಲ್ಲ, ಬದಲಾಗಿ ನಿಮ್ಮ ಸ್ನೇಹಿತರ ಜೊತೆ ಮಾತನಾಡುತ್ತೀರಿ ಅಥವಾ ಮೊಬೈಲ್ ನೋಡುತ್ತೀರಿ. ದೋಸೆ ರೆಡಿಯಾದ ತಕ್ಷಣ ವೇಟರ್ ತಂದು ಕೊಡುತ್ತಾರೆ. ಇಲ್ಲಿ ನೀವು ಕಾಯುತ್ತಾ ಸಮಯ ವ್ಯರ್ಥ ಮಾಡಲಿಲ್ಲ. ಇದು Asynchronous.</li>
+                        </ul>
+                        <!-- Visual Diagram -->
+                        <div class="mt-6 flex justify-between space-x-2">
+                            <div class="flex-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 p-2 text-center rounded text-sm">ದೋಸೆ ಬೇಯುತ್ತಿದೆ (ಹಿನ್ನೆಲೆಯಲ್ಲಿ)</div>
+                            <div class="flex-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 p-2 text-center rounded text-sm">ನೀವು ಮೊಬೈಲ್ ನೋಡುತ್ತಿದ್ದೀರಿ (ಮುಂದಿನ ಕೆಲಸ)</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700">
+
+            <section id="callback-intro" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-phone-volume text-pink-500 mr-3"></i> 2. Callback (ಕಾಲ್‌ಬ್ಯಾಕ್) ಎಂದರೇನು?
+                </h3>
+                <p class="mb-4 leading-relaxed">ಹೆಸರಿನಲ್ಲೇ ಇರುವಂತೆ "Call-back" (ಮತ್ತೆ ಕರೆ ಮಾಡು). ನೀವು ಒಂದು ಕೆಲಸವನ್ನು ಯಾರಿಗಾದರೂ ವಹಿಸಿ, "ಆ ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ ನನಗೆ ತಿಳಿಸು (ಕಾಲ್ ಮಾಡು), ನಾನು ಮುಂದಿನ ಕೆಲಸ ಮಾಡುತ್ತೇನೆ" ಎಂದು ಹೇಳುವುದೇ ಕಾಲ್‌ಬ್ಯಾಕ್.</p>
+                <ul class="list-disc pl-6 space-y-2 mb-4">
+                    <li><strong>ಉದಾಹರಣೆ:</strong> ನೀವು ಮೆಕ್ಯಾನಿಕ್‌ಗೆ ಬೈಕ್ ರಿಪೇರಿಗೆ ಕೊಡುತ್ತೀರಿ. "ಬೈಕ್ ರಿಪೇರಿ ಮುಗಿದ ಮೇಲೆ ನನಗೆ ಕಾಲ್ ಮಾಡಿ, ನಾನು ಬಂದು ತೆಗೆದುಕೊಂಡು ಹೋಗುತ್ತೇನೆ" ಎಂದು ಹೇಳುತ್ತೀರಿ. ಬೈಕ್ ರೆಡಿಯಾದ ತಕ್ಷಣ ಮೆಕ್ಯಾನಿಕ್ ನಿಮಗೆ ಕಾಲ್ ಮಾಡುವುದು 'Callback'.</li>
+                </ul>
+                <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg italic text-center">
+                    <p>ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ, <strong>ಒಂದು ಫಂಕ್ಷನ್ (ಕೆಲಸ) ಮುಗಿದ ನಂತರ, ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಅನ್ನು ರನ್ ಮಾಡಲು ಈ Callback ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.</strong></p>
+                </div>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700">
+
+            <section id="callback-syntax" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-keyboard text-teal-500 mr-3"></i> 3. Callback ಬರೆಯುವ ವಿಧಾನ (Syntax)
+                </h3>
+                <p class="mb-4">ಬಹಳ ಸರಳವಾಗಿ ಹೇಳಬೇಕೆಂದರೆ, ಒಂದು ಫಂಕ್ಷನ್ ಒಳಗೆ ಮತ್ತೊಂದು ಫಂಕ್ಷನ್ ಅನ್ನು ಪಾಸ್ ಮಾಡುವುದು:</p>
+                
+                <div class="relative group mt-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                        <i class="fa-regular fa-copy mr-1"></i> Copy
+                    </button>
+                    <pre><code class="language-javascript">// ಮುಖ್ಯ ಕೆಲಸದ ಫಂಕ್ಷನ್
+function doSomething(callbackFunction) {
+    // 1. ಇಲ್ಲಿ ಮುಖ್ಯ ಕೆಲಸ ನಡೆಯುತ್ತದೆ...
+    
+    // 2. ಆ ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ ಕಾಲ್‌ಬ್ಯಾಕ್ ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯಲಾಗುತ್ತದೆ
+    callbackFunction(); 
+}</code></pre>
+                </div>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700">
+
+            <section id="examples" class="fade-in">
+                <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-laptop-code text-orange-500 mr-3"></i> 4. ಉದಾಹರಣೆಗಳು ಮತ್ತು ಹಂತ-ಹಂತದ ವಿವರಣೆ
+                </h3>
+                <p class="mb-8 text-gray-600 dark:text-gray-400">ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂಬುದನ್ನು ನೋಡೋಣ. (ಇಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ - JavaScript ಕೋಡ್ ಬಳಸಲಾಗಿದೆ, ಆದರೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ತುಂಬಾ ಸುಲಭವಾಗಿದೆ).</p>
+
+                <!-- Example 1 -->
+                <div class="mb-10 bg-white dark:bg-darkCard p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800">
+                    <h4 class="text-xl font-bold mb-4 text-blue-600 dark:text-blue-400">ಉದಾಹರಣೆ 1: ಸರಳ ಕಾಲ್‌ಬ್ಯಾಕ್ (Synchronous Callback)</h4>
+                    <p class="mb-4">ಒಬ್ಬರ ಹೆಸರು ಹೇಳಿ, ನಂತರ ಅವರಿಗೆ ವಿದಾಯ ಹೇಳುವ ಪ್ರೋಗ್ರಾಮ್.</p>
+                    <div class="relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">// 1. ಮುಖ್ಯ ಫಂಕ್ಷನ್
+function greet(name, callback) {
+    console.log("ನಮಸ್ಕಾರ, " + name); // ಮೊದಲ ಕೆಲಸ
+    callback(); // ಎರಡನೇ ಕೆಲಸ (ಕಾಲ್‌ಬ್ಯಾಕ್)
+}
+
+// 2. ಕಾಲ್‌ಬ್ಯಾಕ್ ಆಗಿ ಕೆಲಸ ಮಾಡುವ ಫಂಕ್ಷನ್
+function sayGoodbye() {
+    console.log("ಮತ್ತೆ ಸಿಗೋಣ! ಬಾಯ್.");
+}
+
+// 3. ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವುದು
+greet("ರಾಮು", sayGoodbye);</code></pre>
+                    </div>
+                    <div class="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <h5 class="font-bold mb-2">ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h5>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>ನಾವು <code>greet</code> ಫಂಕ್ಷನ್‌ಗೆ "ರಾಮು" ಎಂಬ ಹೆಸರು ಮತ್ತು <code>sayGoodbye</code> ಎಂಬ ಫಂಕ್ಷನ್ ಅನ್ನು ಕಳುಹಿಸುತ್ತೇವೆ.</li>
+                            <li>ಮೊದಲು ಕಂಪ್ಯೂಟರ್ "ನಮಸ್ಕಾರ, ರಾಮು" ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                            <li>ತಕ್ಷಣವೇ ಕಾಲ್‌ಬ್ಯಾಕ್ ಆದ <code>sayGoodbye</code> ಅನ್ನು ರನ್ ಮಾಡಿ "ಮತ್ತೆ ಸಿಗೋಣ! ಬಾಯ್." ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="mb-10 bg-white dark:bg-darkCard p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800">
+                    <h4 class="text-xl font-bold mb-4 text-green-600 dark:text-green-400">ಉದಾಹರಣೆ 2: ಅಸಿಂಕ್ರೋನಸ್ ಕಾಲ್‌ಬ್ಯಾಕ್ (ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡುವ ಉದಾಹರಣೆ - Asynchronous Callback)</h4>
+                    <p class="mb-2">ಇದು ನಿಜವಾದ ಕಾಲ್‌ಬ್ಯಾಕ್‌ನ ಶಕ್ತಿ. ಪಿಜ್ಜಾ ತಯಾರಾಗಲು ಸಮಯ ಬೇಕು, ಅಲ್ಲಿಯವರೆಗೆ ಕಾಯದೆ ನಾವು ಬೇರೆ ಕೆಲಸ ಮಾಡಬಹುದು.</p>
+                    <p class="mb-4 text-sm text-gray-500 italic">(ಸೂಚನೆ: <code>setTimeout</code> ಎಂಬುದು ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ ಸ್ವಲ್ಪ ಸಮಯ ಕಾಯಲು ಬಳಸುವ ಟೂಲ್ ಆಗಿದೆ)</p>
+                    <div class="relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">function orderPizza(callback) {
+    console.log("1. ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ. ತಯಾರಾಗುತ್ತಿದೆ...");
+
+    // ಪಿಜ್ಜಾ ತಯಾರಾಗಲು 3 ಸೆಕೆಂಡ್ (3000 milliseconds) ಬೇಕು
+    setTimeout(function() {
+        console.log("2. ಬಿಸಿ ಬಿಸಿ ಪಿಜ್ಜಾ ರೆಡಿಯಾಗಿದೆ!");
+        callback(); // ಪಿಜ್ಜಾ ರೆಡಿಯಾದ ಮೇಲೆ ಈ ಕಾಲ್‌ಬ್ಯಾಕ್ ರನ್ ಆಗುತ್ತದೆ
+    }, 3000);
+}
+
+function eatPizza() {
+    console.log("3. ನಾನು ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತಿದ್ದೇನೆ. ಸೂಪರ್ ಆಗಿದೆ!");
+}
+
+// ಪ್ರೋಗ್ರಾಮ್ ಶುರು
+orderPizza(eatPizza);
+console.log("ನಾನು ಪಿಜ್ಜಾ ಬರುವವರೆಗೆ ಟಿವಿ ನೋಡುತ್ತಿದ್ದೇನೆ...");</code></pre>
+                    </div>
+                    <div class="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <h5 class="font-bold mb-2">ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ? (ಹಂತ ಹಂತವಾಗಿ):</h5>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>ಮೊದಲು <code>orderPizza</code> ಶುರುವಾಗುತ್ತದೆ. "1. ಪಿಜ್ಜಾ ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ..." ಎಂದು ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.</li>
+                            <li>ಪಿಜ್ಜಾ ತಯಾರಾಗಲು 3 ಸೆಕೆಂಡ್ ಬೇಕು (ಇದು ಅಸಿಂಕ್ರೋನಸ್ ಕೆಲಸ). ಕಂಪ್ಯೂಟರ್ 3 ಸೆಕೆಂಡ್ ಸುಮ್ಮನೆ ಕಾಯುವುದಿಲ್ಲ!</li>
+                            <li>ಅದು ನೇರವಾಗಿ ಕೊನೆಯ ಸಾಲಿಗೆ ಬಂದು "ನಾನು ಪಿಜ್ಜಾ ಬರುವವರೆಗೆ ಟಿವಿ ನೋಡುತ್ತಿದ್ದೇನೆ..." ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                            <li>ಸರಿಯಾಗಿ 3 ಸೆಕೆಂಡ್ ಆದ ಮೇಲೆ, ಪಿಜ್ಜಾ ರೆಡಿಯಾಗುತ್ತದೆ. ಆಗ "2. ಬಿಸಿ ಬಿಸಿ ಪಿಜ್ಜಾ ರೆಡಿಯಾಗಿದೆ!" ಎಂದು ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.</li>
+                            <li>ಕೊನೆಯದಾಗಿ ಕಾಲ್‌ಬ್ಯಾಕ್ (<code>eatPizza</code>) ರನ್ ಆಗಿ "3. ನಾನು ಪಿಜ್ಜಾ ತಿನ್ನುತ್ತಿದ್ದೇನೆ..." ಎಂದು ಬರುತ್ತದೆ.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="mb-10 bg-white dark:bg-darkCard p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800">
+                    <h4 class="text-xl font-bold mb-4 text-purple-600 dark:text-purple-400">ಉದಾಹರಣೆ 3: ಫೋಟೋ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವುದು (ಇಂಟರ್ನೆಟ್ ಉದಾಹರಣೆ)</h4>
+                    <p class="mb-4">ನೀವು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಒಂದು ದೊಡ್ಡ ವಿಡಿಯೋ ಅಥವಾ ಫೋಟೋ ಡೌನ್‌ಲೋಡ್ ಮಾಡುವಾಗ, ಅದು ಡೌನ್‌ಲೋಡ್ ಆಗುವವರೆಗೂ ನೀವು ಬೇರೆ ಮೆಸೇಜ್ ಓದುತ್ತಿರುತ್ತೀರಿ ಅಲ್ಲವೇ? ಅದೇ ರೀತಿ ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.</p>
+                    <div class="relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">function downloadPhoto(photoName, callback) {
+    console.log("-> " + photoName + " ಡೌನ್‌ಲೋಡ್ ಶುರುವಾಗಿದೆ...");
+
+    // ಡೌನ್‌ಲೋಡ್ ಆಗಲು 4 ಸೆಕೆಂಡ್ ಬೇಕು ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ
+    setTimeout(function() {
+        console.log("-> " + photoName + " ಸಂಪೂರ್ಣವಾಗಿ ಡೌನ್‌ಲೋಡ್ ಆಯ್ತು.");
+        callback(photoName); // ಡೌನ್‌ಲೋಡ್ ಮುಗಿದ ಮೇಲೆ ಓಪನ್ ಮಾಡಲು ಹೇಳುವುದು
+    }, 4000); 
+}
+
+function openPhoto(photo) {
+    console.log("-> ಈಗ ನಾನು " + photo + " ಅನ್ನು ಗ್ಯಾಲರಿಯಲ್ಲಿ ನೋಡುತ್ತಿದ್ದೇನೆ.");
+}
+
+// ಕೆಲಸ ಶುರು
+downloadPhoto("ಪ್ರವಾಸದ_ಫೋಟೋ.jpg", openPhoto);
+console.log("-> ಫೋಟೋ ಡೌನ್‌ಲೋಡ್ ಆಗುವವರೆಗೆ ನಾನು ಬೇರೆ ಮೆಸೇಜ್ ಓದುತ್ತಿದ್ದೇನೆ...");</code></pre>
+                    </div>
+                    <div class="mt-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <h5 class="font-bold mb-2">ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?</h5>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>ಮೊದಲು ಫೋಟೋ ಡೌನ್‌ಲೋಡ್ ಶುರುವಾಗುತ್ತದೆ.</li>
+                            <li>ಡೌನ್‌ಲೋಡ್ ಆಗಲು 4 ಸೆಕೆಂಡ್ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ, ಆ ಸಮಯದಲ್ಲಿ ಸಿಸ್ಟಮ್ ಬ್ಲಾಕ್ ಆಗುವುದಿಲ್ಲ. ತಕ್ಷಣವೇ "ನಾನು ಬೇರೆ ಮೆಸೇಜ್ ಓದುತ್ತಿದ್ದೇನೆ" ಎಂಬ ಸಾಲು ರನ್ ಆಗುತ್ತದೆ.</li>
+                            <li>4 ಸೆಕೆಂಡ್ ನಂತರ, ಡೌನ್‌ಲೋಡ್ ಮುಗಿಯುತ್ತದೆ ಮತ್ತು ಕಾಲ್‌ಬ್ಯಾಕ್ ಮೂಲಕ ಆ ಫೋಟೋ ಗ್ಯಾಲರಿಯಲ್ಲಿ ಓಪನ್ ಆಗುತ್ತದೆ.</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <!-- Summary -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-xl shadow-sm mt-8">
+                    <h3 class="text-xl font-bold mb-4 text-blue-800 dark:text-blue-300"><i class="fa-solid fa-list-check mr-2"></i> ಒಟ್ಟಾರೆಯಾಗಿ ಸಾರಾಂಶ (Summary):</h3>
+                    <ul class="list-disc pl-5 space-y-3">
+                        <li><strong>Synchronous:</strong> ಒಬ್ಬರಾದ ಮೇಲೆ ಒಬ್ಬರು (ಕ್ಯೂನಲ್ಲಿ ನಿಂತಂತೆ).</li>
+                        <li><strong>Asynchronous:</strong> ಕಾಯದೆ ಬೇರೆ ಕೆಲಸ ಮಾಡುವುದು ಮತ್ತು ಮೊದಲ ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ ಅದರ ಫಲಿತಾಂಶ ಪಡೆಯುವುದು (ರೆಸ್ಟೋರೆಂಟ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿದಂತೆ).</li>
+                        <li><strong>Callback:</strong> "ನನ್ನ ದೊಡ್ಡ ಕೆಲಸ ಮುಗಿದ ಮೇಲೆ, ಈ ಸಣ್ಣ ಕೆಲಸವನ್ನು ಮಾಡು" ಎಂದು ಪ್ರೋಗ್ರಾಮ್‌ಗೆ ಹೇಳುವ ಒಂದು ಅದ್ಭುತ ವಿಧಾನ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <hr class="border-gray-300 dark:border-gray-700 my-12">
+            
+            <!-- ========================================== -->
+            <!-- EXTENDED EXPERT SECTIONS ADDED FOR COMPLETENESS -->
+            <!-- ========================================== -->
+            <div class="text-center mb-8">
+                <span class="inline-block bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wider uppercase"><i class="fa-solid fa-plus-circle mr-1"></i> ಹೆಚ್ಚುವರಿ ಪ್ರಮುಖ ಮಾಹಿತಿಗಳು (Bonus Core Concepts)</span>
+            </div>
+
+            <section id="dom-events" class="fade-in">
+                <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-sitemap text-yellow-500 mr-3"></i> 5. DOM & Element Selection (ಡಾಮ್ ಮತ್ತು ಎಲಿಮೆಂಟ್ ಆಯ್ಕೆ)
+                </h3>
+                <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800 concept-card">
+                    <p class="mb-4">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ HTML ಪೇಜ್ ಅನ್ನು ಒಂದು "ಮನೆ" ಅಥವಾ ಬ್ಲೂಪ್ರಿಂಟ್ (Blueprint) ರೀತಿ ನೋಡಲಾಗುತ್ತದೆ. ಇದನ್ನೇ <strong>DOM (Document Object Model)</strong> ಎನ್ನುತ್ತೇವೆ.</p>
+                    <ul class="list-disc pl-5 space-y-3 mb-6">
+                        <li><strong>Element Selection:</strong> ಮನೆಯಲ್ಲಿ ನಿಮ್ಮ ನಿರ್ದಿಷ್ಟ ಕೋಣೆಯನ್ನು ಹುಡುಕುವಂತೆ, ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿರುವ ಒಂದು ಬಟನ್ ಅಥವಾ ಟೆಕ್ಸ್ಟ್ ಅನ್ನು ಹುಡುಕಿ ಬದಲಾಯಿಸುವುದು.</li>
+                        <li><em>ಉದಾಹರಣೆ:</em> ನಿಮ್ಮ ಸ್ನೇಹಿತ "ಕೆಂಪು ಶರ್ಟ್" ಹಾಕಿದ್ದಾನೆ ಎಂದು ಹುಡುಕುವುದು (Class Name ಮೂಲಕ ಹುಡುಕಿದಂತೆ).</li>
+                    </ul>
+                    
+                    <h4 class="text-lg font-bold mb-3 mt-6 flex items-center"><i class="fa-solid fa-hand-pointer text-indigo-400 mr-2"></i> Event Handling (ಘಟನೆಗಳನ್ನು ನಿರ್ವಹಿಸುವುದು)</h4>
+                    <p class="mb-4">ಯಾರಾದರೂ ನಿಮ್ಮ ಮನೆಯ <strong>ಕಾಲಿಂಗ್ ಬೆಲ್</strong> ಒತ್ತಿದಾಗ, ನೀವು ಬಾಗಿಲು ತೆಗೆಯುತ್ತೀರಿ. ಇಲ್ಲಿ "ಬೆಲ್ ಒತ್ತುವುದು" ಒಂದು Event (ಘಟನೆ), ಮತ್ತು "ಬಾಗಿಲು ತೆಗೆಯುವುದು" ನೀವು ನೀಡುವ ಪ್ರತಿಕ್ರಿಯೆ.</p>
+                    
+                    <div class="relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">// 1. HTML ನಲ್ಲಿರುವ 'bellButton' ಅನ್ನು ಹುಡುಕುವುದು (Element Selection)
+const button = document.getElementById("bellButton");
+
+// 2. ಬೆಲ್ ಒತ್ತಿದಾಗ (click event) ಏನು ಆಗಬೇಕು ಎಂದು ಬರೆಯುವುದು (Event Handling)
+button.addEventListener("click", function() {
+    console.log("ಬಾಗಿಲು ತೆಗೆಯಲಾಗಿದೆ! ಸ್ವಾಗತ.");
+    // ಬಣ್ಣ ಬದಲಾಯಿಸುವುದು (DOM Manipulation)
+    document.body.style.backgroundColor = "lightgreen";
+});</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="storage" class="fade-in">
+                <h3 class="text-2xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
+                    <i class="fa-solid fa-database text-cyan-500 mr-3"></i> 6. Client-side Storage (ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಡೇಟಾ ಸೇವ್ ಮಾಡುವುದು)
+                </h3>
+                <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800 concept-card">
+                    <p class="mb-4">ಇಂಟರ್ನೆಟ್ ಕಟ್ ಆದರೂ, ನೀವು ಯಾವ ಥೀಮ್ (Dark/Light) ಬಳಸುತ್ತಿದ್ದೀರಿ ಅಥವಾ ಲಾಗಿನ್ ಆಗಿದ್ದೀರಾ ಎಂದು ಬ್ರೌಸರ್ ನೆನಪಿಟ್ಟುಕೊಳ್ಳಲು ಈ Storage ಬಳಸುತ್ತೇವೆ.</p>
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                            <h5 class="font-bold text-blue-700 dark:text-blue-300 mb-1"><i class="fa-solid fa-book mr-1"></i> LocalStorage (ಶಾಶ್ವತ)</h5>
+                            <p class="text-sm">ಇದು ನಿಮ್ಮ <strong>ಪರ್ಸನಲ್ ಡೈರಿ</strong> ಇದ್ದಂತೆ. ಬ್ರೌಸರ್ ಮುಚ್ಚಿದರೂ ಇದರಲ್ಲಿರುವ ಮಾಹಿತಿ ಅಳಿಸಿಹೋಗುವುದಿಲ್ಲ.</p>
+                        </div>
+                        <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border-l-4 border-orange-500">
+                            <h5 class="font-bold text-orange-700 dark:text-orange-300 mb-1"><i class="fa-solid fa-ticket mr-1"></i> SessionStorage (ತಾತ್ಕಾಲಿಕ)</h5>
+                            <p class="text-sm">ಇದು <strong>ಸಿನಿಮಾ ಟಿಕೆಟ್</strong> ಇದ್ದಂತೆ. ಬ್ರೌಸರ್ (ಥಿಯೇಟರ್) ಮುಚ್ಚಿದ ತಕ್ಷಣ ಡೇಟಾ ಡಿಲೀಟ್ ಆಗುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition z-10 flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">// ಡೈರಿಯಲ್ಲಿ (LocalStorage) ಹೆಸರು ಸೇವ್ ಮಾಡುವುದು
+localStorage.setItem("username", "ರಾಮು");
+
+// ಸೇವ್ ಮಾಡಿದ ಡೇಟಾ ವಾಪಸ್ ಪಡೆಯುವುದು
+const name = localStorage.getItem("username");
+console.log("ಮತ್ತೆ ಸ್ವಾಗತ, " + name); 
+
+// ಬೇಡವಾದಾಗ ಡೇಟಾ ಡಿಲೀಟ್ ಮಾಡುವುದು
+localStorage.removeItem("username");</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm pb-8 border-t border-gray-200 dark:border-gray-800 pt-8">
+                <p>Designed with <i class="fa-solid fa-heart text-red-500 mx-1"></i> for an 8-10 hour daily screen-time experience.</p>
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- PrismJS for Syntax Highlighting Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Interactive Logic (Dark Mode, Copy Buttons, Intersection Observer) -->
+    <script>
+        // 1. Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const mobileThemeToggleBtn = document.getElementById('mobileThemeToggle');
+        const htmlElement = document.documentElement;
+
+        function toggleTheme() {
+            htmlElement.classList.toggle('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        mobileThemeToggleBtn.addEventListener('click', toggleTheme);
+
+        // 2. Copy to Clipboard Logic
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Find the adjacent code block
+                const codeBlock = button.nextElementSibling.querySelector('code');
+                const textToCopy = codeBlock.innerText;
+
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Copied!';
+                    button.classList.add('bg-green-600', 'text-white');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.classList.remove('bg-green-600');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            });
+        });
+
+        // 3. Scroll Animation (Fade In)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(section => {
+            observer.observe(section);
+        });
+
+        // 4. Sticky Sidebar Highlighting Logic
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

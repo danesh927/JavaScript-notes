@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ async ಮತ್ತು await: ಸಂಪೂರ್ಣ ಮಾರ್ಗದರ್ಶಿ</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        kannada: ['"Noto Sans Kannada"', 'sans-serif'],
+                        code: ['"Fira Code"', '"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            400: '#f7df1e', // JS Yellow
+                            500: '#e3c613',
+                            600: '#d1b610'
+                        },
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- PrismJS (Syntax Highlighting) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS for Animations & Refinements -->
+    <style>
+        body { font-family: 'Noto Sans Kannada', sans-serif; }
+        code, pre { font-family: 'Fira Code', monospace !important; }
+        
+        /* Smooth Fade In Animation */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background-color: #334155; }
+        
+        /* PrismJS Customizations */
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            padding: 1.5rem;
+            background-color: #111827 !important;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* TOC Active Link */
+        .toc-link.active {
+            color: #f7df1e;
+            font-weight: 600;
+            border-left-color: #f7df1e;
+            background-color: rgba(247, 223, 30, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-darkBg/90 border-b border-gray-200 dark:border-gray-800 transition-colors duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-brands fa-js text-brand-400 text-3xl"></i>
+                <h1 class="font-bold text-xl md:text-2xl hidden sm:block tracking-wide">JS Mastery <span class="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">| Async/Await</span></h1>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-400" aria-label="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon text-gray-600 dark:text-gray-300 text-lg"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-10">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="hidden lg:block w-72 shrink-0">
+            <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-4 custom-scrollbar">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4 ml-3">ಪರಿವಿಡಿ (Content)</h3>
+                <nav id="toc" class="flex flex-col border-l-2 border-gray-200 dark:border-gray-700">
+                    <a href="#intro" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಮುನ್ನುಡಿ</a>
+                    <a href="#step-1" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 1: ದೈನಂದಿನ ಉದಾಹರಣೆ</a>
+                    <a href="#step-2" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 2: ಪ್ರಮುಖ ಪದಗಳ ಅರ್ಥ</a>
+                    <a href="#step-3" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 3: ಮೂಲ ಸಿಂಟ್ಯಾಕ್ಸ್</a>
+                    <a href="#step-4" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 4: ಮಾಡಬೇಕಾದ ಸಿದ್ಧತೆ</a>
+                    <a href="#step-5" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 5: ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಕೆಲಸದ ರೀತಿ</a>
+                    <a href="#step-6" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 6: ಪ್ರಾಯೋಗಿಕ ಉದಾಹರಣೆಗಳು</a>
+                    <a href="#step-7" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 7: ಹಳೆಯ vs ಹೊಸ ವಿಧಾನ</a>
+                    <a href="#step-8" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors">ಹಂತ 8: ಬೋನಸ್ ಮಾಹಿತಿ</a>
+                    <a href="#step-9" class="toc-link block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-l-2 border-transparent -ml-[2px] transition-colors"><i class="fa-solid fa-star text-brand-400 mr-1 text-xs"></i> ಹಂತ 9: Event Loop & Microtask</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 w-full max-w-4xl mx-auto space-y-16 pb-20">
+
+            <!-- Title & Intro -->
+            <section id="intro" class="fade-in-section scroll-mt-24 text-center md:text-left">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-semibold mb-4 border border-blue-200 dark:border-blue-800">
+                    <i class="fa-solid fa-book-open mr-2"></i>ಸಂಪೂರ್ಣ ಮಾರ್ಗದರ್ಶಿ (Complete Guide)
+                </span>
+                <h1 class="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-gradient">`async`</span> ಮತ್ತು <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-gradient">`await`</span>
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ತರುವುದು ಅಥವಾ ಫೈಲ್ ಸೇವ್ ಮಾಡುವುದು ಮುಂತಾದ ಕೆಲಸಗಳಿಗೆ ಸ್ವಲ್ಪ ಸಮಯ ಬೇಕಾಗುತ್ತದೆ. ಇಂತಹ ಸಮಯದಲ್ಲಿ ಇಡೀ ವೆಬ್‌ಸೈಟ್ ಹ್ಯಾಂಗ್ ಆಗದಂತೆ (ಗಾಬರಿಯಾಗದಂತೆ) ತಡೆಯಲು ಹಾಗೂ ಕೆಲಸ ಪೂರ್ಣಗೊಳ್ಳುವವರೆಗೆ ಕಾಯುವ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಅಚ್ಚುಕಟ್ಟಾಗಿ ನಿರ್ವಹಿಸಲು <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-brand-500 font-bold">async</code> ಮತ್ತು <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-brand-500 font-bold">await</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.
+                </p>
+            </section>
+
+            <!-- Step 1 -->
+            <section id="step-1" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                    ಹಂತ 1: ದೈನಂದಿನ ಉದಾಹರಣೆ (Synchronous vs Asynchronous)
+                </h2>
+                <p class="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">ಇದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಹೋಟೆಲ್‌ನಲ್ಲಿ ಮಸಾಲೆ ದೋಸೆ ಆರ್ಡರ್ ಮಾಡುವ ಉದಾಹರಣೆ ನೋಡೋಣ:</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-100 dark:border-red-900/30 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity"><i class="fa-solid fa-hourglass-half text-4xl text-red-500"></i></div>
+                        <h3 class="font-bold text-red-700 dark:text-red-400 mb-2 flex items-center"><i class="fa-solid fa-ban mr-2"></i>ಸಾಮಾನ್ಯ ವಿಧಾನ (Synchronous / Blocking)</h3>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">ನೀವು ಕೌಂಟರ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡಿ, ದೋಸೆ ಬರುವವರೆಗೂ ಅಲ್ಲಿಯೇ ನಿಂತಿರುತ್ತೀರಿ. ದೋಸೆ ಕೈಗೆ ಸಿಗುವವರೆಗೂ ನೀವು ಬೇರೆ ಯಾವ ಕೆಲಸವೂ ಮಾಡುವಂತಿಲ್ಲ. ಇದು ನಿಮ್ಮ ಸಮಯವನ್ನು ತಡೆಯುತ್ತದೆ.</p>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-100 dark:border-green-900/30 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity"><i class="fa-solid fa-bolt text-4xl text-green-500"></i></div>
+                        <h3 class="font-bold text-green-700 dark:text-green-400 mb-2 flex items-center"><i class="fa-solid fa-check-circle mr-2"></i>ಅಸಿಂಕ್ರೋನಸ್ (Asynchronous / Non-blocking)</h3>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">ನೀವು ಆರ್ಡರ್ ಮಾಡಿದಾಗ ಅವರು ನಿಮಗೆ ಒಂದು ಟೋಕನ್ ಕೊಡುತ್ತಾರೆ. ನೀವು ಹೋಗಿ ಸೀಟಿನಲ್ಲಿ ಕುಳಿತು ಸ್ನೇಹಿತರೊಂದಿಗೆ ಮಾತನಾಡಬಹುದು. ದೋಸೆ ರೆಡಿಯಾದಾಗ ಟೋಕನ್ ಕರೆಯುತ್ತಾರೆ, ಆಗ ಹೋಗಿ ತರುತ್ತೀರಿ. ಇಲ್ಲಿ ನೀವು ಕಾಯುವ ಸಮಯದಲ್ಲಿ ಬೇರೆ ಕೆಲಸ ಮಾಡಬಹುದು. <code class="font-code text-brand-600 dark:text-brand-400">async/await</code> ಕೆಲಸ ಮಾಡುವುದು ಇದೇ ರೀತಿ!</p>
+                    </div>
+                </div>
+
+                <!-- Conceptual SVG Illustration -->
+                <div class="w-full bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex justify-center">
+                    <svg viewBox="0 0 600 200" class="w-full max-w-2xl h-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Sync Timeline -->
+                        <text x="10" y="40" font-family="sans-serif" font-size="14" font-weight="bold" fill="currentColor" class="text-gray-600 dark:text-gray-300">Synchronous (Blocking)</text>
+                        <rect x="180" y="25" width="100" height="20" rx="4" fill="#ef4444" />
+                        <text x="230" y="40" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Order Food</text>
+                        <rect x="285" y="25" width="150" height="20" rx="4" fill="#f87171" opacity="0.6"/>
+                        <text x="360" y="40" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Blocked (Waiting...)</text>
+                        <rect x="440" y="25" width="100" height="20" rx="4" fill="#ef4444" />
+                        <text x="490" y="40" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Eat Food</text>
+                        
+                        <!-- Async Timeline -->
+                        <line x1="10" y1="90" x2="580" y2="90" stroke="currentColor" stroke-dasharray="4" class="text-gray-200 dark:text-gray-700" stroke-width="2"/>
+                        
+                        <text x="10" y="140" font-family="sans-serif" font-size="14" font-weight="bold" fill="currentColor" class="text-gray-600 dark:text-gray-300">Asynchronous (Non-blocking)</text>
+                        <rect x="180" y="125" width="100" height="20" rx="4" fill="#10b981" />
+                        <text x="230" y="140" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Order (Get Token)</text>
+                        <rect x="285" y="155" width="150" height="20" rx="4" fill="#3b82f6" />
+                        <text x="360" y="170" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Chat with friends</text>
+                        
+                        <!-- Background task dashed line -->
+                        <path d="M 230 125 C 230 100, 490 100, 490 125" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="4"/>
+                        <text x="360" y="115" font-family="sans-serif" font-size="10" fill="#10b981" text-anchor="middle">Food cooking in background (Promise)</text>
+
+                        <rect x="440" y="125" width="100" height="20" rx="4" fill="#10b981" />
+                        <text x="490" y="140" font-family="sans-serif" font-size="12" fill="white" text-anchor="middle">Eat Food</text>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Step 2 -->
+            <section id="step-2" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                    ಹಂತ 2: ಪ್ರಮುಖ ಪದಗಳ ಅರ್ಥ ಮತ್ತು ನಿಯಮಗಳು
+                </h2>
+                <ul class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <li class="flex items-start bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                        <i class="fa-solid fa-code text-brand-500 mt-1 mr-3 text-lg"></i>
+                        <div>
+                            <strong class="text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded mr-1">`async` (ಅಸಿಂಕ್):</strong> 
+                            ಯಾವುದೇ ಫಂಕ್ಷನ್‌ನ ಮುಂದೆ <code class="font-code text-sm">async</code> ಎಂದು ಬರೆದರೆ, ಆ ಫಂಕ್ಷನ್ ಒಳಗೆ ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸ ಇದೆ ಎಂದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ಗೆ ತಿಳಿಸಿದಂತೆ.
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-xl shadow-sm border border-yellow-200 dark:border-yellow-900/30">
+                        <i class="fa-solid fa-lightbulb text-yellow-500 mt-1 mr-3 text-lg animate-pulse"></i>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/50 px-2 py-1 rounded mb-2 inline-block">(ಹೊಸ ಮಾಹಿತಿ ಸೇರ್ಪಡೆ)</span><br>
+                            <strong class="text-gray-900 dark:text-white">ನೆನಪಿಡಿ:</strong> ನೀವು ಒಂದು ಫಂಕ್ಷನ್ ಹಿಂದೆ <code class="font-code text-sm text-yellow-700 dark:text-yellow-400">async</code> ಹಾಕಿದರೆ, ಆ ಫಂಕ್ಷನ್ ಯಾವಾಗಲೂ ಒಂದು <strong>Promise</strong> ಅನ್ನೇ ಹಿಂತಿರುಗಿಸುತ್ತದೆ (Return ಮಾಡುತ್ತದೆ).
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                        <i class="fa-solid fa-pause-circle text-blue-500 mt-1 mr-3 text-lg"></i>
+                        <div>
+                            <strong class="text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded mr-1">`await` (ಅವೇಟ್):</strong> 
+                            ಇದರ ಅರ್ಥ "ಈ ನಿರ್ದಿಷ್ಟ ಕೆಲಸ ಮುಗಿಯುವವರೆಗೂ ಇಲ್ಲಿಯೇ ಕಾಯು".
+                        </div>
+                    </li>
+                    <li class="flex items-start bg-red-50 dark:bg-red-900/10 p-4 rounded-xl shadow-sm border border-red-200 dark:border-red-900/30">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 mt-1 mr-3 text-lg"></i>
+                        <div>
+                            <strong class="text-red-700 dark:text-red-400">ನಿಯಮ:</strong> <code class="font-code text-sm">await</code> ಅನ್ನು ಕೇವಲ <code class="font-code text-sm">async</code> ಫಂಕ್ಷನ್‌ನ ಒಳಗೆ ಮಾತ್ರ ಬಳಸಲು ಸಾಧ್ಯ. ಹೊರಗಡೆ ಬಳಸಿದರೆ ಎರರ್ ಬರುತ್ತದೆ. (ಆದರೆ ಆಧುನಿಕ JS ನಲ್ಲಿ Top-level await ಬಂದಿದೆ, ಅದನ್ನು ಕೊನೆಯಲ್ಲಿ ವಿವರಿಸಲಾಗಿದೆ).
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Step 3 -->
+            <section id="step-3" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                    ಹಂತ 3: ಮೂಲ ಸಿಂಟ್ಯಾಕ್ಸ್ (Basic Syntax)
+                </h2>
+                <p class="mb-4 text-gray-700 dark:text-gray-300">ಇದನ್ನು ಬರೆಯಲು ಮುಖ್ಯವಾಗಿ ಎರಡು ವಿಧಾನಗಳಿವೆ:</p>
+                
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-cube text-gray-400 mr-2"></i>ವಿಧಾನ 1: ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್ (Regular Function)</h3>
+                <div class="relative group mt-2 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <pre><code class="language-javascript">async function functionName() {
+    let result = await somePromiseFunction();
+    console.log(result);
+}</code></pre>
+                </div>
+                
+                <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg mb-8 shadow-sm">
+                    <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center">
+                        <i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:
+                    </h4>
+                    <ul class="list-disc ml-5 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">async function functionName() {</code> : ಇದು ಒಂದು ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್, ಆದರೆ `async` ಕೀವರ್ಡ್ ಬಳಸಿರುವುದರಿಂದ ಇದರೊಳಗೆ ನಾವು ಕಾಯುವ (`await`) ಕೆಲಸ ಮಾಡಬಹುದು.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">let result = await somePromiseFunction();</code> : `somePromiseFunction()` ಎಂಬುದು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸ. `await` ಇರುವುದರಿಂದ ಆ ಕೆಲಸ ಮುಗಿದು ಡೇಟಾ ಬರುವವರೆಗೂ ಕೋಡ್ ಇಲ್ಲಿಯೇ ಕಾಯುತ್ತದೆ. ಬಂದ ಡೇಟಾ `result` ಎಂಬ ವೇರಿಯೇಬಲ್ ಒಳಗೆ ಸೇವ್ ಆಗುತ್ತದೆ.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">console.log(result);</code> : ಬಂದ ಡೇಟಾವನ್ನು ಸ್ಕ್ರೀನ್ ಮೇಲೆ (ಕನ್ಸೋಲ್‌ನಲ್ಲಿ) ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 mt-8"><i class="fa-solid fa-arrow-right text-brand-500 mr-2"></i>ವಿಧಾನ 2: ಆ್ಯರೋ ಫಂಕ್ಷನ್ (Arrow Function - ಆಧುನಿಕ ವಿಧಾನ)</h3>
+                <div class="relative group mt-2 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <pre><code class="language-javascript">const functionName = async () => {
+    let result = await somePromiseFunction();
+    console.log(result);
+}</code></pre>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg mb-4 shadow-sm">
+                    <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center">
+                        <i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:
+                    </h4>
+                    <ul class="list-disc ml-5 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">const functionName = async () => {</code> : ಇದು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ (ES6) ಬರವಣಿಗೆ. ಫಂಕ್ಷನ್ ಹೆಸರನ್ನು ಒಂದು ವೇರಿಯೇಬಲ್‌ನಂತೆ ಬರೆದು, `()` ಚಿಹ್ನೆಗೂ ಮುನ್ನ `async` ಸೇರಿಸಲಾಗಿದೆ. ಒಳಗಿನ ಕೆಲಸ ವಿಧಾನ 1 ರಂತೆಯೇ ಇರುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Step 4 -->
+            <section id="step-4" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                    ಹಂತ 4: `await` ಬಳಸುವ ಮುನ್ನ ಮಾಡಬೇಕಾದ ಸಿದ್ಧತೆ (Prerequisites)
+                </h2>
+                <p class="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <code class="font-code bg-gray-100 dark:bg-gray-800 px-1 rounded text-brand-500">await</code> ಬಳಸುವ ಮುನ್ನ ಅತಿ ಮುಖ್ಯವಾದ ಅಂಶವೆಂದರೆ: ನೀವು ಯಾವ ಕೆಲಸಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದ್ದೀರೋ, ಆ ಕೆಲಸವು ಕಡ್ಡಾಯವಾಗಿ ಒಂದು <strong>"Promise"</strong> ಆಗಿರಬೇಕು. ಸಾಮಾನ್ಯ ಡೇಟಾಗೆ (ಉದಾ: ಸ್ಟ್ರಿಂಗ್, ನಂಬರ್) `await` ಹಾಕಿದರೆ ಅದು ಕಾಯುವುದಿಲ್ಲ.
+                </p>
+
+                <h3 class="font-bold text-lg text-red-600 dark:text-red-400 mb-2 flex items-center mt-6">
+                    <i class="fa-solid fa-circle-xmark mr-2"></i>ತಪ್ಪಾದ ವಿಧಾನ:
+                </h3>
+                <div class="relative group mt-2 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <pre><code class="language-javascript">async function test() {
+    let data = await "ಹಲೋ"; // ಇದು Promise ಅಲ್ಲ, ಹಾಗಾಗಿ ಇಲ್ಲಿ ಸಮಯ ಕಾಯುವುದಿಲ್ಲ!
+    console.log(data);
+}</code></pre>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700 mb-8">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 mb-1 text-sm"><i class="fa-solid fa-thumbtack text-gray-400 mr-2"></i>📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 ml-6">ಇಲ್ಲಿ `await` ನ ಪಕ್ಕದಲ್ಲಿ ಕೇವಲ `"ಹಲೋ"` ಎಂಬ ಸ್ಟ್ರಿಂಗ್ (ಪದ) ಇದೆ. ಇದು Promise ಅಲ್ಲದ ಕಾರಣ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದು ಮಿಲಿಸೆಕೆಂಡ್ ಕೂಡ ಕಾಯುವುದಿಲ್ಲ, ನೇರವಾಗಿ ಪ್ರಿಂಟ್ ಮಾಡಿಬಿಡುತ್ತದೆ. ಇದು `await` ನ ತಪ್ಪು ಬಳಕೆ.</p>
+                </div>
+
+                <h3 class="font-bold text-lg text-green-600 dark:text-green-400 mb-2 flex items-center mt-6">
+                    <i class="fa-solid fa-circle-check mr-2"></i>ಸರಿಯಾದ ವಿಧಾನ (Promise ರಚಿಸುವುದು):
+                </h3>
+                <p class="mb-2 text-gray-700 dark:text-gray-300">ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸವನ್ನು Promise ಆಗಿ ಪರಿವರ್ತಿಸಬೇಕು.</p>
+                <div class="relative group mt-2 mb-4">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <pre><code class="language-javascript">// 1. ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸ (Promise)
+function getDataFromServer() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve("ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಬಂದಿದೆ!"), 2000);
+    });
+}
+
+// 2. ಆ Promise ಅನ್ನು async/await ಒಳಗೆ ಕರೆಯುವುದು
+async function showData() {
+    console.log("ಡೇಟಾ ತರುತ್ತಿದ್ದೇನೆ...");
+    let result = await getDataFromServer(); // ಸರಿಯಾಗಿ 2 ಸೆಕೆಂಡ್ ಕಾಯುತ್ತದೆ
+    console.log(result);
+}</code></pre>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg mb-4 shadow-sm">
+                    <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center">
+                        <i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:
+                    </h4>
+                    <ul class="list-disc ml-5 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">return new Promise(...)</code> : ಇದೊಂದು ಭರವಸೆ (Promise). ಕೆಲಸ ಮುಗಿದಾಗ `resolve` ಮೂಲಕ ಉತ್ತರ ಕೊಡುತ್ತೇನೆ ಎಂದು ಹೇಳುತ್ತದೆ.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">setTimeout(...)</code> : ಇದು ಕೃತಕವಾಗಿ 2 ಸೆಕೆಂಡ್ (2000ms) ವಿಳಂಬ ಮಾಡುತ್ತದೆ (ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ಬರಲು ಸಮಯ ತಗಲುವಂತೆ). 2 ಸೆಕೆಂಡ್ ನಂತರ `"ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಬಂದಿದೆ!"` ಎಂಬುದನ್ನು ಕಳುಹಿಸುತ್ತದೆ.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">console.log("ಡೇಟಾ ತರುತ್ತಿದ್ದೇನೆ...");</code> : ಇದು ಮೊದಲು ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">let result = await getDataFromServer();</code> : ಇಲ್ಲಿಗೆ ಬಂದಾಗ ಪ್ರೋಗ್ರಾಮ್ ನಿಖರವಾಗಿ 2 ಸೆಕೆಂಡ್ ಕಾಯುತ್ತದೆ. ಏಕೆಂದರೆ `getDataFromServer` ಒಂದು Promise ಆಗಿದೆ.</li>
+                        <li><code class="font-code text-xs bg-white dark:bg-gray-800 px-1 rounded">console.log(result);</code> : 2 ಸೆಕೆಂಡ್ ನಂತರ ಬಂದ ಡೇಟಾವನ್ನು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Step 5 -->
+            <section id="step-5" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">5</span>
+                    ಹಂತ 5: ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ? (Behind the Scenes)
+                </h2>
+                <p class="mb-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ "ಸಿಂಗಲ್ ಥ್ರೆಡ್" (Single-threaded) ಭಾಷೆ. ಅದಕ್ಕೆ ಏಕಕಾಲದಲ್ಲಿ ಒಂದೇ ಕೆಲಸ ಮಾಡಲು ಸಾಧ್ಯ. ಆದರೂ ಇದು ಮಲ್ಟಿ-ಟಾಸ್ಕಿಂಗ್‌ನಂತೆ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?
+                </p>
+
+                <div class="relative pl-8 space-y-6 before:absolute before:inset-0 before:ml-4 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-brand-400 before:to-transparent">
+                    <div class="relative flex items-start group">
+                        <div class="absolute -left-10 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-400 text-darkBg shadow-sm font-bold text-xs">1</div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 w-full group-hover:-translate-y-1 transition-transform">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-1">ಪ್ರಾರಂಭ:</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">`async` ಫಂಕ್ಷನ್ ಕರೆದಾಗ, ಸಾಲಿನಿಂದ ಸಾಲಿಗೆ ಕೋಡ್ ಓದಲು ಶುರುವಾಗುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                    <div class="relative flex items-start group">
+                        <div class="absolute -left-10 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-400 text-darkBg shadow-sm font-bold text-xs">2</div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 w-full group-hover:-translate-y-1 transition-transform">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-1">ತಾತ್ಕಾಲಿಕ ತಡೆ (Pause):</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">ಕೋಡ್‌ನಲ್ಲಿ `await` ಎದುರಾದಾಗ, ಆ ಫಂಕ್ಷನ್ ಅನ್ನು ಅಲ್ಲಿಗೇ ತಾತ್ಕಾಲಿಕವಾಗಿ ತಡೆಹಿಡಿಯಲಾಗುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                    <div class="relative flex items-start group">
+                        <div class="absolute -left-10 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-400 text-darkBg shadow-sm font-bold text-xs">3</div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 w-full group-hover:-translate-y-1 transition-transform">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-1">ಹಿನ್ನೆಲೆಗೆ ವರ್ಗಾವಣೆ:</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">`await` ಮುಂದಿರುವ ಕೆಲಸವನ್ನು (ಉದಾ: ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ತರುವುದು) ಬ್ರೌಸರ್‌ನ ಹಿನ್ನೆಲೆಗೆ (Web APIs) ಒಪ್ಪಿಸಲಾಗುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                    <div class="relative flex items-start group">
+                        <div class="absolute -left-10 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-400 text-darkBg shadow-sm font-bold text-xs">4</div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 w-full group-hover:-translate-y-1 transition-transform">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-1">ಬೇರೆ ಕೆಲಸ ಮುಂದುವರಿಕೆ (Non-blocking):</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">ಇಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಖಾಲಿ ಕೂರುವುದಿಲ್ಲ! ಆ ಫಂಕ್ಷನ್‌ನಿಂದ ಹೊರಬಂದು, ಕೆಳಗಿರುವ ಬೇರೆ ಸಾಲಿನ ಕೋಡ್‌ಗಳನ್ನು ರನ್ ಮಾಡಲು ಶುರು ಮಾಡುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                    <div class="relative flex items-start group">
+                        <div class="absolute -left-10 mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-brand-400 text-darkBg shadow-sm font-bold text-xs">5</div>
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 w-full group-hover:-translate-y-1 transition-transform">
+                            <h4 class="font-bold text-gray-900 dark:text-white mb-1">ಮರಳಿ ಬರುವುದು (Resume):</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">ಹಿನ್ನೆಲೆಯಲ್ಲಿ ನಡೆಯುತ್ತಿದ್ದ ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮತ್ತೆ ಎಲ್ಲಿ `await` ಬಳಿ ಕೋಡ್ ನಿಲ್ಲಿಸಿತ್ತೋ, ಅಲ್ಲಿಂದಲೇ ಮುಂದಿನ ಸಾಲುಗಳನ್ನು ರನ್ ಮಾಡುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <hr class="border-gray-200 dark:border-gray-800 my-8">
+
+            <!-- Step 6 -->
+            <section id="step-6" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">6</span>
+                    ಹಂತ 6: ಪ್ರಾಯೋಗಿಕ ಉದಾಹರಣೆಗಳು (Beginner to Pro)
+                </h2>
+
+                <!-- Level 1 -->
+                <div class="mb-10">
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 flex items-center">
+                        <span class="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs px-2 py-1 rounded-full mr-2 uppercase tracking-wide">Level 1</span>
+                        ಬೇಸಿಕ್ (ಹೋಟೆಲ್ ಆರ್ಡರ್)
+                    </h3>
+                    <div class="relative group mt-2 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">function makeDosa() {
+    return new Promise(resolve => setTimeout(() => resolve("ದೋಸೆ ರೆಡಿಯಾಗಿದೆ! 🍽️"), 3000));
+}
+
+async function getFood() {
+    console.log("1. ಆರ್ಡರ್ ಮಾಡಿದ್ದೀನಿ, ಕಾಯುತ್ತಿದ್ದೇನೆ...");
+    let food = await makeDosa(); // 3 ಸೆಕೆಂಡ್ ಕಾಯುತ್ತದೆ
+    console.log("2.", food);
+}
+
+getFood();
+console.log("ಈ ಮಧ್ಯೆ ನಾನು ಸ್ನೇಹಿತರೊಂದಿಗೆ ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ... 🗣️");
+// ಔಟ್‌ಪುಟ್: ಮೊದಲು 1 ಮತ್ತು 'ಸ್ನೇಹಿತರೊಂದಿಗೆ...' ಪ್ರಿಂಟ್ ಆಗಿ, 3 ಸೆಕೆಂಡ್ ನಂತರ ದೋಸೆ ಬರುತ್ತದೆ.</code></pre>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+                        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center"><i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:</h4>
+                        <ul class="list-disc ml-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li>`makeDosa()` : ಇದು 3 ಸೆಕೆಂಡ್ ಕಾಯುವ ಒಂದು Promise.</li>
+                            <li>`getFood()` ಕರೆಯಲ್ಪಟ್ಟಾಗ, `"1. ಆರ್ಡರ್ ಮಾಡಿದ್ದೀನಿ..."` ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.</li>
+                            <li>`await makeDosa()` ಎದುರಾದಾಗ `getFood` ಫಂಕ್ಷನ್ 3 ಸೆಕೆಂಡ್‌ಗಳ ಕಾಲ ತಾತ್ಕಾಲಿಕವಾಗಿ ನಿಲ್ಲುತ್ತದೆ (Pause).</li>
+                            <li>ಆದರೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಕಾಯುವುದಿಲ್ಲ! ಅದು ಫಂಕ್ಷನ್‌ನಿಂದ ಹೊರಬಂದು, ಕೆಳಗಿರುವ `"ಈ ಮಧ್ಯೆ ನಾನು ಸ್ನೇಹಿತರೊಂದಿಗೆ..."` ಅನ್ನು ತಕ್ಷಣ ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                            <li>3 ಸೆಕೆಂಡ್ ಮುಗಿದ ತಕ್ಷಣ, ಮತ್ತೆ `getFood` ಒಳಗೆ ಹೋಗಿ `"2. ದೋಸೆ ರೆಡಿಯಾಗಿದೆ! 🍽️"` ಎಂದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="mb-10">
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 text-xs px-2 py-1 rounded-full mr-2 uppercase tracking-wide">Level 2</span>
+                        ಇಂಟರ್ಮೀಡಿಯೇಟ್ (API ನಿಂದ ಡೇಟಾ ತರುವುದು)
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">ಇಲ್ಲಿ <code class="font-code">fetch</code> ಎಂಬುದು ಮೊದಲೇ ಸಿದ್ಧಪಡಿಸಿದ Promise ಆಗಿದೆ.</p>
+                    <div class="relative group mt-2 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">async function getUserData() {
+    console.log("ಡೇಟಾ ತರುತ್ತಿದ್ದೇನೆ... ⏳");
+    
+    // ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ಬರಲು ಕಾಯುತ್ತಿದೆ
+    let response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+    
+    // ಬಂದ ಡೇಟಾವನ್ನು JSON ಗೆ ಬದಲಾಯಿಸಲು ಕಾಯುತ್ತಿದೆ
+    let user = await response.json();
+    
+    console.log("ಬಳಕೆದಾರನ ಹೆಸರು:", user.name);
+}
+getUserData();</code></pre>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+                        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center"><i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:</h4>
+                        <ul class="list-disc ml-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li>`await fetch(...)` : ಇದು ಇಂಟರ್ನೆಟ್‌ನಿಂದ (API) ಡೇಟಾ ತರುತ್ತದೆ. ಇದು ತಾನಾಗಿಯೇ ಒಂದು Promise ಆಗಿರುವುದರಿಂದ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಆಗುವರೆಗೆ ಕೋಡ್ ಇಲ್ಲೇ ಕಾಯುತ್ತದೆ.</li>
+                            <li>`await response.json()` : ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಬಂದ ಡೇಟಾ ನೇರವಾಗಿ ಓದಲು ಬರುವುದಿಲ್ಲ. ಅದನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವ JSON ಫಾರ್ಮ್ಯಾಟ್‌ಗೆ ಬದಲಾಯಿಸಲು ಸ್ವಲ್ಪ ಸಮಯ ಬೇಕು. ಅದಕ್ಕೂ `await` ಹಾಕಲಾಗಿದೆ.</li>
+                            <li>`user.name` : JSON ಆಗಿ ಬದಲಾದ ಡೇಟಾದಿಂದ ಕೇವಲ ಹೆಸರನ್ನು (name) ಮಾತ್ರ ತೆಗೆದು ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div>
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 flex items-center">
+                        <span class="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 text-xs px-2 py-1 rounded-full mr-2 uppercase tracking-wide">Level 3</span>
+                        ಪ್ರೊ (Pro) - ದೋಷ ನಿವಾರಣೆ (Error Handling) ಮತ್ತು `Promise.all`
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">ಇಂಟರ್ನೆಟ್ ಆಫ್ ಆಗಿದ್ದರೆ ಪ್ರೋಗ್ರಾಮ್ ಕ್ರ್ಯಾಶ್ ಆಗದಂತೆ `try...catch` ಮತ್ತು ಏಕಕಾಲದಲ್ಲಿ ಹಲವು ಡೇಟಾ ತರಲು `Promise.all` ಬಳಸಲಾಗುತ್ತದೆ.</p>
+                    <div class="relative group mt-2 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                        <pre><code class="language-javascript">async function getMultipleUsersInfo() {
+    try {
+        console.log("ಮಾಹಿತಿ ಕಲೆಹಾಕಲಾಗುತ್ತಿದೆ...");
+
+        // Promise.all ಬಳಸಿ ಒಟ್ಟಿಗೆ ಎರಡು ಡೇಟಾಗಳನ್ನು ತರುವುದು (ಸಮಯದ ಉಳಿತಾಯ)
+        let [res1, res2] = await Promise.all([
+            fetch('https://jsonplaceholder.typicode.com/users/1'),
+            fetch('https://jsonplaceholder.typicode.com/users/2')
+        ]);
+
+        let user1 = await res1.json();
+        let user2 = await res2.json();
+
+        console.log("ಮೊದಲ ವ್ಯಕ್ತಿ:", user1.name, "| ಎರಡನೇ ವ್ಯಕ್ತಿ:", user2.name);
+
+    } catch (error) {
+        // ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದಿದ್ದರೆ ಈ ಭಾಗ ರನ್ ಆಗುತ್ತದೆ
+        console.log("ಕ್ಷಮಿಸಿ, ದೋಷ ಕಂಡುಬಂದಿದೆ! 🚫", error.message);
+    } finally {
+        // ಕೆಲಸ ಯಶಸ್ವಿಯಾಗಲಿ ಅಥವಾ ವಿಫಲವಾಗಲಿ, ಇದು ರನ್ ಆಗುತ್ತದೆ
+        console.log("ಪ್ರಕ್ರಿಯೆ ಮುಕ್ತಾಯಗೊಂಡಿದೆ. ✅");
+    }
+}
+getMultipleUsersInfo();</code></pre>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+                        <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center"><i class="fa-solid fa-thumbtack mr-2"></i> 📌 ಕೋಡ್‌ನ ಹಂತ-ಹಂತದ ವಿವರಣೆ:</h4>
+                        <ul class="list-disc ml-5 space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li>`try { ... }` : ಯಶಸ್ವಿಯಾಗಿ ನಡೆಯಬೇಕಾದ ಕೋಡ್ ಅನ್ನು ಇದರೊಳಗೆ ಬರೆಯುತ್ತೇವೆ.</li>
+                            <li>`await Promise.all([...])` : ಇದು ಬಹಳ ಮುಖ್ಯ! ಎರಡು ಪ್ರತ್ಯೇಕ `await fetch` ಬರೆದರೆ, ಮೊದಲನೆಯದು ಮುಗಿಯುವರೆಗೆ ಎರಡನೆಯದು ಕಾಯಬೇಕು. ಆದರೆ `Promise.all` ಬಳಸಿದರೆ ಎರಡೂ API ಗಳು ಏಕಕಾಲದಲ್ಲಿ (Parallel) ರನ್ ಆಗಿ, ಸಮಯ ಉಳಿತಾಯವಾಗುತ್ತದೆ.</li>
+                            <li>`let [res1, res2]` : ಎರಡೂ ಡೇಟಾಗಳನ್ನು ಒಟ್ಟಿಗೆ ತಂದು Array Destructuring ಮೂಲಕ ಎರಡು ಬೇರೆ ಬೇರೆ ವೇರಿಯೇಬಲ್‌ಗೆ ಹಾಕಲಾಗುತ್ತಿದೆ.</li>
+                            <li>`catch (error) { ... }` : ಒಂದು ವೇಳೆ ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದಿದ್ದರೆ ಅಥವಾ ಸರ್ವರ್ ಡೌನ್ ಇದ್ದರೆ `try` ಬ್ಲಾಕ್ ಫೇಲ್ ಆಗುತ್ತದೆ. ಆಗ ಪ್ರೋಗ್ರಾಮ್ ನಿಲ್ಲುವ ಬದಲು, ಈ `catch` ಬ್ಲಾಕ್ ಒಳಗೆ ಬಂದು ಯೂಸರ್‌ಗೆ ದೋಷದ ಸಂದೇಶವನ್ನು (error.message) ಪ್ರಿಂಟ್ ಮಾಡುತ್ತದೆ.</li>
+                            <li>`finally { ... }` : ಕೆಲಸ ಸಕ್ಸಸ್ ಆಗಲಿ (try) ಅಥವಾ ಫೇಲ್ ಆಗಲಿ (catch), ಕೊನೆಯಲ್ಲಿ ಈ ಬ್ಲಾಕ್ ಕಡ್ಡಾಯವಾಗಿ ರನ್ ಆಗುತ್ತದೆ (ಉದಾಹರಣೆಗೆ ಲೋಡಿಂಗ್ ಸ್ಪಿನ್ನರ್ ಅನ್ನು ಆಫ್ ಮಾಡಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-gray-800 my-8">
+
+            <!-- Step 7 -->
+            <section id="step-7" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">7</span>
+                    ಹಂತ 7: ಹಳೆಯ ವಿಧಾನ vs ಹೊಸ ವಿಧಾನ (ಏಕೆ ಬದಲಾಯಿಸಬೇಕು?)
+                </h2>
+                <p class="mb-4 text-gray-700 dark:text-gray-300">ಹಳೆಯ `Promise.then().catch()` ವಿಧಾನವನ್ನು ಹೊಸ `async/await` ಗೆ ಬದಲಾಯಿಸುವುದು ಬಹಳ ಸುಲಭ.</p>
+                <ul class="list-disc ml-5 mb-6 text-gray-700 dark:text-gray-300 space-y-1">
+                    <li>`.then()` ಮಾಡುವ ಕೆಲಸವನ್ನು `await` ಮಾಡುತ್ತದೆ.</li>
+                    <li>`.catch()` ಮಾಡುವ ಕೆಲಸವನ್ನು `try...catch` ಮಾಡುತ್ತದೆ.</li>
+                </ul>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Old Method -->
+                    <div>
+                        <h3 class="font-bold text-gray-700 dark:text-gray-400 mb-2 flex items-center text-sm">
+                            <i class="fa-solid fa-history mr-2"></i>ಹಳೆಯ ವಿಧಾನ (Callback Hell / Promise Chain):
+                        </h3>
+                        <div class="relative group mb-4">
+                            <pre class="!mt-0"><code class="language-javascript">fetch('https://jsonplaceholder.typicode.com/users/1')
+    .then(response => response.json())
+    .then(user => console.log(user.name))
+    .catch(error => console.log(error));</code></pre>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
+                            <p class="mb-1"><i class="fa-solid fa-arrow-right text-gray-400 mr-1 text-xs"></i> ಇಲ್ಲಿ `fetch` ಮಾಡಿದ ಮೇಲೆ ಡೇಟಾ ಬಂದರೆ `.then` ಒಳಗೆ ಹೋಗು, ಆಮೇಲೆ ಅದನ್ನು JSON ಮಾಡು, ಆಮೇಲೆ ಪ್ರಿಂಟ್ ಮಾಡು, ಏನಾದರೂ ತಪ್ಪಾದರೆ `.catch` ಗೆ ಹೋಗು ಎಂದು ಚೈನ್ (Chain) ರೀತಿ ಬರೆಯಲಾಗುತ್ತದೆ.</p>
+                            <p class="text-red-600 dark:text-red-400 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ಸಮಸ್ಯೆ: ಒಂದರ ಕೆಳಗೆ ಒಂದು `.then()` ಬರೆಯುತ್ತಾ ಹೋದರೆ ಕೋಡ್ ಓದಲು ಕಷ್ಟವಾಗುತ್ತದೆ (ಇದನ್ನು Callback Hell ಎನ್ನುತ್ತಾರೆ).</p>
+                        </div>
+                    </div>
+
+                    <!-- New Method -->
+                    <div>
+                        <h3 class="font-bold text-brand-600 dark:text-brand-400 mb-2 flex items-center text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>ಹೊಸ ವಿಧಾನ (Clean & Readable):
+                        </h3>
+                        <div class="relative group mb-4">
+                            <pre class="!mt-0"><code class="language-javascript">async function getUser() {
+    try {
+        let response = await fetch('https://jsonplaceholder.typicode.com/users/1');
+        let user = await response.json();
+        console.log(user.name);
+    } catch (error) {
+        console.log(error);
+    }
+}</code></pre>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
+                            <p class="mb-1"><i class="fa-solid fa-arrow-right text-gray-400 mr-1 text-xs"></i> ಇಲ್ಲಿ ಯಾವುದೇ `.then` ಚೈನಿಂಗ್ ಇಲ್ಲ.</p>
+                            <p class="mb-1"><i class="fa-solid fa-arrow-right text-gray-400 mr-1 text-xs"></i> ಸಾಲು 1 ರಲ್ಲಿ ಡೇಟಾ ತರುವುದು, ಸಾಲು 2 ರಲ್ಲಿ JSON ಮಾಡುವುದು, ಸಾಲು 3 ರಲ್ಲಿ ಪ್ರಿಂಟ್ ಮಾಡುವುದು. ಇದು ಸಾಮಾನ್ಯ ಸಿಂಕ್ರೋನಸ್ ಕೋಡ್‌ನಂತೆಯೇ ಕಾಣುತ್ತದೆ.</p>
+                            <p class="text-green-600 dark:text-green-400 font-semibold"><i class="fa-solid fa-check mr-1"></i> ಲಾಭ: ಹೊಸ ವಿಧಾನದಲ್ಲಿ ಕೋಡ್ ಸಾಮಾನ್ಯ ಇಂಗ್ಲಿಷ್ ವಾಕ್ಯದಂತೆ ಓದಲು ಮತ್ತು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಬಹಳ ಸುಲಭ.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 8 -->
+            <section id="step-8" class="fade-in-section scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 flex items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 w-8 h-8 rounded-full flex items-center justify-center text-sm mr-3">8</span>
+                    ಹಂತ 8: ಬೋನಸ್ ಮಾಹಿತಿ (ನೀವು ತಿಳಿದಿರಲೇಬೇಕಾದ ಅಂಶಗಳು)
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                        <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-question"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">1. `await` ಹಾಕಲು ಮರೆತರೆ ಏನಾಗುತ್ತದೆ?</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">ಒಂದು ವೇಳೆ ನೀವು `await` ಹಾಕಲು ಮರೆತರೆ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಡೇಟಾ ಬರುವವರೆಗೆ ಕಾಯುವುದಿಲ್ಲ. ಬದಲಾಗಿ ಅದು ನೇರವಾಗಿ ಒಂದು ಖಾಲಿ <code class="font-code text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">Promise { &lt;pending&gt; }</code> ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡಿಬಿಡುತ್ತದೆ. ಇದು ಡೆವಲಪರ್‌ಗಳು ಮಾಡುವ ಅತಿ ಸಾಮಾನ್ಯ ತಪ್ಪು.</p>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 text-blue-500 rounded-full flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-rocket"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">2. Top-level `await` (ಹೊಸ ಅಪ್ಡೇಟ್):</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">ಹಿಂದೆ `await` ಬಳಸಲು `async` ಫಂಕ್ಷನ್ ಕಡ್ಡಾಯವಾಗಿತ್ತು. ಆದರೆ ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (ES2022+) Modules (<code class="font-code text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">type="module"</code>) ಒಳಗೆ ಫಂಕ್ಷನ್ ಇಲ್ಲದೆಯೂ ನೇರವಾಗಿ <code class="font-code text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">await fetch(...)</code> ಎಂದು ಬರೆಯಬಹುದು.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 9 (Bonus Expanded based on learning context) -->
+            <section id="step-9" class="fade-in-section scroll-mt-24 mt-12 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800/30 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-atom text-9xl text-indigo-500"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 flex items-center text-indigo-900 dark:text-indigo-300">
+                    <i class="fa-solid fa-star text-yellow-500 mr-3"></i>
+                    ಹಂತ 9: ವಿಶೇಷ ಬೋನಸ್ - Event Loop ಮತ್ತು Microtask Queue
+                </h2>
+                <p class="mb-4 text-indigo-800 dark:text-indigo-200/80 leading-relaxed">
+                    ನೀವು <strong>Event Loop</strong> ಆರ್ಕಿಟೆಕ್ಚರ್ ಅನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವಾಗ <code class="font-code bg-indigo-100 dark:bg-indigo-900/50 px-1 rounded text-indigo-700 dark:text-indigo-300">async/await</code> ನ ಹಿಂದಿನ ರಹಸ್ಯವನ್ನು ತಿಳಿದಿರುವುದು ಅತ್ಯಗತ್ಯ:
+                </p>
+                <div class="space-y-4 text-sm text-indigo-900/80 dark:text-indigo-200/70">
+                    <p><i class="fa-solid fa-circle-check text-indigo-500 mr-2"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Promise ಗಳು (ಹಾಗೂ `await` ನ ಮುಂದಿನ ಸಾಲುಗಳು) ನೇರವಾಗಿ <strong>ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (Microtask Queue)</strong> ಒಳಗೆ ಹೋಗುತ್ತವೆ.</p>
+                    <p><i class="fa-solid fa-circle-check text-indigo-500 mr-2"></i> ಸಾಮಾನ್ಯ `setTimeout` ಅಥವಾ Event Listener ಗಳು <strong>ಮ್ಯಾಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (Macrotask Queue)</strong> ಒಳಗೆ ಹೋಗುತ್ತವೆ.</p>
+                    <div class="bg-white/60 dark:bg-darkCard/60 p-4 rounded-lg border border-indigo-100/50 dark:border-indigo-800/50 backdrop-blur-sm">
+                        <strong class="text-indigo-900 dark:text-indigo-300">💡 ಪ್ರಮುಖ ನಿಯಮ:</strong> Event Loop ಯಾವಾಗಲೂ ಮ್ಯಾಕ್ರೋಟಾಸ್ಕ್‌ಗಿಂತ <strong>ಮೊದಲು</strong> ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ ಅನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡುತ್ತದೆ. ಆದ್ದರಿಂದ `await` ನ ಹಿನ್ನೆಲೆ ಕೆಲಸಗಳು `setTimeout` ಗಿಂತ ಹೆಚ್ಚಿನ ಆದ್ಯತೆ (High Priority) ಪಡೆಯುತ್ತವೆ!
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Dark/Light Theme Toggle
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const htmlTag = document.documentElement;
+
+            // Check system preference / local storage
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlTag.classList.add('dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                htmlTag.classList.remove('dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                htmlTag.classList.toggle('dark');
+                if (htmlTag.classList.contains('dark')) {
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            });
+
+            // 2. Intersection Observer for Fade-in Animations
+            const fadeElements = document.querySelectorAll('.fade-in-section');
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+            
+            const fadeObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            fadeElements.forEach(el => fadeObserver.observe(el));
+
+            // 3. TOC Active State Highlighting on Scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.toc-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    // Adjusted offset for sticky header
+                    if (pageYOffset >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // 4. Copy to Clipboard Functionality
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Find the code block within the same parent
+                    const codeBlock = button.parentElement.querySelector('code');
+                    const text = codeBlock.innerText;
+
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalHTML = button.innerHTML;
+                        button.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                        button.classList.add('bg-green-600', 'hover:bg-green-700');
+                        button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                        
+                        setTimeout(() => {
+                            button.innerHTML = originalHTML;
+                            button.classList.remove('bg-green-600', 'hover:bg-green-700');
+                            button.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                        }, 2000);
+                    }).catch(err => console.error('Failed to copy!', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

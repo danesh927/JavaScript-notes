@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Settled Promises | Comprehensive Guide</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        kannada: ['Nudi', 'Tunga', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkSurface: '#1e293b',
+                        darkBorder: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Prism.js Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS for Animations and overrides -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Prioritize Kannada fallback for specific characters */
+        }
+        
+        .kn-text {
+            line-height: 1.8;
+            letter-spacing: 0.2px;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Code block refinements */
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: #1a1a1a !important;
+        }
+
+        /* Sidebar link active state transition */
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active {
+            border-left-color: #3b82f6; /* bg-blue-500 */
+            color: #3b82f6;
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2 font-medium">
+        <i class="fas fa-check-circle"></i>
+        <span>Code Copied!</span>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-white dark:bg-darkSurface border-b border-gray-200 dark:border-darkBorder shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-400 text-black p-2 rounded-lg font-bold text-xl leading-none">JS</div>
+                <h1 class="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+                    Settled Promises
+                </h1>
+            </div>
+            
+            <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 text-gray-600 dark:text-gray-300 focus:outline-none">
+                <i class="fas fa-sun text-xl hidden dark:block text-yellow-400"></i>
+                <i class="fas fa-moon text-xl block dark:hidden text-indigo-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 py-8 relative">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="w-full md:w-72 flex-shrink-0 md:sticky md:top-24 md:h-[calc(100vh-8rem)] overflow-y-auto order-2 md:order-1 bg-white dark:bg-darkSurface rounded-xl p-5 shadow-sm border border-gray-200 dark:border-darkBorder transition-colors duration-300">
+            <h3 class="text-lg font-bold mb-4 uppercase tracking-wider text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
+                <i class="fas fa-list-ul"></i> ಪರಿವಿಡಿ (Contents)
+            </h3>
+            <nav class="flex flex-col gap-2">
+                <a href="#intro" class="nav-link block px-3 py-2 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400">ಪೀಠಿಕೆ (Introduction)</a>
+                <a href="#section1" class="nav-link block px-3 py-2 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400">1. ತಳಮಟ್ಟದ ವಿವರಣೆ</a>
+                <a href="#section2" class="nav-link block px-3 py-2 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400">2. ತಾಂತ್ರಿಕ ವಿವರಣೆ</a>
+                <a href="#section3" class="nav-link block px-3 py-2 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400">3. ಹಂತ-ಹಂತದ ಉದಾಹರಣೆಗಳು</a>
+                <a href="#section4" class="nav-link block px-3 py-2 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400">4. Promise.allSettled()</a>
+            </nav>
+            
+            <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                <p class="text-xs text-blue-800 dark:text-blue-300 font-medium">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                    <strong>Pro Tip:</strong> Use the toggle button in the top right to switch between dark and light modes for optimal reading comfort.
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full max-w-4xl order-1 md:order-2 space-y-12 pb-20">
+            
+            <!-- Intro -->
+            <section id="intro" class="fade-in scroll-mt-24">
+                <div class="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-darkSurface p-6 rounded-2xl border border-indigo-100 dark:border-gray-700 shadow-sm">
+                    <p class="text-xl leading-relaxed font-medium kn-text">
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ 'ಪ್ರಾಮಿಸ್' (Promise) ಎಂದರೆ ಭವಿಷ್ಯದಲ್ಲಿ ನಡೆಯುವ ಒಂದು ಕೆಲಸ ಅಥವಾ ಡೇಟಾ. 'ಸೆಟಲ್ಡ್ ಪ್ರಾಮಿಸ್' (Settled Promise) ಎಂದರೆ ಆ ಕೆಲಸಕ್ಕಾಗಿ ಕಾಯುವ ಅಗತ್ಯವಿಲ್ಲ; ಅದು ಈಗಾಗಲೇ ಯಶಸ್ವಿಯಾಗಿದೆ (Resolved) ಅಥವಾ ವಿಫಲವಾಗಿದೆ (Rejected) ಎಂದರ್ಥ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 1 -->
+            <section id="section1" class="fade-in scroll-mt-24">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                    <div class="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-500">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    1. ತಳಮಟ್ಟದ ವಿವರಣೆ (ಚಿಕ್ಕ ಮಕ್ಕಳಿಗೆ ಅರ್ಥವಾಗುವಂತೆ)
+                </h2>
+                
+                <p class="text-lg mb-4 kn-text">
+                    ಒಂದು ಸರಳ ಉದಾಹರಣೆ ತೆಗೆದುಕೊಳ್ಳಿ: ನೀವು ನಿಮ್ಮ ತಾಯಿಯ ಬಳಿ "ನನಗೆ ಐಸ್ ಕ್ರೀಮ್ ಬೇಕು" ಎಂದು ಕೇಳುತ್ತೀರಿ.
+                </p>
+
+                <ul class="space-y-4 text-lg kn-text mb-6">
+                    <li class="flex items-start gap-3 bg-white dark:bg-darkSurface p-4 rounded-xl border border-gray-200 dark:border-darkBorder">
+                        <i class="fas fa-hourglass-half text-yellow-500 mt-1"></i>
+                        <div>
+                            <strong>ಸಾಮಾನ್ಯ ಪ್ರಾಮಿಸ್ (Pending):</strong> ತಾಯಿ "ಸಂಜೆ ತಂದು ಕೊಡುತ್ತೇನೆ" ಎನ್ನುತ್ತಾರೆ. ನೀವು ಸಂಜೆಯವರೆಗೆ ಕಾಯಬೇಕು.
+                        </div>
+                    </li>
+                    <li>
+                        <div class="font-bold text-xl mb-3 flex items-center gap-2"><i class="fas fa-check-double text-green-500"></i> ಸೆಟಲ್ಡ್ ಪ್ರಾಮಿಸ್ (Settled):</div>
+                        <ul class="space-y-3 ml-4 md:ml-8">
+                            <li class="flex items-start gap-3 bg-green-50 dark:bg-green-900/10 p-4 rounded-xl border border-green-200 dark:border-green-900/50">
+                                <i class="fas fa-ice-cream text-green-500 mt-1"></i>
+                                <div>
+                                    <strong>ಯಶಸ್ವಿ (Promise.resolve):</strong> ತಾಯಿಯ ಫ್ರಿಡ್ಜ್‌ನಲ್ಲಿ ಈಗಾಗಲೇ ಐಸ್ ಕ್ರೀಮ್ ಇದೆ ಮತ್ತು ಅವರು ತಕ್ಷಣವೇ ನಿಮಗೆ ಕೊಡುತ್ತಾರೆ. ಇಲ್ಲಿ ಕಾಯುವ ಅಗತ್ಯವಿಲ್ಲ!
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3 bg-red-50 dark:bg-red-900/10 p-4 rounded-xl border border-red-200 dark:border-red-900/50">
+                                <i class="fas fa-ban text-red-500 mt-1"></i>
+                                <div>
+                                    <strong>ವಿಫಲ (Promise.reject):</strong> ತಾಯಿ ತಕ್ಷಣವೇ "ಇಲ್ಲ, ನಿನಗೆ ನೆಗಡಿಯಾಗಿದೆ, ಐಸ್ ಕ್ರೀಮ್ ಕೊಡುವುದಿಲ್ಲ" ಎಂದು ಹೇಳಿಬಿಡುತ್ತಾರೆ. ಇದಕ್ಕೂ ಕಾಯುವ ಅಗತ್ಯವಿಲ್ಲ, ನಿರ್ಧಾರ ತಕ್ಷಣ ಗೊತ್ತಾಗುತ್ತದೆ.
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <p class="text-lg bg-blue-50 dark:bg-blue-900/20 p-5 rounded-xl border-l-4 border-blue-500 kn-text">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ, ಯಾವುದೇ ಕಾಯುವಿಕೆ ಇಲ್ಲದೆ ತಕ್ಷಣವೇ ಫಲಿತಾಂಶ ಅಥವಾ ದೋಷವನ್ನು ನೀಡುವ ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು "ಸೆಟಲ್ಡ್ ಪ್ರಾಮಿಸ್‌ಗಳು" ಎಂದು ಕರೆಯುತ್ತಾರೆ.
+                </p>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="section2" class="fade-in scroll-mt-24">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    2. ತಾಂತ್ರಿಕ ವಿವರಣೆ ಮತ್ತು ಕೆಲಸ
+                </h2>
+                
+                <p class="text-lg mb-4 kn-text">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಸೆಟಲ್ಡ್ ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು ರಚಿಸಲು ಎರಡು ಮುಖ್ಯ ವಿಧಾನಗಳಿವೆ:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-white dark:bg-darkSurface p-5 rounded-xl border border-gray-200 dark:border-darkBorder shadow-sm flex flex-col gap-2">
+                        <div class="font-mono text-green-600 dark:text-green-400 font-bold bg-green-50 dark:bg-green-900/20 p-2 rounded inline-block w-max">1. Promise.resolve(value)</div>
+                        <p class="kn-text text-gray-700 dark:text-gray-300">ಮೌಲ್ಯವನ್ನು (value) ತಕ್ಷಣವೇ ಹಿಂತಿರುಗಿಸುವ ಯಶಸ್ವಿ ಪ್ರಾಮಿಸ್.</p>
+                    </div>
+                    <div class="bg-white dark:bg-darkSurface p-5 rounded-xl border border-gray-200 dark:border-darkBorder shadow-sm flex flex-col gap-2">
+                        <div class="font-mono text-red-600 dark:text-red-400 font-bold bg-red-50 dark:bg-red-900/20 p-2 rounded inline-block w-max">2. Promise.reject(reason)</div>
+                        <p class="kn-text text-gray-700 dark:text-gray-300">ದೋಷವನ್ನು (error) ತಕ್ಷಣವೇ ಹಿಂತಿರುಗಿಸುವ ವಿಫಲ ಪ್ರಾಮಿಸ್.</p>
+                    </div>
+                </div>
+
+                <!-- Interactive SVG Diagram -->
+                <div class="my-10 bg-white dark:bg-darkSurface p-6 rounded-2xl border border-gray-200 dark:border-darkBorder shadow-inner text-center overflow-x-auto">
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">Promise Lifecycle Diagram</h4>
+                    <svg viewBox="0 0 800 250" class="w-full max-w-2xl mx-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Definitions -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" class="fill-gray-400 dark:fill-gray-500" />
+                            </marker>
+                            <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+                            </marker>
+                            <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                            </marker>
+                        </defs>
+
+                        <!-- Nodes -->
+                        <!-- Pending -->
+                        <rect x="50" y="100" width="140" height="50" rx="25" class="fill-gray-100 dark:fill-gray-800 stroke-gray-300 dark:stroke-gray-600 stroke-2" />
+                        <text x="120" y="130" text-anchor="middle" font-weight="bold" class="fill-gray-800 dark:fill-gray-200 font-sans">Pending</text>
+                        
+                        <!-- Resolved -->
+                        <rect x="330" y="30" width="140" height="50" rx="8" class="fill-green-50 dark:fill-green-900/30 stroke-green-500 stroke-2" />
+                        <text x="400" y="60" text-anchor="middle" font-weight="bold" class="fill-green-700 dark:fill-green-400 font-sans">Resolved</text>
+                        
+                        <!-- Rejected -->
+                        <rect x="330" y="170" width="140" height="50" rx="8" class="fill-red-50 dark:fill-red-900/30 stroke-red-500 stroke-2" />
+                        <text x="400" y="200" text-anchor="middle" font-weight="bold" class="fill-red-700 dark:fill-red-400 font-sans">Rejected</text>
+
+                        <!-- Settled -->
+                        <rect x="610" y="100" width="140" height="50" rx="25" class="fill-blue-50 dark:fill-blue-900/30 stroke-blue-500 stroke-2" />
+                        <text x="680" y="130" text-anchor="middle" font-weight="bold" class="fill-blue-700 dark:fill-blue-400 font-sans">Settled</text>
+
+                        <!-- Lines -->
+                        <path d="M 190 125 C 250 125, 270 55, 320 55" fill="none" class="stroke-gray-400 dark:stroke-gray-500 stroke-2" marker-end="url(#arrowhead)" />
+                        <path d="M 190 125 C 250 125, 270 195, 320 195" fill="none" class="stroke-gray-400 dark:stroke-gray-500 stroke-2" marker-end="url(#arrowhead)" />
+                        
+                        <path d="M 470 55 C 530 55, 550 125, 600 125" fill="none" class="stroke-green-500 stroke-2" marker-end="url(#arrowhead-green)" />
+                        <path d="M 470 195 C 530 195, 550 125, 600 125" fill="none" class="stroke-red-500 stroke-2" marker-end="url(#arrowhead-red)" />
+                    </svg>
+                </div>
+
+                <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100">ಇವುಗಳ ಉಪಯೋಗವೇನು?</h3>
+                <ul class="space-y-4 text-lg kn-text">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-blue-500 mt-1"></i>
+                        <div><strong>ಸ್ಥಿರತೆ (Consistency):</strong> ಒಂದು ಫಂಕ್ಷನ್ ಕೆಲವೊಮ್ಮೆ ತಕ್ಷಣ ಡೇಟಾ ನೀಡಬಹುದು, ಕೆಲವೊಮ್ಮೆ ಸರ್ವರ್‌ನಿಂದ ತರಲು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳಬಹುದು. ಆದರೆ ಆ ಫಂಕ್ಷನ್ ಯಾವಾಗಲೂ 'Promise' ಅನ್ನೇ ಹಿಂದಿರುಗಿಸುವಂತೆ ಮಾಡಲು ಇದನ್ನು ಬಳಸುತ್ತಾರೆ.</div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-hdd text-blue-500 mt-1"></i>
+                        <div><strong>ಕ್ಯಾಶಿಂಗ್ (Caching):</strong> ಈಗಾಗಲೇ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿದ ಡೇಟಾವನ್ನು ಮತ್ತೆ ಸರ್ವರ್‌ನಿಂದ ತರುವ ಬದಲು ತಕ್ಷಣವೇ ಹಿಂದಿರುಗಿಸಲು.</div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-vial text-blue-500 mt-1"></i>
+                        <div><strong>ಟೆಸ್ಟಿಂಗ್ (Testing):</strong> ಕೋಡ್ ಅನ್ನು ಟೆಸ್ಟ್ ಮಾಡುವಾಗ ಕೃತಕ (mock) ಡೇಟಾವನ್ನು ತಕ್ಷಣವೇ ಸೃಷ್ಟಿಸಲು.</div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="section3" class="fade-in scroll-mt-24">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                    <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-500">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    3. ಎಲ್ಲಾ ರೀತಿಯ ಉದಾಹರಣೆಗಳು ಮತ್ತು ಹಂತ-ಹಂತದ ವಿವರಣೆ
+                </h2>
+
+                <!-- Example 1 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">ಉದಾಹರಣೆ 1: ಯಶಸ್ವಿಯಾದ ಪ್ರಾಮಿಸ್ (Promise.resolve)</h3>
+                    
+                    <div class="relative group mt-4 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                            <i class="fas fa-copy"></i> Copy Code
+                        </button>
+<pre><code class="language-javascript">// ಹಂತ 1: ತಕ್ಷಣವೇ ಯಶಸ್ವಿಯಾಗುವ ಪ್ರಾಮಿಸ್ ರಚನೆ
+const instantSuccess = Promise.resolve("ಡೇಟಾ ತಕ್ಷಣ ಸಿಕ್ಕಿತು!");
+
+// ಹಂತ 2: ಫಲಿತಾಂಶವನ್ನು .then() ಮೂಲಕ ಪಡೆಯುವುದು
+instantSuccess.then((message) => {
+    console.log(message); 
+});
+// ಔಟ್‌ಪುಟ್: ಡೇಟಾ ತಕ್ಷಣ ಸಿಕ್ಕಿತು!</code></pre>
+                    </div>
+                    <p class="text-lg kn-text bg-white dark:bg-darkSurface p-4 rounded-lg border-l-4 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 shadow-sm">
+                        <strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ ನಾವು ಯಾವುದೇ ಸರ್ವರ್‌ಗೆ ಮನವಿ ಕಳುಹಿಸುತ್ತಿಲ್ಲ. ಬದಲಿಗೆ, ನಮ್ಮ ಬಳಿ ಇರುವ ಸ್ಟ್ರಿಂಗ್ ಅನ್ನು Promise.resolve() ಬಳಸಿ ಪ್ರಾಮಿಸ್ ರೂಪಕ್ಕೆ ಬದಲಾಯಿಸಿದ್ದೇವೆ. .then() ಬಳಸಿ ಆ ಮೌಲ್ಯವನ್ನು ನಾವು ತಕ್ಷಣವೇ ಪಡೆಯಬಹುದು.
+                    </p>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">ಉದಾಹರಣೆ 2: ವಿಫಲವಾದ ಪ್ರಾಮಿಸ್ (Promise.reject)</h3>
+                    
+                    <div class="relative group mt-4 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                            <i class="fas fa-copy"></i> Copy Code
+                        </button>
+<pre><code class="language-javascript">// ಹಂತ 1: ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ವಿಫಲವಾಗುವ ಪ್ರಾಮಿಸ್ ರಚನೆ
+const instantFailure = Promise.reject(new Error("ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ!"));
+
+// ಹಂತ 2: ದೋಷವನ್ನು .catch() ಮೂಲಕ ಹಿಡಿಯುವುದು
+instantFailure.catch((error) => {
+    console.log(error.message); 
+});
+// ಔಟ್‌ಪುಟ್: ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ!</code></pre>
+                    </div>
+                    <p class="text-lg kn-text bg-white dark:bg-darkSurface p-4 rounded-lg border-l-4 border-red-400 text-gray-700 dark:text-gray-300 shadow-sm">
+                        <strong>ವಿವರಣೆ:</strong> Promise.reject ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ದೋಷವನ್ನು ಸೃಷ್ಟಿಸುತ್ತದೆ. ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ ಯೂಸರ್ ತಪ್ಪು ಡೇಟಾ ನೀಡಿದಾಗ ತಕ್ಷಣವೇ ದೋಷವನ್ನು ಹಿಂದಿರುಗಿಸಲು ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ವಿಫಲವಾದ ಪ್ರಾಮಿಸ್ ಅನ್ನು ನಿರ್ವಹಿಸಲು .catch() ಬಳಸಬೇಕು.
+                    </p>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">ಉದಾಹರಣೆ 3: ವೃತ್ತಿಪರ ಮಟ್ಟದ ಉಪಯೋಗ (ಕ್ಯಾಶಿಂಗ್)</h3>
+                    <p class="text-lg kn-text mb-4">ವೃತ್ತಿಪರ ಡೆವಲಪರ್‌ಗಳು ಡೇಟಾವನ್ನು ಉಳಿಸಿ (cache) ಮತ್ತೆ ವೇಗವಾಗಿ ಬಳಸಲು ಇದನ್ನು ಹೇಗೆ ಬಳಸುತ್ತಾರೆಂದು ನೋಡೋಣ.</p>
+                    
+                    <div class="relative group mt-4 mb-4">
+                        <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                            <i class="fas fa-copy"></i> Copy Code
+                        </button>
+<pre><code class="language-javascript">// ಇದು ನಮ್ಮ ಡೇಟಾಬೇಸ್ ಅಥವಾ ಕ್ಯಾಶ್ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ
+const cache = {
+    user123: { name: "ರಾಮ್", age: 25 }
+};
+
+// ಬಳಕೆದಾರನ ಡೇಟಾ ತರುವ ಫಂಕ್ಷನ್
+function getUserData(userId) {
+    // ಹಂತ 1: ಡೇಟಾ ಈಗಾಗಲೇ ಕ್ಯಾಶ್‌ನಲ್ಲಿದ್ದರೆ, ತಕ್ಷಣವೇ ಸೆಟಲ್ಡ್ ಪ್ರಾಮಿಸ್ ಮೂಲಕ ಹಿಂದಿರುಗಿಸಿ
+    if (cache[userId]) {
+        console.log("ಕ್ಯಾಶ್‌ನಿಂದ ಡೇಟಾ ತರಲಾಗುತ್ತಿದೆ...");
+        return Promise.resolve(cache[userId]);
+    }
+    
+    // ಹಂತ 2: ಡೇಟಾ ಇಲ್ಲದಿದ್ದರೆ, ಸರ್ವರ್‌ನಿಂದ ತರಲು ಹೊಸ ಪ್ರಾಮಿಸ್ (ಕಾಯುವಿಕೆ) ಮಾಡಿ
+    console.log("ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ತರಲಾಗುತ್ತಿದೆ...");
+    return fetch(`https://api.example.com/users/${userId}`)
+        .then(response => response.json());
+}
+
+// ಬಳಕೆ (Usage)
+getUserData("user123").then(data => {
+    console.log("ಬಳಕೆದಾರನ ಹೆಸರು:", data.name);
+});
+// ಔಟ್‌ಪುಟ್:
+// ಕ್ಯಾಶ್‌ನಿಂದ ಡೇಟಾ ತರಲಾಗುತ್ತಿದೆ...
+// ಬಳಕೆದಾರನ ಹೆಸರು: ರಾಮ್</code></pre>
+                    </div>
+                    <p class="text-lg kn-text bg-white dark:bg-darkSurface p-4 rounded-lg border-l-4 border-green-400 text-gray-700 dark:text-gray-300 shadow-sm">
+                        <strong>ವಿವರಣೆ:</strong> ಈ ಕೋಡ್‌ನಲ್ಲಿ getUserData ಎಂಬುದು ಯಾವಾಗಲೂ .then() ಅನ್ನು ಬೆಂಬಲಿಸುವ ಪ್ರಾಮಿಸ್ ಅನ್ನು ಹಿಂದಿರುಗಿಸಬೇಕು ಎಂಬ ನಿಯಮವಿರುತ್ತದೆ. ಡೇಟಾ ಈಗಾಗಲೇ cache ನಲ್ಲಿದ್ದರೆ, ನಾವು ಅದನ್ನು ನೇರವಾಗಿ return cache[userId] ಎಂದು ಕಳುಹಿಸುವಂತಿಲ್ಲ, ಏಕೆಂದರೆ ಆಗ ಅದು ಪ್ರಾಮಿಸ್ ಆಗಿರುವುದಿಲ್ಲ. ಆದ್ದರಿಂದ Promise.resolve(cache[userId]) ಅನ್ನು ಬಳಸುವ ಮೂಲಕ ಡೇಟಾವನ್ನು ಪ್ರಾಮಿಸ್ ರೂಪದಲ್ಲೇ ತಕ್ಷಣ ಹಿಂದಿರುಗಿಸುತ್ತೇವೆ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 4 (Newly Added dynamically for completeness) -->
+            <section id="section4" class="fade-in scroll-mt-24">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-1 mb-6 shadow-lg">
+                    <div class="bg-white dark:bg-darkSurface rounded-xl p-6 sm:p-8">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            4. Promise.allSettled() ನ ಬಗ್ಗೆ
+                        </h2>
+
+                        <p class="text-lg kn-text mb-4">
+                            <code>Promise.allSettled()</code> ಎಂಬುದು ಬಹುಪಾಲು ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ನಿರ್ವಹಿಸಲು ಬಳಸುವ ಅತ್ಯಂತ ಉಪಯುಕ್ತ ವಿಧಾನವಾಗಿದೆ. <code>Promise.all()</code> ಗಿಂತ ಇದು ಭಿನ್ನವಾಗಿದೆ; ಏಕೆಂದರೆ ಇದರಲ್ಲಿ ಯಾವುದೇ ಒಂದು ಪ್ರಾಮಿಸ್ ವಿಫಲವಾದರೂ (Rejected), ಇಡೀ ಪ್ರಕ್ರಿಯೆ ನಿಲ್ಲುವುದಿಲ್ಲ. ಬದಲಿಗೆ, ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು ಮುಗಿಯುವವರೆಗೆ ಕಾಯುತ್ತದೆ ಮತ್ತು ಪ್ರತಿಯೊಂದರ ಅಂತಿಮ ಸ್ಥಿತಿಯನ್ನು (status - fulfilled or rejected) ನಮಗೆ ಹಿಂದಿರುಗಿಸುತ್ತದೆ.
+                        </p>
+
+                        <div class="relative group mt-6 mb-4">
+                            <button class="copy-btn absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                                <i class="fas fa-copy"></i> Copy Code
+                            </button>
+<pre><code class="language-javascript">// ಮೂರು ಬೇರೆ ಬೇರೆ ಪ್ರಾಮಿಸ್‌ಗಳ ರಚನೆ
+const promise1 = Promise.resolve("ಮೊದಲನೇ ಕೆಲಸ ಯಶಸ್ವಿ!");
+const promise2 = Promise.reject(new Error("ಎರಡನೇ ಕೆಲಸ ವಿಫಲ!"));
+const promise3 = new Promise((resolve) => setTimeout(resolve, 100, "ಮೂರನೇ ಕೆಲಸ ಸ್ವಲ್ಪ ತಡವಾಗಿ ಯಶಸ್ವಿ!"));
+
+// ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು ಸೆಟಲ್ ಆಗುವವರೆಗೆ ಕಾಯುವುದು
+Promise.allSettled([promise1, promise2, promise3])
+    .then((results) => {
+        results.forEach((result, index) => {
+            if (result.status === 'fulfilled') {
+                console.log(`ಪ್ರಾಮಿಸ್ ${index + 1}: ಯಶಸ್ವಿ ->`, result.value);
+            } else if (result.status === 'rejected') {
+                console.log(`ಪ್ರಾಮಿಸ್ ${index + 1}: ವಿಫಲ ->`, result.reason.message);
+            }
+        });
+    });
+
+/* ಔಟ್‌ಪುಟ್:
+ಪ್ರಾಮಿಸ್ 1: ಯಶಸ್ವಿ -> ಮೊದಲನೇ ಕೆಲಸ ಯಶಸ್ವಿ!
+ಪ್ರಾಮಿಸ್ 2: ವಿಫಲ -> ಎರಡನೇ ಕೆಲಸ ವಿಫಲ!
+ಪ್ರಾಮಿಸ್ 3: ಯಶಸ್ವಿ -> ಮೂರನೇ ಕೆಲಸ ಸ್ವಲ್ಪ ತಡವಾಗಿ ಯಶಸ್ವಿ!
+*/</code></pre>
+                        </div>
+                        <p class="text-lg kn-text bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500 text-gray-700 dark:text-gray-300 shadow-sm mt-4">
+                            <strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ ನಾವು ಮೂರು ಪ್ರಾಮಿಸ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ. ಒಂದು ಉದ್ದೇಶಪೂರ್ವಕವಾಗಿ ವಿಫಲವಾದರೂ (promise2), <code>Promise.allSettled()</code> ಪ್ರಕ್ರಿಯೆಯನ್ನು ಅಡ್ಡಿಪಡಿಸುವುದಿಲ್ಲ. ಬದಲಿಗೆ, ಎಲ್ಲಾ ಮೂರು ಪ್ರಾಮಿಸ್‌ಗಳ ಅಂತಿಮ ಸ್ಥಿತಿಯನ್ನು ಮತ್ತು ಅವುಗಳ ಮೌಲ್ಯ ಅಥವಾ ದೋಷವನ್ನು ಒಂದು ಅರೇ (Array) ರೂಪದಲ್ಲಿ ನಮಗೆ ಒದಗಿಸುತ್ತದೆ. ಒಂದಕ್ಕೊಂದು ಸಂಬಂಧವಿಲ್ಲದ ಬಹು API ಕಾಲ್‌ಗಳನ್ನು ಒಟ್ಟಿಗೆ ಮಾಡುವಾಗ ಇದು ಬಹಳ ಉಪಯುಕ್ತ.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Prism JS for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Custom Interactivity Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+            
+            // Check local storage or system preference (defaults to dark in HTML class)
+            if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                htmlElement.classList.remove('dark');
+            } else {
+                htmlElement.classList.add('dark');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                htmlElement.classList.toggle('dark');
+                if (htmlElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+            });
+
+            // 2. ScrollSpy Logic (Highlight Sidebar based on scroll position)
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -60% 0px', // Adjust active trigger zone
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${entry.target.id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+
+            // 3. Fade-in Animation Observer
+            const fadeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        fadeObserver.unobserve(entry.target); // Animate only once
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                fadeObserver.observe(el);
+            });
+
+            // 4. Copy to Clipboard Logic
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            const toast = document.getElementById('toast');
+            let toastTimeout;
+
+            copyButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Find the code block within the same relative container
+                    const codeElement = btn.parentElement.querySelector('code');
+                    const textToCopy = codeElement.innerText;
+
+                    // Reliable copy method for sandboxed environments
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        showToast();
+                    } catch (err) {
+                        console.error('Failed to copy text', err);
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                });
+            });
+
+            function showToast() {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>

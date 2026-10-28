@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Promises Masterclass</title>
+    
+    <!-- Google Fonts for Kannada and English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Kannada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Highlight.js for Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                        primary: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Scrolling */
+        html { scroll-behavior: smooth; }
+
+        /* Custom Scrollbar for extended 8-10 hour reading */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb { background-color: #334155; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+
+        /* Elegant Fade-in Animation */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Hover Effects */
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Code Block Copy Button Container */
+        .code-container {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin: 1.5rem 0;
+            background: #1a1b26; /* Tokyo Night bg */
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .copy-btn.copied {
+            background-color: #10b981; /* Emerald 500 */
+            color: white;
+            border-color: #10b981;
+        }
+        pre {
+            margin: 0 !important;
+            padding: 2.5rem 1.5rem 1.5rem 1.5rem !important;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Sidebar active link style */
+        .toc-link {
+            transition: all 0.2s ease;
+        }
+        .toc-link.active {
+            color: #6366f1;
+            font-weight: 600;
+            border-left-color: #6366f1;
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        .dark .toc-link.active {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border-left-color: #818cf8;
+        }
+        
+        /* List styling overrides for zero-width spaces in input */
+        .notes-list li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkbg dark:text-slate-200 transition-colors duration-300 font-sans leading-relaxed text-[16px] md:text-[17px]">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-darkbg/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-400 p-1.5 rounded-lg text-black">
+                    <i class="fa-brands fa-js text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold hidden sm:block tracking-tight text-slate-900 dark:text-white">JavaScript Promises <span class="text-primary font-normal text-lg">Masterclass</span></h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none flex items-center justify-center w-10 h-10" aria-label="Toggle Theme">
+                    <i id="theme-icon" class="fas fa-sun text-yellow-500 text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row gap-10">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="lg:w-1/4 shrink-0 hidden lg:block">
+            <div class="sticky top-28 bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 hover-card">
+                <h3 class="text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-compass text-primary"></i> ಪರಿವಿಡಿ (Contents)
+                </h3>
+                <nav class="flex flex-col space-y-1">
+                    <a href="#intro" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">ಪ್ರಸ್ತಾವನೆ</a>
+                    <a href="#section-1" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">1. ಚಿಕ್ಕ ಮಕ್ಕಳಿಗಾಗಿ ಸರಳ ಉದಾಹರಣೆ</a>
+                    <a href="#section-2" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">2. Promise ರಚಿಸುವ ಸಿಂಟ್ಯಾಕ್ಸ್</a>
+                    <a href="#section-3" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">3. ರಚಿಸಿದ Promise ಬಳಸುವುದು</a>
+                    <a href="#section-4" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">4. Promise Chaining (ಮಧ್ಯಮ ಮಟ್ಟ)</a>
+                    <a href="#section-5" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">5. Async / Await (ವೃತ್ತಿಪರ ಮಟ್ಟ)</a>
+                    <a href="#section-6" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">6. ಬಹುಮುಖ್ಯ Promise ವಿಧಾನಗಳು</a>
+                    <a href="#summary" class="toc-link block py-2 px-3 border-l-2 border-transparent hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md text-sm text-slate-600 dark:text-slate-300">ಸಾರಾಂಶ (Summary)</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content (JavaScript Notes) -->
+        <main class="lg:w-3/4 pb-20">
+            <div class="bg-white dark:bg-darkcard rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800/80 p-6 md:p-12 transition-colors duration-300">
+                
+                <!-- Intro -->
+                <p id="intro" class="text-xl mb-10 leading-relaxed font-medium bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-6 rounded-2xl border-l-4 border-indigo-500 fade-in-section text-slate-700 dark:text-slate-200">
+                    ಖಂಡಿತ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ನಲ್ಲಿ <strong>Promises</strong> ಎನ್ನುವುದನ್ನು ನಾನ್-ಐಟಿ (Non-IT) ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಮತ್ತು ಚಿಕ್ಕ ಮಕ್ಕಳಿಗೂ ಅರ್ಥವಾಗುವಂತೆ ಸಂಪೂರ್ಣವಾಗಿ, ಹಂತ-ಹಂತವಾಗಿ, ಒಂದೇ ಸರಣಿಯಲ್ಲಿ ಜೋಡಿಸಿ ವಿವರಿಸಲಾಗಿದೆ.
+                </p>
+
+                <!-- Section 1 -->
+                <section id="section-1" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 p-2 rounded-lg"><i class="fas fa-bicycle text-[20px]"></i></span> 
+                        1. ಚಿಕ್ಕ ಮಕ್ಕಳಿಗಾಗಿ ಸರಳ ಉದಾಹರಣೆ (The Analogy)
+                    </h2>
+                    
+                    <p class="mb-4">ನಿಮ್ಮ ತಂದೆ ನಿಮಗೆ <strong>"ನಾಳೆ ಸಂಜೆ ನಿನಗೊಂದು ಹೊಸ ಸೈಕಲ್ ಕೊಡಿಸುತ್ತೇನೆ"</strong> ಎಂದು ಭರವಸೆ (Promise) ನೀಡುತ್ತಾರೆ ಎಂದು ಕಲ್ಪಿಸಿಕೊಳ್ಳಿ.</p>
+                    <p class="mb-4">ಈಗ ಆ ಭರವಸೆಯು 3 ಹಂತಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಒಂದರಲ್ಲಿ ಇರಬಹುದು:</p>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl mb-8 border border-slate-100 dark:border-slate-700">
+                        <ul class="notes-list space-y-3 font-medium">
+                            <li class="flex gap-2"><i class="fas fa-clock text-yellow-500 mt-1"></i> <span>1. <strong>Pending (ಬಾಕಿ ಇದೆ / ಕಾಯುವುದು):</strong> ನಾಳೆ ಸಂಜೆಯವರೆಗೆ ನೀವು ಕಾಯಬೇಕು. ಸೈಕಲ್ ಸಿಗುತ್ತದೆಯೋ ಇಲ್ಲವೋ ಇನ್ನೂ ತಿಳಿದಿಲ್ಲ.</span></li>
+                            <li class="flex gap-2"><i class="fas fa-check-circle text-green-500 mt-1"></i> <span>​2. <strong>Resolve / Fulfilled (ಯಶಸ್ಸು):</strong> ನಾಳೆ ಸಂಜೆ ಅವರು ಹೇಳಿದಂತೆ ಸೈಕಲ್ ತಂದುಕೊಟ್ಟರು. ನಿಮ್ಮ ತಂದೆ ಭರವಸೆಯನ್ನು ಈಡೇರಿಸಿದರು!</span></li>
+                            <li class="flex gap-2"><i class="fas fa-times-circle text-red-500 mt-1"></i> <span>3. <strong>Reject (ವಿಫಲ):</strong> ಅಂಗಡಿ ಬಂದ್ ಆಗಿದ್ದರಿಂದ ಅಥವಾ ಅವರ ಬಳಿ ಹಣವಿಲ್ಲದ ಕಾರಣ ಸೈಕಲ್ ತರಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಭರವಸೆ ಮುರಿಯಿತು.</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Visual Illustration (SVG Flowchart) Added Seamlessly -->
+                    <div class="w-full mb-8 overflow-x-auto bg-slate-50 dark:bg-[#151e2e] rounded-xl border border-slate-200 dark:border-slate-700 p-6 flex justify-center hover-card">
+                        <svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
+                            <!-- Pending Node -->
+                            <rect x="50" y="75" width="140" height="50" rx="10" fill="#eab308" fill-opacity="0.2" stroke="#eab308" stroke-width="2"/>
+                            <text x="120" y="105" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#ca8a04" text-anchor="middle">Pending</text>
+                            
+                            <!-- Arrow Up-Right -->
+                            <path d="M 190 90 L 330 50" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" fill="none" stroke-dasharray="5,5" class="dark:stroke-slate-500"/>
+                            
+                            <!-- Arrow Down-Right -->
+                            <path d="M 190 110 L 330 150" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" fill="none" stroke-dasharray="5,5" class="dark:stroke-slate-500"/>
+                            
+                            <!-- Resolve Node -->
+                            <rect x="350" y="25" width="200" height="50" rx="10" fill="#22c55e" fill-opacity="0.2" stroke="#22c55e" stroke-width="2"/>
+                            <text x="450" y="55" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#16a34a" text-anchor="middle">Resolve (Fulfilled)</text>
+
+                            <!-- Reject Node -->
+                            <rect x="350" y="125" width="200" height="50" rx="10" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2"/>
+                            <text x="450" y="155" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#dc2626" text-anchor="middle">Reject (Failed)</text>
+                            
+                            <!-- Defs for arrow -->
+                            <defs>
+                                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                    <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8" class="dark:fill-slate-500"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <p class="mb-4">ಕಂಪ್ಯೂಟರ್ ಜಗತ್ತಿನಲ್ಲಿ, ನಾವು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಸ್ವಿಗ್ಗಿ/ಝೊಮ್ಯಾಟೊ (Swiggy/Zomato) ಮೂಲಕ ಬಿರಿಯಾನಿ ಆರ್ಡರ್ ಮಾಡಿದಾಗಲೂ ಇದೇ ಆಗುತ್ತದೆ. ಆರ್ಡರ್ ಮಾಡಿದ ತಕ್ಷಣ ಆ್ಯಪ್ ನಿಮಗೆ ಊಟ ತಲುಪಿಸುವ <strong>ಭರವಸೆ (Promise)</strong> ನೀಡುತ್ತದೆ. ಊಟ ಬರುವವರೆಗೆ ನೀವು ಕಾಯುತ್ತೀರಿ (Pending). ಊಟ ಬಂದರೆ ಯಶಸ್ಸು (Resolve), ಹೋಟೆಲ್‌ನಲ್ಲಿ ಊಟ ಖಾಲಿಯಾದರೆ ವಿಫಲ (Reject).</p>
+                    
+                    <p class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border-l-4 border-indigo-400 mt-6 text-[17px]">
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿಯೂ <strong>Promise</strong> ಎಂದರೆ ಇದೇ! ಒಂದು ಕೆಲಸ (ಉದಾಹರಣೆಗೆ: ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ತರುವುದು) ಮುಗಿಯುವವರೆಗೆ ಅದು ಕಾಯುತ್ತದೆ ಮತ್ತು ಆ ಕೆಲಸ ಯಶಸ್ವಿಯಾಯಿತೋ ಅಥವಾ ವಿಫಲವಾಯಿತೋ ಎಂದು ನಮಗೆ ತಿಳಿಸುತ್ತದೆ.
+                    </p>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Section 2 -->
+                <section id="section-2" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-teal-100 dark:bg-teal-900/50 text-teal-600 dark:text-teal-400 p-2 rounded-lg"><i class="fas fa-laptop-code text-[20px]"></i></span> 
+                        2. Promise ರಚಿಸುವ ಸಿಂಟ್ಯಾಕ್ಸ್ (ಕೋಡ್ ಬರೆಯುವ ನಿಯಮ) - Beginner Level
+                    </h2>
+                    
+                    <p class="mb-4">ಮೊದಲು ನಾವು ಕಂಪ್ಯೂಟರ್‌ಗೆ ಭರವಸೆಯನ್ನು ಸೃಷ್ಟಿಸಲು ಹೇಳಬೇಕು. ಊಟ ಆರ್ಡರ್ ಮಾಡುವ ಉದಾಹರಣೆಯನ್ನು ಕೋಡ್ ಮೂಲಕ ನೋಡೋಣ. ಪ್ರತಿಯೊಂದು ಸಾಲನ್ನೂ ಬಿಡಿಸಿ ಹೇಳಲಾಗಿದೆ.</p>
+                    
+                    <div class="code-container hover-card">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">// 1. ಭರವಸೆಯನ್ನು (Promise) ಹುಟ್ಟುಹಾಕುವುದು
+let orderFood = new Promise(function(resolve, reject) {
+    
+    let foodAvailable = true; // ಊಟ ಹೋಟೆಲ್‌ನಲ್ಲಿ ಇದೆಯೋ ಇಲ್ಲವೋ?
+
+    if (foodAvailable === true) {
+        resolve("ನಿಮ್ಮ ಬಿರಿಯಾನಿ ಡೆಲಿವರಿ ಆಗಿದೆ! 🍲"); // ಯಶಸ್ಸು
+    } else {
+        reject("ಕ್ಷಮಿಸಿ, ಬಿರಿಯಾನಿ ಖಾಲಿ ಆಗಿದೆ. ❌"); // ವಿಫಲ
+    }
+    
+});</code></pre>
+                    </div>
+
+                    <h3 class="text-lg font-bold mb-4 mt-8 text-indigo-600 dark:text-indigo-400">ಕೋಡ್‌ನ ಪ್ರತಿಯೊಂದು ಸಾಲಿನ ಸಂಪೂರ್ಣ ವಿವರಣೆ (Non-IT ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ):</h3>
+                    
+                    <ul class="space-y-4 text-slate-700 dark:text-slate-300">
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">let orderFood =</strong> : <code>orderFood</code> (ಊಟದ ಆರ್ಡರ್) ಎಂಬ ಹೆಸರಿನ ಒಂದು ಡಬ್ಬವನ್ನು (Variable) ನಾವು ಮಾಡುತ್ತಿದ್ದೇವೆ. ಈ ಡಬ್ಬದೊಳಗೆ ನಮ್ಮ ಭರವಸೆಯನ್ನು (Promise) ಇಡುತ್ತೇವೆ.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">new Promise(...)</strong> : ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ಗೆ "ನಾನೀಗ ಒಂದು ಹೊಸ ಭರವಸೆಯನ್ನು (Promise) ಹುಟ್ಟುಹಾಕುತ್ತಿದ್ದೇನೆ" ಎಂದು ಹೇಳುವ ಅಧಿಕೃತ ಪದವಿದು.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">function(resolve, reject) { ... }</strong> : ಇದು ಪ್ರಾಮಿಸ್‌ನ ನಿಯಮ. ಭರವಸೆ ಯಶಸ್ವಿಯಾದರೆ ಬಳಸಲು <strong><code>resolve</code></strong> (ಸಕ್ಸಸ್) ಎಂಬ ಬಟನ್, ಮತ್ತು ಭರವಸೆ ವಿಫಲವಾದರೆ ಬಳಸಲು <strong><code>reject</code></strong> (ಫೇಲ್) ಎಂಬ ಬಟನ್ ಅನ್ನು ನಾವಿಲ್ಲಿ ಸಿದ್ಧಪಡಿಸುತ್ತಿದ್ದೇವೆ.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">let foodAvailable = true;</strong> : ಹೋಟೆಲ್‌ನಲ್ಲಿ ಊಟ ಇದೆಯಾ ಎಂದು ನಾವು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ. <code>true</code> ಎಂದರೆ "ಹೌದು, ಊಟ ಇದೆ" ಎಂದರ್ಥ. (<code>false</code> ಎಂದು ಬರೆದರೆ "ಊಟ ಇಲ್ಲ" ಎಂದರ್ಥ).</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">if (foodAvailable === true) { ... }</strong> : ಊಟ ನಿಜವಾಗಿಯೂ ಇದ್ದರೆ (if) ಏನು ಮಾಡಬೇಕು ಎಂದು ಕಂಪ್ಯೂಟರ್‌ಗೆ ಹೇಳುತ್ತಿದ್ದೇವೆ.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-green-600 dark:text-green-400 text-sm">resolve("ನಿಮ್ಮ ಬಿರಿಯಾನಿ ಡೆಲಿವರಿ ಆಗಿದೆ! 🍲");</strong> : ಊಟ ಇರುವುದರಿಂದ ಆರ್ಡರ್ ಯಶಸ್ವಿಯಾಗಿದೆ. ಹಾಗಾಗಿ ನಾವು <code>resolve</code> ಅನ್ನು ಬಳಸಿ, ಒಂದು ಖುಷಿಯ ಸಂದೇಶವನ್ನು ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-pink-600 dark:text-pink-400 text-sm">else { ... }</strong> : ಒಂದು ವೇಳೆ ಊಟ ಇಲ್ಲದಿದ್ದರೆ (else) ಏನು ಮಾಡಬೇಕು ಎಂದು ಹೇಳುತ್ತಿದ್ದೇವೆ.</li>
+                        <li class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg"><strong class="font-mono text-red-600 dark:text-red-400 text-sm">reject("ಕ್ಷಮಿಸಿ, ಬಿರಿಯಾನಿ ಖಾಲಿ ಆಗಿದೆ. ❌");</strong> : ಊಟ ಖಾಲಿಯಾಗಿದ್ದರೆ ಭರವಸೆ ಮುರಿಯುತ್ತದೆ. ಹಾಗಾಗಿ <code>reject</code> ಅನ್ನು ಬಳಸಿ, ಕ್ಷಮೆಯ ಸಂದೇಶವನ್ನು ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ.</li>
+                    </ul>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Section 3 -->
+                <section id="section-3" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 p-2 rounded-lg"><i class="fas fa-play text-[20px]"></i></span> 
+                        3. ರಚಿಸಿದ Promise ಅನ್ನು ಬಳಸುವುದು ಹೇಗೆ? (Consuming the Promise)
+                    </h2>
+                    
+                    <p class="mb-4">ಮೇಲೆ ನಾವು ಕೇವಲ ಭರವಸೆಯನ್ನು ಸೃಷ್ಟಿಸಿದೆವು. ಈಗ ಆ ಭರವಸೆಯ ಫಲಿತಾಂಶ ಏನಾಯಿತು? ಎಂದು ನೋಡಲು ನಾವು <strong><code>.then</code></strong> (ಯಶಸ್ಸಾದರೆ) ಮತ್ತು <strong><code>.catch</code></strong> (ವಿಫಲವಾದರೆ) ಎಂಬ ಎರಡು ಪದಗಳನ್ನು ಬಳಸುತ್ತೇವೆ.</p>
+                    
+                    <div class="code-container hover-card border-l-4 border-green-500">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">// 2. Promise ಅನ್ನು ಬಳಸುವುದು
+orderFood
+    .then(function(message) {
+        console.log("ಖುಷಿಯ ವಿಚಾರ: " + message);
+    })
+    .catch(function(error) {
+        console.log("ಬೇಸರದ ವಿಚಾರ: " + error);
+    })
+    .finally(function() {
+        console.log("ಆರ್ಡರ್ ಪ್ರಕ್ರಿಯೆ ಮುಗಿದಿದೆ (ಯಶಸ್ವಿಯಾಗಲಿ ಅಥವಾ ಬಿಡಲಿ)!");
+    });</code></pre>
+                    </div>
+
+                    <h3 class="text-lg font-bold mb-4 mt-8 text-indigo-600 dark:text-indigo-400">ಇದರ ಪ್ರತಿಯೊಂದು ಸಾಲಿನ ವಿವರಣೆ:</h3>
+                    
+                    <ul class="list-disc pl-6 space-y-3 text-slate-700 dark:text-slate-300 marker:text-primary">
+                        <li><strong class="font-mono text-sm">orderFood</strong> : ನಾವು ಮೇಲೆ ಸೃಷ್ಟಿಸಿದ ಭರವಸೆಯ ಹೆಸರು.</li>
+                        <li><strong class="font-mono text-sm">.then(function(message) { ... })</strong> : ಭರವಸೆ ಯಶಸ್ವಿಯಾದರೆ (ಅಂದರೆ ಮೇಲೆ <code>resolve</code> ಆಗಿದ್ದರೆ) ಮಾತ್ರ ಈ <code>then</code> ಎನ್ನುವ ಭಾಗ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</li>
+                        <li><strong class="font-mono text-sm">message</strong> : ಮೇಲೆ ನಾವು <code>resolve</code> ಒಳಗೆ ಕಳುಹಿಸಿದ "ನಿಮ್ಮ ಬಿರಿಯಾನಿ ಡೆಲಿವರಿ ಆಗಿದೆ!" ಎಂಬ ವಾಕ್ಯವು ಈ <code>message</code> ಎಂಬ ಪದದೊಳಗೆ ಬಂದು ಕೂರುತ್ತದೆ.</li>
+                        <li><strong class="font-mono text-sm">console.log(...)</strong> : ಇದು ಕಂಪ್ಯೂಟರ್ ಸ್ಕ್ರೀನ್ (ಪರದೆ) ಮೇಲೆ ನಮ್ಮ ಸಂದೇಶವನ್ನು ತೋರಿಸಲು ಬಳಸುವ ಒಂದು ಸಿಂಪಲ್ ಕಮಾಂಡ್.</li>
+                        <li><strong class="font-mono text-sm">.catch(function(error) { ... })</strong> : ಒಂದು ವೇಳೆ ಭರವಸೆ ಮುರಿದು ಬಿದ್ದರೆ (ಅಂದರೆ ಮೇಲೆ <code>reject</code> ಆಗಿದ್ದರೆ), ಆಗ ಆ ತಪ್ಪನ್ನು ಹಿಡಿಯಲು (catch ಮಾಡಲು) ಇದು ಕೆಲಸ ಮಾಡುತ್ತದೆ.</li>
+                        <li><strong class="font-mono text-sm">error</strong> : <code>reject</code> ಒಳಗೆ ಕಳುಹಿಸಿದ "ಕ್ಷಮಿಸಿ, ಬಿರಿಯಾನಿ ಖಾಲಿ ಆಗಿದೆ" ಎಂಬ ವಾಕ್ಯವು ಈ <code>error</code> ಎಂಬ ಪದದೊಳಗೆ ಬರುತ್ತದೆ.</li>
+                        <li><strong class="font-mono text-sm">.finally(function() { ... })</strong> : ಫಲಿತಾಂಶ ಏನೇ ಆಗಿರಲಿ (Resolve ಆಗಿರಲಿ ಅಥವಾ Reject ಆಗಿರಲಿ), ಕೊನೆಯಲ್ಲಿ ಇದು ರನ್ ಆಗೇ ಆಗುತ್ತದೆ.</li>
+                    </ul>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Section 4 -->
+                <section id="section-4" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-2 rounded-lg"><i class="fas fa-link text-[20px]"></i></span> 
+                        4. ಮಧ್ಯಮ ಮಟ್ಟ (Intermediate Level) - Promise Chaining
+                    </h2>
+                    
+                    <p class="mb-4">ಕೆಲವೊಮ್ಮೆ ನಾವು ಒಂದು ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ, ಅದರ ಆಧಾರದ ಮೇಲೆ ಮತ್ತೊಂದು ಕೆಲಸವನ್ನು ಮಾಡಬೇಕಾಗುತ್ತದೆ. ಇದನ್ನು <strong>Promise Chaining</strong> ಎನ್ನುತ್ತಾರೆ.</p>
+                    
+                    <div class="bg-orange-50 dark:bg-orange-900/10 p-4 rounded-lg border border-orange-200 dark:border-orange-800/50 mb-6 flex items-center gap-3">
+                        <i class="fas fa-lightbulb text-orange-500 text-xl"></i>
+                        <p class="m-0">ಉದಾಹರಣೆಗೆ: ಸೈಕಲ್ ಸಿಕ್ಕರೆ <i class="fas fa-arrow-right text-sm mx-1 text-slate-400"></i> ಅದನ್ನು ಓಡಿಸಲು ಕಲಿಯಬೇಕು <i class="fas fa-arrow-right text-sm mx-1 text-slate-400"></i> ಓಡಿಸಲು ಕಲಿತರೆ <i class="fas fa-arrow-right text-sm mx-1 text-slate-400"></i> ಗೆಳೆಯರ ಜೊತೆ ರೇಸ್ ಮಾಡಬೇಕು.</p>
+                    </div>
+                    
+                    <div class="code-container hover-card">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">// ಸೈಕಲ್ ಸಿಗುವ ಪ್ರಾಮಿಸ್
+const getCycle = new Promise(function(resolve, reject) {
+    resolve("ಸೈಕಲ್ ಸಿಕ್ಕಿತು");
+});
+
+getCycle
+    .then(function(result) {
+        console.log(result); // ಔಟ್‌ಪುಟ್: ಸೈಕಲ್ ಸಿಕ್ಕಿತು
+        return "ಸೈಕಲ್ ಓಡಿಸಲು ಕಲಿತೆ"; // ಮುಂದಿನ ಹಂತಕ್ಕೆ ರವಾನಿಸುತ್ತೇವೆ
+    })
+    .then(function(nextResult) {
+        console.log(nextResult); // ಔಟ್‌ಪುಟ್: ಸೈಕಲ್ ಓಡಿಸಲು ಕಲಿತೆ
+        return "ಗೆಳೆಯರ ಜೊತೆ ರೇಸ್ ಮಾಡಿದೆ"; 
+    })
+    .then(function(finalResult) {
+        console.log(finalResult); // ಔಟ್‌ಪುಟ್: ಗೆಳೆಯರ ಜೊತೆ ರೇಸ್ ಮಾಡಿದೆ
+    })
+    .catch(function(error) {
+        // ನಡುವೆ ಎಲ್ಲಿಯಾದರೂ ದೋಷ ಬಂದರೆ ಈ catch ಅದನ್ನು ಹಿಡಿಯುತ್ತದೆ
+        console.log("ಏನೋ ತಪ್ಪಾಗಿದೆ: ", error);
+    });</code></pre>
+                    </div>
+
+                    <p class="font-medium mt-4">ಇಲ್ಲಿ ನಾವು ಒಂದರ ನಂತರ ಒಂದರಂತೆ <code>.then()</code> ಅನ್ನು ಸರಪಳಿಯಂತೆ (Chain) ಜೋಡಿಸುತ್ತೇವೆ.</p>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Section 5 -->
+                <section id="section-5" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 p-2 rounded-lg"><i class="fas fa-user-tie text-[20px]"></i></span> 
+                        5. ವೃತ್ತಿಪರ ಮಟ್ಟ (Professional Level) - Async / Await
+                    </h2>
+                    
+                    <p class="mb-4">ಹಿಂದೆ <code>.then()</code> ಮತ್ತು <code>.catch()</code> ಬಳಸುತ್ತಿದ್ದುದು ಹಳೆಯ ವಿಧಾನ. ಈಗಿನ ವೃತ್ತಿಪರ ಡೆವಲಪರ್‌ಗಳು ಕೋಡ್ ಅನ್ನು ಇನ್ನಷ್ಟು ಸುಲಭವಾಗಿ ಮತ್ತು ಕ್ಲೀನ್ ಆಗಿ ಬರೆಯಲು <strong>Async / Await</strong> ಅನ್ನು ಬಳಸುತ್ತಾರೆ. ಇದು ಪ್ರಾಮಿಸ್ ಅನ್ನು ನಿರ್ವಹಿಸುವ ಆಧುನಿಕ ವಿಧಾನವಾಗಿದೆ.</p>
+                    
+                    <div class="code-container hover-card border-l-4 border-purple-500">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">// ಅದೇ ಸೈಕಲ್ ಉದಾಹರಣೆಯನ್ನು ಈಗ ವೃತ್ತಿಪರ ಶೈಲಿಯಲ್ಲಿ ಬರೆಯೋಣ
+function buyCyclePro() {
+    return new Promise(function(resolve, reject) {
+        let shopOpen = true;
+        
+        // ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ (1.5 ಸೆಕೆಂಡ್) ತೀರ್ಮಾನ ಹೇಳಲು setTimeout ಬಳಕೆ
+        setTimeout(function() {
+            if (shopOpen) {
+                resolve("ಯೇ! ಹೊಸ ಸೈಕಲ್ ಸಿಕ್ಕಿತು! 🚲");
+            } else {
+                reject("ಅಂಗಡಿ ಮುಚ್ಚಿದೆ. 😞");
+            }
+        }, 1500);
+    });
+}
+
+// Async ಫಂಕ್ಷನ್ ರಚನೆ
+async function getMyCycleTask() {
+    try {
+        console.log("ಅಪ್ಪ ಅಂಗಡಿಗೆ ಹೋಗಿದ್ದಾರೆ... ದಯವಿಟ್ಟು ಕಾಯಿರಿ...");
+        
+        // ಇಲ್ಲಿ 'await' ಎಂದರೆ Promise ನ ಫಲಿತಾಂಶ ಬರುವವರೆಗೂ ಕಾಯುವುದು
+        const result = await buyCyclePro(); 
+        
+        console.log("ಫಲಿತಾಂಶ: ", result); // resolve ಆದರೆ ಇಲ್ಲಿಗೆ ಬರುತ್ತದೆ
+    } catch (error) {
+        console.log("ದೋಷ: ", error); // reject ಆದರೆ ಇಲ್ಲಿಗೆ ಬರುತ್ತದೆ
+    }
+}
+
+// ಫಂಕ್ಷನ್ ಕರೆ ಮಾಡುವುದು
+getMyCycleTask();</code></pre>
+                    </div>
+
+                    <div class="mt-6 bg-purple-50 dark:bg-purple-900/10 p-5 rounded-xl border border-purple-100 dark:border-purple-800/30">
+                        <p><strong><i class="fas fa-gem text-purple-500 mr-2"></i>ವೃತ್ತಿಪರ ಸಲಹೆ:</strong> <code>async</code> ಫಂಕ್ಷನ್ ಒಳಗೆ ಮಾತ್ರ <code>await</code> ಅನ್ನು ಬಳಸಬಹುದು. ದೋಷಗಳನ್ನು (errors) ಹಿಡಿಯಲು <code>try...catch</code> ಬ್ಲಾಕ್ ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇದು <code>.then</code> ಮತ್ತು <code>.catch</code> ಗಿಂತ ಓದಲು ಬಹಳ ಸುಲಭವಾಗಿರುತ್ತದೆ.</p>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Section 6 -->
+                <section id="section-6" class="mb-14 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 p-2 rounded-lg"><i class="fas fa-layer-group text-[20px]"></i></span> 
+                        6. ಬಹುಮುಖ್ಯ Promise ವಿಧಾನಗಳು (Advanced Level)
+                    </h2>
+                    
+                    <p class="mb-6">ವೃತ್ತಿಪರ ಮಟ್ಟದಲ್ಲಿ ಒಂದೇ ಬಾರಿಗೆ ಹಲವು Promise ಗಳನ್ನು ನಿಭಾಯಿಸಬೇಕಾಗುತ್ತದೆ. ಅದಕ್ಕಾಗಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ 4 ಮುಖ್ಯ ವಿಧಾನಗಳನ್ನು ನೀಡಿದೆ:</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover-card">
+                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">1. <code>Promise.all([p1, p2])</code></h4>
+                            <p class="text-sm">ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು ಯಶಸ್ವಿಯಾದರೆ (resolve) ಮಾತ್ರ ಇದು ಯಶಸ್ವಿಯಾಗುತ್ತದೆ. ಯಾವುದಾದರೂ ಒಂದು ವಿಫಲವಾದರೂ (reject), ಇಡೀ ಪ್ರಕ್ರಿಯೆ ವಿಫಲವಾಗುತ್ತದೆ. <span class="block mt-2 font-medium text-slate-500 dark:text-slate-400">(ಎಲ್ಲರೂ ಪಾಸ್ ಆಗಬೇಕು)</span></p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover-card">
+                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">2. <code>Promise.race([p1, p2])</code></h4>
+                            <p class="text-sm">ಇದರಲ್ಲಿ ಯಾವ ಪ್ರಾಮಿಸ್ ಅತ್ಯಂತ ವೇಗವಾಗಿ ಮುಗಿಯುತ್ತದೆಯೋ (ಪಾಸ್ ಆಗಲಿ ಅಥವಾ ಫೇಲ್ ಆಗಲಿ), ಅದರ ಫಲಿತಾಂಶವನ್ನು ಮಾತ್ರ ನೀಡುತ್ತದೆ. <span class="block mt-2 font-medium text-slate-500 dark:text-slate-400">(ಓಟದ ಸ್ಪರ್ಧೆಯಂತೆ!)</span></p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover-card">
+                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">3. <code>Promise.allSettled([p1, p2])</code></h4>
+                            <p class="text-sm">ಎಲ್ಲಾ ಪ್ರಾಮಿಸ್‌ಗಳು ಮುಗಿಯುವವರೆಗೆ ಕಾಯುತ್ತದೆ. ಅವು ಪಾಸ್ ಆಗಿರಲಿ ಅಥವಾ ಫೇಲ್ ಆಗಿರಲಿ, ಎಲ್ಲದರ ವಿವರವಾದ ರಿಪೋರ್ಟ್ ನೀಡುತ್ತದೆ. <span class="block mt-2 font-medium text-slate-500 dark:text-slate-400">(ಎಲ್ಲಾ ರಿಸಲ್ಟ್ ಬೇಕು)</span></p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 hover-card">
+                            <h4 class="font-bold text-indigo-600 dark:text-indigo-400 mb-2">4. <code>Promise.any([p1, p2])</code></h4>
+                            <p class="text-sm">ಹಲವು ಪ್ರಾಮಿಸ್‌ಗಳಲ್ಲಿ ಯಾವುದಾದರೂ <strong>ಒಂದು</strong> ಯಶಸ್ವಿಯಾದರೂ ಸಾಕು, ಇದು ಯಶಸ್ವಿಯಾಗುತ್ತದೆ. ಎಲ್ಲವೂ ವಿಫಲವಾದರೆ ಮಾತ್ರ ಇದು ವಿಫಲವಾಗುತ್ತದೆ. <span class="block mt-2 font-medium text-slate-500 dark:text-slate-400">(ಯಾರಾದರೂ ಒಬ್ಬರು ಪಾಸ್ ಆದರೆ ಸಾಕು)</span></p>
+                        </div>
+                    </div>
+
+                    <h3 class="text-lg font-bold mb-2 text-slate-800 dark:text-slate-200">ಉದಾಹರಣೆ (<code>Promise.all</code>):</h3>
+                    
+                    <div class="code-container hover-card">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">const task1 = Promise.resolve("ಹೋಮ್‌ವರ್ಕ್ ಮುಗಿಯಿತು");
+const task2 = Promise.resolve("ರೂಮ್ ಕ್ಲೀನ್ ಮಾಡಿದೆ");
+
+Promise.all([task1, task2])
+    .then(function(results) {
+        console.log("ಎಲ್ಲಾ ಕೆಲಸ ಮುಗಿಯಿತು: ", results);
+        // ಔಟ್‌ಪುಟ್: ಎಲ್ಲಾ ಕೆಲಸ ಮುಗಿಯಿತು: ["ಹೋಮ್‌ವರ್ಕ್ ಮುಗಿಯಿತು", "ರೂಮ್ ಕ್ಲೀನ್ ಮಾಡಿದೆ"]
+    });</code></pre>
+                    </div>
+                    
+                    <!-- Expansion Addon: Seamlessly added to make the notes fully comprehensive as requested -->
+                    <h3 class="text-lg font-bold mb-2 mt-8 text-slate-800 dark:text-slate-200">ಹೆಚ್ಚುವರಿ ಉದಾಹರಣೆ (<code>Promise.race</code> ಮತ್ತು <code>Promise.any</code>):</h3>
+                    <div class="code-container hover-card border-l-4 border-blue-500">
+                        <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code"><i class="fas fa-copy"></i> Copy Code</button>
+<pre><code class="language-javascript">// ಯಾರು ಮೊದಲು ಬರುತ್ತಾರೋ ಅವರು ಗೆಲ್ಲುತ್ತಾರೆ (ಓಟದ ಸ್ಪರ್ಧೆ)
+const fastTask = new Promise(function(resolve) { setTimeout(resolve, 100, "ಮೊದಲನೇಯವನು ಬಂದ! 🏃‍♂️"); });
+const slowTask = new Promise(function(resolve) { setTimeout(resolve, 500, "ನಿಧಾನವಾಗಿ ಬಂದೆ... 🚶‍♂️"); });
+
+Promise.race([fastTask, slowTask]).then(function(winner) {
+    console.log("Race Result: ", winner); // ಔಟ್‌ಪುಟ್: ಮೊದಲನೇಯವನು ಬಂದ! 🏃‍♂️
+});</code></pre>
+                    </div>
+
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800 my-10">
+
+                <!-- Summary -->
+                <section id="summary" class="mb-8 fade-in-section pt-4">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400 p-2 rounded-lg"><i class="fas fa-star text-[20px]"></i></span> 
+                        ಸಾರಾಂಶ (Summary)
+                    </h2>
+                    
+                    <p class="mb-4 text-lg">ನೀವು ನೆನಪಿಡಬೇಕಾದ್ದು ಕೇವಲ ಮೂರೇ ಅಂಶಗಳು:</p>
+                    
+                    <div class="bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 p-8 rounded-2xl shadow-inner border border-slate-200 dark:border-slate-700">
+                        <ul class="space-y-4 text-lg font-medium">
+                            <li class="flex items-center gap-3"><span class="bg-white dark:bg-slate-700 text-primary w-8 h-8 flex items-center justify-center rounded-full shadow-sm">1</span> <span>ಭರವಸೆ ನೀಡುವುದು: <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-primary text-sm shadow-sm border border-slate-100 dark:border-slate-700">new Promise</code></span></li>
+                            <li class="flex items-center gap-3"><span class="bg-white dark:bg-slate-700 text-primary w-8 h-8 flex items-center justify-center rounded-full shadow-sm">2</span> <span>ಯಶಸ್ಸು ಮತ್ತು ವಿಫಲತೆ: <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-green-500 text-sm shadow-sm border border-slate-100 dark:border-slate-700">resolve</code> ಮತ್ತು <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-red-500 text-sm shadow-sm border border-slate-100 dark:border-slate-700">reject</code></span></li>
+                            <li class="flex items-center gap-3"><span class="bg-white dark:bg-slate-700 text-primary w-8 h-8 flex items-center justify-center rounded-full shadow-sm">3</span> <span>ಫಲಿತಾಂಶ ಪಡೆಯುವುದು: <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-blue-500 text-sm shadow-sm border border-slate-100 dark:border-slate-700">.then</code> (ಯಶಸ್ಸಿಗೆ) ಮತ್ತು <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-orange-500 text-sm shadow-sm border border-slate-100 dark:border-slate-700">.catch</code> (ವಿಫಲತೆಗೆ) ಅಥವಾ ವೃತ್ತಿಪರ ಶೈಲಿಯಲ್ಲಿ <code class="bg-white dark:bg-darkbg px-2 py-1 rounded text-purple-500 text-sm shadow-sm border border-slate-100 dark:border-slate-700">async/await</code>.</span></li>
+                        </ul>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // 1. Initialize Syntax Highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+
+        // 2. Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Ensure default dark theme applies icon correctly
+        if (localStorage.getItem('theme') === 'light') {
+            htmlElement.classList.remove('dark');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+            themeIcon.classList.replace('text-yellow-500', 'text-slate-600');
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-slate-600', 'text-yellow-500');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.replace('text-yellow-500', 'text-slate-600');
+            }
+        });
+
+        // 3. Copy Code Functionality
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const textToCopy = codeBlock.innerText;
+
+            navigator.clipboard.writeText(textToCopy).then(function() {
+                const originalHTML = '<i class="fas fa-copy"></i> Copy Code';
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy code: ', err);
+            });
+        }
+
+        // 4. ScrollSpy for Sidebar (Highlight active section)
+        const sections = document.querySelectorAll('section, p#intro');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px', // Highlights when section reaches top part of viewport
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(function(link) {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(function(section) { observer.observe(section); });
+
+        // 5. Elegant Fade-in on Scroll Animation
+        const fadeSections = document.querySelectorAll('.fade-in-section');
+        const fadeObserver = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Trigger only once
+                }
+            });
+        }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
+
+        fadeSections.forEach(function(section) { fadeObserver.observe(section); });
+    </script>
+</body>
+</html>

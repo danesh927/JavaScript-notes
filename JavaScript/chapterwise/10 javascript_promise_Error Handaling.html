@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Promise Masterclass</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        kannada: ['Nudi', 'Tunga', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#111827', // bg-gray-900
+                        darkSurface: '#1f2937', // bg-gray-800
+                        darkBorder: '#374151' // border-gray-700
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Prism.js Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .kn-text {
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+        }
+
+        /* Inline Code styling */
+        code:not([class*="language-"]) {
+            background-color: #f1f5f9;
+            color: #ef4444;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+            font-family: monospace;
+        }
+        .dark code:not([class*="language-"]) {
+            background-color: #374151;
+            color: #fca5a5;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        /* Code block refinements */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 1rem 0 1.5rem 0;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: #0f172a !important; /* Tailwind slate-900 */
+        }
+
+        /* Sidebar link active state transition */
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active {
+            border-left-color: #3b82f6; 
+            color: #3b82f6;
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Smooth section targeting */
+        section { scroll-margin-top: 5rem; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-5 py-3 rounded-lg shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3 font-medium">
+        <i class="fas fa-check-circle text-lg"></i>
+        <span>ಕೋಡ್ ಕಾಪಿ ಮಾಡಲಾಗಿದೆ! (Code Copied!)</span>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="fixed top-0 left-0 w-full z-40 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-md border-b border-gray-200 dark:border-darkBorder shadow-sm transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-400 text-black p-2 rounded-lg font-bold text-xl leading-none flex items-center justify-center w-10 h-10 shadow-sm">
+                    <i class="fab fa-js"></i>
+                </div>
+                <h1 class="text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+                    JavaScript Promise Masterclass
+                </h1>
+            </div>
+            
+            <button id="themeToggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors duration-200 text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fas fa-sun text-xl hidden dark:block text-yellow-400"></i>
+                <i class="fas fa-moon text-xl block dark:hidden text-indigo-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 pt-24 pb-12 relative">
+        
+        <!-- Sidebar Navigation (Table of Contents) -->
+        <aside class="w-full md:w-72 flex-shrink-0 hidden md:block md:sticky md:top-24 md:h-[calc(100vh-8rem)] overflow-y-auto bg-white dark:bg-darkSurface rounded-xl p-5 shadow-sm border border-gray-200 dark:border-darkBorder transition-colors duration-300 z-10">
+            <h3 class="text-sm font-bold mb-4 uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                <i class="fas fa-list-ul"></i> ಪರಿವಿಡಿ (Contents)
+            </h3>
+            <nav class="flex flex-col gap-1">
+                <a href="#intro" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">ಪೀಠಿಕೆ</a>
+                <a href="#section1" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">1. Promise ರಚನೆ & ಮೆಸೇಜ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್</a>
+                <a href="#section2" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">2. Error Object & .finally()</a>
+                <a href="#section3" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">3. Promise Chaining</a>
+                <a href="#section4" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">4. Async/Await (ಆಧುನಿಕ ವಿಧಾನ)</a>
+                <a href="#section5" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">5. Event Loop & Microtask Queue</a>
+                <a href="#section6" class="nav-link block px-3 py-2.5 rounded text-sm hover:text-blue-600 dark:hover:text-blue-400 kn-text">6. Promise.allSettled()</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full max-w-4xl space-y-12">
+            
+            <!-- Title Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+                    JavaScript Promise Masterclass <br>
+                    <span class="text-2xl md:text-3xl text-blue-600 dark:text-blue-400 font-normal mt-2 inline-block">(ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಪ್ರಾಮಿಸ್)</span>
+                </h1>
+                <div class="h-1 w-20 bg-blue-500 rounded"></div>
+            </div>
+
+            <!-- Intro Text -->
+            <section id="intro" class="fade-in">
+                <p class="text-lg kn-text mb-6">
+                    ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ (JavaScript) <strong>Promise (ಪ್ರಾಮಿಸ್)</strong> ಎಂದರೆ ಭವಿಷ್ಯದಲ್ಲಿ (future) ಸಿಗುವ ಒಂದು ಮೌಲ್ಯ (value) ಅಥವಾ ಕಾರ್ಯಾಚರಣೆಯ ಅಂತಿಮ ಫಲಿತಾಂಶವನ್ನು ಪ್ರತಿನಿಧಿಸುವ ಒಂದು ವ್ಯವಸ್ಥೆಯಾಗಿದೆ. ಇದು ಅಸಿಂಕ್ರೊನಸ್ (asynchronous) ಕೆಲಸಗಳನ್ನು (ಉದಾಹರಣೆಗೆ: ಸರ್ವರ್‌ನಿಂದ ಡೇಟಾ ಪಡೆಯುವುದು, ಫೈಲ್ ಓದುವುದು) ನಿರ್ವಹಿಸಲು ಬಳಸಲ್ಪಡುತ್ತದೆ.
+                </p>
+
+                <p class="text-lg kn-text mb-4 font-semibold text-gray-800 dark:text-gray-200">
+                    ಒಂದು Promise ಮೂರು ಹಂತಗಳಲ್ಲಿ (States) ಇರಬಹುದು:
+                </p>
+                <ol class="list-decimal pl-6 space-y-3 text-lg kn-text mb-8">
+                    <li><span class="font-bold text-yellow-600 dark:text-yellow-400">Pending (ಬಾಕಿ):</span> ಕಾರ್ಯಾಚರಣೆ ಇನ್ನೂ ನಡೆಯುತ್ತಿದೆ, ಪೂರ್ಣಗೊಂಡಿಲ್ಲ.</li>
+                    <li><span class="font-bold text-green-600 dark:text-green-400">Fulfilled (ಯಶಸ್ವಿ):</span> ಕಾರ್ಯಾಚರಣೆ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ (<code>resolve</code> ಆಗಿದೆ).</li>
+                    <li><span class="font-bold text-red-600 dark:text-red-400">Rejected (ವಿಫಲ):</span> ಕಾರ್ಯಾಚರಣೆ ವಿಫಲವಾಗಿದೆ ಅಥವಾ ದೋಷ (error) ಉಂಟಾಗಿದೆ (<code>reject</code> ಆಗಿದೆ).</li>
+                </ol>
+
+                <!-- SVG Diagram (Promise States) -->
+                <div class="my-10 bg-white dark:bg-darkSurface p-6 rounded-xl border border-gray-200 dark:border-darkBorder shadow-sm text-center overflow-x-auto hover:shadow-md transition-shadow duration-300">
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-6 uppercase tracking-wider">Promise States Diagram</h4>
+                    <svg viewBox="0 0 600 200" class="w-full max-w-lg mx-auto" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Definitions for arrows -->
+                        <defs>
+                            <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#22c55e" />
+                            </marker>
+                            <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#ef4444" />
+                            </marker>
+                        </defs>
+
+                        <!-- Pending Node -->
+                        <rect x="50" y="75" width="120" height="50" rx="25" class="fill-yellow-100 dark:fill-yellow-900/30 stroke-yellow-500 stroke-2" />
+                        <text x="110" y="105" text-anchor="middle" font-weight="bold" class="fill-yellow-700 dark:fill-yellow-400 font-sans text-sm">Pending</text>
+
+                        <!-- Fulfilled Node -->
+                        <rect x="350" y="20" width="120" height="50" rx="8" class="fill-green-100 dark:fill-green-900/30 stroke-green-500 stroke-2" />
+                        <text x="410" y="50" text-anchor="middle" font-weight="bold" class="fill-green-700 dark:fill-green-400 font-sans text-sm">Fulfilled</text>
+                        <text x="410" y="70" text-anchor="middle" class="fill-gray-500 dark:fill-gray-400 font-sans text-xs">(resolve)</text>
+
+                        <!-- Rejected Node -->
+                        <rect x="350" y="130" width="120" height="50" rx="8" class="fill-red-100 dark:fill-red-900/30 stroke-red-500 stroke-2" />
+                        <text x="410" y="160" text-anchor="middle" font-weight="bold" class="fill-red-700 dark:fill-red-400 font-sans text-sm">Rejected</text>
+                        <text x="410" y="180" text-anchor="middle" class="fill-gray-500 dark:fill-gray-400 font-sans text-xs">(reject)</text>
+
+                        <!-- Connecting Paths -->
+                        <path d="M 170 90 C 250 90, 260 45, 340 45" fill="none" class="stroke-green-500 stroke-2" marker-end="url(#arrow-green)" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" />
+                        </path>
+                        <path d="M 170 110 C 250 110, 260 155, 340 155" fill="none" class="stroke-red-500 stroke-2" marker-end="url(#arrow-red)" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2s" repeatCount="indefinite" />
+                        </path>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Section 1 -->
+            <section id="section1" class="fade-in pt-4">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-cube text-blue-500"></i> 
+                    1. Promise ರಚನೆ ಮತ್ತು ಬೇಸಿಕ್ ಮೆಸೇಜ್ ಹ್ಯಾಂಡ್ಲಿಂಗ್ (Basic Message Handling)
+                </h3>
+                <p class="text-lg kn-text mb-4">
+                    ಪ್ರಾಮಿಸ್ ಅನ್ನು ರಚಿಸುವಾಗ <code>resolve</code> (ಯಶಸ್ಸು) ಮತ್ತು <code>reject</code> (ವಿಫಲ) ಎಂಬ ಎರಡು ಫಂಕ್ಷನ್‌ಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಯಶಸ್ವಿಯಾದಾಗ <code>.then()</code> ಮೂಲಕ ಮೆಸೇಜ್ ಪಡೆಯುತ್ತೇವೆ ಮತ್ತು ವಿಫಲವಾದಾಗ <code>.catch()</code> ಮೂಲಕ ಎರೆರ್ ಮೆಸೇಜ್ (Error Message) ಪಡೆಯುತ್ತೇವೆ.
+                </p>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-6 mb-2"><strong>ಉದಾಹರಣೆ 1:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-javascript">const myFirstPromise = new Promise((resolve, reject) => {
+    let isTaskCompleted = true; // ಇದನ್ನು false ಮಾಡಿದರೆ ದೋಷ ಬರುತ್ತದೆ
+
+    if (isTaskCompleted) {
+        resolve("ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಕೆಲಸ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ."); // Success message
+    } else {
+        reject("ದೋಷ: ಕೆಲಸವನ್ನು ಪೂರ್ಣಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."); // Error message
+    }
+});
+
+// ಪ್ರಾಮಿಸ್ ಅನ್ನು ಬಳಸುವುದು
+myFirstPromise
+    .then((message) => {
+        // resolve ಆದಾಗ ಈ ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತದೆ
+        console.log("ಯಶಸ್ಸು:", message);
+    })
+    .catch((error) => {
+        // reject ಆದಾಗ ಈ ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತದೆ
+        console.log("ವಿಫಲ:", error);
+    });</code></pre>
+                </div>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-4 mb-2"><strong>ಔಟ್‌ಪುಟ್ (Output):</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-text">ಯಶಸ್ಸು: ಅಭಿನಂದನೆಗಳು! ನಿಮ್ಮ ಕೆಲಸ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ.</code></pre>
+                </div>
+
+                <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-lg kn-text text-gray-700 dark:text-gray-300">
+                        <strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ <code>isTaskCompleted</code> true ಆಗಿರುವುದರಿಂದ <code>resolve</code> ಕಾರ್ಯಗತಗೊಂಡು <code>.then()</code> ಒಳಗೆ ಇರುವ ಮೆಸೇಜ್ ಪ್ರಿಂಟ್ ಆಗಿದೆ. ಒಂದು ವೇಳೆ ಅದನ್ನು <code>false</code> ಮಾಡಿದರೆ <code>.catch()</code> ಒಳಗೆ ಇರುವ ದೋಷ (error) ಮೆಸೇಜ್ ಪ್ರಿಂಟ್ ಆಗುತ್ತದೆ.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-darkBorder my-10">
+
+            <!-- Section 2 -->
+            <section id="section2" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-bug text-red-500"></i>
+                    2. Error Object ಮತ್ತು .finally() ಬಳಸಿ ದೋಷಗಳನ್ನು ನಿರ್ವಹಿಸುವುದು
+                </h3>
+                <p class="text-lg kn-text mb-4">
+                    ನೈಜ ಪ್ರೋಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ, ನಾವು ಕೇವಲ ಸ್ಟ್ರಿಂಗ್ ಮೆಸೇಜ್ ಬದಲಾಗಿ <code>Error</code> ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಪಾಸ್ ಮಾಡುತ್ತೇವೆ. ಇದರಿಂದ ದೋಷ ಎಲ್ಲಿದೆ ಮತ್ತು ಅದರ ನಿಖರವಾದ ಕಾರಣವೇನು (error.message) ಎಂದು ತಿಳಿಯಲು ಸುಲಭವಾಗುತ್ತದೆ. <code>.finally()</code> ಎಂಬುದು ಪ್ರಾಮಿಸ್ ಯಶಸ್ವಿಯಾಗಲಿ ಅಥವಾ ವಿಫಲವಾಗಲಿ, ಕೊನೆಯಲ್ಲಿ ಖಚಿತವಾಗಿ ರನ್ ಆಗುವ ಬ್ಲಾಕ್ ಆಗಿದೆ.
+                </p>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-6 mb-2"><strong>ಉದಾಹರಣೆ 2:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-javascript">const fetchServerData = new Promise((resolve, reject) => {
+    let serverConnected = false; 
+
+    setTimeout(() => {
+        if (serverConnected) {
+            resolve({ user: "Kiran", role: "Developer" });
+        } else {
+            // ದೋಷದ ಸಂದೇಶವನ್ನು (Error object) ಕಳುಹಿಸುವುದು
+            reject(new Error("ಸರ್ವರ್ ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ (Network connection failed)."));
+        }
+    }, 2000); // 2 ಸೆಕೆಂಡ್‌ಗಳ ವಿಳಂಬ (delay)
+});
+
+fetchServerData
+    .then((data) => {
+        console.log("ಡೇಟಾ ಸಿಕ್ಕಿದೆ:", data);
+    })
+    .catch((error) => {
+        // ದೋಷದ ನಿಖರವಾದ ಸಂದೇಶವನ್ನು ಮಾತ್ರ ಪಡೆಯಲು error.message ಬಳಸುತ್ತೇವೆ
+        console.error("ದೋಷದ ವಿವರ (Error Message):", error.message);
+    })
+    .finally(() => {
+        console.log("ಕಾರ್ಯಾಚರಣೆ ಮುಕ್ತಾಯವಾಗಿದೆ. (ಲೋಡಿಂಗ್ ಸ್ಪಿನ್ನರ್ ಅನ್ನು ನಿಲ್ಲಿಸಿ)");
+    });</code></pre>
+                </div>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-4 mb-2"><strong>ಔಟ್‌ಪುಟ್ (Output):</strong> (2 ಸೆಕೆಂಡ್‌ಗಳ ನಂತರ)</p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-text">ದೋಷದ ವಿವರ (Error Message): ಸರ್ವರ್ ಸಂಪರ್ಕ ಕಡಿತಗೊಂಡಿದೆ (Network connection failed).
+ಕಾರ್ಯಾಚರಣೆ ಮುಕ್ತಾಯವಾಗಿದೆ. (ಲೋಡಿಂಗ್ ಸ್ಪಿನ್ನರ್ ಅನ್ನು ನಿಲ್ಲಿಸಿ)</code></pre>
+                </div>
+
+                <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-lg kn-text text-gray-700 dark:text-gray-300">
+                        <strong>ವಿವರಣೆ:</strong> ಇಲ್ಲಿ ಸರ್ವರ್ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ (<code>serverConnected = false</code>), ಹಾಗಾಗಿ <code>reject</code> ಒಳಗೆ <code>new Error()</code> ಅನ್ನು ಕಳುಹಿಸಲಾಗಿದೆ. <code>.catch()</code> ಬ್ಲಾಕ್‌ನಲ್ಲಿ <code>error.message</code> ಅನ್ನು ಬಳಸುವುದರಿಂದ ನಮಗೆ ಕೇವಲ ದೋಷದ ಸಂದೇಶ ಸ್ಪಷ್ಟವಾಗಿ ಸಿಗುತ್ತದೆ. ಕೊನೆಯಲ್ಲಿ <code>.finally()</code> ಬ್ಲಾಕ್ ರನ್ ಆಗುತ್ತದೆ.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-darkBorder my-10">
+
+            <!-- Section 3 -->
+            <section id="section3" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-link text-purple-500"></i>
+                    3. Promise Chaining (ಸರಣಿ ಪ್ರಾಮಿಸ್‌ಗಳು)
+                </h3>
+                <p class="text-lg kn-text mb-4">
+                    ಒಂದು ಕೆಲಸದ ಫಲಿತಾಂಶದ ಆಧಾರದ ಮೇಲೆ ಮತ್ತೊಂದು ಕೆಲಸವನ್ನು ಮಾಡಬೇಕಾದರೆ, ನಾವು <code>.then()</code> ಅನ್ನು ಒಂದರ ಹಿಂದೆ ಒಂದರಂತೆ ಜೋಡಿಸಬಹುದು. ಇದರ ಮಧ್ಯೆ ಎಲ್ಲಿಯೇ ದೋಷ ಬಂದರೂ ಕೊನೆಯಲ್ಲಿರುವ ಒಂದೇ <code>.catch()</code> ಅದನ್ನು ಹಿಡಿಯುತ್ತದೆ.
+                </p>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-6 mb-2"><strong>ಉದಾಹರಣೆ 3:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-javascript">const calculateNumber = new Promise((resolve, reject) => {
+    resolve(10);
+});
+
+calculateNumber
+    .then((result) => {
+        console.log("ಹಂತ 1ರ ಫಲಿತಾಂಶ:", result);
+        return result * 2; // ಈ ಮೌಲ್ಯ ಮುಂದಿನ .then ಗೆ ಹೋಗುತ್ತದೆ
+    })
+    .then((newResult) => {
+        console.log("ಹಂತ 2ರ ಫಲಿತಾಂಶ:", newResult);
+        return newResult + 5;
+    })
+    .then((finalResult) => {
+        console.log("ಅಂತಿಮ ಫಲಿತಾಂಶ:", finalResult);
+        // ಬೇಕು ಎಂದಾದರೆ ಇಲ್ಲಿ ಕೃತಕ ದೋಷವನ್ನು ಸೃಷ್ಟಿಸಬಹುದು
+        // throw new Error("ಲೆಕ್ಕಾಚಾರದಲ್ಲಿ ದೋಷವಿದೆ!");
+    })
+    .catch((error) => {
+        console.log("ಯಾವುದೋ ಹಂತದಲ್ಲಿ ದೋಷ ಬಂದಿದೆ:", error.message);
+    });</code></pre>
+                </div>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-4 mb-2"><strong>ಔಟ್‌ಪುಟ್ (Output):</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-text">ಹಂತ 1ರ ಫಲಿತಾಂಶ: 10
+ಹಂತ 2ರ ಫಲಿತಾಂಶ: 20
+ಅಂತಿಮ ಫಲಿತಾಂಶ: 25</code></pre>
+                </div>
+
+                <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-lg kn-text text-gray-700 dark:text-gray-300">
+                        <strong>ವಿವರಣೆ:</strong> ಮೊದಲ ಹಂತದಲ್ಲಿ 10 ಸಿಕ್ಕಿದೆ. ಆ 10 ಅನ್ನು 2 ರಿಂದ ಗುಣಿಸಿ ಮುಂದಿನ ಹಂತಕ್ಕೆ ಕಳುಹಿಸಲಾಗಿದೆ (20). ಕೊನೆಯ ಹಂತದಲ್ಲಿ 20 ಕ್ಕೆ 5 ಸೇರಿಸಿ 25 ಅನ್ನು ಪ್ರಿಂಟ್ ಮಾಡಲಾಗಿದೆ. ಈ ಸರಣಿಯಲ್ಲಿ ಎಲ್ಲಿಯಾದರೂ ದೋಷ ಸಂಭವಿಸಿದರೆ (ಉದಾಹರಣೆಗೆ <code>throw new Error()</code> ಬಳಸಿದರೆ), ನಡುವಿನ ಹಂತಗಳು ನಿಂತುಹೋಗಿ ನೇರವಾಗಿ <code>.catch()</code> ಬ್ಲಾಕ್ ಕಾರ್ಯಗತಗೊಳ್ಳುತ್ತದೆ.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-darkBorder my-10">
+
+            <!-- Section 4 -->
+            <section id="section4" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-bolt text-yellow-500"></i>
+                    4. Async/Await ಜೊತೆಗೆ Error ಮತ್ತು Message ನಿರ್ವಹಣೆ (ಆಧುನಿಕ ವಿಧಾನ)
+                </h3>
+                <p class="text-lg kn-text mb-4">
+                    ಇತ್ತೀಚಿನ ದಿನಗಳಲ್ಲಿ <code>.then()</code> ಮತ್ತು <code>.catch()</code> ಬದಲಾಗಿ ಹೆಚ್ಚು ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವ <code>async</code> ಮತ್ತು <code>await</code> ಅನ್ನು <code>try...catch</code> ಬ್ಲಾಕ್‌ನೊಂದಿಗೆ ಬಳಸಲಾಗುತ್ತದೆ.
+                </p>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-6 mb-2"><strong>ಉದಾಹರಣೆ 4:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-javascript">function getUserData() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error("ಬಳಕೆದಾರನ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ (User not found)."));
+        }, 1500);
+    });
+}
+
+async function displayData() {
+    try {
+        console.log("ಡೇಟಾ ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇನೆ...");
+        let data = await getUserData(); // ಪ್ರಾಮಿಸ್ ಪೂರ್ಣಗೊಳ್ಳುವವರೆಗೆ ಕಾಯುತ್ತದೆ
+        console.log("ಯಶಸ್ಸು:", data);
+    } catch (error) {
+        // ಪ್ರಾಮಿಸ್ reject ಆದರೆ, ನೇರವಾಗಿ ಇಲ್ಲಿಗೆ ಬರುತ್ತದೆ
+        console.log("ಕ್ಯಾಚ್ ಆದ ದೋಷ (Caught Error):", error.message);
+    }
+}
+
+displayData();</code></pre>
+                </div>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-4 mb-2"><strong>ಔಟ್‌ಪುಟ್ (Output):</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-text">ಡೇಟಾ ಪಡೆಯಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇನೆ...
+(1.5 ಸೆಕೆಂಡ್‌ಗಳ ನಂತರ)
+ಕ್ಯಾಚ್ ಆದ ದೋಷ (Caught Error): ಬಳಕೆದಾರನ ಮಾಹಿತಿ ಲಭ್ಯವಿಲ್ಲ (User not found).</code></pre>
+                </div>
+
+                <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-lg kn-text text-gray-700 dark:text-gray-300">
+                        <strong>ವಿವರಣೆ:</strong> <code>async</code> ಫಂಕ್ಷನ್ ಒಳಗೆ <code>await</code> ಬಳಸುವುದರಿಂದ ಕೋಡ್ ನೋಡಲು ಸಿಂಕ್ರೊನಸ್ (ಸಾಮಾನ್ಯ ಕೋಡ್) ರೀತಿಯಲ್ಲಿ ಕಾಣುತ್ತದೆ. <code>try</code> ಬ್ಲಾಕ್ ಒಳಗೆ ಯಶಸ್ವಿಯಾಗುವ ಕೆಲಸಗಳನ್ನು ಬರೆಯುತ್ತೇವೆ. <code>getUserData</code> ಪ್ರಾಮಿಸ್ ವಿಫಲವಾದರೆ (reject), ಅದು ತಕ್ಷಣವೇ <code>catch</code> ಬ್ಲಾಕ್‌ಗೆ ಜಿಗಿಯುತ್ತದೆ ಮತ್ತು ಅಲ್ಲಿ ನಾವು ದೋಷದ ಸಂದೇಶವನ್ನು (error.message) ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಬಹುದು.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-darkBorder my-10">
+
+            <!-- Section 5 -->
+            <section id="section5" class="fade-in">
+                <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-sync-alt text-teal-500"></i>
+                    5. ಇವೆಂಟ್ ಲೂಪ್ ಮತ್ತು ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (Event Loop & Microtask Queue)
+                </h3>
+                <p class="text-lg kn-text mb-4">
+                    <code>Promise.resolve()</code> ತಕ್ಷಣವೇ ಡೇಟಾವನ್ನು ನೀಡಿದರೂ (Settled ಆದರೂ), ಅದರೊಳಗಿನ <code>.then()</code> ಕೋಡ್ ತಕ್ಷಣವೇ (Synchronous ಆಗಿ) ರನ್ ಆಗುವುದಿಲ್ಲ. ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅದನ್ನು 'ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ' (Microtask Queue) ನಲ್ಲಿ ಇಡುತ್ತದೆ. ಉಳಿದ ಸಾಮಾನ್ಯ ಕೋಡ್ ರನ್ ಆದ ಮೇಲೆಯೇ ಇದು ರನ್ ಆಗುತ್ತದೆ.
+                </p>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-6 mb-2"><strong>ಉದಾಹರಣೆ 5:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-javascript">console.log("1. ಮೊದಲು");
+Promise.resolve("2. ಪ್ರಾಮಿಸ್ ಡೇಟಾ").then(res => console.log(res));
+console.log("3. ಕೊನೆಯಲ್ಲಿ");</code></pre>
+                </div>
+
+                <p class="font-bold text-gray-800 dark:text-gray-200 kn-text mt-4 mb-2"><strong>ಔಟ್‌ಪುಟ್:</strong></p>
+                <div class="relative group">
+                    <button class="copy-btn absolute top-3 right-3 bg-gray-700/80 hover:bg-gray-600 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-2 z-10 font-sans shadow-md" aria-label="Copy Code">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+<pre><code class="language-text">1. ಮೊದಲು
+3. ಕೊನೆಯಲ್ಲಿ
+2. ಪ್ರಾಮಿಸ್ ಡೇಟಾ</code></pre>
+                </div>
+            </section>
+
+            <hr class="border-gray-200 dark:border-darkBorder my-10">
+
+            <!-- Section 6 -->
+            <section id="section6" class="fade-in mb-20">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-[2px] shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-white dark:bg-darkSurface rounded-xl p-6 md:p-8">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-blue-600">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            6. Promise.allSettled() (ES2020 ವೈಶಿಷ್ಟ್ಯ)
+                        </h3>
+                        <p class="text-lg kn-text">
+                            ರಿಯಲ್-ಟೈಮ್ ಪ್ರಾಜೆಕ್ಟ್‌ಗಳಲ್ಲಿ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಪ್ರಾಮಿಸ್‌ಗಳಿದ್ದರೆ (ಉದಾಹರಣೆಗೆ 3 ಬೇರೆ ಬೇರೆ API ಗಳಿಂದ ಡೇಟಾ ತರುವಾಗ), ಅವುಗಳಲ್ಲಿ ಕೆಲವು ಯಶಸ್ವಿಯಾಗಿ, ಕೆಲವು ವಿಫಲವಾದರೂ, ಎಲ್ಲವೂ "ಸೆಟಲ್" (Settled) ಆಗುವವರೆಗೆ ಕಾಯಲು <code>Promise.allSettled()</code> ಅನ್ನು ಬಳಸಲಾಗುತ್ತದೆ.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Prism JS for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+            
+            // Determine initial theme based on localStorage or OS preference
+            if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                htmlElement.classList.remove('dark');
+            } else {
+                htmlElement.classList.add('dark');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                htmlElement.classList.toggle('dark');
+                if (htmlElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+            });
+
+            // 2. ScrollSpy (IntersectionObserver for Sidebar Highlighting)
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px', 
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${entry.target.id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+
+            // 3. Fade-in Animation Observer
+            const fadeObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        fadeObserver.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                fadeObserver.observe(el);
+            });
+
+            // 4. Copy Code to Clipboard Fallback functionality
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            const toast = document.getElementById('toast');
+            let toastTimeout;
+
+            copyButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const codeElement = btn.parentElement.querySelector('code');
+                    const textToCopy = codeElement.innerText;
+
+                    // Fallback copy using execCommand (avoids iFrame clipboard API issues)
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    textarea.style.position = 'fixed'; // Avoid scrolling to bottom
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        showToast();
+                    } catch (err) {
+                        console.error('Failed to copy code: ', err);
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                });
+            });
+
+            function showToast() {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 2500);
+            }
+        });
+    </script>
+</body>
+</html>

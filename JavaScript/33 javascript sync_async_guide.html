@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="kn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Async/Sync Guide | ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಮಾರ್ಗದರ್ಶಿ</title>
+    
+    <!-- Google Fonts: Inter (English) & Noto Sans Kannada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Kannada:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PrismJS for Syntax Highlighting (Dark Theme) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        darkBg: '#0f172a', /* Soothing slate-900 */
+                        darkCard: '#1e293b', /* slate-800 */
+                        primary: '#3b82f6', /* blue-500 */
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #cbd5e1;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #64748b;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Fade-in Animation */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Active Sidebar Link Indicator */
+        .toc-link.active {
+            color: #3b82f6; /* text-blue-500 */
+            border-left-color: #3b82f6;
+            font-weight: 600;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Interactive Cards */
+        .concept-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .concept-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Typography spacing for Kannada */
+        p {
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300 antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white/90 dark:bg-darkBg/90 shadow-sm">
+        <div class="max-w-8xl mx-auto">
+            <div class="py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fab fa-js text-yellow-400 text-3xl"></i>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
+                        JS Async/Sync Notes
+                    </h1>
+                </div>
+                <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-all">
+                    <i id="theme-toggle-dark-icon" class="hidden fas fa-moon text-lg"></i>
+                    <i id="theme-toggle-light-icon" class="hidden fas fa-sun text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row pb-12">
+        
+        <!-- Sticky Sidebar (Table of Contents) -->
+        <aside class="hidden lg:block lg:w-72 lg:shrink-0 pt-8 pr-8">
+            <nav class="sticky top-24 overflow-y-auto max-h-[calc(100vh-120px)] border-l-2 border-gray-200 dark:border-gray-800">
+                <ul class="text-sm space-y-2">
+                    <li>
+                        <a href="#intro" class="toc-link block py-2 pl-4 border-l-2 border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                            ಪರಿಚಯ (Introduction)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#level-1" class="toc-link block py-2 pl-4 border-l-2 border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                            ಹಂತ 1: ನಾನ್-ಐಟಿ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#level-2" class="toc-link block py-2 pl-4 border-l-2 border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                            ಹಂತ 2: ಐಟಿ ವಿದ್ಯಾರ್ಥಿ ಹಂತ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#level-3" class="toc-link block py-2 pl-4 border-l-2 border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                            ಹಂತ 3: ವೃತ್ತಿಪರ (Professional) ಹಂತ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#level-4" class="toc-link block py-2 pl-4 border-l-2 border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200">
+                            ಹಂತ 4: ಕೋಡ್ ಉದಾಹರಣೆ
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="w-full min-w-0 flex-auto lg:static lg:max-h-full lg:overflow-visible pt-8">
+            
+            <!-- Introduction Section -->
+            <section id="intro" class="fade-in-section mb-12 scroll-mt-24">
+                <div class="bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 dark:border-gray-800 concept-card">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900 dark:text-white">
+                        <i class="fas fa-book-open text-primary"></i> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ಸಿಂಕ್ರೊನಸ್ ಮತ್ತು ಅಸಿಂಕ್ರೊನಸ್
+                    </h2>
+                    <p class="text-lg">
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ನ <strong>ಸಿಂಕ್ರೊನಸ್ (Synchronous)</strong> ಮತ್ತು <strong>ಅಸಿಂಕ್ರೊನಸ್ (Asynchronous)</strong> ಪರಿಕಲ್ಪನೆಗಳನ್ನು ನಾನ್-ಐಟಿ (Non-IT) ಹಿನ್ನೆಲೆಯ ವ್ಯಕ್ತಿಗೆ ಅರ್ಥವಾಗುವ ದೈನಂದಿನ ಉದಾಹರಣೆಗಳಿಂದ ಶುರುಮಾಡಿ, ಒಬ್ಬ ಸಾಫ್ಟ್‌ವೇರ್ ವೃತ್ತಿಪರ (Professional) ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕಾದ ಆಳವಾದ ತಾಂತ್ರಿಕ ವಿವರಗಳವರೆಗೆ (Event Loop, Call Stack) ಹಂತ-ಹಂತವಾಗಿ ಕಲಿಯೋಣ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Level 1 Section -->
+            <section id="level-1" class="fade-in-section mb-12 scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fas fa-users text-green-500"></i> ಹಂತ 1: ನಾನ್-ಐಟಿ (Non-IT) ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ದೈನಂದಿನ ಉದಾಹರಣೆ
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Synchronous Card -->
+                    <div class="bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border-l-4 border-red-500 concept-card">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+                            <i class="fas fa-hourglass-half text-red-500"></i> 1. ಸಿಂಕ್ರೊನಸ್ (Synchronous) ಎಂದರೆ ಏನು?
+                        </h3>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            ಇದನ್ನು "ಒಂದಾದ ಮೇಲೆ ಮತ್ತೊಂದು ಕೆಲಸ ಮಾಡುವುದು" ಎಂದು ಕರೆಯಬಹುದು.
+                        </p>
+                        <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg mt-4 text-sm">
+                            <p class="mb-2"><strong class="text-red-500 dark:text-red-400">ಉದಾಹರಣೆ:</strong> ನೀವು ಒಂದು ಸಣ್ಣ ಕಾಫಿ ಶಾಪ್‌ಗೆ ಹೋಗುತ್ತೀರಿ. ಅಲ್ಲಿ ಕೌಂಟರ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಕಾಫಿ ತಯಾರಾಗುವವರೆಗೆ ನೀವು ಅಲ್ಲೇ ನಿಂತು ಕಾಯಬೇಕು. ನಿಮ್ಮ ಕಾಫಿ ಸಿಕ್ಕ ಮೇಲೆ ಮಾತ್ರ ನಿಮ್ಮ ಹಿಂದಿರುವ ವ್ಯಕ್ತಿ ಆರ್ಡರ್ ಮಾಡಬಹುದು.</p>
+                            <p><strong class="text-blue-500 dark:text-blue-400">ಅರ್ಥ:</strong> ಇಲ್ಲಿ ಒಂದು ಕೆಲಸ ಮುಗಿಯುವವರೆಗೂ ಮುಂದಿನ ಕೆಲಸ ಶುರುವಾಗುವುದಿಲ್ಲ. ಇದು ಇತರ ಕೆಲಸಗಳನ್ನು <strong>ಬ್ಲಾಕ್ (Block)</strong> ಮಾಡುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+
+                    <!-- Asynchronous Card -->
+                    <div class="bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border-l-4 border-green-500 concept-card">
+                        <h3 class="text-xl font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+                            <i class="fas fa-forward text-green-500"></i> 2. ಅಸಿಂಕ್ರೊನಸ್ (Asynchronous) ಎಂದರೆ ಏನು?
+                        </h3>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            ಇದನ್ನು "ಒಂದು ಕೆಲಸ ನಡೆಯುತ್ತಿರುವಾಗಲೇ, ಕಾಯದೆ ಬೇರೆ ಕೆಲಸ ಮಾಡುವುದು" ಎಂದು ಕರೆಯಬಹುದು.
+                        </p>
+                        <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg mt-4 text-sm">
+                            <p class="mb-2"><strong class="text-green-500 dark:text-green-400">ಉದಾಹರಣೆ:</strong> ನೀವು ಒಂದು ದೊಡ್ಡ ರೆಸ್ಟೋರೆಂಟ್‌ಗೆ ಹೋಗಿ ಆರ್ಡರ್ ಮಾಡುತ್ತೀರಿ. ಅವರು ನಿಮಗೆ ಒಂದು 'ಟೋಕನ್' ಕೊಟ್ಟು ಟೇಬಲ್ ಬಳಿ ಕೂರಲು ಹೇಳುತ್ತಾರೆ. ನಿಮ್ಮ ಅಡುಗೆ ತಯಾರಾಗುವಾಗ, ನೀವು ಫೋನ್ ನೋಡಬಹುದು ಅಥವಾ ಸ್ನೇಹಿತರ ಜೊತೆ ಮಾತನಾಡಬಹುದು. ಅಡುಗೆ ತಯಾರಾದ ತಕ್ಷಣ ವೇಟರ್ ಅದನ್ನು ತಂದು ಕೊಡುತ್ತಾರೆ.</p>
+                            <p><strong class="text-blue-500 dark:text-blue-400">ಅರ್ಥ:</strong> ಇಲ್ಲಿ ಯಾವುದಕ್ಕೂ ಕಾಯುವ (Block ಆಗುವ) ಅಗತ್ಯವಿಲ್ಲ. ಎಲ್ಲವೂ ಸಮಾನಾಂತರವಾಗಿ ನಡೆಯುತ್ತದೆ.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Level 2 Section -->
+            <section id="level-2" class="fade-in-section mb-12 scroll-mt-24">
+                <div class="bg-white dark:bg-darkCard rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 dark:border-gray-800 concept-card relative overflow-hidden">
+                    <!-- Decorative background element -->
+                    <div class="absolute -right-10 -top-10 text-gray-100 dark:text-gray-800 opacity-50 transform rotate-12">
+                        <i class="fas fa-microchip text-9xl"></i>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2 relative z-10">
+                        <i class="fas fa-laptop-code text-blue-500"></i> ಹಂತ 2: ಐಟಿ (IT) ವಿದ್ಯಾರ್ಥಿ ಹಂತ – ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?
+                    </h2>
+                    <p class="relative z-10">
+                        ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಒಂದು <strong>"ಸಿಂಗಲ್-ಥ್ರೆಡೆಡ್" (Single-Threaded)</strong> ಭಾಷೆ. ಎಂದರೆ, ಅದರ ಬಳಿ ಕೆಲಸ ಮಾಡಲು ಇರುವುದು ಕೇವಲ ಒಬ್ಬನೇ ಕೆಲಸಗಾರ (Main Thread).
+                    </p>
+                    <p class="relative z-10 mt-3">
+                        ಒಬ್ಬನೇ ಕೆಲಸಗಾರನಿದ್ದರೆ, ಅವನು ಸಿಂಕ್ರೊನಸ್ ಆಗಿ ಕೆಲಸ ಮಾಡಿದರೆ ಸಿಸ್ಟಮ್ ಹ್ಯಾಂಗ್ ಆಗುತ್ತದೆ (ಉದಾಹರಣೆಗೆ: ಇಂಟರ್ನೆಟ್‌ನಿಂದ ದೊಡ್ಡ ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಆಗುವವರೆಗೆ ಇಡೀ ವೆಬ್‌ಸೈಟ್ ಸ್ತಬ್ಧವಾಗುತ್ತದೆ). ಇದನ್ನು ತಡೆಯಲು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಅಸಿಂಕ್ರೊನಸ್ (Asynchronous) ವಿಧಾನವನ್ನು ಬಳಸುತ್ತದೆ. ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸಗಳನ್ನು (ಉದಾ: ಡೇಟಾಬೇಸ್‌ನಿಂದ ಮಾಹಿತಿ ತರುವುದು, ಟೈಮರ್‌ಗಳು) ಹಿನ್ನೆಲೆಯಲ್ಲಿ (Background) ನಡೆಯಲು ಬಿಟ್ಟು, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ತನ್ನ ಮುಂದಿನ ಕೆಲಸಗಳನ್ನು ಮುಂದುವರಿಸುತ್ತದೆ.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Level 3 Section -->
+            <section id="level-3" class="fade-in-section mb-12 scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fas fa-cogs text-purple-500"></i> ಹಂತ 3: ವೃತ್ತಿಪರ (Professional) ಹಂತ – Under the Hood (ಆಳವಾದ ವಿವರ)
+                </h2>
+                <p class="mb-6">
+                    ಒಬ್ಬ ಪ್ರೊಫೆಷನಲ್ ಡೆವಲಪರ್ ಆಗಿ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಬಿಹೈಂಡ್ ದಿ ಸೀನ್ಸ್ (Behind the scenes) ಹೇಗೆ ಅಸಿಂಕ್ರೊನಸ್ ಕೆಲಸಗಳನ್ನು ನಿಭಾಯಿಸುತ್ತದೆ ಎಂದು ತಿಳಿಯಲು <strong>Event Loop Architecture</strong> ಅನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬೇಕು. ಇದರಲ್ಲಿ 4 ಪ್ರಮುಖ ಭಾಗಗಳಿವೆ:
+                </p>
+
+                <div class="space-y-4">
+                    <!-- Feature 1 -->
+                    <div class="flex flex-col md:flex-row gap-4 p-5 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 concept-card">
+                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400">
+                            <i class="fas fa-layer-group text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">1. ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ (Call Stack):</h3>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಮುಖ್ಯ ಕಾರ್ಯಕ್ಷೇತ್ರ. ಇದೊಂದು "Last In, First Out" (LIFO) ವ್ಯವಸ್ಥೆ. ಯಾವುದೇ ಫಂಕ್ಷನ್ ರನ್ ಆಗಬೇಕಾದರೂ ಮೊದಲು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ಬರುತ್ತದೆ. ಕೆಲಸ ಮುಗಿದ ತಕ್ಷಣ ಅಲ್ಲಿಂದ ಹೊರಹೋಗುತ್ತದೆ.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex flex-col md:flex-row gap-4 p-5 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 concept-card">
+                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400">
+                            <i class="fas fa-globe text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">2. ವೆಬ್ ಎಪಿಐ ಗಳು (Web APIs / Node APIs):</h3>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್‌ನ ಹೊರಗಿರುವ ಬ್ರೌಸರ್‌ನ ಫೀಚರ್‌ಗಳು (ಮತ್ತು DOM ಜೊತೆಗಿನ ಸಂಪರ್ಕಗಳು). ಉದಾಹರಣೆಗೆ: <code>setTimeout()</code>, <code>fetch()</code> (ಇಂಟರ್ನೆಟ್‌ನಿಂದ ಡೇಟಾ ತರುವುದು), DOM Events ಮುಂತಾದವು. ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುವ ಕೆಲಸಗಳನ್ನು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಇವುಗಳಿಗೆ ಒಪ್ಪಿಸಿಬಿಡುತ್ತದೆ.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex flex-col md:flex-row gap-4 p-5 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 concept-card">
+                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400">
+                            <i class="fas fa-list-ol text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">3. ಟಾಸ್ಕ್ ಕ್ಯೂಗಳು (Task Queues):</h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                ವೆಬ್ ಎಪಿಐಗಳು ತಮ್ಮ ಹಿನ್ನೆಲೆ ಕೆಲಸವನ್ನು ಮುಗಿಸಿದ ನಂತರ, ಅದರ ಫಲಿತಾಂಶಗಳನ್ನು ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ಗೆ ವಾಪಸ್ ಕಳುಹಿಸಲು ಕ್ಯೂ (ಸರತಿ ಸಾಲು) ನಲ್ಲಿ ನಿಲ್ಲಿಸುತ್ತವೆ. ಇದರಲ್ಲಿ 2 ವಿಧಗಳಿವೆ:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><strong>ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (Microtask Queue):</strong> ಅತಿ ಹೆಚ್ಚು ಆದ್ಯತೆ (High Priority) ಇರುವ ಕ್ಯೂ. ಭವಿಷ್ಯದ ಫಲಿತಾಂಶಗಳನ್ನು ನಿಭಾಯಿಸುವ Promises (<code>.then</code>, <code>.catch</code>), <code>async/await</code> ಗಳು ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ.</li>
+                                <li><strong>ಮ್ಯಾಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ (Macrotask Queue / Callback Queue):</strong> ಕಡಿಮೆ ಆದ್ಯತೆ ಇರುವ ಕ್ಯೂ. <code>setTimeout</code>, <code>setInterval</code> ಗಳು ಇಲ್ಲಿ ಬರುತ್ತವೆ.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="flex flex-col md:flex-row gap-4 p-5 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 concept-card">
+                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-teal-100 text-teal-500 dark:bg-teal-500/20 dark:text-teal-400">
+                            <i class="fas fa-sync-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">4. ಈವೆಂಟ್ ಲೂಪ್ (Event Loop):</h3>
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                ಇದೊಂದು ಕಾವಲುಗಾರನಿದ್ದಂತೆ. ಇದರ ಕೆಲಸ ಒಂದೇ: ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಖಾಲಿ ಇದೆಯೇ ಎಂದು ನಿರಂತರವಾಗಿ ಪರಿಶೀಲಿಸುವುದು.
+                            </p>
+                            <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                                <li>ಕಾಲ್ ಸ್ಟ್ಯಾಕ್ ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿಯಾದಾಗ, ಈವೆಂಟ್ ಲೂಪ್ ಮೊದಲು <strong>ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ</strong> ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಕೆಲಸಗಳನ್ನು ಸ್ಟ್ಯಾಕ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ.</li>
+                                <li>ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ ಖಾಲಿಯಾದ ಮೇಲೆ ಮಾತ್ರ, <strong>ಮ್ಯಾಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ</strong> ನಲ್ಲಿರುವ ಕೆಲಸಗಳನ್ನು ಸ್ಟ್ಯಾಕ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Level 4 Section (Code Example) -->
+            <section id="level-4" class="fade-in-section mb-12 scroll-mt-24">
+                <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <i class="fas fa-code text-indigo-500"></i> ಹಂತ 4: ಕೋಡ್ ಉದಾಹರಣೆ ಮತ್ತು ಇಂಟರ್ವ್ಯೂ ಪ್ರಶ್ನೆ
+                </h2>
+                <p class="mb-4">
+                    ಈ ಕೆಳಗಿನ ಕೋಡ್ ಅನ್ನು ಗಮನಿಸಿ. ಇದು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಡೆವಲಪರ್ ಸಂದರ್ಶನಗಳಲ್ಲಿ ಅತಿ ಹೆಚ್ಚು ಕೇಳಲಾಗುವ ಪ್ರಶ್ನೆ:
+                </p>
+
+                <!-- Code Block -->
+                <div class="relative group rounded-xl overflow-hidden shadow-lg mb-6">
+                    <div class="flex justify-between items-center bg-[#1d1f21] px-4 py-2 text-gray-400 text-sm border-b border-gray-700">
+                        <span class="flex items-center gap-2"><i class="fab fa-js text-yellow-400"></i> script.js</span>
+                        <button onclick="copyCode(this)" class="hover:text-white transition-colors flex items-center gap-1 focus:outline-none" aria-label="Copy code">
+                            <i class="far fa-copy"></i> <span class="copy-text">Copy Code</span>
+                        </button>
+                    </div>
+                    <pre class="!m-0 !rounded-none !bg-[#1d1f21]"><code class="language-javascript" id="js-code">console.log("Start");
+
+setTimeout(() => {
+    console.log("Macrotask (setTimeout)");
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log("Microtask (Promise)");
+});
+
+console.log("End");</code></pre>
+                </div>
+
+                <!-- Code Output Explanation -->
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-bold mb-3 flex items-center gap-2 text-gray-900 dark:text-white">
+                        <i class="fas fa-terminal text-gray-600 dark:text-gray-400"></i> ಔಟ್‌ಪುಟ್ (Output) ಬರುವ ಸರಿಯಾದ ಕ್ರಮ:
+                    </h3>
+                    <ol class="list-decimal pl-5 space-y-3 text-gray-700 dark:text-gray-300">
+                        <li><strong>Start</strong> (ಇದು ಸಿಂಕ್ರೊನಸ್, ನೇರವಾಗಿ ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ನಲ್ಲಿ ರನ್ ಆಗುತ್ತದೆ)</li>
+                        <li><strong>End</strong> (ಇದು ಕೂಡ ಸಿಂಕ್ರೊನಸ್, ಕಾಲ್ ಸ್ಟ್ಯಾಕ್‌ನಲ್ಲೇ ರನ್ ಆಗುತ್ತದೆ)</li>
+                        <li><strong>Microtask (Promise)</strong> (ಸ್ಟ್ಯಾಕ್ ಖಾಲಿಯಾದ ಕೂಡಲೇ, ಈವೆಂಟ್ ಲೂಪ್ ಮೊದಲು ಮೈಕ್ರೋಟಾಸ್ಕ್ ಕ್ಯೂ ಅನ್ನು ರನ್ ಮಾಡುತ್ತದೆ)</li>
+                        <li><strong>Macrotask (setTimeout)</strong> (ಮೈಕ್ರೋಟಾಸ್ಕ್ ಖಾಲಿಯಾದ ಮೇಲೆ ಕೊನೆಯದಾಗಿ ಮ್ಯಾಕ್ರೋಟಾಸ್ಕ್ ರನ್ ಆಗುತ್ತದೆ, ಸಮಯ 0 ಇದ್ದರೂ ಸಹ!)</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <footer class="mt-16 py-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 dark:text-gray-400">
+                <p>Designed for prolonged reading comfort & deeply comprehensive learning.</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- PrismJS Script for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <!-- Custom Interactivity Scripts -->
+    <script>
+        // 1. Dark Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Check local storage or system preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            lightIcon.classList.remove('hidden');
+        } else {
+            // Ensure default is dark as requested, unless explicitly set to light
+            if(!localStorage.getItem('color-theme')) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            darkIcon.classList.toggle('hidden');
+            lightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // 2. Intersection Observer for Fade-In Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // observer.unobserve(entry.target); // Uncomment to animate only once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach((section) => {
+            observer.observe(section);
+        });
+
+        // 3. Scrollspy for Sticky Sidebar (Active state highlighting)
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.toc-link');
+
+        const scrollSpyOptions = {
+            rootMargin: '-100px 0px -40% 0px',
+            threshold: 0.1
+        };
+
+        const scrollSpyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, scrollSpyOptions);
+
+        sections.forEach(section => {
+            scrollSpyObserver.observe(section);
+        });
+
+        // 4. Copy Code Functionality
+        function copyCode(button) {
+            const codeBlock = document.getElementById('js-code');
+            const copyText = button.querySelector('.copy-text');
+            const icon = button.querySelector('i');
+            
+            // Clipboard API implementation
+            navigator.clipboard.writeText(codeBlock.innerText).then(() => {
+                // Success visual feedback
+                copyText.textContent = 'Copied!';
+                icon.classList.remove('far', 'fa-copy');
+                icon.classList.add('fas', 'fa-check', 'text-green-400');
+                
+                setTimeout(() => {
+                    copyText.textContent = 'Copy Code';
+                    icon.classList.remove('fas', 'fa-check', 'text-green-400');
+                    icon.classList.add('far', 'fa-copy');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                copyText.textContent = 'Error!';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="kn" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Pro Notes: Factory & Constructor Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --sidebar-bg: #ffffff;
+            --sidebar-border: #e2e8f0;
+            --card-bg: #ffffff;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #f59e0b;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --sidebar-bg: #1e293b;
+            --sidebar-border: #334155;
+            --card-bg: #1e293b;
+            --code-bg: #000000;
+            --primary: #60a5fa;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Kannada', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            display: flex;
+            transition: var(--transition);
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 300px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            position: fixed;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+        }
+
+        .logo i {
+            color: var(--secondary);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            padding: 2rem 4rem;
+            width: calc(100% - 300px);
+            max-width: 1200px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--sidebar-border);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--sidebar-border);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            width: 300px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            color: var(--text-color);
+            margin-left: 10px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            border: 1px solid var(--sidebar-border);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Sections and Cards */
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 2rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--secondary);
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: var(--text-color);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--sidebar-border);
+        }
+
+        .highlight-box {
+            background-color: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background-color: rgba(239, 68, 68, 0.05);
+            border-left: 4px solid var(--accent-red);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .pro-tip {
+            background-color: rgba(16, 185, 129, 0.05);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .pro-tip::before {
+            content: '🌟 Pro Tip / Advanced';
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: var(--accent-green);
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 1.5rem 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .code-header {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* Syntax highlighting simple colors */
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        .function { color: #dcdcaa; }
+        .variable { color: #9cdcfe; }
+
+        .output-panel {
+            background-color: rgba(0,0,0,0.05);
+            border-top: 1px solid var(--sidebar-border);
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .output-panel {
+            background-color: #111;
+            color: #a0aec0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--sidebar-border);
+        }
+
+        th {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        [data-theme="dark"] tr:hover {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        /* Interactive Quiz */
+        .quiz-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--sidebar-border);
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .options {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+        .options li {
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.05);
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        [data-theme="dark"] .options li { background: rgba(255,255,255,0.05); }
+        .options li:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+        .answer {
+            display: none;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent-green);
+            margin-top: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Original Notes Archive */
+        .archive-section {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px dashed #d97706;
+        }
+        [data-theme="dark"] .archive-section {
+            background-color: #451a03;
+            color: #fde68a;
+            border-color: #b45309;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1.5rem;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+        
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--primary);
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fa-brands fa-js"></i> JS Masterclass
+        </div>
+        <ul class="nav-links">
+            <li><a href="#intro" class="active"><i class="fa-solid fa-home"></i> ಪೀಠಿಕೆ (Intro)</a></li>
+            <li><a href="#factory"><i class="fa-solid fa-industry"></i> Factory Function</a></li>
+            <li><a href="#constructor"><i class="fa-solid fa-gears"></i> Constructor Function</a></li>
+            <li><a href="#new-this"><i class="fa-solid fa-wand-magic-sparkles"></i> 'new' & 'this'</a></li>
+            <li><a href="#differences"><i class="fa-solid fa-scale-balanced"></i> ವ್ಯತ್ಯಾಸಗಳು (Differences)</a></li>
+            <li><a href="#quiz"><i class="fa-solid fa-brain"></i> ಅಭ್ಯಾಸ (Practice Quiz)</a></li>
+            <li><a href="#original-notes"><i class="fa-solid fa-box-archive"></i> ಮೂಲ ನೋಟ್ಸ್ (Archive)</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="ಹುಡುಕಿ (Search)...">
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+        </header>
+
+        <section id="intro" class="hero">
+            <h1>JavaScript Objects: Factory & Constructor Functions</h1>
+            <p>ಆರಂಭಿಕ ವಿದ್ಯಾರ್ಥಿಯಿಂದ (Beginner) ವೃತ್ತಿಪರ (Professional) ಮಟ್ಟದವರೆಗೆ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಸೃಷ್ಟಿಸುವ ಸುಧಾರಿತ ವಿಧಾನಗಳ ಸಂಪೂರ್ಣ ಕನ್ನಡಿಗರಿಗಾಗಿ ತಯಾರಿಸಿದ ಮಾರ್ಗದರ್ಶಿ.</p>
+        </section>
+
+        <!-- FACTORY FUNCTION SECTION -->
+        <section id="factory">
+            <h2><i class="fa-solid fa-industry"></i> ೧. Factory Function (ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್)</h2>
+            <div class="card">
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>Factory Function</strong> ಎನ್ನುವುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಬಹಳ ಸುಲಭ. ನೀವು ಇದನ್ನು ಒಂದು "ಆಟಿಕೆ ತಯಾರಿಸುವ ಮಷಿನ್" (Toy Factory) ಎಂದು ಊಹಿಸಿಕೊಳ್ಳಿ.</p>
+                <p>ನೀವು ಮಷಿನ್‌ಗೆ <em>"ನನಗೆ ಕೆಂಪು ಬಣ್ಣದ ಕಾರು ಬೇಕು"</em> ಎಂದು ಹೇಳಿದರೆ, ಅದು ನಿಮಗೆ ಕೆಂಪು ಬಣ್ಣದ ಕಾರನ್ನು ತಯಾರಿಸಿ ಕೊಡುತ್ತದೆ. <em>"ನೀಲಿ ಬಣ್ಣದ ಬೈಕ್ ಬೇಕು"</em> ಅಂದರೆ ನೀಲಿ ಬೈಕ್ ಕೊಡುತ್ತದೆ.</p>
+                <div class="highlight-box">
+                    <strong>ತಾಂತ್ರಿಕ ವ್ಯಾಖ್ಯಾನ (Technical Definition):</strong> Factory Function ಎಂದರೆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು (Objects) ಸೃಷ್ಟಿಸಿ, ನಮಗೆ ವಾಪಸ್ (return) ಕೊಡುವ ಒಂದು ಸಾಮಾನ್ಯ ಫಂಕ್ಷನ್. ಇದರಲ್ಲಿ <code style="background:rgba(0,0,0,0.1); padding:2px 5px; border-radius:4px;">new</code> ಕೀವರ್ಡ್ ಬಳಸುವ ಅಗತ್ಯವಿರುವುದಿಲ್ಲ.
+                </div>
+
+                <h3><i class="fa-solid fa-seedling"></i> 1. Beginner ಹಂತ (ಆರಂಭಿಕ ಹಂತ: ಆಟಿಕೆ ತಯಾರಿಸೋಣ!)</h3>
+                <p>ಮೊದಲಿಗೆ ಒಂದು ಸರಳವಾದ ಆಟಿಕೆ ಮಷಿನ್ ಮಾಡೋಣ. ನಾವು ಆಟಿಕೆಯ ಹೆಸರು ಮತ್ತು ಬಣ್ಣವನ್ನು ಹೇಳಿದರೆ, ಅದು ನಮಗೆ ಹೊಸ ಆಟಿಕೆಯನ್ನು ಕೊಡಬೇಕು.</p>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fa-brands fa-js"></i> factory_beginner.js</span>
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code><span class="comment">// ಇದು ನಮ್ಮ ಫ್ಯಾಕ್ಟರಿ (ಮಷಿನ್)</span>
+<span class="keyword">function</span> <span class="function">createToy</span>(<span class="variable">name</span>, <span class="variable">color</span>) {
+  <span class="comment">// ಇದು ಹೊಸ ಆಟಿಕೆಯನ್ನು (Object) ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಹಾಕಿ ನಮಗೆ ಕೊಡುತ್ತದೆ</span>
+  <span class="keyword">return</span> {
+    <span class="variable">toyName</span>: name,
+    <span class="variable">toyColor</span>: color
+  };
+}
+
+<span class="comment">// ಮಷಿನ್ ಬಳಸಿ ಆಟಿಕೆಗಳನ್ನು ತಯಾರಿಸೋಣ!</span>
+<span class="keyword">let</span> car = <span class="function">createToy</span>(<span class="string">"ಕಾರು"</span>, <span class="string">"ಕೆಂಪು"</span>);
+<span class="keyword">let</span> ball = <span class="function">createToy</span>(<span class="string">"ಚೆಂಡು"</span>, <span class="string">"ಹಸಿರು"</span>);
+
+<span class="function">console.log</span>(car.toyName);  
+<span class="function">console.log</span>(ball.toyColor);</code></pre>
+                    <div class="output-panel">
+                        <strong>ಔಟ್‌ಪುಟ್ (Output):</strong><br>
+                        ಕಾರು<br>
+                        ಹಸಿರು
+                    </div>
+                </div>
+                <p><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> ಇಲ್ಲಿ <code>createToy</code> ಎಂಬುದು ಒಂದು ಫ್ಯಾಕ್ಟರಿ. ಅದಕ್ಕೆ ನಾವು "ಕಾರು" ಮತ್ತು "ಕೆಂಪು" ಎಂದು ಹೇಳಿದ ತಕ್ಷಣ, ಅದು ಒಳಗಡೆ ಒಂದು ಹೊಸ ಬಾಕ್ಸ್ (Object <code>{}</code>) ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಅದರಲ್ಲಿ ಹೆಸರು ಮತ್ತು ಬಣ್ಣವನ್ನು ಹಾಕಿ ನಮಗೆ return ಮಾಡಿತು. ನಮಗೆ ಎಷ್ಟು ಬೇಕೋ ಅಷ್ಟು ಹೊಸ ಆಟಿಕೆಗಳನ್ನು ಈ ಮಷಿನ್‌ನಿಂದ ಪಡೆಯಬಹುದು!</p>
+
+                <h3><i class="fa-solid fa-gears"></i> 2. Intermediate ಹಂತ (ಮಧ್ಯಮ ಹಂತ: ಮಾತನಾಡುವ ಆಟಿಕೆ!)</h3>
+                <p>ಈಗ ನಮ್ಮ ಮಷಿನ್ ಅನ್ನು ಸ್ವಲ್ಪ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡೋಣ. ಬರೀ ಆಟಿಕೆ ಅಲ್ಲ, ಆ ಆಟಿಕೆ ಕೆಲಸ ಮಾಡುವಂತೆಯೂ (ಮಾತನಾಡುವಂತೆ) ಮಾಡೋಣ.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fa-brands fa-js"></i> factory_intermediate.js</span>
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">function</span> <span class="function">createRobot</span>(<span class="variable">robotName</span>) {
+  <span class="keyword">return</span> {
+    <span class="variable">name</span>: robotName,
+    <span class="comment">// ರೋಬೋಟ್ ಮಾತನಾಡುವ ಕೆಲಸ (Method)</span>
+    <span class="function">talk</span>: <span class="keyword">function</span>() {
+      <span class="function">console.log</span>(<span class="string">"ಹಲೋ! ನನ್ನ ಹೆಸರು "</span> + robotName);
+    }
+  };
+}
+
+<span class="comment">// ಹೊಸ ರೋಬೋಟ್ ತಯಾರಿಸೋಣ</span>
+<span class="keyword">let</span> chitti = <span class="function">createRobot</span>(<span class="string">"ಚಿಟ್ಟಿ"</span>);
+<span class="keyword">let</span> wallE = <span class="function">createRobot</span>(<span class="string">"ವಾಲ್-ಇ"</span>);
+
+<span class="comment">// ರೋಬೋಟ್ ಕೈಯಲ್ಲಿ ಮಾತನಾಡಿಸೋಣ</span>
+chitti.<span class="function">talk</span>(); 
+wallE.<span class="function">talk</span>();</code></pre>
+                    <div class="output-panel">
+                        <strong>ಔಟ್‌ಪುಟ್ (Output):</strong><br>
+                        ಹಲೋ! ನನ್ನ ಹೆಸರು ಚಿಟ್ಟಿ<br>
+                        ಹಲೋ! ನನ್ನ ಹೆಸರು ವಾಲ್-ಇ
+                    </div>
+                </div>
+                <p><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> ನಾವು ತಯಾರಿಸಿದ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಬರೀ ಹೆಸರು ಮಾತ್ರ ಇಲ್ಲ, <code>talk</code> ಎಂಬ ಒಂದು ಕೆಲಸ (ಫಂಕ್ಷನ್/method) ಕೂಡ ಇದೆ. ಚಿಟ್ಟಿ ಎಂಬ ರೋಬೋಟ್ ತಯಾರಾದ ಮೇಲೆ, ಅದಕ್ಕೆ <code>chitti.talk()</code> ಎಂದು ಹೇಳಿದಾಗ ಅದು ತನ್ನ ಹೆಸರನ್ನು ಹೇಳಿತು.</p>
+
+                <h3><i class="fa-solid fa-user-secret"></i> 3. Pro ಹಂತ (ಪ್ರೊ ಹಂತ: ರಹಸ್ಯ ಕಾಪಾಡುವುದು - Data Privacy)</h3>
+                <p>ಪ್ರೊಗ್ರಾಮರ್‌ಗಳು Factory Function ಅನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸಲು ಕಾರಣವೇನೆಂದರೆ "ರಹಸ್ಯವನ್ನು ಕಾಪಾಡಲು" (Data Privacy / Closures).</p>
+                <p>ಒಂದು ಹುಂಡಿಯ (Piggy Bank) ಉದಾಹರಣೆ ತೆಗೆದುಕೊಳ್ಳೋಣ. ಹುಂಡಿಯಲ್ಲಿರುವ ಹಣವನ್ನು ಯಾರೂ ನೇರವಾಗಿ ಕದಿಯಬಾರದು, ಕೇವಲ ನಾಣ್ಯ ಹಾಕುವ ರಂಧ್ರದ ಮೂಲಕ ಮಾತ್ರ ಹಣ ಸೇರಿಸಬೇಕು ಅಲ್ಲವೇ? ಇದನ್ನೇ ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ ಹೇಗೆ ಮಾಡುವುದು ಎಂದು ನೋಡೋಣ.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fa-brands fa-js"></i> factory_pro.js</span>
+                        <button class="copy-btn" onclick="copyCode(this)"><i class="fa-solid fa-copy"></i> Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">function</span> <span class="function">createPiggyBank</span>() {
+  <span class="keyword">let</span> secretMoney = <span class="keyword">0</span>; <span class="comment">// ಇದು ರಹಸ್ಯ. ಯಾರೂ ಇದನ್ನು ಹೊರಗಿನಿಂದ ಮುಟ್ಟುವಂತಿಲ್ಲ!</span>
+
+  <span class="keyword">return</span> {
+    <span class="comment">// ಹಣ ಸೇರಿಸಲು ಮಾತ್ರ ದಾರಿ</span>
+    <span class="function">addMoney</span>: <span class="keyword">function</span>(<span class="variable">amount</span>) {
+      secretMoney = secretMoney + amount;
+      <span class="function">console.log</span>(amount + <span class="string">" ರೂ. ಜಮಾ ಆಯಿತು!"</span>);
+    },
+    <span class="comment">// ಹಣ ಎಷ್ಟಿದೆ ಎಂದು ನೋಡಲು ಮಾತ್ರ ದಾರಿ</span>
+    <span class="function">checkBalance</span>: <span class="keyword">function</span>() {
+      <span class="function">console.log</span>(<span class="string">"ಒಟ್ಟು ಹಣ: "</span> + secretMoney + <span class="string">" ರೂ."</span>);
+    }
+  };
+}
+
+<span class="keyword">let</span> myBank = <span class="function">createPiggyBank</span>();
+
+myBank.<span class="function">addMoney</span>(<span class="keyword">100</span>); 
+myBank.<span class="function">addMoney</span>(<span class="keyword">50</span>);  
+myBank.<span class="function">checkBalance</span>(); 
+
+<span class="comment">// ಯಾರಾದರೂ ಕದಿಯಲು ಪ್ರಯತ್ನಿಸಿದರೆ?</span>
+<span class="function">console.log</span>(myBank.secretMoney);</code></pre>
+                    <div class="output-panel">
+                        <strong>ಔಟ್‌ಪುಟ್ (Output):</strong><br>
+                        100 ರೂ. ಜಮಾ ಆಯಿತು!<br>
+                        50 ರೂ. ಜಮಾ ಆಯಿತು!<br>
+                        ಒಟ್ಟು ಹಣ: 150 ರೂ.<br>
+                        undefined (ಯಾರಿಗೂ ಸಿಗುವುದಿಲ್ಲ!)
+                    </div>
+                </div>
+                <p><strong>ಉದಾಹರಣೆಯ ವಿವರಣೆ:</strong> ಇಲ್ಲಿ <code>secretMoney</code> ಎಂಬುದು ಫ್ಯಾಕ್ಟರಿಯ ಒಳಗಡೆಯೇ ಇರುವ ರಹಸ್ಯ. ನಾವು ವಾಪಸ್ (return) ಕೊಟ್ಟ ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ <code>secretMoney</code> ಅನ್ನು ಕೊಟ್ಟೇ ಇಲ್ಲ! ನಾವು ಕೊಟ್ಟಿದ್ದು ಕೇವಲ <code>addMoney</code> (ಹಣ ಹಾಕಲು) ಮತ್ತು <code>checkBalance</code> (ಹಣ ನೋಡಲು) ಮಾತ್ರ. ಇದರಿಂದಾಗಿ ನಿಮ್ಮ ಪ್ರೋಗ್ರಾಮ್‌ನಲ್ಲಿರುವ ಡೇಟಾ ಬಹಳ ಭದ್ರವಾಗಿರುತ್ತದೆ. ಇದನ್ನೇ ಪ್ರೊಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ <strong>Encapsulation / Closure</strong> ಎನ್ನುತ್ತಾರೆ.</p>
+
+                <div class="highlight-box">
+                    <h4>Factory Function ನ ಲಾಭಗಳೇನು? (Advantages)</h4>
+                    <ol style="margin-left: 20px;">
+                        <li><strong>ಸುಲಭ ಮತ್ತು ಸರಳ:</strong> <code>new</code> ಅಥವಾ <code>this</code> ಎಂಬ ಗೊಂದಲಮಯ ಪದಗಳನ್ನು ಬಳಸುವ ಅಗತ್ಯವಿಲ್ಲ.</li>
+                        <li><strong>ಭದ್ರತೆ (Privacy):</strong> ನಮ್ಮ ಡೇಟಾವನ್ನು ಬೇರೆಯವರು ಸುಲಭವಾಗಿ ಬದಲಾಯಿಸದಂತೆ ಬಚ್ಚಿಡಬಹುದು (Closures ಮೂಲಕ).</li>
+                        <li><strong>ಮರುಬಳಕೆ (Reusability):</strong> ಒಂದೇ ಮಷಿನ್ ಬಳಸಿ ನೂರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಕ್ಷಣಾರ್ಧದಲ್ಲಿ ಮಾಡಬಹುದು.</li>
+                    </ol>
+                </div>
+
+                <div class="pro-tip">
+                    <h4>ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ 'this' ಕೀವರ್ಡ್ ಬಳಸಬಹುದೇ?</h4>
+                    <p>ಹೌದು, ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ <code>this</code> ಕೀವರ್ಡ್ ಬಳಸಬಹುದು. ಆದರೆ, ಬಳಸದಿರುವುದೇ <strong>ಅತ್ಯುತ್ತಮ ಅಭ್ಯಾಸ (Best Practice)</strong>! ಏಕೆಂದರೆ, ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸುವ ಮುಖ್ಯ ಉದ್ದೇಶವೇ <code>this</code> ಎಂಬ ಗೊಂದಲಮಯ ಕೀವರ್ಡ್‌ನಿಂದ ಪಾರಾಗುವುದು.</p>
+                    <p><code>this</code> ಕೀವರ್ಡ್ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದು "ಊಸರವಳ್ಳಿ" (Chameleon) ಇದ್ದಂತೆ. ಅದು ಎಲ್ಲಿ ಮತ್ತು ಹೇಗೆ ಕರೆಯಲ್ಪಡುತ್ತದೆ ಎಂಬುದರ ಮೇಲೆ ತನ್ನ ಅರ್ಥವನ್ನು ಬದಲಾಯಿಸುತ್ತಲೇ ಇರುತ್ತದೆ.</p>
+                </div>
+
+                <h4><i class="fa-solid fa-triangle-exclamation"></i> 1. 'this' ಬಳಸಿದಾಗ ಆಗುವ ಅನಾಹುತ (The Problem)</h4>
+                <p>ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಒಳಗೆ <code>this</code> ಬಳಸಿದರೆ ಏನಾಗುತ್ತದೆ ಎಂದು ನೋಡೋಣ:</p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">function</span> <span class="function">createPlayer</span>(<span class="variable">name</span>) {
+  <span class="keyword">return</span> {
+    <span class="variable">playerName</span>: name,
+    <span class="function">cheer</span>: <span class="keyword">function</span>() {
+      <span class="comment">// ಇಲ್ಲಿ this ಬಳಸಲಾಗಿದೆ</span>
+      <span class="function">console.log</span>(<span class="string">"ಕಪ್ ನಮ್ದೇ! ಎಂದರು "</span> + <span class="keyword">this</span>.playerName); 
+    }
+  };
+}
+
+<span class="keyword">let</span> virat = <span class="function">createPlayer</span>(<span class="string">"ವಿರಾಟ್"</span>);
+
+<span class="comment">// ಇದು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ</span>
+virat.<span class="function">cheer</span>(); <span class="comment">// ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ವಿರಾಟ್</span>
+
+<span class="comment">// ಆದರೆ ಇಲ್ಲಿ ನೋಡಿ (ಅನಾಹುತ ಶುರು!)</span>
+<span class="function">setTimeout</span>(virat.cheer, <span class="keyword">1000</span>); 
+<span class="comment">// 1 ಸೆಕೆಂಡ್ ಆದಮೇಲೆ ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು undefined</span></code></pre>
+                </div>
+                <p><strong>ಏನಾಯಿತು ಇಲ್ಲಿ?</strong> <code>setTimeout</code> ನಂತಹ ಬೇರೆ ಫಂಕ್ಷನ್‌ಗಳಿಗೆ ನಾವು ಈ <code>cheer</code> ಫಂಕ್ಷನ್ ಅನ್ನು ಕಳುಹಿಸಿದಾಗ, <code>this</code> ಕೀವರ್ಡ್ ತಾನು ಯಾವ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿದ್ದು (Context) ಎಂಬುದನ್ನು ಮರೆತುಬಿಡುತ್ತದೆ. ಆಗ <code>this.playerName</code> ಎನ್ನುವುದು ಸಿಗದೆ <code>undefined</code> ಎಂದು ಬರುತ್ತದೆ.</p>
+
+                <h4><i class="fa-solid fa-check-circle"></i> 2. 'this' ಬಳಸದೆ ಇದ್ದಾಗ (The Solution - Pro Level)</h4>
+                <p>ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ <code>this</code> ಬಳಸುವ ಬದಲು, ನೇರವಾಗಿ ಡೇಟಾವನ್ನು (Closures ಮೂಲಕ) ಬಳಸಬೇಕು.</p>
+                <div class="code-container">
+                    <pre><code><span class="keyword">function</span> <span class="function">createPlayer</span>(<span class="variable">name</span>) {
+  <span class="comment">// ಇಲ್ಲಿ name ಎಂಬುದು ಮಷಿನ್ ನೆನಪಿನಲ್ಲಿಟ್ಟುಕೊಂಡಿರುವ (Closure) ಡೇಟಾ</span>
+  <span class="keyword">return</span> {
+    <span class="function">cheer</span>: <span class="keyword">function</span>() {
+      <span class="comment">// ಇಲ್ಲಿ this ಬಳಸಿಲ್ಲ! ನೇರವಾಗಿ name ಬಳಸಿದ್ದೇವೆ</span>
+      <span class="function">console.log</span>(<span class="string">"ಕಪ್ ನಮ್ದೇ! ಎಂದರು "</span> + name); 
+    }
+  };
+}
+
+<span class="keyword">let</span> dhoni = <span class="function">createPlayer</span>(<span class="string">"ಧೋನಿ"</span>);
+dhoni.<span class="function">cheer</span>(); <span class="comment">// ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ಧೋನಿ</span>
+
+<span class="comment">// ಈಗ ಅನಾಹುತ ಆಗುವುದಿಲ್ಲ!</span>
+<span class="function">setTimeout</span>(dhoni.cheer, <span class="keyword">1000</span>); 
+<span class="comment">// 1 ಸೆಕೆಂಡ್ ಆದಮೇಲೆ ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ಧೋನಿ</span></code></pre>
+                </div>
+                <p><strong>ಇಲ್ಲಿ ಏಕೆ ಸರಿಯಾಗಿ ಬಂತು?</strong> ನಾವು <code>this</code> ಬಳಸಲೇ ಇಲ್ಲ! ಫಂಕ್ಷನ್ ಒಳಗೆ ಇರುವ <code>name</code> ಅನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಕ್ಲೋಷರ್ (Closure) ಎಂಬ ಅದ್ಭುತ ಶಕ್ತಿಯು ತನ್ನ ನೆನಪಿನಲ್ಲಿ ಭದ್ರವಾಗಿ ಸೇವ್ ಮಾಡಿಟ್ಟುಕೊಂಡಿರುತ್ತದೆ. ನೀವು ಆ ಫಂಕ್ಷನ್ ಅನ್ನು ಎಲ್ಲೇ ತೆಗೆದುಕೊಂಡು ಹೋದರೂ ಅದು ತನ್ನ ಡೇಟಾವನ್ನು ಮರೆಯುವುದಿಲ್ಲ.</p>
+                <p><strong>ಸಾರಾಂಶ:</strong> ನೀವು ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಬರೆಯುತ್ತಿದ್ದೀರಿ ಎಂದರೆ <code>this</code> ಅನ್ನು ಮರೆತುಬಿಡಿ. ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ನೇರವಾಗಿ ಬಳಸಿ. ಇದರಿಂದ ನಿಮ್ಮ ಕೋಡ್ ಎಂದಿಗೂ ಗೊಂದಲ ಮಾಡುವುದಿಲ್ಲ ಮತ್ತು ಡೇಟಾ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ!</p>
+
+            </div>
+        </section>
+
+        <!-- CONSTRUCTOR FUNCTION SECTION -->
+        <section id="constructor">
+            <h2><i class="fa-solid fa-gears"></i> ೨. Constructor Function (ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್)</h2>
+            <div class="card">
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ <strong>'Constructor Function'</strong> ಎಂಬುದನ್ನು ನಾವು ಒಂದು ಆಟಿಕೆ ಕಾರ್ಖಾನೆ (Toy Factory) ಅಥವಾ ಬಿಸ್ಕತ್ ಅಚ್ಚು (Cookie Cutter) ಮೂಲಕ ಬಹಳ ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಹುದು.</p>
+                <p>ನೀವು ಮನೆಯಲ್ಲಿ ಬಿಸ್ಕತ್ ಮಾಡುವಾಗ ಒಂದು 'ಅಚ್ಚು' (mould) ಬಳಸುತ್ತೀರಿ, ಹೌದಲ್ವಾ? ಆ ಒಂದೇ ಅಚ್ಚನ್ನು ಬಳಸಿ ನೀವು ಬೇಕಾದಷ್ಟು ಬಿಸ್ಕತ್‌ಗಳನ್ನು ಮಾಡಬಹುದು. ಅದೇ ರೀತಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದೇ ರೀತಿಯ ಅನೇಕ 'ಆಬ್ಜೆಕ್ಟ್' (Objects) ಗಳನ್ನು ತಯಾರಿಸಲು ಬಳಸುವ 'ಅಚ್ಚು' ಅಥವಾ ಫ್ಯಾಕ್ಟರಿಯೇ ಈ Constructor Function.</p>
+
+                <h3><i class="fa-solid fa-seedling"></i> 1. ಬಿಗಿನರ್ ಲೆವೆಲ್ (Beginner): ನಮಗೇಕೆ ಇದು ಬೇಕು?</h3>
+                <p>ಉದಾಹರಣೆಗೆ, ನೀವು 3 ಆಟದ ಕಾರುಗಳನ್ನು (Objects) ಮಾಡಬೇಕು. ಪ್ರತಿಯೊಂದಕ್ಕೂ ಹೆಸರು, ಬಣ್ಣ ಬರೆಯುತ್ತಾ ಕೂತರೆ ಬಹಳ ಸಮಯ ಹಿಡಿಯುತ್ತದೆ:</p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// ಅಚ್ಚು ಇಲ್ಲದೆ ಒಂದೊಂದೇ ಕಾರು ಮಾಡುವುದು (ತುಂಬಾ ಕಷ್ಟ)</span>
+<span class="keyword">let</span> car1 = { <span class="variable">name</span>: <span class="string">"Maruti"</span>, <span class="variable">color</span>: <span class="string">"Red"</span> };
+<span class="keyword">let</span> car2 = { <span class="variable">name</span>: <span class="string">"Tata"</span>, <span class="variable">color</span>: <span class="string">"Blue"</span> };
+<span class="keyword">let</span> car3 = { <span class="variable">name</span>: <span class="string">"Mahindra"</span>, <span class="variable">color</span>: <span class="string">"Black"</span> };</code></pre>
+                </div>
+                <p>ಇದರ ಬದಲು ನಾವು ಒಂದು 'ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ' (Constructor Function) ಯಂತ್ರವನ್ನು ಮಾಡಿದರೆ, ಕಾರಿನ ಬಣ್ಣ ಮತ್ತು ಹೆಸರು ಹೇಳಿದ ತಕ್ಷಣ ಅದು ಹೊಸ ಕಾರನ್ನು ರೆಡಿ ಮಾಡಿಕೊಡುತ್ತದೆ.</p>
+
+                <div class="warning-box">
+                    <h4>ಬರೆಯುವ ನಿಯಮಗಳು (Rules):</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>ಇದರ ಹೆಸರು ಯಾವಾಗಲೂ <strong>ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ (Capital Letter)</strong> ಶುರುವಾಗಬೇಕು. (ಉದಾಹರಣೆಗೆ: <code>Car</code>, <code>Robot</code>). ಇದು ಕೇವಲ ಡೆವಲಪರ್‌ಗಳಿಗೆ ಇದು ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಎಂದು ತಿಳಿಸಲು ಮಾಡುವ ಕನ್ವೆನ್ಷನ್ (Convention).</li>
+                        <li><code>this</code> ಎಂಬ ಪದವನ್ನು ಬಳಸುತ್ತೇವೆ. (ಇದರ ಅರ್ಥ "ಈಗ ತಯಾರಾಗುತ್ತಿರುವ ಹೊಸ ಆಟಿಕೆ").</li>
+                        <li>ಹೊಸ ವಸ್ತುವನ್ನು ಪಡೆಯಲು <code>new</code> ಎಂಬ ಪದವನ್ನು ಕಡ್ಡಾಯವಾಗಿ ಬಳಸುತ್ತೇವೆ.</li>
+                    </ul>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header"><span>ಉದಾಹರಣೆ 1: ಸರಳ ಕಾರು ಕಾರ್ಖಾನೆ</span></div>
+                    <pre><code><span class="comment">// 1. ಇದು ನಮ್ಮ ಫ್ಯಾಕ್ಟರಿ (Constructor Function)</span>
+<span class="keyword">function</span> <span class="function">Car</span>(<span class="variable">ಹೆಸರು</span>, <span class="variable">ಬಣ್ಣ</span>) {
+    <span class="keyword">this</span>.name = ಹೆಸರು;
+    <span class="keyword">this</span>.color = ಬಣ್ಣ;
+}
+
+<span class="comment">// 2. new ಪದ ಬಳಸಿ ಕಾರ್ಖಾನೆಗೆ ಆರ್ಡರ್ ಕೊಡುವುದು!</span>
+<span class="keyword">let</span> myFirstCar = <span class="keyword">new</span> <span class="function">Car</span>(<span class="string">"Maruti"</span>, <span class="string">"Red"</span>);
+<span class="keyword">let</span> mySecondCar = <span class="keyword">new</span> <span class="function">Car</span>(<span class="string">"Tata"</span>, <span class="string">"Blue"</span>);
+
+<span class="function">console.log</span>(myFirstCar.name); <span class="comment">// ಔಟ್‌ಪುಟ್: Maruti</span>
+<span class="function">console.log</span>(mySecondCar.color); <span class="comment">// ಔಟ್‌ಪುಟ್: Blue</span></code></pre>
+                </div>
+                <p>ಇಲ್ಲಿ <code>new Car(...)</code> ಎಂದು ಹೇಳಿದಾಗ, ಆ ಫ್ಯಾಕ್ಟರಿ ತಕ್ಷಣವೇ ಒಂದು ಹೊಸ ಕಾರನ್ನು ತಯಾರಿಸಿ ಕೊಡುತ್ತದೆ.</p>
+
+                <h3><i class="fa-solid fa-gears"></i> 2. ಇಂಟರ್ಮೀಡಿಯೇಟ್ ಲೆವೆಲ್ (Intermediate): ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಕೆಲಸ ಕೊಡುವುದು</h3>
+                <p>ಕೇವಲ ಬಣ್ಣ, ಹೆಸರು ಮಾತ್ರವಲ್ಲದೆ ಆ ಹೊಸ ಕಾರು ಅಥವಾ ಆಟಿಕೆ ಕೆಲಸ ಮಾಡುವಂತೆ (Methods/Functions) ಮಾಡಬಹುದು. ಉದಾಹರಣೆಗೆ, ನಮ್ಮ ಕಾರು ಹಾರ್ನ್ (Horn) ಮಾಡುವಂತೆ ಮಾಡೋಣ.</p>
+
+                <div class="code-container">
+                    <pre><code><span class="keyword">function</span> <span class="function">SmartCar</span>(<span class="variable">name</span>, <span class="variable">color</span>) {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.color = color;
+    
+    <span class="comment">// ಕಾರು ಹಾರ್ನ್ ಮಾಡುವ ಫಂಕ್ಷನ್</span>
+    <span class="keyword">this</span>.<span class="function">soundHorn</span> = <span class="keyword">function</span>() {
+        <span class="function">console.log</span>(<span class="keyword">this</span>.name + <span class="string">" ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!"</span>);
+    }
+}
+
+<span class="keyword">let</span> tataCar = <span class="keyword">new</span> <span class="function">SmartCar</span>(<span class="string">"Tata Nexon"</span>, <span class="string">"White"</span>);
+tataCar.<span class="function">soundHorn</span>(); 
+<span class="comment">// ಔಟ್‌ಪುಟ್: Tata Nexon ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!</span></code></pre>
+                </div>
+
+                <h3><i class="fa-solid fa-brain"></i> 3. ಪ್ರೊ ಲೆವೆಲ್ (Pro Level): Prototype ಬಳಸಿ ಮೆಮೊರಿ ಉಳಿಸುವುದು</h3>
+                <p>ಮೇಲಿನ <code>SmartCar</code> ಉದಾಹರಣೆಯಲ್ಲಿ ಒಂದು ಸಣ್ಣ ಸಮಸ್ಯೆಯಿದೆ. ನೀವು 1000 ಕಾರುಗಳನ್ನು ತಯಾರಿಸಿದರೆ, <code>soundHorn</code> ಎಂಬ ಫಂಕ್ಷನ್ ಕೂಡ 1000 ಬಾರಿ ಕಾಪಿ (Copy) ಆಗುತ್ತದೆ. ಪ್ರತಿಯೊಂದು ಆಬ್ಜೆಕ್ಟ್ ತನ್ನದೇ ಆದ ಫಂಕ್ಷನ್ ಮೆಮೊರಿ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. ಇದರಿಂದ ಕಂಪ್ಯೂಟರ್ ಮೆಮೊರಿ ವೇಸ್ಟ್ ಆಗುತ್ತದೆ.</p>
+                <p>ಇದನ್ನು ತಪ್ಪಿಸಲು ಪ್ರೊ (Pro) ಡೆವಲಪರ್‌ಗಳು <code>prototype</code> ಬಳಸುತ್ತಾರೆ. <strong>prototype ಅಂದರೆ ಊರಿನ ಲೈಬ್ರರಿ ಇದ್ದ ಹಾಗೆ.</strong> ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಒಂದೊಂದು ಪುಸ್ತಕ ಕೊಡುವ ಬದಲು, ಒಂದು ಪುಸ್ತಕವನ್ನು ಲೈಬ್ರರಿಯಲ್ಲಿ ಇಟ್ಟರೆ ಎಲ್ಲರೂ ಓದಬಹುದು!</p>
+
+                <div class="code-container">
+                    <pre><code><span class="keyword">function</span> <span class="function">ProCar</span>(<span class="variable">name</span>, <span class="variable">color</span>) {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.color = color;
+    <span class="comment">// ಇಲ್ಲಿ ಫಂಕ್ಷನ್ ಬರೆಯುವುದಿಲ್ಲ!</span>
+}
+
+<span class="comment">// ಎಲ್ಲ ಕಾರುಗಳಿಗೂ ಒಂದೇ ಜಾಗದಲ್ಲಿ (prototype ನಲ್ಲಿ) ನಿಯಮ ಬರೆಯುವುದು</span>
+ProCar.<span class="keyword">prototype</span>.<span class="function">soundHorn</span> = <span class="keyword">function</span>() {
+     <span class="function">console.log</span>(<span class="keyword">this</span>.name + <span class="string">" ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!"</span>);
+}
+
+<span class="keyword">let</span> carA = <span class="keyword">new</span> <span class="function">ProCar</span>(<span class="string">"Mahindra Thar"</span>, <span class="string">"Black"</span>);
+<span class="keyword">let</span> carB = <span class="keyword">new</span> <span class="function">ProCar</span>(<span class="string">"Kia"</span>, <span class="string">"Red"</span>);
+
+<span class="comment">// ಎರಡು ಕಾರುಗಳು ಲೈಬ್ರರಿಯಿಂದ (prototype) ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸುತ್ತವೆ</span>
+carA.<span class="function">soundHorn</span>();
+carB.<span class="function">soundHorn</span>();</code></pre>
+                </div>
+                <p>ಹೀಗೆ ಮಾಡುವುದರಿಂದ ಎಷ್ಟೇ ಕಾರುಗಳನ್ನು ತಯಾರಿಸಿದರೂ <code>soundHorn</code> ಫಂಕ್ಷನ್ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಬಾರಿ ಸೇವ್ ಆಗಿರುತ್ತದೆ.</p>
+                
+                <div class="pro-tip">
+                    <h4>Advanced Concept: 'new' ಮರೆತರೆ ಏನಾಗುತ್ತದೆ?</h4>
+                    <p>ಒಂದು ವೇಳೆ ನೀವು ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆಯುವಾಗ <code>new</code> ಕೀವರ್ಡ್ ಮರೆತರೆ, <code>this</code> ಗ್ಲೋಬಲ್ ವಿಂಡೋ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ (Global Window Object) ಪಾಯಿಂಟ್ ಮಾಡುತ್ತದೆ. ಇದರಿಂದ ನಿಮ್ಮ ಡೇಟಾ ಗ್ಲೋಬಲ್ ಸ್ಕೋಪ್‌ಗೆ ಸೇರಿ ಅನಾಹುತವಾಗುತ್ತದೆ ಮತ್ತು ಫಂಕ್ಷನ್ <code>undefined</code> ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡುತ್ತದೆ!</p>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>ಸಾರಾಂಶ (ನೆನಪಿಡಬೇಕಾದ ಮುಖ್ಯ ಅಂಶಗಳು):</h4>
+                    <ul>
+                        <li><strong>Constructor Function:</strong> ಒಂದೇ ರೀತಿಯ ಅನೇಕ ಆಬ್ಜೆಕ್ಟ್ ಮಾಡಲು ಬಳಸುವ ಅಚ್ಚು.</li>
+                        <li><strong>Capital Letter:</strong> ಇದರ ಹೆಸರು ಯಾವಾಗಲೂ ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗಬೇಕು.</li>
+                        <li><strong>new Keyword:</strong> ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಹುಟ್ಟುಹಾಕಲು ಕಡ್ಡಾಯವಾಗಿ <code>new</code> ಬಳಸಬೇಕು.</li>
+                        <li><strong>this Keyword:</strong> ತಯಾರಾಗುತ್ತಿರುವ ಪ್ರಸ್ತುತ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ.</li>
+                        <li><strong>prototype:</strong> ಮೆಮೊರಿ ಉಳಿಸಲು ಕಾಮನ್ ಆಗಿರುವ ಫಂಕ್ಷನ್‌ಗಳನ್ನು <code>prototype</code> ಒಳಗೆ ಹಾಕಬೇಕು.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW & THIS SECTION -->
+        <section id="new-this">
+            <h2><i class="fa-solid fa-wand-magic-sparkles"></i> ೩. 'new' ಮತ್ತು 'this': ಒಂದು ಸರಳ ಪರಿಚಯ</h2>
+            <div class="card">
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನಾವು ಹೊಸ ವಸ್ತುಗಳನ್ನು (Objects) ತಯಾರಿಸುವಾಗ <code>new</code> ಮತ್ತು <code>this</code> ಕೀವರ್ಡ್‌ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ. ಇವುಗಳ ಕೆಲಸವನ್ನು ಶಾಲೆಯ 'ಪುಸ್ತಕ'ದ ಉದಾಹರಣೆಯೊಂದಿಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.</p>
+
+                <div style="display: flex; gap: 2rem; margin: 2rem 0; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px; background: rgba(59, 130, 246, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--primary);">
+                        <h4 style="color: var(--primary); margin-top:0;">🔹 new (ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ ತರುವುದು)</h4>
+                        <p><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ನೀವು ಅಂಗಡಿಗೆ ಹೋಗಿ "ನನಗೆ ಒಂದು ಹೊಸ ಪುಸ್ತಕ ಕೊಡಿ" ಎಂದು ಕೇಳಿದಾಗ, ಅಂಗಡಿಯವನು ನಿಮಗೆ ಒಂದು ಹೊಸ, ಖಾಲಿ ಪುಟಗಳಿರುವ ಪುಸ್ತಕವನ್ನು ಕೊಡುತ್ತಾನೆ.</p>
+                        <p><strong>ತಾಂತ್ರಿಕ ವಿವರಣೆ:</strong> ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನೀವು <code>new</code> ಎಂದು ಬರೆದರೆ, ಕಂಪ್ಯೂಟರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಚ್ಚಹೊಸ "ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ (Empty Object <code>{}</code>)" ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ.</p>
+                    </div>
+                    <div style="flex: 1; min-width: 250px; background: rgba(16, 185, 129, 0.05); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent-green);">
+                        <h4 style="color: var(--accent-green); margin-top:0;">🔹 this (ಪುಸ್ತಕದ ಮೇಲೆ 'ನನ್ನ' ಹೆಸರು ಬರೆಯುವುದು)</h4>
+                        <p><strong>ದೈನಂದಿನ ಉದಾಹರಣೆ:</strong> ಮನೆಗೆ ತಂದ ಆ ಹೊಸ ಪುಸ್ತಕದ ಮೇಲಿರುವ ಚೀಟಿಯಲ್ಲಿ (Label) ನೀವು "ಈ ಪುಸ್ತಕ ನನ್ನದು, ನನ್ನ ಹೆಸರು ರಾಜು" ಎಂದು ಬರೆಯುತ್ತೀರಿ.</p>
+                        <p><strong>ತಾಂತ್ರಿಕ ವಿವರಣೆ:</strong> ಮೆಮೊರಿಯಲ್ಲಿ ಸೃಷ್ಟಿಯಾದ ಆ ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಡೇಟಾವನ್ನು (Properties) ತುಂಬಲು <code>this</code> ಬಳಸಲಾಗುತ್ತದೆ. ಅಂದರೆ, ಆ ಆಬ್ಜೆಕ್ಟ್ ತನ್ನ ಸ್ವಂತ ಮಾಹಿತಿಯನ್ನು ಸೇರಿಸಿಕೊಳ್ಳಲು <code>this</code> ಅನ್ನು ಬಳಸುತ್ತದೆ.</p>
+                    </div>
+                </div>
+
+                <h3>ಕಂಪ್ಯೂಟರ್‌ನ ಒಳಗೆ ಏನಾಗುತ್ತದೆ? (The 4 Technical Steps)</h3>
+                <p>ನೀವು <code>new</code> ಕೀವರ್ಡ್ ಬಳಸಿ ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ (ಉದಾಹರಣೆಗೆ: V8 Engine) ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಈ ಕೆಳಗಿನ 4 ಪ್ರಮುಖ ಕೆಲಸಗಳನ್ನು ಮಾಡುತ್ತದೆ:</p>
+                
+                <ol style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿ (Create Object):</strong> ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ (<code>{}</code>) ಸೃಷ್ಟಿಸುತ್ತದೆ. <em>(ಇದೇ ನಿಮ್ಮ ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ)</em></li>
+                    <li><strong>ಪ್ರೋಟೋಟೈಪ್ ಲಿಂಕ್ (Prototype Linking):</strong> ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್‌ನ <code>prototype</code> ಗೆ ಲಿಂಕ್ ಮಾಡುತ್ತದೆ. <em>(ಇದರಿಂದ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ)</em>.</li>
+                    <li><strong>this ಬೈಂಡಿಂಗ್ (Binding this):</strong> ಫಂಕ್ಷನ್‌ನ ಒಳಗಿರುವ <code>this</code> ಪದವನ್ನು, ತಾನು ಈಗಷ್ಟೇ ಸೃಷ್ಟಿಸಿದ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಪಾಯಿಂಟ್ (Bind) ಮಾಡುತ್ತದೆ. <em>(ಪುಸ್ತಕದ ಮೇಲೆ ಹೆಸರು ಬರೆಯುವ ಹಂತ)</em>.</li>
+                    <li><strong>ಆಟೋಮ್ಯಾಟಿಕ್ ರಿಟರ್ನ್ (Implicit Return):</strong> ನಾವು ಕೋಡ್‌ನಲ್ಲಿ <code>return</code> ಎಂದು ಬರೆಯದಿದ್ದರೂ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ತಾನಾಗಿಯೇ ನಮಗೆ ವಾಪಸ್ ಕೊಡುತ್ತದೆ.</li>
+                </ol>
+
+                <h3>ಎರಡನ್ನೂ ಒಟ್ಟುಗೂಡಿಸಿ ಕೋಡ್‌ನಲ್ಲಿ ನೋಡೋಣ</h3>
+                <p>ಈಗ ಸರಳ ಕಥೆ ಮತ್ತು ತಾಂತ್ರಿಕ ಪ್ರಕ್ರಿಯೆ ಎರಡೂ ಕೋಡ್‌ನಲ್ಲಿ ಹೇಗೆ ಜೊತೆಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ ಎಂದು ನೋಡಿ:</p>
+                <div class="code-container">
+                    <pre><code><span class="comment">// ಇದು ನಮ್ಮ ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ (ಪುಸ್ತಕ ತಯಾರಿಸುವ ಫ್ಯಾಕ್ಟರಿ)</span>
+<span class="keyword">function</span> <span class="function">Student</span>(<span class="variable">ಹೆಸರು</span>, <span class="variable">ತರಗತಿ</span>) {
+    
+    <span class="comment">// ತಾಂತ್ರಿಕವಾಗಿ: ನೀವು 'new' ಬಳಸಿದಾಗ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ 1ನೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ:</span>
+    <span class="comment">// this = {};  &lt;-- (ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ / ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಯಾಯಿತು)</span>
+    
+    <span class="comment">// ಈಗ 'this' ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಡೇಟಾ ಸೇರಿಸುತ್ತಿದೆ:</span>
+    <span class="comment">// (2ನೇ ಕೆಲಸ: ಪುಸ್ತಕದ ಮೇಲೆ ಹೆಸರು ಮತ್ತು ತರಗತಿ ಬರೆಯುವುದು)</span>
+    <span class="keyword">this</span>.name = ಹೆಸರು;      
+    <span class="keyword">this</span>.grade = ತರಗತಿ;
+
+    <span class="comment">// ತಾಂತ್ರಿಕವಾಗಿ: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ 4ನೇ ಕೆಲಸವಾಗಿ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡುತ್ತದೆ:</span>
+    <span class="comment">// return this; &lt;-- (ನಿಮ್ಮ ಕೈಗೆ ತುಂಬಿದ ಪುಸ್ತಕ ಸಿಕ್ಕಿತು)</span>
+}
+
+<span class="comment">// 'new' ಪದ ಬಳಸಿ ಹೊಸ Student ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ</span>
+<span class="keyword">let</span> student1 = <span class="keyword">new</span> <span class="function">Student</span>(<span class="string">"ರಾಜು"</span>, <span class="string">"10ನೇ ತರಗತಿ"</span>); 
+<span class="keyword">let</span> student2 = <span class="keyword">new</span> <span class="function">Student</span>(<span class="string">"ರಮ್ಯ"</span>, <span class="string">"9ನೇ ತರಗತಿ"</span>);
+
+<span class="comment">// ಈಗ ಪ್ರಿಂಟ್ ಮಾಡಿ ನೋಡೋಣ</span>
+<span class="function">console.log</span>(student1.name); <span class="comment">// ಔಟ್‌ಪುಟ್: ರಾಜು</span>
+<span class="function">console.log</span>(student2.name); <span class="comment">// ಔಟ್‌ಪುಟ್: ರಮ್ಯ</span></code></pre>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>ಅಂತಿಮ ಸಾರಾಂಶ (Conclusion)</h4>
+                    <ul>
+                        <li><strong>new ಎಂದರೆ:</strong> "ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಸ, ಖಾಲಿ ಜಾಗವನ್ನು (<code>{}</code>) ಕೊಡು" ಎನ್ನುವ ಕಮಾಂಡ್.</li>
+                        <li><strong>this ಎಂದರೆ:</strong> "ಆ ಹೊಸ ಜಾಗದ ಒಳಗೆ ಈ ಕೆಳಗಿನ ಡೇಟಾವನ್ನು ತುಂಬು" ಎಂದು ಹೇಳುವ ಪಾಯಿಂಟರ್.</li>
+                    </ul>
+                    <p>ಇವೆರಡೂ ಒಟ್ಟಿಗೆ ಸೇರಿದರೆ, ನಮಗೆ ಬೇಕಾದ ನಿಖರವಾದ ಮಾಹಿತಿಯನ್ನು ಹೊಂದಿರುವ ಒಂದು ಸಂಪೂರ್ಣ 'ಆಬ್ಜೆಕ್ಟ್' (Object) ತಯಾರಾಗುತ್ತದೆ.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIFFERENCES SECTION -->
+        <section id="differences">
+            <h2><i class="fa-solid fa-scale-balanced"></i> ೪. ವ್ಯತ್ಯಾಸಗಳು: Factory vs Constructor</h2>
+            <div class="card">
+                <p>ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Factory Function ಮತ್ತು Constructor Function ಇವೆರಡರ ಮುಖ್ಯ ಕೆಲಸ ಒಂದೇ: <strong>"ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ (Object) ಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು"</strong>.</p>
+                <p>ಆದರೆ ಅವು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸುವ 'ವಿಧಾನ' ಬೇರೆ. ಇವೆರಡರ ವ್ಯತ್ಯಾಸವನ್ನು ಸರಳವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                    
+                    <!-- Factory Column -->
+                    <div style="border: 1px solid var(--sidebar-border); border-radius: 8px; padding: 1.5rem;">
+                        <h3 style="margin-top: 0;"><i class="fa-solid fa-industry"></i> ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್</h3>
+                        <p>ಇದನ್ನು ಒಂದು <strong>"ಸಾಮಾನ್ಯ ಕೆಲಸಗಾರ"</strong>ನಿಗೆ ಹೋಲಿಸಬಹುದು. ನೀವು ಒಂದು ಗೊಂಬೆ ಕೇಳಿದರೆ, ಆತನೇ ಒಂದು ಖಾಲಿ ಡಬ್ಬ ತಂದು, ಅದಕ್ಕೆ ಬಣ್ಣ ಬಳಿದು, ಕೊನೆಗೆ ಆ ಡಬ್ಬವನ್ನು ನಿಮ್ಮ ಕೈಗೆ ಕೊಡುತ್ತಾನೆ.</p>
+                        <p>ಇಲ್ಲಿ ಯಾವುದೇ 'ಮ್ಯಾಜಿಕ್' ಇರುವುದಿಲ್ಲ. ನಾವೇ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ (<code>{}</code>) ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಅದಕ್ಕೆ ಡೇಟಾ ತುಂಬಿ, ಕೊನೆಗೆ ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ <code>return</code> ಮಾಡಬೇಕು.</p>
+                        
+                        <div class="code-container">
+                            <pre><code><span class="comment">// Factory Function ಉದಾಹರಣೆ</span>
+<span class="keyword">function</span> <span class="function">createRobot</span>(<span class="variable">ಹೆಸರು</span>, <span class="variable">ಬಣ್ಣ</span>) {
+    <span class="comment">// 1. ನಾವೇ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ</span>
+    <span class="keyword">let</span> robot = {}; 
+    
+    <span class="comment">// 2. ಡೇಟಾ ತುಂಬುತ್ತಿದ್ದೇವೆ (this ಬಳಸುವಂತಿಲ್ಲ)</span>
+    robot.name = ಹೆಸರು;
+    robot.color = ಬಣ್ಣ;
+    
+    <span class="comment">// 3. ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ ರಿಟರ್ನ್ ಮಾಡುತ್ತಿದ್ದೇವೆ</span>
+    <span class="keyword">return</span> robot; 
+}
+
+<span class="comment">// 'new' ಪದ ಇಲ್ಲದೆ ಕರೆಯುವುದು</span>
+<span class="keyword">let</span> robot1 = <span class="function">createRobot</span>(<span class="string">"ಚಿಟ್ಟಿ"</span>, <span class="string">"ಬೆಳ್ಳಿ"</span>); 
+<span class="function">console.log</span>(robot1.name); <span class="comment">// ಔಟ್‌ಪುಟ್: ಚಿಟ್ಟಿ</span></code></pre>
+                        </div>
+                        <p style="color: var(--accent-red); font-weight: bold;">ನೆನಪಿಡಬೇಕಾದದ್ದು: ಇಲ್ಲಿ new ಬೇಡ, this ಬೇಡ, ಆದರೆ return ಕಡ್ಡಾಯ!</p>
+                    </div>
+
+                    <!-- Constructor Column -->
+                    <div style="border: 1px solid var(--sidebar-border); border-radius: 8px; padding: 1.5rem;">
+                        <h3 style="margin-top: 0;"><i class="fa-solid fa-gears"></i> ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್</h3>
+                        <p>ಇದನ್ನು ಒಂದು <strong>"ಆಟೋಮ್ಯಾಟಿಕ್ ಮ್ಯಾಜಿಕ್ ಮಷಿನ್"</strong>ಗೆ ಹೋಲಿಸಬಹುದು. ನಾವು ಈ ಹಿಂದೆ ಕಲಿತಂತೆ, ಇಲ್ಲಿ <code>new</code> ಎಂಬ ಮ್ಯಾಜಿಕ್ ದಂಡವನ್ನು ಬಳಸುತ್ತೇವೆ. ಆ ಮ್ಯಾಜಿಕ್ ದಂಡವೇ ಗುಪ್ತವಾಗಿ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸಿ, ಕೊನೆಗೆ ತಾನೇ ವಾಪಸ್ (return) ಕೊಡುತ್ತದೆ.</p>
+                        <br>
+                        
+                        <div class="code-container">
+                            <pre><code><span class="comment">// Constructor Function ಉದಾಹರಣೆ (ಹೆಸರು ಕ್ಯಾಪಿಟಲ್ ಇರಬೇಕು)</span>
+<span class="keyword">function</span> <span class="function">Robot</span>(<span class="variable">ಹೆಸರು</span>, <span class="variable">ಬಣ್ಣ</span>) {
+    <span class="comment">// ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಗುಪ್ತವಾಗಿ ಸೃಷ್ಟಿಯಾಗಿದೆ: this = {}</span>
+    
+    <span class="comment">// ನಾವಿಲ್ಲಿ 'this' ಬಳಸುತ್ತೇವೆ</span>
+    <span class="keyword">this</span>.name = ಹೆಸರು;
+    <span class="keyword">this</span>.color = ಬಣ್ಣ;
+    
+    <span class="comment">// ರಿಟರ್ನ್ ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ! (ಗುಪ್ತವಾಗಿ: return this;)</span>
+}
+
+<span class="comment">// ಕಡ್ಡಾಯವಾಗಿ 'new' ಪದ ಬಳಸಬೇಕು</span>
+<span class="keyword">let</span> robot2 = <span class="keyword">new</span> <span class="function">Robot</span>(<span class="string">"ಟರ್ಮಿನೇಟರ್"</span>, <span class="string">"ಕಪ್ಪು"</span>);
+<span class="function">console.log</span>(robot2.name); <span class="comment">// ಔಟ್‌ಪುಟ್: ಟರ್ಮಿನೇಟರ್</span></code></pre>
+                        </div>
+                        <p style="color: var(--accent-green); font-weight: bold;">ನೆನಪಿಡಬೇಕಾದದ್ದು: ಇಲ್ಲಿ new ಮತ್ತು this ಕಡ್ಡಾಯ, ಆದರೆ return ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ!</p>
+                    </div>
+                </div>
+
+                <h3>ಮುಖಾಮುಖಿ ಹೋಲಿಕೆ (Comparison Table)</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ವ್ಯತ್ಯಾಸ (Difference)</th>
+                                <th>ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ (Factory Function)</th>
+                                <th>ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ (Constructor Function)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ಫಂಕ್ಷನ್ ಹೆಸರು</strong></td>
+                                <td>ಸಣ್ಣ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗುತ್ತದೆ (ಉದಾ: <code>createRobot</code>)</td>
+                                <td>ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗುತ್ತದೆ (ಉದಾ: <code>Robot</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>new</code> ಕೀವರ್ಡ್</strong></td>
+                                <td>ಬಳಸುವುದಿಲ್ಲ ❌</td>
+                                <td>ಕಡ್ಡಾಯವಾಗಿ ಬಳಸಬೇಕು ✅</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>this</code> ಕೀವರ್ಡ್</strong></td>
+                                <td>ಬಳಸುವುದಿಲ್ಲ ❌</td>
+                                <td>ಕಡ್ಡಾಯವಾಗಿ ಬಳಸಬೇಕು ✅</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>return</code> ಕೀವರ್ಡ್</strong></td>
+                                <td>ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ return ಮಾಡಬೇಕು</td>
+                                <td>ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ (ತಾನೇ ರಿಟರ್ನ್ ಆಗುತ್ತದೆ)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ಯಾವುದು ಸುಲಭ?</strong></td>
+                                <td>ಆರಂಭಿಕರಿಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ತುಂಬಾ ಸುಲಭ.</td>
+                                <td>ಸ್ವಲ್ಪ ಕನ್ಫ್ಯೂಸ್ ಆಗಬಹುದು, ಆದರೆ ಪ್ರೊ ಡೆವಲಪರ್‌ಗಳು ಇದನ್ನೇ ಹೆಚ್ಚು ಬಳಸುತ್ತಾರೆ.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>ಸಾರಾಂಶ:</strong> ನಿಮಗೆ <code>new</code> ಮತ್ತು <code>this</code> ನ ತಲೆನೋವು ಬೇಡ, ಎಲ್ಲವನ್ನೂ ನಾನೇ ಮ್ಯಾನ್ಯುವಲ್ (Manual) ಆಗಿ ಬರೆಯುತ್ತೇನೆ ಎಂದರೆ <strong>Factory Function</strong> ಬಳಸಿ. ಇಲ್ಲ, "ಕಂಪ್ಯೂಟರ್ ತಾನೇ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಆಬ್ಜೆಕ್ಟ್ ಕ್ರಿಯೇಟ್ ಮಾಡಿ ರಿಟರ್ನ್ ಮಾಡಲಿ, ನನ್ನ ಕೋಡ್ ಚಿಕ್ಕದಾಗಲಿ" ಎಂದರೆ <strong>Constructor Function</strong> ಬಳಸಿ!
+                </div>
+
+                <div class="pro-tip">
+                    <h4>Modern JavaScript Update (ES6 Classes)</h4>
+                    <p>ಇಂದು ಆಧುನಿಕ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Constructor Function ಬರೆಯುವ ಬದಲು <code>class</code> ಕೀವರ್ಡ್ ಅನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸುತ್ತಾರೆ. ಇದು ಕೇವಲ ಬರೆಯುವ ಶೈಲಿ (Syntactic Sugar) ಅಷ್ಟೇ, ಒಳಗಡೆ ಕೆಲಸ ಮಾಡುವುದು ಇದೇ ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ನಿಯಮಗಳೇ!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ SECTION -->
+        <section id="quiz">
+            <h2><i class="fa-solid fa-brain"></i> ೫. ಅಭ್ಯಾಸ (Practice Quiz)</h2>
+            <div class="quiz-container">
+                <div class="question">1. Factory Function ನಲ್ಲಿ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ನಾವೇ 'return' ಮಾಡಬೇಕೇ?</div>
+                <ul class="options">
+                    <li onclick="toggleAnswer('ans1')">A. ಹೌದು, ಕಡ್ಡಾಯವಾಗಿ ಮಾಡಬೇಕು.</li>
+                    <li onclick="toggleAnswer('ans1')">B. ಇಲ್ಲ, ಅದು ತಾನಾಗಿಯೇ ರಿಟರ್ನ್ ಆಗುತ್ತದೆ.</li>
+                </ul>
+                <div id="ans1" class="answer">ಸರಿಯಾದ ಉತ್ತರ: <strong>A. ಹೌದು, ಕಡ್ಡಾಯವಾಗಿ ಮಾಡಬೇಕು.</strong> Factory Function ನಲ್ಲಿ ಆಟೋಮ್ಯಾಟಿಕ್ ರಿಟರ್ನ್ ಇರುವುದಿಲ್ಲ.</div>
+
+                <div class="question" style="margin-top: 2rem;">2. Constructor Function ನ ಹೆಸರು ಯಾವ ಅಕ್ಷರದಿಂದ ಪ್ರಾರಂಭವಾಗಬೇಕು (Best Practice)?</div>
+                <ul class="options">
+                    <li onclick="toggleAnswer('ans2')">A. ಸಣ್ಣ ಅಕ್ಷರದಿಂದ (lowercase)</li>
+                    <li onclick="toggleAnswer('ans2')">B. ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ (Capital Letter)</li>
+                </ul>
+                <div id="ans2" class="answer">ಸರಿಯಾದ ಉತ್ತರ: <strong>B. ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ.</strong> ಡೆವಲಪರ್‌ಗಳಿಗೆ ಇದೊಂದು ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಎಂದು ತಿಳಿಸಲು Capital letter ಬಳಸಲಾಗುತ್ತದೆ.</div>
+            </div>
+        </section>
+
+        <!-- ORIGINAL NOTES ARCHIVE -->
+        <section id="original-notes">
+            <h2><i class="fa-solid fa-box-archive"></i> Original Notes — ಸಂಪೂರ್ಣ ಮೂಲ ನೋಟ್ಸ್</h2>
+            <div class="archive-section">
+                <p><em>ಮಾಹಿತಿ ನಷ್ಟವಾಗದಿರಲು ನಿಮ್ಮ ಮೂಲ ನೋಟ್ಸ್‌ನ ಯಥಾವತ್ತಾದ ಪಠ್ಯವನ್ನು (Raw Text) ಇಲ್ಲಿ ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.</em></p>
+                <hr style="border: 1px solid rgba(0,0,0,0.1); margin: 1rem 0;">
+                <pre style="background: transparent; color: inherit; white-space: pre-wrap; font-family: inherit; font-size: 0.9rem; padding: 0;">ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Factory Function (ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್) ಎನ್ನುವುದನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದು ಬಹಳ ಸುಲಭ. ನೀವು ಇದನ್ನು ಒಂದು "ಆಟಿಕೆ ತಯಾರಿಸುವ ಮಷಿನ್" (Toy Factory) ಎಂದು ಊಹಿಸಿಕೊಳ್ಳಿ.
+
+ನೀವು ಮಷಿನ್‌ಗೆ "ನನಗೆ ಕೆಂಪು ಬಣ್ಣದ ಕಾರು ಬೇಕು" ಎಂದು ಹೇಳಿದರೆ, ಅದು ನಿಮಗೆ ಕೆಂಪು ಬಣ್ಣದ ಕಾರನ್ನು ತಯಾರಿಸಿ ಕೊಡುತ್ತದೆ. "ನೀಲಿ ಬಣ್ಣದ ಬೈಕ್ ಬೇಕು" ಅಂದರೆ ನೀಲಿ ಬೈಕ್ ಕೊಡುತ್ತದೆ.
+
+ಪ್ರೋಗ್ರಾಮಿಂಗ್ ಭಾಷೆಯಲ್ಲಿ: Factory Function ಎಂದರೆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು (Objects) ತಯಾರಿಸಿ, ನಮಗೆ ವಾಪಸ್ (return) ಕೊಡುವ ಒಂದು ಫಂಕ್ಷನ್.
+
+ಇದನ್ನು 3 ಹಂತಗಳಲ್ಲಿ (Beginner, Intermediate, Pro) ಉದಾಹರಣೆಯೊಂದಿಗೆ ಕಲಿಯೋಣ ಬನ್ನಿ!
+
+
+1. Beginner ಹಂತ (ಆರಂಭಿಕ ಹಂತ: ಆಟಿಕೆ ತಯಾರಿಸೋಣ!)
+ಮೊದಲಿಗೆ ಒಂದು ಸರಳವಾದ ಆಟಿಕೆ ಮಷಿನ್ ಮಾಡೋಣ. ನಾವು ಆಟಿಕೆಯ ಹೆಸರು ಮತ್ತು ಬಣ್ಣವನ್ನು ಹೇಳಿದರೆ, ಅದು ನಮಗೆ ಹೊಸ ಆಟಿಕೆಯನ್ನು ಕೊಡಬೇಕು.
+
+ಉದಾಹರಣೆ ಕೋಡ್:
+
+
+JavaScript
+// ಇದು ನಮ್ಮ ಫ್ಯಾಕ್ಟರಿ (ಮಷಿನ್)
+function createToy(name, color) {
+  // ಇದು ಹೊಸ ಆಟಿಕೆಯನ್ನು (Object) ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಹಾಕಿ ನಮಗೆ ಕೊಡುತ್ತದೆ
+  return {
+    toyName: name,
+    toyColor: color
+  };
+}
+
+// ಮಷಿನ್ ಬಳಸಿ ಆಟಿಕೆಗಳನ್ನು ತಯಾರಿಸೋಣ!
+let car = createToy("ಕಾರು", "ಕೆಂಪು");
+let ball = createToy("ಚೆಂಡು", "ಹಸಿರು");
+
+console.log(car.toyName);  // ಔಟ್‌ಪುಟ್: ಕಾರು
+console.log(ball.toyColor); // ಔಟ್‌ಪುಟ್: ಹಸಿರು
+ಉದಾಹರಣೆಯ ವಿವರಣೆ: ಇಲ್ಲಿ createToy ಎಂಬುದು ಒಂದು ಫ್ಯಾಕ್ಟರಿ. ಅದಕ್ಕೆ ನಾವು "ಕಾರು" ಮತ್ತು "ಕೆಂಪು" ಎಂದು ಹೇಳಿದ ತಕ್ಷಣ, ಅದು ಒಳಗಡೆ ಒಂದು ಹೊಸ ಬಾಕ್ಸ್ (Object {}) ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಅದರಲ್ಲಿ ಹೆಸರು ಮತ್ತು ಬಣ್ಣವನ್ನು ಹಾಕಿ ನಮಗೆ return ಮಾಡಿತು. ನಮಗೆ ಎಷ್ಟು ಬೇಕೋ ಅಷ್ಟು ಹೊಸ ಆಟಿಕೆಗಳನ್ನು ಈ ಮಷಿನ್‌ನಿಂದ ಪಡೆಯಬಹುದು!
+
+
+2. Intermediate ಹಂತ (ಮಧ್ಯಮ ಹಂತ: ಮಾತನಾಡುವ ಆಟಿಕೆ!)
+ಈಗ ನಮ್ಮ ಮಷಿನ್ ಅನ್ನು ಸ್ವಲ್ಪ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡೋಣ. ಬರೀ ಆಟಿಕೆ ಅಲ್ಲ, ಆ ಆಟಿಕೆ ಕೆಲಸ ಮಾಡುವಂತೆಯೂ (ಮಾತನಾಡುವಂತೆ) ಮಾಡೋಣ.
+
+ಉದಾಹರಣೆ ಕೋಡ್:
+
+
+JavaScript
+function createRobot(robotName) {
+  return {
+    name: robotName,
+    // ರೋಬೋಟ್ ಮಾತನಾಡುವ ಕೆಲಸ (Method)
+    talk: function() {
+      console.log("ಹಲೋ! ನನ್ನ ಹೆಸರು " + robotName);
+    }
+  };
+}
+
+// ಹೊಸ ರೋಬೋಟ್ ತಯಾರಿಸೋಣ
+let chitti = createRobot("ಚಿಟ್ಟಿ");
+let wallE = createRobot("ವಾಲ್-ಇ");
+
+// ರೋಬೋಟ್ ಕೈಯಲ್ಲಿ ಮಾತನಾಡಿಸೋಣ
+chitti.talk(); // ಔಟ್‌ಪುಟ್: ಹಲೋ! ನನ್ನ ಹೆಸರು ಚಿಟ್ಟಿ
+wallE.talk();  // ಔಟ್‌ಪುಟ್: ಹಲೋ! ನನ್ನ ಹೆಸರು ವಾಲ್-ಇ
+ಉದಾಹರಣೆಯ ವಿವರಣೆ: ನಾವು ತಯಾರಿಸಿದ ಆಬ್ಜೆಕ್ಟ್ ಒಳಗೆ ಬರೀ ಹೆಸರು ಮಾತ್ರ ಇಲ್ಲ, talk ಎಂಬ ಒಂದು ಕೆಲಸ (ಫಂಕ್ಷನ್/method) ಕೂಡ ಇದೆ. ಚಿಟ್ಟಿ ಎಂಬ ರೋಬೋಟ್ ತಯಾರಾದ ಮೇಲೆ, ಅದಕ್ಕೆ chitti.talk() ಎಂದು ಹೇಳಿದಾಗ ಅದು ತನ್ನ ಹೆಸರನ್ನು ಹೇಳಿತು.
+
+
+3. Pro ಹಂತ (ಪ್ರೊ ಹಂತ: ರಹಸ್ಯ ಕಾಪಾಡುವುದು - Data Privacy)
+ಪ್ರೊಗ್ರಾಮರ್‌ಗಳು Factory Function ಅನ್ನು ಹೆಚ್ಚಾಗಿ ಬಳಸಲು ಕಾರಣವೇನೆಂದರೆ "ರಹಸ್ಯವನ್ನು ಕಾಪಾಡಲು" (Data Privacy / Closures).
+
+ಒಂದು ಹುಂಡಿಯ (Piggy Bank) ಉದಾಹರಣೆ ತೆಗೆದುಕೊಳ್ಳೋಣ. ಹುಂಡಿಯಲ್ಲಿರುವ ಹಣವನ್ನು ಯಾರೂ ನೇರವಾಗಿ ಕದಿಯಬಾರದು, ಕೇವಲ ನಾಣ್ಯ ಹಾಕುವ ರಂಧ್ರದ ಮೂಲಕ ಮಾತ್ರ ಹಣ ಸೇರಿಸಬೇಕು ಅಲ್ಲವೇ? ಇದನ್ನೇ ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ ಹೇಗೆ ಮಾಡುವುದು ಎಂದು ನೋಡೋಣ.
+
+ಉದಾಹರಣೆ ಕೋಡ್:
+
+
+JavaScript
+function createPiggyBank() {
+  let secretMoney = 0; // ಇದು ರಹಸ್ಯ. ಯಾರೂ ಇದನ್ನು ಹೊರಗಿನಿಂದ ಮುಟ್ಟುವಂತಿಲ್ಲ!
+
+  return {
+    // ಹಣ ಸೇರಿಸಲು ಮಾತ್ರ ದಾರಿ
+    addMoney: function(amount) {
+      secretMoney = secretMoney + amount;
+      console.log(amount + " ರೂ. ಜಮಾ ಆಯಿತು!");
+    },
+    // ಹಣ ಎಷ್ಟಿದೆ ಎಂದು ನೋಡಲು ಮಾತ್ರ ದಾರಿ
+    checkBalance: function() {
+      console.log("ಒಟ್ಟು ಹಣ: " + secretMoney + " ರೂ.");
+    }
+  };
+}
+
+let myBank = createPiggyBank();
+
+myBank.addMoney(100); // ಔಟ್‌ಪುಟ್: 100 ರೂ. ಜಮಾ ಆಯಿತು!
+myBank.addMoney(50);  // ಔಟ್‌ಪುಟ್: 50 ರೂ. ಜಮಾ ಆಯಿತು!
+myBank.checkBalance(); // ಔಟ್‌ಪುಟ್: ಒಟ್ಟು ಹಣ: 150 ರೂ.
+
+// ಯಾರಾದರೂ ಕದಿಯಲು ಪ್ರಯತ್ನಿಸಿದರೆ?
+console.log(myBank.secretMoney); // ಔಟ್‌ಪುಟ್: undefined (ಯಾರಿಗೂ ಸಿಗುವುದಿಲ್ಲ!)
+ಉದಾಹರಣೆಯ ವಿವರಣೆ: ಇಲ್ಲಿ secretMoney ಎಂಬುದು ಫ್ಯಾಕ್ಟರಿಯ ಒಳಗಡೆಯೇ ಇರುವ ರಹಸ್ಯ. ನಾವು ವಾಪಸ್ (return) ಕೊಟ್ಟ ಆಬ್ಜೆಕ್ಟ್‌ನಲ್ಲಿ secretMoney ಅನ್ನು ಕೊಟ್ಟೇ ಇಲ್ಲ! ನಾವು ಕೊಟ್ಟಿದ್ದು ಕೇವಲ addMoney (ಹಣ ಹಾಕಲು) ಮತ್ತು checkBalance (ಹಣ ನೋಡಲು) ಮಾತ್ರ. ಇದರಿಂದಾಗಿ ನಿಮ್ಮ ಪ್ರೋಗ್ರಾಮ್‌ನಲ್ಲಿರುವ ಡೇಟಾ ಬಹಳ ಭದ್ರವಾಗಿರುತ್ತದೆ. ಇದನ್ನೇ ಪ್ರೊಗ್ರಾಮಿಂಗ್‌ನಲ್ಲಿ Encapsulation / Closure ಎನ್ನುತ್ತಾರೆ.
+
+
+ಒಟ್ಟಾರೆಯಾಗಿ Factory Function ನ ಲಾಭಗಳೇನು?
+1.  ಸುಲಭ ಮತ್ತು ಸರಳ: new ಅಥವಾ this ಎಂಬ ಗೊಂದಲಮಯ ಪದಗಳನ್ನು ಬಳಸುವ ಅಗತ್ಯವಿಲ್ಲ.
+
+2.  ಭದ್ರತೆ (Privacy): ನಮ್ಮ ಡೇಟಾವನ್ನು ಬೇರೆಯವರು ಸುಲಭವಾಗಿ ಬದಲಾಯಿಸದಂತೆ ಬಚ್ಚಿಡಬಹುದು.
+
+3.  ಮರುಬಳಕೆ (Reusability): ಒಂದೇ ಮಷಿನ್ ಬಳಸಿ ನೂರಾರು ಆಬ್ಜೆಕ್ಟ್‌ಗಳನ್ನು ಕ್ಷಣಾರ್ಧದಲ್ಲಿ ಮಾಡಬಹುದು.
+4.  ಹೌದು, ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ this ಕೀವರ್ಡ್ ಬಳಸಬಹುದು. ಆದರೆ, ಬಳಸದಿರುವುದೇ ಅತ್ಯುತ್ತಮ ಅಭ್ಯಾಸ (Best Practice)!
+5.  
+6.  ಏಕೆಂದರೆ, ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸುವ ಮುಖ್ಯ ಉದ್ದೇಶವೇ this ಎಂಬ ಗೊಂದಲಮಯ ಕೀವರ್ಡ್‌ನಿಂದ ಪಾರಾಗುವುದು. this ಕೀವರ್ಡ್ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದು "ಊಸರವಳ್ಳಿ" (Chameleon) ಇದ್ದಂತೆ. ಅದು ಎಲ್ಲಿ ಮತ್ತು ಹೇಗೆ ಕರೆಯಲ್ಪಡುತ್ತದೆ ಎಂಬುದರ ಮೇಲೆ ತನ್ನ ಅರ್ಥವನ್ನು ಬದಲಾಯಿಸುತ್ತಲೇ ಇರುತ್ತದೆ.
+7.  
+8.  ಇದನ್ನು ಉದಾಹರಣೆಯೊಂದಿಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ:
+9.  
+
+1. 10. this ಬಳಸಿದಾಗ ಆಗುವ ಅನಾಹುತ (The Problem)
+11. ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಒಳಗೆ this ಬಳಸಿದರೆ ಏನಾಗುತ್ತದೆ ಎಂದು ನೋಡೋಣ.
+12. 
+
+13. JavaScript
+14. function createPlayer(name) {
+15.   return {
+16.     playerName: name,
+17.     cheer: function() {
+18.       // ಇಲ್ಲಿ this ಬಳಸಲಾಗಿದೆ
+19.       console.log("ಕಪ್ ನಮ್ದೇ! ಎಂದರು " + this.playerName); 
+20.     }
+21.   };
+22. }
+23. 
+24. let virat = createPlayer("ವಿರಾಟ್");
+25. 
+26. // ಇದು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ
+27. virat.cheer(); // ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ವಿರಾಟ್
+28. 
+29. // ಆದರೆ ಇಲ್ಲಿ ನೋಡಿ (ಅನಾಹುತ ಶುರು!)
+30. setTimeout(virat.cheer, 1000); 
+31. // 1 ಸೆಕೆಂಡ್ ಆದಮೇಲೆ ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು undefined
+32. ಏನಾಯಿತು ಇಲ್ಲಿ?setTimeout ನಂತಹ ಬೇರೆ ಫಂಕ್ಷನ್‌ಗಳಿಗೆ ನಾವು ಈ cheer ಫಂಕ್ಷನ್ ಅನ್ನು ಕಳುಹಿಸಿದಾಗ, this ಕೀವರ್ಡ್ ತಾನು ಯಾವ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಸೇರಿದ್ದು (Context) ಎಂಬುದನ್ನು ಮರೆತುಬಿಡುತ್ತದೆ. ಆಗ this.playerName ಎನ್ನುವುದು ಸಿಗದೆ undefined ಎಂದು ಬರುತ್ತದೆ.
+33. 
+
+34. 2. this ಬಳಸದೆ ಇದ್ದಾಗ (The Solution - Pro Level)
+35. ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್‌ನಲ್ಲಿ this ಬಳಸುವ ಬದಲು, ನೇರವಾಗಿ ಡೇಟಾವನ್ನು (Closures ಮೂಲಕ) ಬಳಸಬೇಕು.
+36. 
+
+37. JavaScript
+38. function createPlayer(name) {
+39.   // ಇಲ್ಲಿ name ಎಂಬುದು ಮಷಿನ್ ನೆನಪಿನಲ್ಲಿಟ್ಟುಕೊಂಡಿರುವ (Closure) ಡೇಟಾ
+40.   return {
+41.     cheer: function() {
+42.       // ಇಲ್ಲಿ this ಬಳಸಿಲ್ಲ! ನೇರವಾಗಿ name ಬಳಸಿದ್ದೇವೆ
+43.       console.log("ಕಪ್ ನಮ್ದೇ! ಎಂದರು " + name); 
+44.     }
+45.   };
+46. }
+47. 
+48. let dhoni = createPlayer("ಧೋನಿ");
+49. 
+50. // ಇದು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ
+51. dhoni.cheer(); // ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ಧೋನಿ
+52. 
+53. // ಈಗ ಅನಾಹುತ ಆಗುವುದಿಲ್ಲ!
+54. setTimeout(dhoni.cheer, 1000); 
+55. // 1 ಸೆಕೆಂಡ್ ಆದಮೇಲೆ ಔಟ್‌ಪುಟ್: ಕಪ್ ನಮ್ದೇ! ಎಂದರು ಧೋನಿ
+56. ಇಲ್ಲಿ ಏಕೆ ಸರಿಯಾಗಿ ಬಂತು? ನಾವು this ಬಳಸಲೇ ಇಲ್ಲ! ಫಂಕ್ಷನ್ ಒಳಗೆ ಇರುವ name ಅನ್ನು ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನ ಕ್ಲೋಷರ್ (Closure) ಎಂಬ ಅದ್ಭುತ ಶಕ್ತಿಯು ತನ್ನ ನೆನಪಿನಲ್ಲಿ ಭದ್ರವಾಗಿ ಸೇವ್ ಮಾಡಿಟ್ಟುಕೊಂಡಿರುತ್ತದೆ. ನೀವು ಆ ಫಂಕ್ಷನ್ ಅನ್ನು ಎಲ್ಲೇ ತೆಗೆದುಕೊಂಡು ಹೋದರೂ (ಉದಾಹರಣೆಗೆ setTimeout ಒಳಗೆ) ಅದು ತನ್ನ ಡೇಟಾವನ್ನು ಮರೆಯುವುದಿಲ್ಲ.
+57. 
+58. ಸಾರಾಂಶ: ನೀವು ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ ಬರೆಯುತ್ತಿದ್ದೀರಿ ಎಂದರೆ this ಅನ್ನು ಮರೆತುಬಿಡಿ. ವೇರಿಯೇಬಲ್‌ಗಳನ್ನು ನೇರವಾಗಿ ಬಳಸಿ. ಇದರಿಂದ ನಿಮ್ಮ ಕೋಡ್ ಎಂದಿಗೂ ಗೊಂದಲ ಮಾಡುವುದಿಲ್ಲ ಮತ್ತು ಡೇಟಾ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ!
+ನಮಸ್ಕಾರ! ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ (JavaScript) ನಲ್ಲಿ 'Constructor Function' ಎಂಬುದನ್ನು ನಾವು ಒಂದು ಆಟಿಕೆ ಕಾರ್ಖಾನೆ (Toy Factory) ಅಥವಾ ಬಿಸ್ಕತ್ ಅಚ್ಚು (Cookie Cutter) ಮೂಲಕ ಬಹಳ ಸುಲಭವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಬಹುದು.
+
+ನೀವು ಮನೆಯಲ್ಲಿ ಬಿಸ್ಕತ್ ಮಾಡುವಾಗ ಒಂದು 'ಅಚ್ಚು' (mould) ಬಳಸುತ್ತೀರಿ, ಹೌದಲ್ವಾ? ಆ ಒಂದೇ ಅಚ್ಚನ್ನು ಬಳಸಿ ನೀವು ಬೇಕಾದಷ್ಟು ಬಿಸ್ಕತ್‌ಗಳನ್ನು ಮಾಡಬಹುದು. ಅದೇ ರೀತಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ಒಂದೇ ರೀತಿಯ ಅನೇಕ 'ಆಬ್ಜೆಕ್ಟ್' (Objects) ಗಳನ್ನು ತಯಾರಿಸಲು ಬಳಸುವ 'ಅಚ್ಚು' ಅಥವಾ ಫ್ಯಾಕ್ಟರಿಯೇ ಈ Constructor Function.
+
+೧. ಬಿಗಿನರ್ ಲೆವೆಲ್ (Beginner): ನಮಗೇಕೆ ಇದು ಬೇಕು?
+ಉದಾಹರಣೆಗೆ, ನೀವು 3 ಆಟದ ಕಾರುಗಳನ್ನು (Objects) ಮಾಡಬೇಕು. ಪ್ರತಿಯೊಂದಕ್ಕೂ ಹೆಸರು, ಬಣ್ಣ ಬರೆಯುತ್ತಾ ಕೂತರೆ ಬಹಳ ಸಮಯ ಹಿಡಿಯುತ್ತದೆ:
+
+
+JavaScript
+// ಅಚ್ಚು ಇಲ್ಲದೆ ಒಂದೊಂದೇ ಕಾರು ಮಾಡುವುದು (ತುಂಬಾ ಕಷ್ಟ)
+let car1 = { name: "Maruti", color: "Red" };
+let car2 = { name: "Tata", color: "Blue" };
+let car3 = { name: "Mahindra", color: "Black" };
+ಇದರ ಬದಲು ನಾವು ಒಂದು 'ಕಾರ್ ಫ್ಯಾಕ್ಟರಿ' (Constructor Function) ಯಂತ್ರವನ್ನು ಮಾಡಿದರೆ, ಕಾರಿನ ಬಣ್ಣ ಮತ್ತು ಹೆಸರು ಹೇಳಿದ ತಕ್ಷಣ ಅದು ಹೊಸ ಕಾರನ್ನು ರೆಡಿ ಮಾಡಿಕೊಡುತ್ತದೆ.
+
+ಇದನ್ನು ಬರೆಯುವ ನಿಯಮಗಳು:
+
+
+• ಇದರ ಹೆಸರು ಯಾವಾಗಲೂ ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ (Capital Letter) ಶುರುವಾಗಬೇಕು. (ಉದಾಹರಣೆಗೆ: Car, Robot).
+
+• this ಎಂಬ ಪದವನ್ನು ಬಳಸುತ್ತೇವೆ. (ಇದರ ಅರ್ಥ "ಈಗ ತಯಾರಾಗುತ್ತಿರುವ ಹೊಸ ಆಟಿಕೆ").
+
+• ಹೊಸ ವಸ್ತುವನ್ನು ಪಡೆಯಲು new ಎಂಬ ಪದವನ್ನು ಬಳಸುತ್ತೇವೆ.
+
+ಉದಾಹರಣೆ 1: ಸರಳ ಕಾರು ಕಾರ್ಖಾನೆ
+JavaScript
+// 1. ಇದು ನಮ್ಮ ಫ್ಯಾಕ್ಟರಿ (Constructor Function)
+function Car(ಹೆಸರು, ಬಣ್ಣ) {
+    this.name = ಹೆಸರು;
+    this.color = ಬಣ್ಣ;
+}
+
+// 2. new ಪದ ಬಳಸಿ ಕಾರ್ಖಾನೆಗೆ ಆರ್ಡರ್ ಕೊಡುವುದು!
+let myFirstCar = new Car("Maruti", "Red");
+let mySecondCar = new Car("Tata", "Blue");
+
+console.log(myFirstCar.name); // ಔಟ್‌ಪುಟ್: Maruti
+console.log(mySecondCar.color); // ಔಟ್‌ಪುಟ್: Blue
+ಇಲ್ಲಿ new Car(...) ಎಂದು ಹೇಳಿದಾಗ, ಆ ಫ್ಯಾಕ್ಟರಿ ತಕ್ಷಣವೇ ಒಂದು ಹೊಸ ಕಾರನ್ನು ತಯಾರಿಸಿ ಕೊಡುತ್ತದೆ.
+
+
+೨. ಇಂಟರ್ಮೀಡಿಯೇಟ್ ಲೆವೆಲ್ (Intermediate): ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಕೆಲಸ ಕೊಡುವುದು
+ಕೇವಲ ಬಣ್ಣ, ಹೆಸರು ಮಾತ್ರವಲ್ಲದೆ ಆ ಹೊಸ ಕಾರು ಅಥವಾ ಆಟಿಕೆ ಕೆಲಸ ಮಾಡುವಂತೆ (Methods/Functions) ಮಾಡಬಹುದು. ಉದಾಹರಣೆಗೆ, ನಮ್ಮ ಕಾರು ಹಾರ್ನ್ (Horn) ಮಾಡುವಂತೆ ಮಾಡೋಣ.
+
+
+JavaScript
+function SmartCar(name, color) {
+    this.name = name;
+    this.color = color;
+    
+    // ಕಾರು ಹಾರ್ನ್ ಮಾಡುವ ಫಂಕ್ಷನ್
+    this.soundHorn = function() {
+        console.log(this.name + " ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!");
+    }
+}
+
+let tataCar = new SmartCar("Tata Nexon", "White");
+tataCar.soundHorn(); 
+// ಔಟ್‌ಪುಟ್: Tata Nexon ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!
+೩. ಪ್ರೊ ಲೆವೆಲ್ (Pro Level): Prototype ಬಳಸಿ ಮೆಮೊರಿ ಉಳಿಸುವುದು
+ಮೇಲಿನ SmartCar ಉದಾಹರಣೆಯಲ್ಲಿ ಒಂದು ಸಣ್ಣ ಸಮಸ್ಯೆಯಿದೆ. ನೀವು 1000 ಕಾರುಗಳನ್ನು ತಯಾರಿಸಿದರೆ, soundHorn ಎಂಬ ಫಂಕ್ಷನ್ ಕೂಡ 1000 ಬಾರಿ ಕಾಪಿ (Copy) ಆಗುತ್ತದೆ. ಇದರಿಂದ ಕಂಪ್ಯೂಟರ್ ಮೆಮೊರಿ ವೇಸ್ಟ್ ಆಗುತ್ತದೆ.
+
+ಇದನ್ನು ತಪ್ಪಿಸಲು ಪ್ರೊ (Pro) ಡೆವಲಪರ್‌ಗಳು prototype ಬಳಸುತ್ತಾರೆ. prototype ಅಂದರೆ ಊರಿನ ಲೈಬ್ರರಿ ಇದ್ದ ಹಾಗೆ. ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಒಂದೊಂದು ಪುಸ್ತಕ ಕೊಡುವ ಬದಲು, ಒಂದು ಪುಸ್ತಕವನ್ನು ಲೈಬ್ರರಿಯಲ್ಲಿ ಇಟ್ಟರೆ ಎಲ್ಲರೂ ಓದಬಹುದು!
+
+
+JavaScript
+function ProCar(name, color) {
+    this.name = name;
+    this.color = color;
+    // ಇಲ್ಲಿ ಫಂಕ್ಷನ್ ಬರೆಯುವುದಿಲ್ಲ!
+}
+
+// ಎಲ್ಲ ಕಾರುಗಳಿಗೂ ಒಂದೇ ಜಾಗದಲ್ಲಿ (prototype ನಲ್ಲಿ) ನಿಯಮ ಬರೆಯುವುದು
+ProCar.prototype.soundHorn = function() {
+     console.log(this.name + " ಕಾರು 'ಪೀಪ್ ಪೀಪ್' ಅನ್ನುತ್ತಿದೆ!");
+}
+
+let carA = new ProCar("Mahindra Thar", "Black");
+let carB = new ProCar("Kia", "Red");
+
+// ಎರಡು ಕಾರುಗಳು ಲೈಬ್ರರಿಯಿಂದ (prototype) ಒಂದೇ ಫಂಕ್ಷನ್ ಅನ್ನು ಬಳಸುತ್ತವೆ
+carA.soundHorn();
+carB.soundHorn();
+ಹೀಗೆ ಮಾಡುವುದರಿಂದ ಎಷ್ಟೇ ಕಾರುಗಳನ್ನು ತಯಾರಿಸಿದರೂ soundHorn ಫಂಕ್ಷನ್ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದೇ ಬಾರಿ ಸೇವ್ ಆಗಿರುತ್ತದೆ.
+
+ಸಾರಾಂಶ (ನೆನಪಿಡಬೇಕಾದ ಮುಖ್ಯ ಅಂಶಗಳು):
+
+
+• Constructor Function: ಒಂದೇ ರೀತಿಯ ಅನೇಕ ಆಬ್ಜೆಕ್ಟ್ ಮಾಡಲು ಬಳಸುವ ಅಚ್ಚು.
+
+• Capital Letter: ಇದರ ಹೆಸರು ಯಾವಾಗಲೂ ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗಬೇಕು.
+
+• new Keyword: ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಹುಟ್ಟುಹಾಕಲು ಕಡ್ಡಾಯವಾಗಿ new ಬಳಸಬೇಕು.
+
+• this Keyword: ತಯಾರಾಗುತ್ತಿರುವ ಪ್ರಸ್ತುತ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುತ್ತದೆ.
+
+• prototype: ಮೆಮೊರಿ ಉಳಿಸಲು ಕಾಮನ್ ಆಗಿರುವ ಫಂಕ್ಷನ್‌ಗಳನ್ನು prototype ಒಳಗೆ ಹಾಕಬೇಕು.
+
+ಖಂಡಿತ, ನೀವು ನೀಡಿದ ಮಾಹಿತಿಯನ್ನು ದೈನಂದಿನ ಉದಾಹರಣೆ ಮತ್ತು ತಾಂತ್ರಿಕ ವಿವರಣೆಗಳೆರಡನ್ನೂ ಸೇರಿಸಿ (Merge ಮಾಡಿ), ಯಾರಿಗಾದರೂ ಸುಲಭವಾಗಿ ಅರ್ಥವಾಗುವಂತೆ ಹಂತ-ಹಂತವಾಗಿ (Step-by-step) ಮತ್ತು ಕ್ರಮಬದ್ಧವಾಗಿ ಕೆಳಗೆ ವಿವರಿಸಿದ್ದೇನೆ.
+
+
+೧. new ಮತ್ತು this: ಒಂದು ಸರಳ ಪರಿಚಯ
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನಾವು ಹೊಸ ವಸ್ತುಗಳನ್ನು (Objects) ತಯಾರಿಸುವಾಗ new ಮತ್ತು this ಕೀವರ್ಡ್‌ಗಳನ್ನು ಬಳಸುತ್ತೇವೆ. ಇವುಗಳ ಕೆಲಸವನ್ನು ಶಾಲೆಯ 'ಪುಸ್ತಕ'ದ ಉದಾಹರಣೆಯೊಂದಿಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.
+
+
+🔹 new (ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ ತರುವುದು)
+• ದೈನಂದಿನ ಉದಾಹರಣೆ: ನೀವು ಅಂಗಡಿಗೆ ಹೋಗಿ "ನನಗೆ ಒಂದು ಹೊಸ ಪುಸ್ತಕ ಕೊಡಿ" ಎಂದು ಕೇಳಿದಾಗ, ಅಂಗಡಿಯವನು ನಿಮಗೆ ಒಂದು ಹೊಸ, ಖಾಲಿ ಪುಟಗಳಿರುವ ಪುಸ್ತಕವನ್ನು ಕೊಡುತ್ತಾನೆ.
+
+• ತಾಂತ್ರಿಕ ವಿವರಣೆ: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ ನೀವು new ಎಂದು ಬರೆದರೆ, ಕಂಪ್ಯೂಟರ್‌ನ ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಚ್ಚಹೊಸ "ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ (Empty Object {})" ಸೃಷ್ಟಿಯಾಗುತ್ತದೆ.
+
+🔹 this (ಪುಸ್ತಕದ ಮೇಲೆ 'ನನ್ನ' ಹೆಸರು ಬರೆಯುವುದು)
+• ದೈನಂದಿನ ಉದಾಹರಣೆ: ಮನೆಗೆ ತಂದ ಆ ಹೊಸ ಪುಸ್ತಕದ ಮೇಲಿರುವ ಚೀಟಿಯಲ್ಲಿ (Label) ನೀವು "ಈ ಪುಸ್ತಕ ನನ್ನದು, ನನ್ನ ಹೆಸರು ರಾಜು" ಎಂದು ಬರೆಯುತ್ತೀರಿ.
+
+• ತಾಂತ್ರಿಕ ವಿವರಣೆ: ಮೆಮೊರಿಯಲ್ಲಿ ಸೃಷ್ಟಿಯಾದ ಆ ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಡೇಟಾವನ್ನು (Properties) ತುಂಬಲು this ಬಳಸಲಾಗುತ್ತದೆ. ಅಂದರೆ, ಆ ಆಬ್ಜೆಕ್ಟ್ ತನ್ನ ಸ್ವಂತ ಮಾಹಿತಿಯನ್ನು ಸೇರಿಸಿಕೊಳ್ಳಲು this ಅನ್ನು ಬಳಸುತ್ತದೆ.
+
+೨. ಕಂಪ್ಯೂಟರ್‌ನ ಒಳಗೆ ಏನಾಗುತ್ತದೆ? (The 4 Technical Steps)
+ನೀವು new ಕೀವರ್ಡ್ ಬಳಸಿ ಫಂಕ್ಷನ್ ಅನ್ನು ಕರೆದಾಗ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಎಂಜಿನ್ (ಉದಾಹರಣೆಗೆ: V8 Engine) ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಈ ಕೆಳಗಿನ 4 ಪ್ರಮುಖ ಕೆಲಸಗಳನ್ನು ಮಾಡುತ್ತದೆ:
+
+
+1.  ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿ (Create Object): ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಸ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ ({}) ಸೃಷ್ಟಿಸುತ್ತದೆ. (ಇದೇ ನಿಮ್ಮ ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ)
+
+2.  ಪ್ರೋಟೋಟೈಪ್ ಲಿಂಕ್ (Prototype Linking): ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್‌ನ prototype ಗೆ ಲಿಂಕ್ ಮಾಡುತ್ತದೆ. (ಇದರಿಂದ ಮೆಮೊರಿ ಉಳಿಯುತ್ತದೆ).
+
+3.  this ಬೈಂಡಿಂಗ್ (Binding this): ಫಂಕ್ಷನ್‌ನ ಒಳಗಿರುವ this ಪದವನ್ನು, ತಾನು ಈಗಷ್ಟೇ ಸೃಷ್ಟಿಸಿದ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಪಾಯಿಂಟ್ (Bind) ಮಾಡುತ್ತದೆ. (ಪುಸ್ತಕದ ಮೇಲೆ ಹೆಸರು ಬರೆಯುವ ಹಂತ).
+
+4.  ಆಟೋಮ್ಯಾಟಿಕ್ ರಿಟರ್ನ್ (Implicit Return): ನಾವು ಕೋಡ್‌ನಲ್ಲಿ return ಎಂದು ಬರೆಯದಿದ್ದರೂ, ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ತಾನಾಗಿಯೇ ನಮಗೆ ವಾಪಸ್ ಕೊಡುತ್ತದೆ.
+
+೩. ಎರಡನ್ನೂ ಒಟ್ಟುಗೂಡಿಸಿ ಕೋಡ್‌ನಲ್ಲಿ ನೋಡೋಣ
+ಈಗ ಸರಳ ಕಥೆ ಮತ್ತು ತಾಂತ್ರಿಕ ಪ್ರಕ್ರಿಯೆ ಎರಡೂ ಕೋಡ್‌ನಲ್ಲಿ ಹೇಗೆ ಜೊತೆಯಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ ಎಂದು ನೋಡಿ:
+
+
+JavaScript
+// ಇದು ನಮ್ಮ ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ (ಪುಸ್ತಕ ತಯಾರಿಸುವ ಫ್ಯಾಕ್ಟರಿ)
+function Student(ಹೆಸರು, ತರಗತಿ) {
+    
+    // ತಾಂತ್ರಿಕವಾಗಿ: ನೀವು 'new' ಬಳಸಿದಾಗ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ 1ನೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ:
+    // this = {};  <-- (ಹೊಸ ಖಾಲಿ ಪುಸ್ತಕ / ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಯಾಯಿತು)
+    
+    // ಈಗ 'this' ಆ ಹೊಸ ಆಬ್ಜೆಕ್ಟ್‌ಗೆ ಡೇಟಾ ಸೇರಿಸುತ್ತಿದೆ:
+    // (2ನೇ ಕೆಲಸ: ಪುಸ್ತಕದ ಮೇಲೆ ಹೆಸರು ಮತ್ತು ತರಗತಿ ಬರೆಯುವುದು)
+    this.name = ಹೆಸರು;      
+    this.grade = ತರಗತಿ;
+
+    // ತಾಂತ್ರಿಕವಾಗಿ: ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್ 4ನೇ ಕೆಲಸವಾಗಿ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ರಿಟರ್ನ್ ಮಾಡುತ್ತದೆ:
+    // return this; <-- (ನಿಮ್ಮ ಕೈಗೆ ತುಂಬಿದ ಪುಸ್ತಕ ಸಿಕ್ಕಿತು)
+}
+
+// 'new' ಪದ ಬಳಸಿ ಹೊಸ Student ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ
+let student1 = new Student("ರಾಜು", "10ನೇ ತರಗತಿ"); 
+let student2 = new Student("ರಮ್ಯ", "9ನೇ ತರಗತಿ");
+
+// ಈಗ ಪ್ರಿಂಟ್ ಮಾಡಿ ನೋಡೋಣ
+console.log(student1.name); // ಔಟ್‌ಪುಟ್: ರಾಜು
+console.log(student2.name); // ಔಟ್‌ಪುಟ್: ರಮ್ಯ
+೪. ಅಂತಿಮ ಸಾರಾಂಶ (Conclusion)
+• new ಎಂದರೆ: "ಮೆಮೊರಿಯಲ್ಲಿ ಒಂದು ಹೊಸ, ಖಾಲಿ ಜಾಗವನ್ನು ({}) ಕೊಡು" ಎನ್ನುವ ಕಮಾಂಡ್.
+
+• this ಎಂದರೆ: "ಆ ಹೊಸ ಜಾಗದ ಒಳಗೆ ಈ ಕೆಳಗಿನ ಡೇಟಾವನ್ನು ತುಂಬು" ಎಂದು ಹೇಳುವ ಪಾಯಿಂಟರ್.
+
+ಇವೆರಡೂ ಒಟ್ಟಿಗೆ ಸೇರಿದರೆ, ನಮಗೆ ಬೇಕಾದ ನಿಖರವಾದ ಮಾಹಿತಿಯನ್ನು ಹೊಂದಿರುವ ಒಂದು ಸಂಪೂರ್ಣ 'ಆಬ್ಜೆಕ್ಟ್' (Object) ತಯಾರಾಗುತ್ತದೆ.
+ಜಾವಾಸ್ಕ್ರಿಪ್ಟ್‌ನಲ್ಲಿ Factory Function ಮತ್ತು Constructor Function ಇವೆರಡರ ಮುಖ್ಯ ಕೆಲಸ ಒಂದೇ: "ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ (Object) ಗಳನ್ನು ಸೃಷ್ಟಿಸುವುದು".
+
+ಆದರೆ ಅವು ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ಸೃಷ್ಟಿಸುವ 'ವಿಧಾನ' ಬೇರೆ. ಇವೆರಡರ ವ್ಯತ್ಯಾಸವನ್ನು ಸರಳವಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳೋಣ.
+
+
+೧. ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ (Factory Function)
+ಇದನ್ನು ಒಂದು "ಸಾಮಾನ್ಯ ಕೆಲಸಗಾರ"ನಿಗೆ ಹೋಲಿಸಬಹುದು. ನೀವು ಒಂದು ಗೊಂಬೆ ಕೇಳಿದರೆ, ಆತನೇ ಒಂದು ಖಾಲಿ ಡಬ್ಬ ತಂದು, ಅದಕ್ಕೆ ಬಣ್ಣ ಬಳಿದು, ಕೊನೆಗೆ ಆ ಡಬ್ಬವನ್ನು ನಿಮ್ಮ ಕೈಗೆ ಕೊಡುತ್ತಾನೆ.
+
+ಇಲ್ಲಿ ಯಾವುದೇ 'ಮ್ಯಾಜಿಕ್' ಇರುವುದಿಲ್ಲ. ನಾವೇ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ({}) ಅನ್ನು ಸೃಷ್ಟಿಸಿ, ಅದಕ್ಕೆ ಡೇಟಾ ತುಂಬಿ, ಕೊನೆಗೆ ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ return ಮಾಡಬೇಕು.
+
+
+JavaScript
+// Factory Function ಉದಾಹರಣೆ
+function createRobot(ಹೆಸರು, ಬಣ್ಣ) {
+    // 1. ನಾವೇ ಒಂದು ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸುತ್ತಿದ್ದೇವೆ
+    let robot = {}; 
+    
+    // 2. ಡೇಟಾ ತುಂಬುತ್ತಿದ್ದೇವೆ (this ಬಳಸುವಂತಿಲ್ಲ)
+    robot.name = ಹೆಸರು;
+    robot.color = ಬಣ್ಣ;
+    
+    // 3. ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ ರಿಟರ್ನ್ ಮಾಡುತ್ತಿದ್ದೇವೆ
+    return robot; 
+}
+
+// 'new' ಪದ ಇಲ್ಲದೆ ಕರೆಯುವುದು
+let robot1 = createRobot("ಚಿಟ್ಟಿ", "ಬೆಳ್ಳಿ"); 
+console.log(robot1.name); // ಔಟ್‌ಪುಟ್: ಚಿಟ್ಟಿ
+ನೆನಪಿಡಬೇಕಾದದ್ದು: ಇಲ್ಲಿ new ಬೇಡ, this ಬೇಡ, ಆದರೆ return ಕಡ್ಡಾಯ!
+
+
+೨. ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ (Constructor Function)
+ಇದನ್ನು ಒಂದು "ಆಟೋಮ್ಯಾಟಿಕ್ ಮ್ಯಾಜಿಕ್ ಮಷಿನ್"ಗೆ ಹೋಲಿಸಬಹುದು. ನಾವು ಈ ಹಿಂದೆ ಕಲಿತಂತೆ, ಇಲ್ಲಿ new ಎಂಬ ಮ್ಯಾಜಿಕ್ ದಂಡವನ್ನು ಬಳಸುತ್ತೇವೆ. ಆ ಮ್ಯಾಜಿಕ್ ದಂಡವೇ ಗುಪ್ತವಾಗಿ ಖಾಲಿ ಆಬ್ಜೆಕ್ಟ್ ಸೃಷ್ಟಿಸಿ, ಕೊನೆಗೆ ತಾನೇ ವಾಪಸ್ (return) ಕೊಡುತ್ತದೆ.
+
+
+JavaScript
+// Constructor Function ಉದಾಹರಣೆ (ಹೆಸರು ಕ್ಯಾಪಿಟಲ್ ಇರಬೇಕು)
+function Robot(ಹೆಸರು, ಬಣ್ಣ) {
+    // ಹೊಸ ಆಬ್ಜೆಕ್ಟ್ ಗುಪ್ತವಾಗಿ ಸೃಷ್ಟಿಯಾಗಿದೆ: this = {}
+    
+    // ನಾವಿಲ್ಲಿ 'this' ಬಳಸುತ್ತೇವೆ
+    this.name = ಹೆಸರು;
+    this.color = ಬಣ್ಣ;
+    
+    // ರಿಟರ್ನ್ ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ! (ಗುಪ್ತವಾಗಿ: return this;)
+}
+
+// ಕಡ್ಡಾಯವಾಗಿ 'new' ಪದ ಬಳಸಬೇಕು
+let robot2 = new Robot("ಟರ್ಮಿನೇಟರ್", "ಕಪ್ಪು");
+console.log(robot2.name); // ಔಟ್‌ಪುಟ್: ಟರ್ಮಿನೇಟರ್
+ನೆನಪಿಡಬೇಕಾದದ್ದು: ಇಲ್ಲಿ new ಮತ್ತು this ಕಡ್ಡಾಯ, ಆದರೆ return ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ!
+
+
+೩. ಮುಖ್ಯ ವ್ಯತ್ಯಾಸಗಳು (ಮುಖಾಮುಖಿ ಹೋಲಿಕೆ)
+ವ್ಯತ್ಯಾಸ (Difference)   ಫ್ಯಾಕ್ಟರಿ ಫಂಕ್ಷನ್ (Factory Function)    ಕನ್‌ಸ್ಟ್ರಕ್ಟರ್ ಫಂಕ್ಷನ್ (Constructor Function)
+ಫಂಕ್ಷನ್ ಹೆಸರು    ಸಣ್ಣ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗುತ್ತದೆ (ಉದಾ: createRobot)   ದೊಡ್ಡ ಅಕ್ಷರದಿಂದ ಶುರುವಾಗುತ್ತದೆ (ಉದಾ: Robot)
+new ಕೀವರ್ಡ್    ಬಳಸುವುದಿಲ್ಲ ಕಡ್ಡಾಯವಾಗಿ ಬಳಸಬೇಕು
+this ಕೀವರ್ಡ್   ಬಳಸುವುದಿಲ್ಲ ಕಡ್ಡಾಯವಾಗಿ ಬಳಸಬೇಕು
+return ಕೀವರ್ಡ್ ಆಬ್ಜೆಕ್ಟ್ ಅನ್ನು ನಾವೇ ಕಡ್ಡಾಯವಾಗಿ return ಮಾಡಬೇಕು    ಬರೆಯುವ ಅಗತ್ಯವಿಲ್ಲ (ತಾನೇ ರಿಟರ್ನ್ ಆಗುತ್ತದೆ)
+ಯಾವುದು ಸುಲಭ?   ಆರಂಭಿಕರಿಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ತುಂಬಾ ಸುಲಭ.    ಸ್ವಲ್ಪ ಕನ್ಫ್ಯೂಸ್ ಆಗಬಹುದು, ಆದರೆ ಪ್ರೊ ಡೆವಲಪರ್‌ಗಳು ಇದನ್ನೇ ಹೆಚ್ಚು ಬಳಸುತ್ತಾರೆ.
+ಸಾರಾಂಶ: ನಿಮಗೆ new ಮತ್ತು this ನ ತಲೆನೋವು ಬೇಡ, ಎಲ್ಲವನ್ನೂ ನಾನೇ ಮ್ಯಾನ್ಯುವಲ್ (Manual) ಆಗಿ ಬರೆಯುತ್ತೇನೆ ಎಂದರೆ Factory Function ಬಳಸಿ. ಇಲ್ಲ, "ಕಂಪ್ಯೂಟರ್ ತಾನೇ ಆಟೋಮ್ಯಾಟಿಕ್ ಆಗಿ ಆಬ್ಜೆಕ್ಟ್ ಕ್ರಿಯೇಟ್ ಮಾಡಿ ರಿಟರ್ನ್ ಮಾಡಲಿ, ನನ್ನ ಕೋಡ್ ಚಿಕ್ಕದಾಗಲಿ" ಎಂದರೆ Constructor Function ಬಳಸಿ!</pre>
+            </div>
+        </section>
+
+        <footer>
+            <div style="text-align: center; border-top: 1px solid var(--sidebar-border); padding-top: 2rem; opacity: 0.8;">
+                <p>Created by JavaScript Masterclass System | Responsive Learning Environment</p>
+                <a href="#intro" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: var(--primary); color: white; text-decoration: none; border-radius: 4px;">Back to Top <i class="fa-solid fa-arrow-up"></i></a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        // Copy Code Functionality
+        function copyCode(btn) {
+            const pre = btn.parentElement.nextElementSibling;
+            const code = pre.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                btn.style.background = 'rgba(16, 185, 129, 0.3)';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'rgba(255,255,255,0.1)';
+                }, 2000);
+            });
+        }
+
+        // Quiz Answer Toggle
+        function toggleAnswer(id) {
+            const ans = document.getElementById(id);
+            if(ans.style.display === 'block') {
+                ans.style.display = 'none';
+            } else {
+                ans.style.display = 'block';
+            }
+        }
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.transform === 'translateX(0px)') {
+                sidebar.style.transform = 'translateX(-100%)';
+            } else {
+                sidebar.style.transform = 'translateX(0px)';
+            }
+        }
+
+        // Scroll Progress Bar & Active Link Update
+        window.addEventListener('scroll', () => {
+            // Progress Bar
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progressBar").style.width = scrolled + "%";
+
+            // Active Nav Link Update
+            let fromTop = window.scrollY;
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            navLinks.forEach(link => {
+                let section = document.querySelector(link.hash);
+                if (
+                    section.offsetTop <= fromTop + 100 &&
+                    section.offsetTop + section.offsetHeight > fromTop + 100
+                ) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
