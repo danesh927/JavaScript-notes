@@ -636,7 +636,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                         • <strong>ಹಂತ 2:</strong> ಈಗ 100 ಮತ್ತು 1 ಅನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. (a = 100, b = 1)<br>
                         100 - 1 = 99 (ಪ್ಲಸ್ ಬಂತು). ಅಂದರೆ 100 ದೊಡ್ಡದು. ಹಾಗಾಗಿ 1 ಅನ್ನು 100 ರ ಹಿಂದೆ ತರುತ್ತದೆ.<br><br>
                         • ಈ ಪ್ರಕ್ರಿಯೆಯು ಪಟ್ಟಿಯ ಎಲ್ಲಾ ಸಂಖ್ಯೆಗಳು ಸರಿಯಾದ ಕ್ರಮದಲ್ಲಿ (ಚಿಕ್ಕದರಿಂದ ದೊಡ್ಡದಕ್ಕೆ) ಜೋಡಣೆಯಾಗುವವರೆಗೂ ನಡೆಯುತ್ತಲೇ ಇರುತ್ತದೆ.<br><br>
-                        ಇದೇ ಲೆಕ್ಕಾಚಾರವನ್ನು <strong>ಇಳಿಕೆ ಕ್ರಮಕ್ಕೆ (Descending)</strong> ಮಾಡಲು ನಾವು <code>return b - a;</code> ಎಂದು ಕಳೆಯುವಿಕೆಯನ್ನು ಉಲ್ಟಾ ಮಾಡುತ್ತೇವೆ, ಆಗ ದೊಡ್ಡ ಸಂಖ್ಯೆಗಳು ಮೊದಲು ಬರುತ್ತವೆ.
+                        ಇದೇ ಲೆಕ್ಕಾಚಾರವನ್ನು <strong>ಇಳಿಕೆ ಕ್ರಮಕ್ಕೆ (Descending)</strong> ಮಾಡಲು ನಾವು <code>return b - a;</code> ಎಂದು ಕಳೆಯುವಿಕೆಯನ್ನು ಉಲ್ಟಾ ಮಾಡುತ್ತೇವೆ, ಆಗ ದೊಡ್ಡ ಸಂಖ್ಯೆ গঠনಗಳು ಮೊದಲು ಬರುತ್ತವೆ.
                     </div>
                 </div>
             </div>
@@ -657,7 +657,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
-<span class="keyword">let</span> doubled = numbers.map(num => num * <span class="number">2</span>);
+<span class="keyword">let</span> doubled = numbers.map(<span class="keyword">function</span>(num) { <span class="keyword">return</span> num * <span class="number">2</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: [2, 4, 6]</span></code></pre>
                     </div>
                 </div>
@@ -668,7 +668,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> ages = [<span class="number">15</span>, <span class="number">22</span>, <span class="number">18</span>, <span class="number">12</span>, <span class="number">30</span>];
-<span class="keyword">let</span> adults = ages.filter(age => age >= <span class="number">18</span>);
+<span class="keyword">let</span> adults = ages.filter(<span class="keyword">function</span>(age) { <span class="keyword">return</span> age >= <span class="number">18</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: [22, 18, 30]</span></code></pre>
                     </div>
                 </div>
@@ -679,7 +679,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> prices = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>];
-<span class="keyword">let</span> total = prices.reduce((sum, current) => sum + current, <span class="number">0</span>);
+<span class="keyword">let</span> total = prices.reduce(<span class="keyword">function</span>(sum, current) { <span class="keyword">return</span> sum + current; }, <span class="number">0</span>);
 <span class="comment">// ಫಲಿತಾಂಶ: 60</span></code></pre>
                     </div>
                 </div>
@@ -690,7 +690,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> numbers = [<span class="number">5</span>, <span class="number">12</span>, <span class="number">8</span>, <span class="number">130</span>, <span class="number">44</span>];
-<span class="keyword">let</span> found = numbers.find(num => num > <span class="number">10</span>);
+<span class="keyword">let</span> found = numbers.find(<span class="keyword">function</span>(num) { <span class="keyword">return</span> num > <span class="number">10</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: 12 (130 ಕೂಡ 10ಕ್ಕಿಂತ ದೊಡ್ಡದು, ಆದರೆ 12 ಮೊದಲು ಸಿಕ್ಕಿತು)</span></code></pre>
                     </div>
                 </div>
@@ -701,7 +701,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> numbers = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>];
-<span class="keyword">let</span> index = numbers.findIndex(num => num === <span class="number">30</span>);
+<span class="keyword">let</span> index = numbers.findIndex(<span class="keyword">function</span>(num) { <span class="keyword">return</span> num === <span class="number">30</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: 2 (ಏಕೆಂದರೆ 30 ಎಂಬುದು 2ನೇ index ನಲ್ಲಿದೆ)</span></code></pre>
                     </div>
                 </div>
@@ -712,7 +712,7 @@ nums.sort(<span class="keyword">function</span>(a, b) {
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> names = [<span class="string">"Ravi"</span>, <span class="string">"Kiran"</span>];
-names.forEach(name => <span class="function">console</span>.log(<span class="string">"Hello "</span> + name));
+names.forEach(<span class="keyword">function</span>(name) { <span class="function">console</span>.log(<span class="string">"Hello "</span> + name); });
 <span class="comment">// ಔಟ್ಪುಟ್: Hello Ravi, Hello Kiran</span></code></pre>
                     </div>
                 </div>
@@ -723,7 +723,7 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> marks = [<span class="number">35</span>, <span class="number">40</span>, <span class="number">20</span>, <span class="number">50</span>];
-<span class="keyword">let</span> hasFailed = marks.some(mark => mark < <span class="number">35</span>);
+<span class="keyword">let</span> hasFailed = marks.some(<span class="keyword">function</span>(mark) { <span class="keyword">return</span> mark < <span class="number">35</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: true (ಏಕೆಂದರೆ 20 ಎಂಬುದು 35ಕ್ಕಿಂತ ಕಡಿಮೆ ಇದೆ)</span></code></pre>
                     </div>
                 </div>
@@ -734,7 +734,7 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
                     <div class="code-container">
                         <div class="code-header"><span class="code-lang">JS</span><button class="copy-btn">Copy</button></div>
 <pre><code><span class="keyword">let</span> ages = [<span class="number">20</span>, <span class="number">25</span>, <span class="number">30</span>];
-<span class="keyword">let</span> allAdults = ages.every(age => age >= <span class="number">18</span>);
+<span class="keyword">let</span> allAdults = ages.every(<span class="keyword">function</span>(age) { <span class="keyword">return</span> age >= <span class="number">18</span>; });
 <span class="comment">// ಫಲಿತಾಂಶ: true (ಎಲ್ಲರೂ 18ಕ್ಕಿಂತ ದೊಡ್ಡವರು)</span></code></pre>
                     </div>
                 </div>
@@ -786,12 +786,12 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
 
     <!-- INTERACTIVE SCRIPTS -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             
             // 1. Scroll Reveal Animation
             const reveals = document.querySelectorAll('.reveal');
-            const revealOnScroll = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                         observer.unobserve(entry.target);
@@ -799,12 +799,12 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
                 });
             }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-            reveals.forEach(reveal => revealOnScroll.observe(reveal));
-            setTimeout(() => reveals[0].classList.add('visible'), 100);
+            reveals.forEach(function(reveal) { revealOnScroll.observe(reveal); });
+            setTimeout(function() { reveals[0].classList.add('visible'); }, 100);
 
             // 2. Reading Progress Bar
             const progressBar = document.getElementById('progressBar');
-            window.addEventListener('scroll', () => {
+            window.addEventListener('scroll', function() {
                 const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
                 const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
                 const scrolled = (winScroll / height) * 100;
@@ -821,7 +821,7 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
             const savedTheme = localStorage.getItem('js-notes-theme') || 'light';
             setTheme(savedTheme);
 
-            themeToggle.addEventListener('click', () => {
+            themeToggle.addEventListener('click', function() {
                 const currentTheme = htmlElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 setTheme(newTheme);
@@ -843,18 +843,18 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
             const copyButtons = document.querySelectorAll('.copy-btn');
             const toast = document.getElementById('toast');
 
-            copyButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
+            copyButtons.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
                     const codeBlock = e.target.parentElement.nextElementSibling.innerText;
-                    navigator.clipboard.writeText(codeBlock).then(() => {
+                    navigator.clipboard.writeText(codeBlock).then(function() {
                         // Show toast
                         toast.className = "show";
-                        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+                        setTimeout(function() { toast.className = toast.className.replace("show", ""); }, 3000);
                         
                         // Change button text temporarily
                         const originalText = e.target.innerText;
                         e.target.innerText = "Copied!";
-                        setTimeout(() => { e.target.innerText = originalText; }, 2000);
+                        setTimeout(function() { e.target.innerText = originalText; }, 2000);
                     });
                 });
             });
@@ -863,10 +863,10 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
             const searchInput = document.getElementById('searchInput');
             const methodCards = document.querySelectorAll('.method-card');
 
-            searchInput.addEventListener('keyup', (e) => {
+            searchInput.addEventListener('keyup', function(e) {
                 const term = e.target.value.toLowerCase();
                 
-                methodCards.forEach(card => {
+                methodCards.forEach(function(card) {
                     const searchData = card.getAttribute('data-search') || "";
                     const content = card.innerText.toLowerCase();
                     
@@ -880,7 +880,7 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
 
             // 6. Back to Top Button
             const backToTopBtn = document.getElementById("backToTop");
-            window.addEventListener('scroll', () => {
+            window.addEventListener('scroll', function() {
                 if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
                     backToTopBtn.style.display = "flex";
                 } else {
@@ -888,7 +888,7 @@ names.forEach(name => <span class="function">console</span>.log(<span class="str
                 }
             });
 
-            backToTopBtn.addEventListener('click', () => {
+            backToTopBtn.addEventListener('click', function() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
